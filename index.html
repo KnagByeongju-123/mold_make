@@ -67,26 +67,13 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 /* 공정 보드 */
 .psel{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
 .psel select{padding:9px 12px;border:1px solid var(--line);border-radius:7px;font-size:14px;font-family:inherit;background:#fff;min-width:280px}
-.lanehead{display:grid;grid-template-columns:64px 108px 1fr;gap:0;margin-bottom:4px;font-size:11px;font-weight:700;color:var(--gray)}
-.lanehead .lanes{display:flex}
-.lanehead .lanes span{width:36px;text-align:center}
-.lanehead .lanes .lc{color:var(--cust)}.lanehead .lanes .ls{color:var(--self)}.lanehead .lanes .lo{color:var(--out)}
 
-.op{display:grid;grid-template-columns:64px 108px 1fr;background:var(--card);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;overflow:hidden}
+.op{display:grid;grid-template-columns:64px 1fr;background:var(--card);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;overflow:hidden}
 .op.st-OK{opacity:.82}
 .op.st-진행{border-color:var(--blue);box-shadow:0 0 0 2px #dbe8fb}
 .op.st-NG{border-color:var(--red);box-shadow:0 0 0 2px #f8dcdc}
 .opcode{background:var(--yellowbg);border-right:1px solid #eee0a8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px}
 .opcode b{font-size:16px;font-weight:600;color:#6b5200;letter-spacing:-.5px}
-.lanecell{display:flex;align-items:center;justify-content:flex-start;border-right:1px solid var(--line);padding-left:0}
-.lanewrap{display:flex;width:108px}
-.laneslot{width:36px;display:flex;align-items:center;justify-content:center;position:relative}
-.laneslot::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:#eef1f6}
-.lchk{appearance:none;width:16px;height:16px;border:1.5px solid #c8cfdb;border-radius:4px;background:#fff;position:relative;z-index:1;margin:0}
-.lchk:checked{border-color:currentColor;background:currentColor}
-.lchk:checked::after{content:'';position:absolute;left:4.5px;top:1px;width:4px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
-.hnote .lchk{vertical-align:-3px}
-.lchk.cust{color:var(--cust)}.lchk.self{color:var(--self)}.lchk.out{color:var(--out)}
 .opbody{padding:11px 14px;display:flex;gap:14px;align-items:flex-start}
 .opinfo{flex:1;min-width:0}
 .opinfo .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -112,10 +99,10 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 .b-ok:hover{background:#ecf9f2}
 .b-ng2{color:var(--red);border-color:#efb9b9}
 .b-ng2:hover{background:#fdf0f0}
-.ngline{grid-column:1/4;background:#fdf0f0;border-top:1px dashed #efb9b9;color:var(--red);font-size:12px;font-weight:600;padding:6px 14px}
+.ngline{grid-column:1/3;background:#fdf0f0;border-top:1px dashed #efb9b9;color:var(--red);font-size:12px;font-weight:600;padding:6px 14px}
 
 /* 외주 부품 */
-.partsec{grid-column:1/4;border-top:1px solid var(--line);background:#f8fafd}
+.partsec{grid-column:1/3;border-top:1px solid var(--line);background:#f8fafd}
 .ptitle{padding:7px 14px;font-size:12px;font-weight:700;color:#4a5568;cursor:pointer;user-select:none}
 .ptitle b{color:var(--out)}
 .psum{margin-left:8px;font-weight:500;color:var(--gray);font-size:11px}
@@ -180,8 +167,6 @@ h1.pt em{font-style:normal;color:var(--blue)}
 @media(max-width:760px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .op{grid-template-columns:52px 1fr}
-  .lanecell{display:none}
-  .lanehead{display:none}
   .row2{grid-template-columns:1fr}
   .hstep{grid-template-columns:44px 1fr}
   .htbl td:first-child{width:auto}
@@ -199,7 +184,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 1.5 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 1.7 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
@@ -228,11 +213,6 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div class="psel">
       <select id="flowsel" onchange="renderFlow()"></select>
       <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
-    </div>
-    <div class="lanehead">
-      <div></div>
-      <div class="lanes"><span class="lc">고객사</span><span class="ls">사내</span><span class="lo">외주</span></div>
-      <div style="padding-left:14px">업무 내용 / 결과물</div>
     </div>
     <div id="flowboard"></div>
   </section>
@@ -295,7 +275,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
           <tr><td><button class="b-ng2" style="pointer-events:none">NG</button></td><td>불합격 처리. 흐름도의 되돌림 경로대로 <b>이전 공정이 자동 재진행</b>되고 NG 횟수가 누적됩니다.</td></tr>
         </table>
-        <p class="hnote">공정 왼쪽 3개 레인의 표식은 담당 주체입니다 — <input type="checkbox" class="lchk cust" checked disabled> 고객사 &nbsp; <input type="checkbox" class="lchk self" checked disabled> 사내 &nbsp; <input type="checkbox" class="lchk out" checked disabled> 외주.</p>
+        <p class="hnote">외주 진행 시 공정 카드 하단의 부품 관리 영역을 이용하세요.</p>
       </div>
     </div>
 
@@ -482,8 +462,6 @@ async function renderFlow(){
   document.getElementById('flowprog').textContent=`진행률 ${ok}/${ps.length} (${Math.round(ok/(ps.length||1)*100)}%)`;
   box.innerHTML=MASTER.map(m=>{
     const p=ps.find(x=>x.op_code===m.op_code)||{status:'대기',ng_count:0};
-    const lane=m.actor==='고객사'?0:m.actor==='당사'?1:2;
-    const dots=[0,1,2].map(i=>`<div class="laneslot"><input type="checkbox" class="lchk ${['cust','self','out'][i]}" ${i===lane?'checked':''} disabled title="${['고객사','사내','외주'][i]}"></div>`).join('');
     const stc=p.status==='OK'?'st-ok':p.status==='진행'?'st-r':p.status==='NG'?'st-ng':'st-w';
     const acts=[];
     if(p.status==='대기')acts.push(`<button class="b-start" onclick="setStatus('${p.id}','${m.op_code}','진행')">시작</button>`);
@@ -495,7 +473,6 @@ async function renderFlow(){
     const ngline=m.ng_return_op?`<div class="ngline">↩ NG 시 ${m.ng_return_op} ${mName(m.ng_return_op)} 공정으로 재진행</div>`:'';
     return `<div class="op st-${p.status}">
       <div class="opcode"><b class="mono">${m.op_code.replace("OP","")}</b></div>
-      <div class="lanecell"><div class="lanewrap">${dots}</div></div>
       <div class="opbody">
         <div class="opinfo">
           <div class="t">
