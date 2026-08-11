@@ -126,6 +126,7 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 .ptbl th{background:#eef1f6;color:#4a5568;font-size:11px;padding:5px 9px;text-align:left;font-weight:700}
 .ptbl td{padding:5px 9px;font-size:12px;border-top:1px solid #eef1f6;color:#3c4450}
 .ptbl .dcell{width:62px}
+.ptbl .wk{color:#5a6478;max-width:180px}
 .dstamp{padding:2px 9px;font-size:11px;border:1px dashed #c0c9d8;background:#fff;border-radius:5px;color:var(--gray);cursor:pointer;font-family:inherit}
 .dstamp:hover{border-color:var(--out);color:var(--out)}
 .dset{font-size:11.5px;font-weight:700;color:var(--green);font-family:'IBM Plex Mono',monospace}
@@ -198,7 +199,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 1.4 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 1.5 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
@@ -304,7 +305,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <h3>외주 부품 관리 (OP40 ~ OP130)</h3>
         <p>설계~사상·조립(40~130) 공정은 외주업체에서 진행되는 경우가 있어, 공정 카드 하단의 <b>외주 부품</b> 영역에서 부품 단위로 관리합니다.</p>
         <ul>
-          <li>제목줄을 클릭하면 펼쳐지고, 부품명·치수·외주업체를 입력 후 <b>+ 추가</b>로 등록합니다.</li>
+          <li>제목줄을 클릭하면 펼쳐지고, 부품명·치수·가공내용·외주업체를 입력 후 <b>+ 추가</b>로 등록합니다.</li>
           <li><b>발주 → 출고 → 입고</b> 버튼을 순서대로 눌러 날짜를 기록합니다. 오늘 날짜가 기본값이며 수정 가능합니다.</li>
           <li>날짜가 기록되면 초록색으로 표시되고, 제목줄에 입고완료 건수가 집계됩니다.</li>
           <li>모든 기록은 이력 탭에 남습니다.</li>
@@ -526,6 +527,7 @@ function partBlock(op){
   const rows=list.map(pt=>`<tr>
     <td>${esc(pt.part_name)}</td>
     <td>${esc(pt.dimension||'')}</td>
+    <td class="wk">${esc(pt.note||'')}</td>
     <td>${esc(pt.vendor||'')}</td>
     ${['order_date','out_date','in_date'].map(f=>`<td class="dcell">${pt[f]
       ?`<span class="dset">${pt[f].slice(5)}</span>`
@@ -540,12 +542,13 @@ function partBlock(op){
     </div>
     <div class="pbody">
       <table class="ptbl">
-        <thead><tr><th>부품명</th><th>치수</th><th>외주업체</th><th>발주</th><th>출고</th><th>입고</th><th></th></tr></thead>
-        <tbody>${rows||'<tr><td colspan="7" class="pempty">등록된 부품 없음</td></tr>'}</tbody>
+        <thead><tr><th>부품명</th><th>치수</th><th>가공내용</th><th>외주업체</th><th>발주</th><th>출고</th><th>입고</th><th></th></tr></thead>
+        <tbody>${rows||'<tr><td colspan="8" class="pempty">등록된 부품 없음</td></tr>'}</tbody>
       </table>
       <div class="padd">
         <input id="pn-${num}" placeholder="부품명">
         <input id="pz-${num}" placeholder="치수 (예: 100x50x20)">
+        <input id="pw-${num}" placeholder="가공내용 (예: MCT 3D가공, Wire Cut)">
         <input id="pv-${num}" placeholder="외주업체">
         <button onclick="addPart('${op}')">+ 추가</button>
       </div>
@@ -557,9 +560,10 @@ async function addPart(op){
   const nm=document.getElementById('pn-'+num).value.trim();
   if(!nm)return toast('부품명을 입력하세요');
   const dim=document.getElementById('pz-'+num).value.trim()||null;
+  const wk=document.getElementById('pw-'+num).value.trim()||null;
   const vd=document.getElementById('pv-'+num).value.trim()||null;
-  await api("/mm_part",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,part_name:nm,dimension:dim,vendor:vd})});
-  await hist(op,'부품',op+' 부품 등록: '+nm+(vd?' ('+vd+')':''));
+  await api("/mm_part",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,part_name:nm,dimension:dim,note:wk,vendor:vd})});
+  await hist(op,'부품',op+' 부품 등록: '+nm+(wk?' / '+wk:'')+(vd?' ('+vd+')':''));
   openParts=op;renderFlow();
 }
 async function setPartDate(id,field){
