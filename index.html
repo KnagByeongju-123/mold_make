@@ -160,6 +160,7 @@ tr:last-child td{border-bottom:none}
 .hfilter .tilde{color:var(--gray)}
 .hfilter .hbtn{padding:8px 18px}
 .hfilter .hclr{padding:8px 14px;background:#eef1f6;color:#4a5568}
+.hfilter .hxls{padding:8px 16px;background:var(--green);color:#fff;margin-left:auto}
 
 /* 게시판 */
 .bcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:8px}
@@ -247,7 +248,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 2.2 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 2.3 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
@@ -315,9 +316,10 @@ h1.pt em{font-style:normal;color:var(--blue)}
       </select>
       <button class="btn btn-p hbtn" onclick="loadHist()">조회</button>
       <button class="btn hclr" onclick="clearHistFilter()">초기화</button>
+      <button class="btn hxls" onclick="exportHist()">엑셀 출력</button>
     </div>
     <table>
-      <thead><tr><th>일시</th><th>금형</th><th>공정</th><th>구분</th><th>내용</th><th>작업자</th></tr></thead>
+      <thead><tr><th>일시</th><th>금형</th><th>공정</th><th>구분</th><th>내용</th><th>작업자</th><th style="width:36px"></th></tr></thead>
       <tbody id="histbody"></tbody>
     </table>
   </section>
@@ -477,7 +479,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <li>공정 마스터(업무 내용·결과물·담당·되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구를 바꾸려면 이 테이블을 수정하세요.</li>
         <li>[게시판] 탭에서 개선·수정 요청사항을 등록하고 접수/완료 상태를 눌러 전환할 수 있습니다.</li>
         <li>[Tryout] 탭에서 차수(1차~양산전)·상태·작업/이슈/계획·사진을 일지로 기록하고, 기간·금형·차수·상태로 필터 조회합니다.</li>
-        <li>[이력] 탭 상단에서 기간·금형·구분으로 필터 조회할 수 있습니다.</li>
+        <li>[이력] 탭 상단에서 기간·금형·구분으로 필터 조회하고, 조회 결과를 엑셀(CSV)로 출력할 수 있습니다. 각 행의 ✕로 개별 삭제도 가능합니다.</li>
         <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
       </ul>
     </div>
@@ -670,6 +672,29 @@ function openOp(op){
 function closeOp(){document.getElementById('modal').classList.remove('show')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOp()});
 
+let LASTHIST=[];
+async function delHist(id){
+  if(!confirm('이 이력을 삭제할까요?'))return;
+  await api(`/mm_history?id=eq.${id}`,{method:"DELETE"});
+  toast('이력 삭제 완료');loadHist();
+}
+function exportHist(){
+  if(!LASTHIST.length)return toast('내보낼 이력이 없습니다');
+  const head=['일시','금형번호','금형명','공정','구분','내용','작업자'];
+  const rows=LASTHIST.map(r=>[
+    new Date(r.created_at).toLocaleString('ko-KR'),
+    r.mm_project?r.mm_project.mold_no:'',
+    r.mm_project?r.mm_project.mold_name:'',
+    r.op_code?(mName(r.op_code)||r.op_code):'',
+    r.action, r.detail||'', r.worker||''
+  ]);
+  const csv=[head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='공정이력_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(a.href);
+}
 function nextDay(d){const x=new Date(d);x.setDate(x.getDate()+1);return x.toISOString().slice(0,10)}
 function clearHistFilter(){['h-from','h-to'].forEach(i=>document.getElementById(i).value='');document.getElementById('h-proj').value='';document.getElementById('h-act').value='';loadHist()}
 function fmt(t){return new Date(t).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
@@ -939,7 +964,9 @@ async function loadHist(){
     <td>${r.op_code?mName(r.op_code)||r.op_code:'-'}</td>
     <td class="a-${r.action}">${r.action}</td>
     <td>${esc(r.detail||'')}</td>
-    <td>${esc(r.worker||'')}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">이력이 없습니다</td></tr>';
+    <td>${esc(r.worker||'')}</td>
+    <td><button class="del" onclick="delHist(${r.id})">✕</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">이력이 없습니다</td></tr>';
+  LASTHIST=rows;
 }
 
 (async()=>{await loadMaster();loadDash();})();
