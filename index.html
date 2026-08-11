@@ -68,6 +68,9 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .psel select{padding:9px 12px;border:1px solid var(--line);border-radius:7px;font-size:14px;font-family:inherit;background:#fff;min-width:280px}
 
 .op{display:grid;grid-template-columns:64px 1fr;background:var(--card);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;overflow:hidden}
+.op.st-대기{border-color:#f5ddc4}
+.op.st-대기 .opcode{background:#fdf3ea;border-right-color:#f5ddc4}
+.op.st-대기 .opcode b{color:#d1873f}
 .op.st-OK{border-color:#b9d1f5;background:#f7fafe}
 .op.st-OK .opcode{background:#e3edfc;border-right-color:#c5daf7}
 .op.st-OK .opcode b{color:var(--blue)}
@@ -84,7 +87,7 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .opinfo .nm{font-weight:700;font-size:15px}
 .dept{font-size:11px;font-weight:700;background:#eef1f6;color:#4a5568;padding:1px 8px;border-radius:4px}
 .st{font-size:11px;font-weight:800;padding:2px 10px;border-radius:20px}
-.st-w{background:#f0f1f4;color:var(--gray)}
+.st-w{background:#fdf3ea;color:#d1873f}
 .st-r{background:#fdecd9;color:#c25e0a}
 .st-ok{background:#dbe8fb;color:var(--blue)}
 .st-ng{background:#fbe4e4;color:var(--red)}
@@ -341,7 +344,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.4</span>
+    <span class="rev">Rev 3.5</span>
   </div>
 </header>
 
