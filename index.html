@@ -29,10 +29,10 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .hide{display:none!important}
 
 /* 대시보드 */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px}
-.stat .k{font-size:12px;color:var(--gray);font-weight:500}
-.stat .v{font-size:28px;font-weight:900;margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center}
+.stat .k{font-size:11.5px;color:var(--gray);font-weight:600}
+.stat .v{font-size:24px;font-weight:900;line-height:1.1}
 .stat.s1 .v{color:var(--blue)}.stat.s2 .v{color:var(--green)}.stat.s3 .v{color:var(--red)}.stat.s4 .v{color:var(--ink)}
 
 .projcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
@@ -306,7 +306,8 @@ h1.pt em{font-size:13px;font-weight:500;color:var(--gray)}
 h1.pt{font-size:17px;font-weight:900;margin-bottom:14px}
 h1.pt em{font-style:normal;color:var(--blue)}
 @media(max-width:760px){
-  .stats{grid-template-columns:repeat(2,1fr)}
+  .stats{gap:6px}
+  .stat .v{font-size:21px}
   .op{grid-template-columns:52px 1fr}
   .row2{grid-template-columns:1fr}
   .hstep{grid-template-columns:44px 1fr}
@@ -344,7 +345,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.6</span>
+    <span class="rev">Rev 3.8</span>
   </div>
 </header>
 
@@ -352,10 +353,10 @@ h1.pt em{font-style:normal;color:var(--blue)}
   <!-- 대시보드 -->
   <section id="v-dash">
     <div class="stats">
-      <div class="stat s1"><div class="k">진행중 금형</div><div class="v" id="st-run">0</div></div>
-      <div class="stat s2"><div class="k">완료 금형</div><div class="v" id="st-done">0</div></div>
-      <div class="stat s3"><div class="k">NG 발생(누적)</div><div class="v" id="st-ng">0</div></div>
-      <div class="stat s4"><div class="k">전체 금형</div><div class="v" id="st-all">0</div></div>
+      <div class="stat s1"><div class="v" id="st-run">0</div><div class="k">진행</div></div>
+      <div class="stat s2"><div class="v" id="st-done">0</div><div class="k">완료</div></div>
+      <div class="stat s3"><div class="v" id="st-ng">0</div><div class="k">NG</div></div>
+      <div class="stat s4"><div class="v" id="st-all">0</div><div class="k">전체</div></div>
     </div>
     <h1 class="pt">전체진행현황</h1>
     <div id="projlist"></div>
@@ -519,17 +520,16 @@ h1.pt em{font-style:normal;color:var(--blue)}
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
     <h1 class="pt">사용안내 <em>— 금형 제작 흐름도 기준 진행 절차</em></h1>
-    <div class="hp">본 화면은 샘플 데이터로 동작을 확인하는 용도입니다. 아래 순서대로 진행하면 10 견적 요청부터 180 금형 이관까지 전 공정이 관리됩니다. 공정 번호는 흐름도의 OP 번호에서 앞 글자를 뺀 숫자입니다.</div>
+    <div class="hp">화면 이동은 <b>하단 고정 메뉴</b>(홈 · 진행현황 · ＋등록 · Tryout)와 <b>☰ 메뉴</b>의 전체 메뉴를 사용합니다. 공정 번호는 흐름도의 OP 번호에서 앞 글자를 뺀 숫자이며, 10 견적 요청부터 180 금형 이관까지 17개 공정으로 관리됩니다.</div>
 
     <div class="hstep">
       <div class="hn mono">01</div>
       <div class="hb">
-        <h3>신규 등록 — 제작 건 개설</h3>
-        <p>[신규 등록] 탭에서 금형번호와 금형명을 입력하고 등록합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
+        <h3>로그인</h3>
+        <p>접속 시 PIN 4자리를 입력합니다. 로그인한 사람의 이름이 이후 모든 작업의 작업자·작성자로 자동 기록됩니다.</p>
         <ul>
-          <li>등록하면 10 견적 요청 ~ 180 금형 이관까지 <b>17개 공정이 자동 생성</b>됩니다.</li>
-          <li>10 견적 요청은 자동으로 <span class="st st-r">진행</span> 상태가 되고, 나머지는 <span class="st st-w">대기</span>로 대기합니다.</li>
-          <li>등록 직후 공정 진행 화면으로 자동 이동합니다.</li>
+          <li>사원 PIN은 <b>메뉴 → 설정</b>에서 등록·삭제합니다. 설정 진입 시 마스터 비밀번호가 필요합니다.</li>
+          <li>상단 우측의 이름 배지를 누르면 로그아웃됩니다.</li>
         </ul>
       </div>
     </div>
@@ -537,39 +537,117 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div class="hstep">
       <div class="hn mono">02</div>
       <div class="hb">
-        <h3>진행현황 — 상태 처리</h3>
-        <p>[진행현황] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 화면 이동은 하단 고정 메뉴(홈·진행현황·등록·Tryout)와 [메뉴] 버튼의 전체 메뉴를 사용합니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. <b>공정명을 클릭</b>하면 업무 내용·결과물·되돌림 경로가 팝업으로 열립니다.</p>
-        <table class="htbl">
-          <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 작업자명을 입력하면 이력에 기록됩니다.</td></tr>
-          <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
-          <tr><td><button class="b-ng2" style="pointer-events:none">NG</button></td><td>불합격 처리. 흐름도의 되돌림 경로대로 <b>이전 공정이 자동 재진행</b>되고 NG 횟수가 누적됩니다.</td></tr>
-        </table>
-        <p class="hnote">담당 주체(고객사·사내·외주)는 업체마다 다를 수 있어 별도로 구분하지 않습니다. 외주로 진행하는 부품은 아래 03의 부품 관리에서 기록하세요.</p>
+        <h3>신규 등록 — 제작 건 개설</h3>
+        <p>하단 ＋<b>등록</b>에서 금형번호와 금형명을 입력합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
+        <ul>
+          <li>등록하면 10 ~ 180까지 <b>17개 공정이 자동 생성</b>됩니다.</li>
+          <li>10 견적 요청은 자동으로 <span class="st st-r">진행</span>이 되고, 나머지는 <span class="st st-w">대기</span>로 둡니다.</li>
+          <li>등록 직후 진행현황 화면으로 자동 이동합니다.</li>
+        </ul>
       </div>
     </div>
 
     <div class="hstep">
       <div class="hn mono">03</div>
       <div class="hb">
-        <h3>부품 발주·입출고 관리 (40 ~ 130)</h3>
-        <p>금형설계부터 사상·조립까지(40 · 50 · 60 · 80 · 90 · 100 · 120 · 130) 각 공정 카드 하단의 <b>외주 부품</b> 영역에서 부품 단위로 발주와 입출고를 관리합니다. 원자재 입고와 열처리 완료품 입고는 별도 공정 대신 이 영역의 입고 기록으로 대체합니다.</p>
-        <ul>
-          <li>제목줄을 클릭하면 펼쳐지고, 부품명·치수·가공내용·외주업체를 입력 후 <b>+ 추가</b>로 등록합니다.</li>
-          <li>한번 등록한 부품명·치수·가공내용·업체는 몇 글자만 입력하면 <b>자동완성 목록</b>으로 나타납니다.</li>
-          <li><b>발주 → 출고 → 입고</b> 버튼을 순서대로 눌러 날짜를 기록합니다. 오늘 날짜가 기본값이며 수정 가능합니다.</li>
-          <li>날짜가 기록되면 초록색으로 표시되고, 제목줄에 입고완료 건수가 집계됩니다.</li>
-          <li>전 부품이 입고되어야 해당 공정을 OK 처리하는 것을 권장합니다.</li>
-          <li><b>출력물 체크리스트(SQ 대응)</b>: 결과물이 있는 공정 카드에 「출력물 n/m 작성」 영역이 표시됩니다. 작성 완료 시 체크하면 날짜·작성자가 기록되고, 「첨부」로 증빙 사진을 등록합니다. 전 항목 작성 시 완비 표시.</li>
-          <li>모든 기록은 이력 탭에 「부품」 구분으로 남습니다.</li>
-        </ul>
+        <h3>진행현황 — 공정 상태 처리</h3>
+        <p>상단에서 금형을 선택하면 공정 카드가 순서대로 표시됩니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다.</p>
+        <table class="htbl">
+          <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 시작 시각과 로그인 사용자가 기록됩니다.</td></tr>
+          <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
+          <tr><td><button class="b-ng2" style="pointer-events:none">NG</button></td><td>불합격. 지정된 <b>이전 공정이 자동 재진행</b>되고 NG 횟수가 누적됩니다.</td></tr>
+        </table>
+        <p class="hnote"><b>공정명</b> 또는 옆의 <i class="ico">?</i>를 누르면 업무 내용 · 결과물 · 되돌림 경로가 팝업으로 열립니다.</p>
+        <p class="hnote">색상 구분 — <span class="st st-w">대기</span> <span class="st st-r">진행</span>은 주황(미완료), <span class="st st-ok">OK</span>는 파랑(완료), <span class="st st-ng">NG</span>는 빨강입니다.</p>
       </div>
     </div>
 
     <div class="hstep">
       <div class="hn mono">04</div>
       <div class="hb">
+        <h3>출력물 체크리스트 — SQ 심사 대응</h3>
+        <p>결과물이 정해진 공정 카드 하단에 <b>「출력물 n/m 작성」</b> 영역이 있습니다. 제목줄을 눌러 펼칩니다.</p>
+        <ul>
+          <li>금형견적서 · 공정검토내역서 · Mill-Sheet · 열처리성적서 · Try-Out Report · 출하검사성적서 · 금형이력카드 등 공정별 결과물이 항목으로 표시됩니다.</li>
+          <li>작성을 마친 항목에 <b>체크</b>하면 작성일과 작성자가 자동 기록됩니다.</li>
+          <li><b>첨부</b>를 눌러 증빙 사진을 등록합니다. 등록된 사진은 눌러서 크게 볼 수 있습니다.</li>
+          <li>전 항목 작성 시 <span class="ocomp">완비</span> 표시가 붙어, 심사 시 공정별 문서 완비 여부를 즉시 확인할 수 있습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">05</div>
+      <div class="hb">
+        <h3>부품 발주·입출고 관리 (40 ~ 130)</h3>
+        <p>설계부터 사상·조립까지의 공정(40 · 50 · 60 · 80 · 90 · 100 · 120 · 130) 카드 하단 <b>「외주 부품」</b> 영역에서 부품 단위로 관리합니다.</p>
+        <ul>
+          <li>부품명 · 치수 · 가공내용 · 외주업체를 입력하고 <b>＋추가</b>로 등록합니다.</li>
+          <li>한번 등록한 값은 몇 글자만 입력하면 <b>자동완성 목록</b>으로 나타납니다.</li>
+          <li><b>발주 → 출고 → 입고</b> 버튼을 순서대로 눌러 날짜를 기록합니다. 오늘 날짜가 기본값이며 수정 가능합니다.</li>
+          <li>기록된 날짜는 초록색으로 표시되고, 제목줄에 입고완료 건수가 집계됩니다. 전 부품 입고 후 공정을 OK 처리하는 것을 권장합니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">06</div>
+      <div class="hb">
+        <h3>제작계획 — 계획 대비 실적</h3>
+        <p>메뉴 → <b>제작계획</b>에서 공정별 계획 시작·완료일을 입력해 금형제작 계획을 수립합니다.</p>
+        <ul>
+          <li>계획일과 실적(시작·완료)이 나란히 표시되어 진척을 대비할 수 있습니다.</li>
+          <li>계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시되고 행이 강조됩니다.</li>
+          <li><b>엑셀 출력</b>으로 금형제작 계획서(계획 대비 실적)를 내려받습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">07</div>
+      <div class="hb">
+        <h3>Tryout 작업일지</h3>
+        <p>하단 <b>Tryout</b>에서 Try-Out 진행 내역을 일지로 기록합니다.</p>
+        <ul>
+          <li>작업일 · 금형 · 차수(1차 / 2차 / 3차 / 양산전 / 기타) · 상태(완료 / 진행중 / 이슈 / 보류)를 선택하고, 작업 내용 · 이슈 사항 · 다음 계획을 작성합니다.</li>
+          <li>사진은 최대 3장 첨부되며 자동 축소되어 저장됩니다.</li>
+          <li>기간 · 금형 · 차수 · 상태로 필터 조회하고, 각 일지의 <b>수정</b> 버튼으로 내용과 사진을 다시 편집합니다.</li>
+          <li><b>엑셀</b>은 목록 형태 CSV, <b>PDF</b>는 사진이 포함된 A4 보고서 양식으로 출력됩니다 (인쇄 창에서 'PDF로 저장' 선택).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">08</div>
+      <div class="hb">
+        <h3>홈 — 전체진행현황 확인</h3>
+        <p>진행중 · 완료 · NG 누적 · 전체 금형 수와 금형별 진행률을 한 화면에서 확인합니다.</p>
+        <ul>
+          <li>진행률 바 아래에 현재 공정이 표시되며, NG가 있으면 NG 공정이 우선 표시됩니다.</li>
+          <li>카드를 누르면 해당 금형의 진행현황으로 이동합니다.</li>
+          <li>카드 우측 <b>✕</b>는 금형과 그 공정 · 부품 · 출력물 · 이력을 함께 삭제합니다. 복구되지 않습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">09</div>
+      <div class="hb">
+        <h3>이력 · 게시판</h3>
+        <p>180 금형 이관까지 전 공정이 OK가 되면 금형 상태가 <span class="badge b-done">완료</span>로 자동 전환됩니다.</p>
+        <ul>
+          <li><b>이력</b>: 등록 · 시작 · OK · NG · 부품 · 출력물 · Tryout 전 기록을 조회합니다. 기간 · 금형 · 구분 필터, 엑셀(CSV) 출력, 행별 ✕ 삭제를 지원합니다.</li>
+          <li>기록 항목: 일시 / 금형 / 공정명 / 구분 / 내용 / 작업자.</li>
+          <li><b>게시판</b>: 개선·수정 요청사항을 등록하고 상태 뱃지를 눌러 접수 ↔ 완료로 전환합니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">10</div>
+      <div class="hb">
         <h3>NG 되돌림 경로</h3>
-        <p>NG 처리 시 흐름도의 회귀선과 동일하게 이전 공정으로 자동 복귀하며, 해당 공정이 다시 진행 상태가 됩니다. 되돌림 경로는 NG 발생 시 카드 하단에 표시됩니다.</p>
+        <p>NG 처리 시 흐름도의 회귀선과 동일하게 이전 공정으로 자동 복귀하며, 해당 공정이 다시 진행 상태가 됩니다.</p>
         <table class="htbl ng">
           <tr><td class="mono">50 금형설계 승인</td><td>→ 40 금형설계 진행</td></tr>
           <tr><td class="mono">140 Try-Out</td><td>→ 120 정밀 가공</td></tr>
@@ -579,43 +657,14 @@ h1.pt em{font-style:normal;color:var(--blue)}
       </div>
     </div>
 
-    <div class="hstep">
-      <div class="hn mono">05</div>
-      <div class="hb">
-        <h3>홈 — 전체 현황 확인</h3>
-        <p>[홈] 화면에서 진행중·완료·NG 누적·전체 금형 수와 금형별 진행률을 확인합니다.</p>
-        <ul>
-          <li>진행률 바 아래에 <b>현재 공정</b>이 표시됩니다. NG가 있으면 NG 공정이 우선 표시됩니다.</li>
-          <li>카드를 클릭하면 해당 금형의 진행현황 화면으로 이동합니다.</li>
-          <li>카드 우측 <b>✕</b>는 금형과 그 공정·이력을 함께 삭제합니다. 복구되지 않습니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">06</div>
-      <div class="hb">
-        <h3>완료 처리 및 이력 확인</h3>
-        <p>180 금형 이관까지 전 공정이 OK가 되면 금형 상태가 <span class="badge b-done">완료</span>로 자동 전환됩니다.</p>
-        <ul>
-          <li>[이력] 탭에서 등록·시작·OK·NG·부품 전 기록을 최근 200건까지 조회합니다.</li>
-          <li>기록 항목: 일시 / 금형번호 / 공정코드 / 구분 / 내용 / 작업자.</li>
-        </ul>
-      </div>
-    </div>
-
     <div class="hnotebox">
       <b>참고</b>
       <ul>
         <li>원본 흐름도의 170 중복 항목은 170(조립 — 도색·명판·출하검사)과 175(영업 — SCRAP BOX·금형이력카드)로 분리했습니다.</li>
         <li>원본 흐름도의 70(원자재 및 표준품 입고)과 110(열처리 완료품 입고)은 부품 관리의 입고 기록으로 대체하여 공정에서 제외했습니다.</li>
-        <li>공정 마스터(업무 내용·결과물·담당·되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구를 바꾸려면 이 테이블을 수정하세요.</li>
-        <li>[게시판] 탭에서 개선·수정 요청사항을 등록하고 접수/완료 상태를 눌러 전환할 수 있습니다.</li>
-        <li>[제작계획] 탭에서 공정별 계획 시작·완료일을 입력해 금형제작 계획을 수립하고, 실적과 대비합니다. 계획완료일 경과 미완료 공정은 지연 표시되며 엑셀 출력을 지원합니다.</li>
-        <li>[Tryout] 탭에서 차수(1차~양산전)·상태·작업/이슈/계획·사진을 일지로 기록하고, 기간·금형·차수·상태로 필터 조회합니다. 조회 결과는 <b>엑셀(CSV)</b>과 <b>PDF(인쇄)</b>로 출력할 수 있으며, 각 일지의 [수정] 버튼으로 내용과 사진을 다시 편집할 수 있습니다.</li>
-        <li>[이력] 탭 상단에서 기간·금형·구분으로 필터 조회하고, 조회 결과를 엑셀(CSV)로 출력할 수 있습니다. 각 행의 ✕로 개별 삭제도 가능합니다.</li>
-        <li>프로그램 진입 시 PIN 4자리로 로그인합니다. 사원 PIN은 [설정] 탭(마스터 비밀번호 필요)에서 등록·삭제하며, 로그인한 사용자 이름이 작업자·작성자에 자동 기록됩니다.</li>
-        <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
+        <li>담당 주체(고객사·사내·외주)는 업체마다 달라 화면에서 구분하지 않습니다. 외주 진행 부품은 05의 부품 관리에 기록하세요.</li>
+        <li>공정 마스터(업무 내용 · 결과물 · 담당 · 되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구 변경은 이 테이블을 수정하세요.</li>
+        <li>데이터는 Supabase에 저장되며 여러 PC·모바일에서 같은 현황을 공유합니다.</li>
       </ul>
     </div>
   </section>
