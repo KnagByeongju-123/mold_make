@@ -77,15 +77,16 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 .op.st-진행{border-color:var(--blue);box-shadow:0 0 0 2px #dbe8fb}
 .op.st-NG{border-color:var(--red);box-shadow:0 0 0 2px #f8dcdc}
 .opcode{background:var(--yellowbg);border-right:1px solid #eee0a8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px}
-.opcode b{font-size:13px;color:#6b5200}
+.opcode b{font-size:16px;font-weight:600;color:#6b5200;letter-spacing:-.5px}
 .lanecell{display:flex;align-items:center;justify-content:flex-start;border-right:1px solid var(--line);padding-left:0}
 .lanewrap{display:flex;width:108px}
 .laneslot{width:36px;display:flex;align-items:center;justify-content:center;position:relative}
 .laneslot::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:#eef1f6}
-.dot{width:14px;height:14px;border-radius:3px;position:relative;z-index:1}
-.dot.cust{background:var(--cust);border-radius:50%}
-.dot.self{background:var(--self)}
-.dot.out{background:var(--out);border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--out);width:10px;height:10px}
+.lchk{appearance:none;width:16px;height:16px;border:1.5px solid #c8cfdb;border-radius:4px;background:#fff;position:relative;z-index:1;margin:0}
+.lchk:checked{border-color:currentColor;background:currentColor}
+.lchk:checked::after{content:'';position:absolute;left:4.5px;top:1px;width:4px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.hnote .lchk{vertical-align:-3px}
+.lchk.cust{color:var(--cust)}.lchk.self{color:var(--self)}.lchk.out{color:var(--out)}
 .opbody{padding:11px 14px;display:flex;gap:14px;align-items:flex-start}
 .opinfo{flex:1;min-width:0}
 .opinfo .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -172,12 +173,12 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 1.1 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 1.3 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
+    <button data-v="new" onclick="go('new')">신규 등록</button>
     <button data-v="flow" onclick="go('flow')">공정 진행</button>
-    <button data-v="new" onclick="go('new')">금형 등록</button>
     <button data-v="hist" onclick="go('hist')">이력</button>
     <button data-v="help" onclick="go('help')">사용안내</button>
   </nav>
@@ -204,7 +205,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
     </div>
     <div class="lanehead">
       <div></div>
-      <div class="lanes"><span class="lc">고객사</span><span class="ls">당사</span><span class="lo">외주</span></div>
+      <div class="lanes"><span class="lc">고객사</span><span class="ls">사내</span><span class="lo">외주</span></div>
       <div style="padding-left:14px">업무 내용 / 결과물</div>
     </div>
     <div id="flowboard"></div>
@@ -248,8 +249,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div class="hstep">
       <div class="hn mono">01</div>
       <div class="hb">
-        <h3>금형 등록 — 제작 건 개설</h3>
-        <p>[금형 등록] 탭에서 금형번호와 금형명을 입력하고 등록합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
+        <h3>신규 등록 — 제작 건 개설</h3>
+        <p>[신규 등록] 탭에서 금형번호와 금형명을 입력하고 등록합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
         <ul>
           <li>등록하면 OP10 견적 요청 ~ OP180 금형 이관까지 <b>19개 공정이 자동 생성</b>됩니다.</li>
           <li>OP10은 자동으로 <span class="st st-r">진행</span> 상태가 되고, 나머지는 <span class="st st-w">대기</span>로 대기합니다.</li>
@@ -268,7 +269,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
           <tr><td><button class="b-ng2" style="pointer-events:none">NG</button></td><td>불합격 처리. 흐름도의 되돌림 경로대로 <b>이전 공정이 자동 재진행</b>되고 NG 횟수가 누적됩니다.</td></tr>
         </table>
-        <p class="hnote">공정 왼쪽 3개 레인의 표식은 담당 주체입니다 — <span class="dotin cust"></span> 고객사 &nbsp; <span class="dotin self"></span> 당사 &nbsp; <span class="dotin out"></span> 외주.</p>
+        <p class="hnote">공정 왼쪽 3개 레인의 표식은 담당 주체입니다 — <input type="checkbox" class="lchk cust" checked disabled> 고객사 &nbsp; <input type="checkbox" class="lchk self" checked disabled> 사내 &nbsp; <input type="checkbox" class="lchk out" checked disabled> 외주.</p>
       </div>
     </div>
 
@@ -358,7 +359,7 @@ async function loadDash(){
   const ng=PROCS.reduce((s,p)=>s+p.ng_count,0);
   st('st-run',run);st('st-done',done);st('st-ng',ng);st('st-all',PROJECTS.length);
   const box=document.getElementById('projlist');
-  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [금형 등록] 탭에서 등록하세요.</div>';return}
+  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [신규 등록] 탭에서 등록하세요.</div>';return}
   box.innerHTML=PROJECTS.map(p=>{
     const ps=PROCS.filter(x=>x.project_id===p.id);
     const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
@@ -438,7 +439,7 @@ async function renderFlow(){
   box.innerHTML=MASTER.map(m=>{
     const p=ps.find(x=>x.op_code===m.op_code)||{status:'대기',ng_count:0};
     const lane=m.actor==='고객사'?0:m.actor==='당사'?1:2;
-    const dots=[0,1,2].map(i=>`<div class="laneslot">${i===lane?`<div class="dot ${['cust','self','out'][lane]}" title="${m.actor}"></div>`:''}</div>`).join('');
+    const dots=[0,1,2].map(i=>`<div class="laneslot"><input type="checkbox" class="lchk ${['cust','self','out'][i]}" ${i===lane?'checked':''} disabled title="${['고객사','사내','외주'][i]}"></div>`).join('');
     const stc=p.status==='OK'?'st-ok':p.status==='진행'?'st-r':p.status==='NG'?'st-ng':'st-w';
     const acts=[];
     if(p.status==='대기')acts.push(`<button class="b-start" onclick="setStatus('${p.id}','${m.op_code}','진행')">시작</button>`);
@@ -449,7 +450,7 @@ async function renderFlow(){
     if(p.status==='OK')acts.push(`<button class="b-ng2" onclick="setStatus('${p.id}','${m.op_code}','NG')">NG처리</button>`);
     const ngline=m.ng_return_op?`<div class="ngline">↩ NG 시 ${m.ng_return_op} ${mName(m.ng_return_op)} 공정으로 재진행</div>`:'';
     return `<div class="op st-${p.status}">
-      <div class="opcode"><b class="mono">${m.op_code}</b></div>
+      <div class="opcode"><b class="mono">${m.op_code.replace("OP","")}</b></div>
       <div class="lanecell"><div class="lanewrap">${dots}</div></div>
       <div class="opbody">
         <div class="opinfo">
