@@ -149,6 +149,8 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .oatt:hover{color:var(--blue);border-color:var(--blue)}
 .pdate{padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;font-family:inherit}
 tr.late td{background:#fdf4f4}
+tr.undone td{background:#fdf6f6}
+.devi{width:34px;height:28px;object-fit:cover;border-radius:4px;border:1px solid var(--line);cursor:pointer}
 
 /* 외주 부품 */
 .partsec{grid-column:1/3;border-top:1px solid var(--line);background:#f8fafd}
@@ -345,7 +347,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.9</span>
+    <span class="rev">Rev 4.1</span>
   </div>
 </header>
 
@@ -382,6 +384,23 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <table class="wide">
         <thead><tr><th>공정</th><th>부서</th><th>계획 시작</th><th>계획 완료</th><th>실적 시작</th><th>실적 완료</th><th>상태</th></tr></thead>
         <tbody id="planbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 출력물 점검표 -->
+  <section id="v-doc" class="hide">
+    <div class="psel">
+      <select id="docsel" onchange="renderDoc()"></select>
+      <span id="docrate" style="font-weight:700;color:var(--blue)"></span>
+      <button class="btn hxls" style="padding:8px 16px;background:var(--green);color:#fff" onclick="exportDocCSV()">엑셀</button>
+      <button class="btn hpdf" style="padding:8px 16px;background:var(--red);color:#fff" onclick="exportDocPDF()">PDF</button>
+    </div>
+    <div class="hp" style="margin-bottom:12px">SQ 심사 대응 점검표입니다. 공정별 결과물의 작성 여부 · 작성일 · 작성자 · 증빙 유무를 한 장으로 확인하고 출력합니다. 미작성 항목은 <b style="color:var(--red)">미작성</b>으로 표시됩니다.</div>
+    <div class="tscroll">
+      <table class="wide">
+        <thead><tr><th>공정</th><th>부서</th><th>결과물</th><th>작성</th><th>작성일</th><th>작성자</th><th>증빙</th></tr></thead>
+        <tbody id="docbody"></tbody>
       </table>
     </div>
   </section>
@@ -571,7 +590,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
           <li>금형견적서 · 공정검토내역서 · Mill-Sheet · 열처리성적서 · Try-Out Report · 출하검사성적서 · 금형이력카드 등 공정별 결과물이 항목으로 표시됩니다.</li>
           <li>작성을 마친 항목에 <b>체크</b>하면 작성일과 작성자가 자동 기록됩니다.</li>
           <li><b>첨부</b>를 눌러 증빙 사진을 등록합니다. 등록된 사진은 눌러서 크게 볼 수 있습니다.</li>
-          <li>전 항목 작성 시 <span class="ocomp">완비</span> 표시가 붙어, 심사 시 공정별 문서 완비 여부를 즉시 확인할 수 있습니다.</li>
+          <li>전 항목 작성 시 <span class="ocomp">완비</span> 표시가 붙습니다.</li>
+          <li>메뉴 → <b>출력물 점검표</b>에서 금형별 전체 결과물의 작성 여부·작성일·작성자·증빙을 한 장으로 확인하고, <b>엑셀</b>과 <b>PDF</b>(결재란 포함 A4 양식)로 출력합니다.</li>
         </ul>
       </div>
     </div>
@@ -610,7 +630,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <p>하단 <b>Tryout</b>에서 Try-Out 진행 내역을 일지로 기록합니다.</p>
         <ul>
           <li>작업일 · 금형 · 차수(1차 / 2차 / 3차 / 양산전 / 기타) · 상태(완료 / 진행중 / 이슈 / 보류)를 선택하고, 작업 내용 · 이슈 사항 · 다음 계획을 작성합니다.</li>
-          <li>사진은 최대 3장 첨부되며 자동 축소되어 저장됩니다.</li>
+          <li>사진은 최대 3장 첨부되며, 자동 축소 후 <b>Supabase Storage</b>에 파일로 저장됩니다(DB에는 주소만 보관).</li>
           <li>기간 · 금형 · 차수 · 상태로 필터 조회하고, 각 일지의 <b>수정</b> 버튼으로 내용과 사진을 다시 편집합니다.</li>
           <li><b>엑셀</b>은 목록 형태 CSV, <b>PDF</b>는 사진이 포함된 A4 보고서 양식으로 출력됩니다 (인쇄 창에서 'PDF로 저장' 선택).</li>
         </ul>
@@ -664,7 +684,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <li>원본 흐름도의 70(원자재 및 표준품 입고)과 110(열처리 완료품 입고)은 부품 관리의 입고 기록으로 대체하여 공정에서 제외했습니다.</li>
         <li>담당 주체(고객사·사내·외주)는 업체마다 달라 화면에서 구분하지 않습니다. 외주 진행 부품은 05의 부품 관리에 기록하세요.</li>
         <li>공정 마스터(업무 내용 · 결과물 · 담당 · 되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구 변경은 이 테이블을 수정하세요.</li>
-        <li>데이터는 Supabase에 저장되며 여러 PC·모바일에서 같은 현황을 공유합니다.</li>
+        <li>데이터는 Supabase에 저장되며 여러 PC·모바일에서 같은 현황을 공유합니다. 첨부 이미지는 Storage 버킷(mm-photos)에 보관되어 DB 용량에 영향을 주지 않습니다.</li>
       </ul>
     </div>
   </section>
@@ -709,6 +729,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <button onclick="go('new')"><span>＋</span>신규 등록</button>
       <button onclick="go('flow')"><span>📊</span>진행현황</button>
       <button onclick="go('plan')"><span>📅</span>제작계획</button>
+      <button onclick="go('doc')"><span>📑</span>출력물 점검표</button>
       <button onclick="go('hist')"><span>📜</span>이력</button>
       <button onclick="go('board')"><span>📋</span>게시판</button>
       <button onclick="go('tryout')"><span>🔧</span>Tryout</button>
@@ -721,7 +742,9 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <div class="toast" id="toast"></div>
 
 <script>
-const URL_="https://pllwltojbofjaftcemvn.supabase.co/rest/v1";
+const BASE="https://pllwltojbofjaftcemvn.supabase.co";
+const URL_=BASE+"/rest/v1";
+const BUCKET="mm-photos";
 const KEY="sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
 const H={"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"};
 
@@ -803,15 +826,16 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
 function go(v){
   closeMenu();
   document.querySelectorAll('.bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set','plan','doc'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
   if(v==='plan')loadPlanSel();
+  if(v==='doc')loadDocSel();
   if(v==='hist')loadHist();
   if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
   if(v==='tryout'){initTryout();loadTryout();}
@@ -1027,9 +1051,14 @@ async function toggleOut(op,name,checked){
 }
 async function attachOut(op,name,input){
   const f=input.files[0];if(!f)return;
-  const img=await shrink(f);
+  let img;
+  try{toast('증빙 업로드 중...');img=await uploadImg(f,'output');}
+  catch(e){return toast(e.message)}
   const rec=await getOutRec(op,name);
-  if(rec)await api(`/mm_output?id=eq.${rec.id}`,{method:"PATCH",body:JSON.stringify({photo:img})});
+  if(rec){
+    if(rec.photo)await deleteImg(rec.photo);
+    await api(`/mm_output?id=eq.${rec.id}`,{method:"PATCH",body:JSON.stringify({photo:img})});
+  }
   else await api("/mm_output",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,output_name:name,photo:img})});
   await hist(op,'출력물',opN(op)+' '+mName(op)+' 증빙 첨부: '+name,USER);
   toast('증빙 첨부 완료');openOuts=op;renderFlow();
@@ -1185,6 +1214,101 @@ async function delBoard(id){
   await api(`/mm_board?id=eq.${id}`,{method:"DELETE"});loadBoard();
 }
 
+/* ---------- 출력물 점검표 (SQ) ---------- */
+let DOCROWS=[];
+async function loadDocSel(){
+  const pj=await api("/mm_project?select=id,mold_no,mold_name,status&order=created_at.desc");
+  const el=document.getElementById('docsel');
+  el.innerHTML=pj.map(x=>`<option value="${x.id}">${esc(x.mold_no)} — ${esc(x.mold_name)} (${x.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
+  renderDoc();
+}
+async function renderDoc(){
+  const pid=document.getElementById('docsel').value;
+  const tb=document.getElementById('docbody');
+  if(!pid){tb.innerHTML='<tr><td colspan="7" class="empty">금형을 먼저 등록하세요</td></tr>';document.getElementById('docrate').textContent='';return}
+  const outs=await api("/mm_output?select=*&project_id=eq."+pid);
+  DOCROWS=[];
+  MASTER.forEach(m=>m.outputs.forEach(o=>{
+    const rec=outs.find(x=>x.op_code===m.op_code&&x.output_name===o);
+    DOCROWS.push({op:m.op_code,pname:m.process_name,dept:m.dept,name:o,
+      done:!!(rec&&rec.done),date:rec&&rec.done_date?rec.done_date:'',
+      worker:rec&&rec.worker?rec.worker:'',photo:rec&&rec.photo?rec.photo:''});
+  }));
+  const done=DOCROWS.filter(r=>r.done).length;
+  const ev=DOCROWS.filter(r=>r.photo).length;
+  document.getElementById('docrate').textContent=`작성 ${done}/${DOCROWS.length} (${Math.round(done/(DOCROWS.length||1)*100)}%) · 증빙 ${ev}건`;
+  tb.innerHTML=DOCROWS.map(r=>`<tr class="${r.done?'':'undone'}">
+    <td><b class="mono" style="color:#6b5200">${opN(r.op)}</b>&nbsp;${esc(r.pname)}</td>
+    <td>${r.dept}</td>
+    <td>${esc(r.name)}</td>
+    <td>${r.done?'<span class="st st-ok">작성</span>':'<span class="st st-ng">미작성</span>'}</td>
+    <td class="mono">${r.date||'-'}</td>
+    <td>${esc(r.worker)||'-'}</td>
+    <td>${r.photo?`<img class="devi" src="${r.photo}" onclick="openBig(this.src)">`:'<span style="color:#c3cad6">-</span>'}</td>
+  </tr>`).join('');
+}
+function docTitle(){const s=document.getElementById('docsel');return s.options.length?s.options[s.selectedIndex].text:''}
+function exportDocCSV(){
+  if(!DOCROWS.length)return toast('출력할 항목이 없습니다');
+  const head=['공정번호','공정명','부서','결과물','작성여부','작성일','작성자','증빙'];
+  const rows=DOCROWS.map(r=>[opN(r.op),r.pname,r.dept,r.name,r.done?'작성':'미작성',r.date,r.worker,r.photo?'첨부':'']);
+  const csv=[['출력물 점검표 - '+docTitle()],head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='출력물점검표_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
+}
+function exportDocPDF(){
+  if(!DOCROWS.length)return toast('출력할 항목이 없습니다');
+  const done=DOCROWS.filter(r=>r.done).length;
+  let last='';
+  const body=DOCROWS.map(r=>{
+    const first=(last!==r.op);last=r.op;
+    return `<tr class="${r.done?'':'nd'}">
+      <td class="c">${first?opN(r.op)+' '+esc(r.pname):''}</td>
+      <td class="c">${first?r.dept:''}</td>
+      <td>${esc(r.name)}</td>
+      <td class="c">${r.done?'○':'×'}</td>
+      <td class="c">${r.date||''}</td>
+      <td class="c">${esc(r.worker)}</td>
+      <td class="c">${r.photo?`<img src="${r.photo}">`:''}</td>
+    </tr>`;}).join('');
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>출력물 점검표</title><style>
+    @page{size:A4;margin:13mm}
+    body{font-family:'Malgun Gothic','Noto Sans KR',sans-serif;color:#232a35;font-size:10.5px}
+    h1{font-size:19px;text-align:center;margin:0 0 4px;letter-spacing:3px}
+    .sub{text-align:center;font-size:11px;color:#666;margin-bottom:6px}
+    .sign{display:flex;justify-content:flex-end;gap:0;margin-bottom:8px}
+    .sign div{border:1px solid #999;width:70px;text-align:center;font-size:9.5px}
+    .sign div .t{background:#f2f2f2;padding:2px;border-bottom:1px solid #999}
+    .sign div .b{height:34px}
+    table{width:100%;border-collapse:collapse}
+    th{background:#16233c;color:#fff;border:1px solid #16233c;padding:5px 4px;font-size:10px}
+    td{border:1px solid #bbb;padding:4px 6px;vertical-align:middle}
+    td.c{text-align:center}
+    tr.nd td{background:#fdf2f2}
+    td img{width:44px;height:34px;object-fit:cover;border:1px solid #ccc}
+    .ft{margin-top:10px;display:flex;justify-content:space-between;font-size:10px;color:#777}
+  </style></head><body>
+  <h1>출 력 물 점 검 표</h1>
+  <div class="sub">${esc(docTitle())}</div>
+  <div class="sign">
+    <div><div class="t">작성</div><div class="b"></div></div>
+    <div><div class="t">검토</div><div class="b"></div></div>
+    <div><div class="t">승인</div><div class="b"></div></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:110px">공정</th><th style="width:42px">부서</th><th>결과물</th><th style="width:34px">작성</th><th style="width:62px">작성일</th><th style="width:56px">작성자</th><th style="width:52px">증빙</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table>
+  <div class="ft"><span>작성 ${done} / 전체 ${DOCROWS.length} 항목 (${Math.round(done/DOCROWS.length*100)}%)</span>
+  <span>출력: ${new Date().toLocaleString('ko-KR')} · ${USER||''}</span></div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(!w)return toast('팝업이 차단되었습니다. 허용 후 다시 시도하세요');
+  w.document.write(html);w.document.close();
+}
+
 /* ---------- 제작계획 ---------- */
 let PLANROWS=[];
 async function loadPlanSel(){
@@ -1252,7 +1376,8 @@ function initTryout(){
   if(!ph.dataset.bound){ph.dataset.bound=1;ph.onchange=async e=>{
     for(const f of e.target.files){
       if(TPHOTOS.length>=3){toast('사진은 최대 3장입니다');break}
-      TPHOTOS.push(await shrink(f));
+      try{toast('사진 업로드 중...');TPHOTOS.push(await uploadImg(f,'tryout'));}
+      catch(err){toast(err.message)}
     }
     ph.value='';renderTP();
   };}
@@ -1265,19 +1390,44 @@ async function fillProjSel(id,withAll){
   const pj=await api("/mm_project?select=id,mold_no,mold_name&order=created_at.desc");
   el.innerHTML=(withAll?'<option value="">전체 금형</option>':'')+pj.map(x=>`<option value="${x.id}">${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`).join('');
 }
-function shrink(file){return new Promise(res=>{
-  const img=new Image();img.onload=()=>{
-    const MAX=900,r=Math.min(1,MAX/Math.max(img.width,img.height));
-    const c=document.createElement('canvas');c.width=img.width*r;c.height=img.height*r;
+function shrinkBlob(file,max){return new Promise((res,rej)=>{
+  const img=new Image();
+  img.onload=()=>{
+    const M=max||1280,r=Math.min(1,M/Math.max(img.width,img.height));
+    const c=document.createElement('canvas');c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);
     c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-    res(c.toDataURL('image/jpeg',.72));
-  };img.src=URL.createObjectURL(file);
+    c.toBlob(b=>b?res(b):rej(new Error('이미지 변환 실패')),'image/jpeg',.8);
+  };
+  img.onerror=()=>rej(new Error('이미지를 읽을 수 없습니다'));
+  img.src=URL.createObjectURL(file);
 })}
+
+/* 이미지를 Supabase Storage에 업로드하고 공개 URL 반환 */
+async function uploadImg(file,folder){
+  const blob=await shrinkBlob(file);
+  const name=folder+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.jpg';
+  const r=await fetch(BASE+"/storage/v1/object/"+BUCKET+"/"+name,{
+    method:"POST",
+    headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"image/jpeg","x-upsert":"true"},
+    body:blob});
+  if(!r.ok){const t=await r.text();throw new Error('업로드 실패: '+t)}
+  return BASE+"/storage/v1/object/public/"+BUCKET+"/"+name;
+}
+/* 저장된 URL이 Storage 파일이면 삭제 */
+async function deleteImg(url){
+  if(!url||!url.includes('/storage/v1/object/public/'+BUCKET+'/'))return;
+  const path=url.split('/storage/v1/object/public/'+BUCKET+'/')[1];
+  try{await fetch(BASE+"/storage/v1/object/"+BUCKET+"/"+path,
+    {method:"DELETE",headers:{apikey:KEY,Authorization:"Bearer "+KEY}});}catch(e){}
+}
 function renderTP(){
   document.getElementById('t-plist').innerHTML=TPHOTOS.map((d,i)=>
-    `<div class="tp"><img src="${d}" onclick="viewImg('${i}')"><button onclick="TPHOTOS.splice(${i},1);renderTP()">✕</button></div>`).join('');
+    `<div class="tp"><img src="${d}" onclick="openBig('${d}')"><button onclick="rmPhoto(${i})">✕</button></div>`).join('');
 }
-function viewImg(i){const w=window.open('');w.document.write('<img src="'+TPHOTOS[i]+'" style="max-width:100%">')}
+async function rmPhoto(i){
+  const url=TPHOTOS[i];TPHOTOS.splice(i,1);renderTP();
+  if(!TEDIT)await deleteImg(url);
+}
 let TEDIT=null, TROWS=[];
 async function editTryout(id){
   const [r]=await api("/mm_tryout?select=*&id=eq."+id);
@@ -1421,6 +1571,8 @@ async function loadTryout(){
 function openBig(src){const w=window.open('');w.document.write('<body style="margin:0;background:#111;display:flex;justify-content:center"><img src="'+src+'" style="max-width:100%;height:auto"></body>')}
 async function delTryout(id){
   if(!confirm('이 일지를 삭제할까요?'))return;
+  const [r]=await api("/mm_tryout?select=photos&id=eq."+id);
+  if(r&&r.photos)for(const u of r.photos)await deleteImg(u);
   await api(`/mm_tryout?id=eq.${id}`,{method:"DELETE"});loadTryout();
 }
 
