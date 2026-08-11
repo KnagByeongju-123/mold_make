@@ -137,15 +137,15 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .ocomp{margin-left:8px;font-size:10.5px;font-weight:800;background:#e0f5ea;color:var(--green);padding:1px 8px;border-radius:12px}
 .outsec .obody{display:none;padding:0 14px 12px}
 .outsec.open .obody{display:block}
-.otbl{width:100%;background:#fff;border:1px solid var(--line);border-radius:7px;overflow:hidden;border-collapse:separate;border-spacing:0}
-.otbl td{padding:6px 10px;font-size:12.5px;border-top:1px solid #eef1f6;color:#3c4450}
+.otbl{width:100%;min-width:460px;background:#fff;border:1px solid var(--line);border-radius:7px;border-collapse:separate;border-spacing:0}
+.otbl td{padding:6px 10px;font-size:12.5px;border-top:1px solid #eef1f6;color:#3c4450;white-space:nowrap}
 .otbl tr:first-child td{border-top:none}
-.olabel{display:flex;align-items:center;gap:7px;cursor:pointer}
-.olabel input{width:15px;height:15px;accent-color:var(--green)}
-.ometa{width:150px;font-size:11px;color:var(--green);font-family:'IBM Plex Mono',monospace}
-.oev{width:60px;text-align:right}
-.oev img{width:34px;height:34px;object-fit:cover;border-radius:5px;border:1px solid var(--line);cursor:pointer}
-.oatt{font-size:11px;color:var(--gray);border:1px dashed #c0c9d8;padding:2px 9px;border-radius:5px;cursor:pointer}
+.olabel{display:flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap}
+.olabel input{width:15px;height:15px;accent-color:var(--green);flex-shrink:0}
+.ometa{width:160px;font-size:11px;color:var(--green);font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.oev{width:66px;text-align:right}
+.oev img{display:inline-block;width:34px;height:34px;object-fit:cover;border-radius:5px;border:1px solid var(--line);cursor:pointer}
+.oatt{display:inline-block;font-size:11px;color:var(--gray);border:1px dashed #c0c9d8;padding:3px 10px;border-radius:5px;cursor:pointer;white-space:nowrap;line-height:1.4}
 .oatt:hover{color:var(--blue);border-color:var(--blue)}
 .pdate{padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;font-family:inherit}
 tr.late td{background:#fdf4f4}
@@ -345,7 +345,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.8</span>
+    <span class="rev">Rev 3.9</span>
   </div>
 </header>
 
@@ -1009,7 +1009,7 @@ function outBlock(op){
       ▸ 출력물 <b>${done}/${m.outputs.length}</b> 작성
       ${done===m.outputs.length?'<span class="ocomp">완비</span>':''}
     </div>
-    <div class="obody"><table class="otbl"><tbody>${rows}</tbody></table></div>
+    <div class="obody"><div class="tscroll"><table class="otbl"><tbody>${rows}</tbody></table></div></div>
   </div>`;
 }
 let openOuts=null;
