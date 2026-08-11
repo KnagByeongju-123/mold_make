@@ -332,7 +332,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 2.8</span>
+    <span class="rev">Rev 2.9</span>
   </div>
 </header>
 
@@ -390,7 +390,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <div class="fg"><label>납기일</label><input id="f-due" type="date"></div>
       </div>
       <div class="fg"><label>비고</label><textarea id="f-nt" rows="2"></textarea></div>
-      <button class="btn btn-p" onclick="createProject()">등록 (OP10~OP180 공정 자동 생성)</button>
+      <button class="btn btn-p" onclick="createProject()">등록 (10 ~ 180 공정 자동 생성)</button>
     </div>
   </section>
 
@@ -785,13 +785,14 @@ async function loadDash(){
 }
 function curProc(ps){
   const ngp=ps.find(x=>x.status==='NG');
-  if(ngp)return ngp.op_code+' NG';
+  if(ngp)return opN(ngp.op_code)+' '+mName(ngp.op_code)+' NG';
   const runp=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='진행');
-  if(runp)return runp.op_code+' '+(mName(runp.op_code));
+  if(runp)return opN(runp.op_code)+' '+mName(runp.op_code);
   const wait=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='대기');
-  if(wait)return wait.op_code+' 대기';
+  if(wait)return opN(wait.op_code)+' '+mName(wait.op_code)+' 대기';
   return ps.length?'전공정 완료':'-';
 }
+function opN(c){return (c||'').replace('OP','')}
 function mName(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name:''}
 function st(id,v){document.getElementById(id).textContent=v}
 function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -806,9 +807,9 @@ async function createProject(){
       manager:g('f-mg')||null,due_date:g('f-due')||null,note:g('f-nt')||null})});
     const rows=MASTER.map((m,i)=>({project_id:p.id,op_code:m.op_code,status:i===0?'진행':'대기',started_at:i===0?new Date().toISOString():null}));
     await api("/mm_process",{method:"POST",body:JSON.stringify(rows)});
-    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' 금형 등록, OP10 개시',worker:g('f-mg')||null})});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' 금형 등록, 10 견적 요청 개시',worker:g('f-mg')||null})});
     ['f-no','f-nm','f-cs','f-pd','f-mg','f-due','f-nt'].forEach(x=>document.getElementById(x).value='');
-    toast('등록 완료 — OP10 견적 요청부터 진행합니다');
+    toast('등록 완료 — 10 견적 요청부터 진행합니다');
     openFlow(p.id);
   }catch(e){toast('등록 실패: '+e.message)}
 }
@@ -853,9 +854,9 @@ async function renderFlow(){
       if(p.status!=='NG')acts.push(`<button class="b-ng2" onclick="setStatus('${p.id}','${m.op_code}','NG')">NG</button>`);
     }
     if(p.status==='OK')acts.push(`<button class="b-ng2" onclick="setStatus('${p.id}','${m.op_code}','NG')">NG처리</button>`);
-    const ngline=m.ng_return_op?`<div class="ngline">↩ NG 시 ${m.ng_return_op} ${mName(m.ng_return_op)} 공정으로 재진행</div>`:'';
+    const ngline=m.ng_return_op?`<div class="ngline">↩ NG 시 ${opN(m.ng_return_op)} ${mName(m.ng_return_op)} 공정으로 재진행</div>`:'';
     return `<div class="op st-${p.status}">
-      <div class="opcode"><b class="mono">${m.op_code.replace("OP","")}</b></div>
+      <div class="opcode"><b class="mono">${opN(m.op_code)}</b></div>
       <div class="opbody">
         <div class="opinfo">
           <div class="t">
@@ -876,7 +877,7 @@ async function renderFlow(){
 }
 function openOp(op){
   const m=MASTER.find(x=>x.op_code===op);if(!m)return;
-  document.getElementById('m-no').textContent=op.replace('OP','');
+  document.getElementById('m-no').textContent=opN(op);
   document.getElementById('m-title').textContent=m.process_name;
   document.getElementById('m-dept').textContent=m.dept;
   document.getElementById('m-tasks').innerHTML=m.tasks.map(t=>`<li>${esc(t)}</li>`).join('');
@@ -885,7 +886,7 @@ function openOp(op){
   document.getElementById('m-outs').innerHTML=m.outputs.map(t=>`<li>${esc(t)}</li>`).join('');
   const nw=document.getElementById('m-ngwrap');
   nw.classList.toggle('hide',!m.ng_return_op);
-  if(m.ng_return_op)document.getElementById('m-ng').textContent=m.ng_return_op.replace('OP','')+' '+mName(m.ng_return_op)+' 공정으로 재진행';
+  if(m.ng_return_op)document.getElementById('m-ng').textContent=opN(m.ng_return_op)+' '+mName(m.ng_return_op)+' 공정으로 재진행';
   document.getElementById('modal').classList.add('show');
 }
 function closeOp(){document.getElementById('modal').classList.remove('show')}
@@ -954,7 +955,7 @@ async function toggleOut(op,name,checked){
   const body={done:checked,done_date:checked?new Date().toISOString().slice(0,10):null,worker:checked?USER:null};
   if(rec)await api(`/mm_output?id=eq.${rec.id}`,{method:"PATCH",body:JSON.stringify(body)});
   else await api("/mm_output",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,output_name:name,...body})});
-  if(checked)await hist(op,'출력물',op.replace('OP','')+' '+mName(op)+' 출력물 작성: '+name,USER);
+  if(checked)await hist(op,'출력물',opN(op)+' '+mName(op)+' 출력물 작성: '+name,USER);
   openOuts=op;renderFlow();
 }
 async function attachOut(op,name,input){
@@ -963,7 +964,7 @@ async function attachOut(op,name,input){
   const rec=await getOutRec(op,name);
   if(rec)await api(`/mm_output?id=eq.${rec.id}`,{method:"PATCH",body:JSON.stringify({photo:img})});
   else await api("/mm_output",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,output_name:name,photo:img})});
-  await hist(op,'출력물',op.replace('OP','')+' '+mName(op)+' 증빙 첨부: '+name,USER);
+  await hist(op,'출력물',opN(op)+' '+mName(op)+' 증빙 첨부: '+name,USER);
   toast('증빙 첨부 완료');openOuts=op;renderFlow();
 }
 
@@ -1013,7 +1014,7 @@ async function addPart(op){
   const wk=document.getElementById('pw-'+num).value.trim()||null;
   const vd=document.getElementById('pv-'+num).value.trim()||null;
   await api("/mm_part",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,part_name:nm,dimension:dim,note:wk,vendor:vd})});
-  await hist(op,'부품',op+' 부품 등록: '+nm+(wk?' / '+wk:'')+(vd?' ('+vd+')':''));
+  await hist(op,'부품',opN(op)+' '+mName(op)+' 부품 등록: '+nm+(wk?' / '+wk:'')+(vd?' ('+vd+')':''));
   openParts=op;renderFlow();
 }
 async function setPartDate(id,field){
@@ -1022,7 +1023,7 @@ async function setPartDate(id,field){
   if(!d)return;
   await api(`/mm_part?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({[field]:d})});
   const [pt]=await api(`/mm_part?id=eq.${id}&select=part_name,op_code`);
-  await hist(pt.op_code,'부품',pt.op_code+' '+pt.part_name+' '+{order_date:'발주',out_date:'출고',in_date:'입고'}[field]+' ('+d+')');
+  await hist(pt.op_code,'부품',opN(pt.op_code)+' '+mName(pt.op_code)+' '+pt.part_name+' '+{order_date:'발주',out_date:'출고',in_date:'입고'}[field]+' ('+d+')');
   openParts=pt.op_code;renderFlow();
 }
 async function delPart(id,nm){
@@ -1055,11 +1056,11 @@ async function setStatus(procId,op,status){
       const [cur]=await api(`/mm_process?id=eq.${procId}&select=ng_count`);
       await api(`/mm_process?id=eq.${procId}`,{method:"PATCH",
         body:JSON.stringify({status:'NG',finished_at:null,ng_count:(cur.ng_count||0)+1})});
-      let detail=op+' '+m.process_name+' NG 발생';
+      let detail=opN(op)+' '+m.process_name+' NG 발생';
       if(m.ng_return_op){
         await api(`/mm_process?project_id=eq.${CURPROJ}&op_code=eq.${m.ng_return_op}`,{method:"PATCH",
           body:JSON.stringify({status:'진행',finished_at:null,started_at:now})});
-        detail+=' → '+m.ng_return_op+' 재진행';
+        detail+=' → '+opN(m.ng_return_op)+' '+mName(m.ng_return_op)+' 재진행';
       }
       await hist(op,'NG',detail);
       toast(detail);
@@ -1075,11 +1076,11 @@ async function setStatus(procId,op,status){
         if(allOk){
           await api(`/mm_project?id=eq.${CURPROJ}`,{method:"PATCH",body:JSON.stringify({status:'완료'})});
           toast('전 공정 완료 — 금형 이관 완료 처리되었습니다');
-        }else toast(op+' OK 완료'+(next?' → 다음 공정 개시':''));
-        await hist(op,'OK',op+' '+m.process_name+' 완료',worker);
+        }else toast(opN(op)+' '+m.process_name+' 완료'+(next?' → 다음 공정 개시':''));
+        await hist(op,'OK',opN(op)+' '+m.process_name+' 완료',worker);
       }else{
-        await hist(op,'시작',op+' '+m.process_name+' 개시',worker);
-        toast(op+' 개시');
+        await hist(op,'시작',opN(op)+' '+m.process_name+' 개시',worker);
+        toast(opN(op)+' '+m.process_name+' 개시');
       }
     }
     renderFlow();
@@ -1138,7 +1139,7 @@ async function renderPlan(){
     const stc=pr.status==='OK'?'st-ok':pr.status==='진행'?'st-r':pr.status==='NG'?'st-ng':'st-w';
     PLANROWS.push({m,pr,delayed});
     return `<tr class="${delayed?'late':''}">
-      <td><b class="mono" style="color:#6b5200">${m.op_code.replace('OP','')}</b>&nbsp;${esc(m.process_name)}</td>
+      <td><b class="mono" style="color:#6b5200">${opN(m.op_code)}</b>&nbsp;${esc(m.process_name)}</td>
       <td>${m.dept}</td>
       <td><input type="date" class="pdate" value="${pr.plan_start||''}" onchange="setPlan('${pr.id}','plan_start',this.value)"></td>
       <td><input type="date" class="pdate" value="${pr.plan_end||''}" onchange="setPlan('${pr.id}','plan_end',this.value)"></td>
@@ -1158,7 +1159,7 @@ function exportPlan(){
   const title=sel.options[sel.selectedIndex].text;
   const head=['공정번호','공정명','부서','계획시작','계획완료','실적시작','실적완료','상태','지연여부'];
   const rows=PLANROWS.map(({m,pr,delayed})=>[
-    m.op_code.replace('OP',''),m.process_name,m.dept,
+    opN(m.op_code),m.process_name,m.dept,
     pr.plan_start||'',pr.plan_end||'',
     pr.started_at?pr.started_at.slice(0,10):'',pr.finished_at?pr.finished_at.slice(0,10):'',
     pr.status,delayed?'지연':'']);
