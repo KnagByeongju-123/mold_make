@@ -340,11 +340,11 @@ h1.pt em{font-style:normal;color:var(--blue)}
 
 <header>
   <div class="hleft">
-    <span class="htitle" id="htitle">대시보드</span>
+    <span class="htitle" id="htitle">홈</span>
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.5</span>
+    <span class="rev">Rev 3.6</span>
   </div>
 </header>
 
@@ -582,8 +582,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div class="hstep">
       <div class="hn mono">05</div>
       <div class="hb">
-        <h3>대시보드 — 전체 현황 확인</h3>
-        <p>[대시보드] 탭에서 진행중·완료·NG 누적·전체 금형 수와 금형별 진행률을 확인합니다.</p>
+        <h3>홈 — 전체 현황 확인</h3>
+        <p>[홈] 화면에서 진행중·완료·NG 누적·전체 금형 수와 금형별 진행률을 확인합니다.</p>
         <ul>
           <li>진행률 바 아래에 <b>현재 공정</b>이 표시됩니다. NG가 있으면 NG 공정이 우선 표시됩니다.</li>
           <li>카드를 클릭하면 해당 금형의 진행현황 화면으로 이동합니다.</li>
@@ -656,7 +656,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   <div class="msbox">
     <div class="mshead">전체 메뉴 <button class="mx" onclick="closeMenu()">✕</button></div>
     <div class="msgrid">
-      <button onclick="go('dash')"><span>🏠</span>대시보드</button>
+      <button onclick="go('dash')"><span>🏠</span>홈</button>
       <button onclick="go('new')"><span>＋</span>신규 등록</button>
       <button onclick="go('flow')"><span>📊</span>진행현황</button>
       <button onclick="go('plan')"><span>📅</span>제작계획</button>
@@ -754,7 +754,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'대시보드',new:'신규 등록',flow:'진행현황',plan:'제작계획',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
 function go(v){
   closeMenu();
   document.querySelectorAll('.bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
