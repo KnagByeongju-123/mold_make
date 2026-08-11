@@ -154,7 +154,7 @@ tr.late td{background:#fdf4f4}
 .ptbl th{background:#eef1f6;color:#4a5568;font-size:11px;padding:5px 9px;text-align:left;font-weight:700}
 .ptbl td{padding:5px 9px;font-size:12px;border-top:1px solid #eef1f6;color:#3c4450}
 .ptbl .dcell{width:62px}
-.ptbl .wk{color:#5a6478;max-width:180px}
+.ptbl .wk{color:#5a6478;min-width:150px}
 .dstamp{padding:2px 9px;font-size:11px;border:1px dashed #c0c9d8;background:#fff;border-radius:5px;color:var(--gray);cursor:pointer;font-family:inherit}
 .dstamp:hover{border-color:var(--out);color:var(--out)}
 .dset{font-size:11.5px;font-weight:700;color:var(--green);font-family:'IBM Plex Mono',monospace}
@@ -167,6 +167,14 @@ tr.late td{background:#fdf4f4}
 
 /* 이력 */
 table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+.tscroll::-webkit-scrollbar{height:6px}
+.tscroll::-webkit-scrollbar-thumb{background:#c3cad6;border-radius:3px}
+table.wide{min-width:720px}
+table.wide th,table.wide td{white-space:nowrap}
+table.wide td.wrap{white-space:normal;min-width:220px}
+.ptbl{min-width:660px}
+.ptbl th,.ptbl td{white-space:nowrap}
 th,td{padding:9px 12px;text-align:left;font-size:12.5px;border-bottom:1px solid #eef1f6}
 th{background:var(--navy);color:#dbe4f5;font-size:12px;font-weight:700}
 tr:last-child td{border-bottom:none}
@@ -324,7 +332,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 2.7</span>
+    <span class="rev">Rev 2.8</span>
   </div>
 </header>
 
@@ -357,10 +365,12 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <button class="btn hxls" style="padding:8px 16px;background:var(--green);color:#fff" onclick="exportPlan()">엑셀 출력</button>
     </div>
     <div class="hp" style="margin-bottom:12px">공정별 계획일을 입력해 금형제작 계획을 수립하고, 실적(시작·완료)과 대비해 관리합니다. 계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시됩니다.</div>
-    <table>
-      <thead><tr><th>공정</th><th>부서</th><th>계획 시작</th><th>계획 완료</th><th>실적 시작</th><th>실적 완료</th><th>상태</th></tr></thead>
-      <tbody id="planbody"></tbody>
-    </table>
+    <div class="tscroll">
+      <table class="wide">
+        <thead><tr><th>공정</th><th>부서</th><th>계획 시작</th><th>계획 완료</th><th>실적 시작</th><th>실적 완료</th><th>상태</th></tr></thead>
+        <tbody id="planbody"></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- 금형 등록 -->
@@ -398,10 +408,12 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <button class="btn hclr" onclick="clearHistFilter()">초기화</button>
       <button class="btn hxls" onclick="exportHist()">엑셀 출력</button>
     </div>
-    <table>
-      <thead><tr><th>일시</th><th>금형</th><th>공정</th><th>구분</th><th>내용</th><th>작업자</th><th style="width:36px"></th></tr></thead>
-      <tbody id="histbody"></tbody>
-    </table>
+    <div class="tscroll">
+      <table class="wide">
+        <thead><tr><th>일시</th><th>금형</th><th>공정</th><th>구분</th><th>내용</th><th>작업자</th><th style="width:36px"></th></tr></thead>
+        <tbody id="histbody"></tbody>
+      </table>
+    </div>
   </section>
 
   <!-- 게시판 -->
@@ -476,10 +488,12 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <button class="btn btn-p" onclick="addUser()">사원 추가</button>
     </div>
     <div style="margin-top:14px">
-      <table>
-        <thead><tr><th>이름</th><th>PIN</th><th>등록일</th><th style="width:36px"></th></tr></thead>
-        <tbody id="userbody"></tbody>
-      </table>
+      <div class="tscroll">
+        <table class="wide">
+          <thead><tr><th>이름</th><th>PIN</th><th>등록일</th><th style="width:36px"></th></tr></thead>
+          <tbody id="userbody"></tbody>
+        </table>
+      </div>
     </div>
     <p class="hnote" style="margin-top:10px">마스터 PIN(관리자)은 프로그램에 내장되어 있으며 삭제할 수 없습니다.</p>
   </section>
@@ -977,10 +991,10 @@ function partBlock(op){
       <span class="psum">${list.filter(x=>x.in_date).length}건 입고완료</span>
     </div>
     <div class="pbody">
-      <table class="ptbl">
+      <div class="tscroll"><table class="ptbl">
         <thead><tr><th>부품명</th><th>치수</th><th>가공내용</th><th>외주업체</th><th>발주</th><th>출고</th><th>입고</th><th></th></tr></thead>
         <tbody>${rows||'<tr><td colspan="8" class="pempty">등록된 부품 없음</td></tr>'}</tbody>
-      </table>
+      </table></div>
       <div class="padd">
         <input id="pn-${num}" placeholder="부품명" list="dl-pn">
         <input id="pz-${num}" placeholder="치수 (예: 100x50x20)" list="dl-pz">
@@ -1124,7 +1138,7 @@ async function renderPlan(){
     const stc=pr.status==='OK'?'st-ok':pr.status==='진행'?'st-r':pr.status==='NG'?'st-ng':'st-w';
     PLANROWS.push({m,pr,delayed});
     return `<tr class="${delayed?'late':''}">
-      <td><b class="mono" style="color:#6b5200">${m.op_code.replace('OP','')}</b> ${esc(m.process_name)}</td>
+      <td><b class="mono" style="color:#6b5200">${m.op_code.replace('OP','')}</b>&nbsp;${esc(m.process_name)}</td>
       <td>${m.dept}</td>
       <td><input type="date" class="pdate" value="${pr.plan_start||''}" onchange="setPlan('${pr.id}','plan_start',this.value)"></td>
       <td><input type="date" class="pdate" value="${pr.plan_end||''}" onchange="setPlan('${pr.id}','plan_end',this.value)"></td>
@@ -1269,7 +1283,7 @@ async function loadHist(){
     <td>${r.mm_project?esc(r.mm_project.mold_no):'-'}</td>
     <td>${r.op_code?mName(r.op_code)||r.op_code:'-'}</td>
     <td class="a-${r.action}">${r.action}</td>
-    <td>${esc(r.detail||'')}</td>
+    <td class="wrap">${esc(r.detail||'')}</td>
     <td>${esc(r.worker||'')}</td>
     <td><button class="del" onclick="delHist(${r.id})">✕</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">이력이 없습니다</td></tr>';
   LASTHIST=rows;
