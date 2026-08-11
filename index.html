@@ -184,7 +184,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 1.7 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 1.8 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
@@ -258,7 +258,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <h3>신규 등록 — 제작 건 개설</h3>
         <p>[신규 등록] 탭에서 금형번호와 금형명을 입력하고 등록합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
         <ul>
-          <li>등록하면 OP10 견적 요청 ~ OP180 금형 이관까지 <b>19개 공정이 자동 생성</b>됩니다.</li>
+          <li>등록하면 OP10 견적 요청 ~ OP180 금형 이관까지 <b>17개 공정이 자동 생성</b>됩니다.</li>
           <li>OP10은 자동으로 <span class="st st-r">진행</span> 상태가 되고, 나머지는 <span class="st st-w">대기</span>로 대기합니다.</li>
           <li>등록 직후 공정 진행 화면으로 자동 이동합니다.</li>
         </ul>
@@ -300,8 +300,6 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <p>NG 처리 시 흐름도의 붉은 회귀선과 동일하게 해당 공정으로 자동 복귀합니다. 되돌림이 지정된 공정은 카드 하단에 경로가 표시됩니다.</p>
         <table class="htbl ng">
           <tr><td class="mono">OP50 금형설계 승인</td><td>→ OP40 금형설계 진행</td></tr>
-          <tr><td class="mono">OP70 원자재 입고</td><td>→ OP60 원자재 발주</td></tr>
-          <tr><td class="mono">OP110 열처리 입고</td><td>→ OP100 열처리 의뢰</td></tr>
           <tr><td class="mono">OP140 Try-Out</td><td>→ OP120 정밀 가공</td></tr>
           <tr><td class="mono">OP150 고객사 SPL 승인</td><td>→ OP140 Try-Out</td></tr>
           <tr><td class="mono">OP160 양산처 Try-Out</td><td>→ OP140 Try-Out</td></tr>
@@ -496,7 +494,7 @@ function fmt(t){return new Date(t).toLocaleString('ko-KR',{month:'2-digit',day:'
 
 /* ---------- 외주 부품 (OP40~OP130) ---------- */
 let PARTS=[];
-const PART_OPS=['OP40','OP50','OP60','OP70','OP80','OP90','OP100','OP110','OP120','OP130'];
+const PART_OPS=['OP40','OP50','OP60','OP80','OP90','OP100','OP120','OP130'];
 function partBlock(op){
   if(!PART_OPS.includes(op))return '';
   const list=PARTS.filter(x=>x.op_code===op);
