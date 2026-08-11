@@ -121,6 +121,33 @@ tr:last-child td{border-bottom:none}
 .a-OK{color:var(--green);font-weight:700}.a-NG{color:var(--red);font-weight:700}
 .a-시작{color:var(--blue);font-weight:700}
 
+/* 사용안내 */
+.hp{color:#5a6478;font-size:13.5px;line-height:1.7;margin-bottom:18px;padding:12px 16px;background:var(--yellowbg);border:1px solid #ecd587;border-radius:9px}
+.hstep{display:grid;grid-template-columns:56px 1fr;gap:0;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.hn{background:var(--navy);color:var(--yellow);font-size:15px;font-weight:600;display:flex;align-items:flex-start;justify-content:center;padding-top:18px}
+.hb{padding:16px 20px}
+.hb h3{font-size:15px;margin-bottom:6px}
+.hb p{font-size:13px;color:#4a5260;line-height:1.65}
+.hb ul{margin-top:8px}
+.hb li{list-style:none;font-size:12.8px;color:#4a5260;line-height:1.7;padding-left:13px;position:relative}
+.hb li::before{content:'–';position:absolute;left:0;color:#a8b0be}
+.hb b{color:var(--navy)}
+.htbl{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.htbl td{padding:8px 12px;font-size:12.8px;border-bottom:1px solid #eef1f6;background:#fbfcfe;color:#4a5260}
+.htbl td:first-child{width:150px;font-weight:700;color:var(--navy)}
+.htbl.ng td:first-child{color:var(--red)}
+.htbl tr:last-child td{border-bottom:none}
+.htbl button{width:74px}
+.hnote{margin-top:10px;font-size:12.5px;color:var(--gray)}
+.dotin{display:inline-block;width:11px;height:11px;vertical-align:-1px;margin-right:2px}
+.dotin.cust{background:var(--cust);border-radius:50%}
+.dotin.self{background:var(--self)}
+.dotin.out{background:var(--out);border-radius:50%}
+.hnotebox{background:#eef2f8;border:1px solid #d3ddec;border-radius:10px;padding:14px 18px;margin-top:16px}
+.hnotebox b{font-size:13px;color:var(--navy)}
+.hnotebox li{list-style:none;font-size:12.5px;color:#4a5260;line-height:1.75;padding-left:13px;position:relative;margin-top:4px}
+.hnotebox li::before{content:'·';position:absolute;left:2px;color:#8794a8;font-weight:900}
+h1.pt em{font-size:13px;font-weight:500;color:var(--gray)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99}
 .toast.show{opacity:1}
 .empty{text-align:center;color:var(--gray);padding:50px 0;font-size:14px}
@@ -132,6 +159,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
   .lanecell{display:none}
   .lanehead{display:none}
   .row2{grid-template-columns:1fr}
+  .hstep{grid-template-columns:44px 1fr}
+  .htbl td:first-child{width:auto}
   .opbody{flex-direction:column}
   .opacts{flex-direction:row;width:100%}
   .opacts button{flex:1}
@@ -143,13 +172,14 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 1.0 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 1.1 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
     <button data-v="flow" onclick="go('flow')">공정 진행</button>
     <button data-v="new" onclick="go('new')">금형 등록</button>
     <button data-v="hist" onclick="go('hist')">이력</button>
+    <button data-v="help" onclick="go('help')">사용안내</button>
   </nav>
 </header>
 
@@ -209,6 +239,89 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <tbody id="histbody"></tbody>
     </table>
   </section>
+
+  <!-- 사용안내 -->
+  <section id="v-help" class="hide">
+    <h1 class="pt">사용안내 <em>— 금형 제작 흐름도 기준 진행 절차</em></h1>
+    <div class="hp">본 화면은 샘플 데이터로 동작을 확인하는 용도입니다. 아래 순서대로 진행하면 흐름도의 OP10 견적 요청부터 OP180 금형 이관까지 전 공정이 관리됩니다.</div>
+
+    <div class="hstep">
+      <div class="hn mono">01</div>
+      <div class="hb">
+        <h3>금형 등록 — 제작 건 개설</h3>
+        <p>[금형 등록] 탭에서 금형번호와 금형명을 입력하고 등록합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
+        <ul>
+          <li>등록하면 OP10 견적 요청 ~ OP180 금형 이관까지 <b>19개 공정이 자동 생성</b>됩니다.</li>
+          <li>OP10은 자동으로 <span class="st st-r">진행</span> 상태가 되고, 나머지는 <span class="st st-w">대기</span>로 대기합니다.</li>
+          <li>등록 직후 공정 진행 화면으로 자동 이동합니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">02</div>
+      <div class="hb">
+        <h3>공정 진행 — 상태 처리</h3>
+        <p>[공정 진행] 탭 상단에서 금형을 선택하면 흐름도 형태의 공정 보드가 표시됩니다. 각 공정 우측 버튼으로 상태를 처리합니다.</p>
+        <table class="htbl">
+          <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 작업자명을 입력하면 이력에 기록됩니다.</td></tr>
+          <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
+          <tr><td><button class="b-ng2" style="pointer-events:none">NG</button></td><td>불합격 처리. 흐름도의 되돌림 경로대로 <b>이전 공정이 자동 재진행</b>되고 NG 횟수가 누적됩니다.</td></tr>
+        </table>
+        <p class="hnote">공정 왼쪽 3개 레인의 표식은 담당 주체입니다 — <span class="dotin cust"></span> 고객사 &nbsp; <span class="dotin self"></span> 당사 &nbsp; <span class="dotin out"></span> 외주.</p>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">03</div>
+      <div class="hb">
+        <h3>NG 되돌림 경로</h3>
+        <p>NG 처리 시 흐름도의 붉은 회귀선과 동일하게 해당 공정으로 자동 복귀합니다. 되돌림이 지정된 공정은 카드 하단에 경로가 표시됩니다.</p>
+        <table class="htbl ng">
+          <tr><td class="mono">OP50 금형설계 승인</td><td>→ OP40 금형설계 진행</td></tr>
+          <tr><td class="mono">OP70 원자재 입고</td><td>→ OP60 원자재 발주</td></tr>
+          <tr><td class="mono">OP110 열처리 입고</td><td>→ OP100 열처리 의뢰</td></tr>
+          <tr><td class="mono">OP140 Try-Out</td><td>→ OP120 정밀 가공</td></tr>
+          <tr><td class="mono">OP150 고객사 SPL 승인</td><td>→ OP140 Try-Out</td></tr>
+          <tr><td class="mono">OP160 양산처 Try-Out</td><td>→ OP140 Try-Out</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">04</div>
+      <div class="hb">
+        <h3>대시보드 — 전체 현황 확인</h3>
+        <p>[대시보드] 탭에서 진행중·완료·NG 누적·전체 금형 수와 금형별 진행률을 확인합니다.</p>
+        <ul>
+          <li>진행률 바 아래에 <b>현재 공정</b>이 표시됩니다. NG가 있으면 NG 공정이 우선 표시됩니다.</li>
+          <li>카드를 클릭하면 해당 금형의 공정 진행 화면으로 이동합니다.</li>
+          <li>카드 우측 <b>✕</b>는 금형과 그 공정·이력을 함께 삭제합니다. 복구되지 않습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">05</div>
+      <div class="hb">
+        <h3>완료 처리 및 이력 확인</h3>
+        <p>OP180 금형 이관까지 전 공정이 OK가 되면 금형 상태가 <span class="badge b-done">완료</span>로 자동 전환됩니다.</p>
+        <ul>
+          <li>[이력] 탭에서 등록·시작·OK·NG 전 기록을 최근 200건까지 조회합니다.</li>
+          <li>기록 항목: 일시 / 금형번호 / 공정코드 / 구분 / 내용 / 작업자.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hnotebox">
+      <b>참고</b>
+      <ul>
+        <li>원본 흐름도의 OP170 중복 항목은 OP170(조립 — 도색·명판·출하검사)과 OP175(영업 — SCRAP BOX·금형이력카드)로 분리했습니다.</li>
+        <li>공정 마스터(업무 내용·결과물·담당·되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구를 바꾸려면 이 테이블을 수정하세요.</li>
+        <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
+      </ul>
+    </div>
+  </section>
 </main>
 
 <div class="toast" id="toast"></div>
@@ -229,7 +342,7 @@ async function api(path,opt={}){
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function go(v){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  ['dash','flow','new','hist'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','help'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
   if(v==='hist')loadHist();
