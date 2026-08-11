@@ -101,6 +101,28 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 .b-ng2:hover{background:#fdf0f0}
 .ngline{grid-column:1/3;background:#fdf0f0;border-top:1px dashed #efb9b9;color:var(--red);font-size:12px;font-weight:600;padding:6px 14px}
 
+/* 공정 상세 모달 */
+.nm.click{cursor:pointer}
+.nm.click:hover{color:var(--blue);text-decoration:underline}
+.ico{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#e3e8f0;color:#7b8798;font-size:10px;font-weight:700;font-style:normal;vertical-align:1px}
+.nm.click:hover .ico{background:var(--blue);color:#fff}
+.modal{position:fixed;inset:0;background:rgba(22,35,60,.45);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal.show{display:flex}
+.mbox{background:#fff;border-radius:12px;width:100%;max-width:480px;max-height:82vh;overflow:auto;box-shadow:0 20px 60px rgba(22,35,60,.3)}
+.mhead{display:flex;align-items:center;gap:9px;padding:15px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
+.mno{background:var(--yellowbg);border:1px solid #ecd587;color:#6b5200;font-size:14px;font-weight:600;padding:2px 10px;border-radius:6px}
+.mtitle{font-size:16px;font-weight:700}
+.mx{margin-left:auto;background:none;border:none;font-size:16px;color:#a8b0be;cursor:pointer}
+.mx:hover{color:var(--ink)}
+.mbody{padding:16px 18px 20px}
+.msec{margin-bottom:16px}
+.msec:last-child{margin-bottom:0}
+.msec h4{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.5px;margin-bottom:7px}
+.msec li{list-style:none;font-size:13.5px;color:#3c4450;line-height:1.75;padding-left:14px;position:relative}
+.msec li::before{content:'–';position:absolute;left:0;color:#a8b0be}
+#m-outs li{color:#5a6478;font-size:13px}
+#m-ng{font-size:13.5px;color:var(--red);font-weight:600}
+
 /* 외주 부품 */
 .partsec{grid-column:1/3;border-top:1px solid var(--line);background:#f8fafd}
 .ptitle{padding:7px 14px;font-size:12px;font-weight:700;color:#4a5568;cursor:pointer;user-select:none}
@@ -131,6 +153,17 @@ th{background:var(--navy);color:#dbe4f5;font-size:12px;font-weight:700}
 tr:last-child td{border-bottom:none}
 .a-OK{color:var(--green);font-weight:700}.a-NG{color:var(--red);font-weight:700}
 .a-시작{color:var(--blue);font-weight:700}.a-부품{color:var(--out);font-weight:700}
+
+/* 게시판 */
+.bcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:8px}
+.bcard.bdone{opacity:.6}
+.btop{display:flex;align-items:center;gap:10px}
+.bst{font-size:11px;font-weight:800;padding:2px 10px;border-radius:20px;background:#fdeccc;color:#a06a00;cursor:pointer;user-select:none}
+.bst.ok{background:#e0f5ea;color:var(--green)}
+.bst:hover{outline:2px solid #e0e6ef}
+.btt{font-size:14px}
+.bmeta{margin-left:auto;font-size:11.5px;color:var(--gray)}
+.bct{margin-top:7px;font-size:13px;color:#4a5260;line-height:1.65;white-space:pre-wrap}
 
 /* 사용안내 */
 .hp{color:#5a6478;font-size:13.5px;line-height:1.7;margin-bottom:18px;padding:12px 16px;background:var(--yellowbg);border:1px solid #ecd587;border-radius:9px}
@@ -184,13 +217,14 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 1.9 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 2.1 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
     <button data-v="new" onclick="go('new')">신규 등록</button>
     <button data-v="flow" onclick="go('flow')">공정 진행</button>
     <button data-v="hist" onclick="go('hist')">이력</button>
+    <button data-v="board" onclick="go('board')">게시판</button>
     <button data-v="help" onclick="go('help')">사용안내</button>
   </nav>
 </header>
@@ -247,6 +281,20 @@ h1.pt em{font-style:normal;color:var(--blue)}
     </table>
   </section>
 
+  <!-- 게시판 -->
+  <section id="v-board" class="hide">
+    <h1 class="pt">게시판 <em>— 요청사항</em></h1>
+    <div class="panel" style="max-width:none;margin-bottom:14px">
+      <div class="row2">
+        <div class="fg"><label>제목 *</label><input id="b-tt" placeholder="요청 제목"></div>
+        <div class="fg"><label>작성자</label><input id="b-wr"></div>
+      </div>
+      <div class="fg"><label>내용</label><textarea id="b-ct" rows="3" placeholder="요청 내용을 입력하세요"></textarea></div>
+      <button class="btn btn-p" onclick="addBoard()">요청 등록</button>
+    </div>
+    <div id="boardlist"></div>
+  </section>
+
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
     <h1 class="pt">사용안내 <em>— 금형 제작 흐름도 기준 진행 절차</em></h1>
@@ -269,7 +317,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <div class="hn mono">02</div>
       <div class="hb">
         <h3>공정 진행 — 상태 처리</h3>
-        <p>[공정 진행] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다.</p>
+        <p>[공정 진행] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. <b>공정명을 클릭</b>하면 업무 내용·결과물·되돌림 경로가 팝업으로 열립니다.</p>
         <table class="htbl">
           <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 작업자명을 입력하면 이력에 기록됩니다.</td></tr>
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
@@ -286,6 +334,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <p>금형설계부터 사상·조립까지(40 · 50 · 60 · 80 · 90 · 100 · 120 · 130) 각 공정 카드 하단의 <b>외주 부품</b> 영역에서 부품 단위로 발주와 입출고를 관리합니다. 원자재 입고와 열처리 완료품 입고는 별도 공정 대신 이 영역의 입고 기록으로 대체합니다.</p>
         <ul>
           <li>제목줄을 클릭하면 펼쳐지고, 부품명·치수·가공내용·외주업체를 입력 후 <b>+ 추가</b>로 등록합니다.</li>
+          <li>한번 등록한 부품명·치수·가공내용·업체는 몇 글자만 입력하면 <b>자동완성 목록</b>으로 나타납니다.</li>
           <li><b>발주 → 출고 → 입고</b> 버튼을 순서대로 눌러 날짜를 기록합니다. 오늘 날짜가 기본값이며 수정 가능합니다.</li>
           <li>날짜가 기록되면 초록색으로 표시되고, 제목줄에 입고완료 건수가 집계됩니다.</li>
           <li>전 부품이 입고되어야 해당 공정을 OK 처리하는 것을 권장합니다.</li>
@@ -339,11 +388,33 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <li>원본 흐름도의 170 중복 항목은 170(조립 — 도색·명판·출하검사)과 175(영업 — SCRAP BOX·금형이력카드)로 분리했습니다.</li>
         <li>원본 흐름도의 70(원자재 및 표준품 입고)과 110(열처리 완료품 입고)은 부품 관리의 입고 기록으로 대체하여 공정에서 제외했습니다.</li>
         <li>공정 마스터(업무 내용·결과물·담당·되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구를 바꾸려면 이 테이블을 수정하세요.</li>
+        <li>[게시판] 탭에서 개선·수정 요청사항을 등록하고 접수/완료 상태를 눌러 전환할 수 있습니다.</li>
         <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
       </ul>
     </div>
   </section>
 </main>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeOp()">
+  <div class="mbox">
+    <div class="mhead">
+      <span class="mno mono" id="m-no"></span>
+      <span class="mtitle" id="m-title"></span>
+      <span class="dept" id="m-dept"></span>
+      <button class="mx" onclick="closeOp()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="msec"><h4>업무 내용</h4><ul id="m-tasks"></ul></div>
+      <div class="msec" id="m-outwrap"><h4>결과물</h4><ul id="m-outs"></ul></div>
+      <div class="msec" id="m-ngwrap"><h4>NG 시 되돌림</h4><p id="m-ng"></p></div>
+    </div>
+  </div>
+</div>
+
+<datalist id="dl-pn"></datalist>
+<datalist id="dl-pz"></datalist>
+<datalist id="dl-pw"></datalist>
+<datalist id="dl-pv"></datalist>
 
 <div class="toast" id="toast"></div>
 
@@ -363,10 +434,11 @@ async function api(path,opt={}){
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function go(v){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  ['dash','flow','new','hist','help'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','help'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
   if(v==='hist')loadHist();
+  if(v==='board')loadBoard();
 }
 
 /* ---------- 로드 ---------- */
@@ -458,6 +530,7 @@ async function renderFlow(){
     api("/mm_part?select=*&project_id=eq."+pid+"&order=created_at")
   ]);
   PARTS=parts;
+  loadSuggest();
   const ok=ps.filter(x=>x.status==='OK').length;
   document.getElementById('flowprog').textContent=`진행률 ${ok}/${ps.length} (${Math.round(ok/(ps.length||1)*100)}%)`;
   box.innerHTML=MASTER.map(m=>{
@@ -476,13 +549,11 @@ async function renderFlow(){
       <div class="opbody">
         <div class="opinfo">
           <div class="t">
-            <span class="nm">${esc(m.process_name)}</span>
+            <span class="nm click" onclick="openOp('${m.op_code}')">${esc(m.process_name)} <i class="ico">?</i></span>
             <span class="dept">${m.dept}</span>
             <span class="st ${stc}">${p.status}</span>
             ${p.ng_count?`<span class="ngc">NG ${p.ng_count}회</span>`:''}
           </div>
-          <ul class="tasks">${m.tasks.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
-          ${m.outputs.length?`<div class="outs"><b>결과물:</b> ${m.outputs.map(esc).join(', ')}</div>`:''}
           <div class="opmeta">${p.started_at?'시작 '+fmt(p.started_at):''} ${p.finished_at?' · 완료 '+fmt(p.finished_at):''} ${p.worker?' · '+esc(p.worker):''}</div>
         </div>
         <div class="opacts">${acts.join('')}</div>
@@ -492,6 +563,23 @@ async function renderFlow(){
     </div>`;
   }).join('');
 }
+function openOp(op){
+  const m=MASTER.find(x=>x.op_code===op);if(!m)return;
+  document.getElementById('m-no').textContent=op.replace('OP','');
+  document.getElementById('m-title').textContent=m.process_name;
+  document.getElementById('m-dept').textContent=m.dept;
+  document.getElementById('m-tasks').innerHTML=m.tasks.map(t=>`<li>${esc(t)}</li>`).join('');
+  const ow=document.getElementById('m-outwrap');
+  ow.classList.toggle('hide',!m.outputs.length);
+  document.getElementById('m-outs').innerHTML=m.outputs.map(t=>`<li>${esc(t)}</li>`).join('');
+  const nw=document.getElementById('m-ngwrap');
+  nw.classList.toggle('hide',!m.ng_return_op);
+  if(m.ng_return_op)document.getElementById('m-ng').textContent=m.ng_return_op.replace('OP','')+' '+mName(m.ng_return_op)+' 공정으로 재진행';
+  document.getElementById('modal').classList.add('show');
+}
+function closeOp(){document.getElementById('modal').classList.remove('show')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOp()});
+
 function fmt(t){return new Date(t).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
 
 /* ---------- 외주 부품 (OP40~OP130) ---------- */
@@ -523,10 +611,10 @@ function partBlock(op){
         <tbody>${rows||'<tr><td colspan="8" class="pempty">등록된 부품 없음</td></tr>'}</tbody>
       </table>
       <div class="padd">
-        <input id="pn-${num}" placeholder="부품명">
-        <input id="pz-${num}" placeholder="치수 (예: 100x50x20)">
-        <input id="pw-${num}" placeholder="가공내용 (예: MCT 3D가공, Wire Cut)">
-        <input id="pv-${num}" placeholder="외주업체">
+        <input id="pn-${num}" placeholder="부품명" list="dl-pn">
+        <input id="pz-${num}" placeholder="치수 (예: 100x50x20)" list="dl-pz">
+        <input id="pw-${num}" placeholder="가공내용 (예: MCT 3D가공, Wire Cut)" list="dl-pw">
+        <input id="pv-${num}" placeholder="외주업체" list="dl-pv">
         <button onclick="addPart('${op}')">+ 추가</button>
       </div>
     </div>
@@ -558,6 +646,16 @@ async function delPart(id,nm){
   renderFlow();
 }
 let openParts=null;
+async function loadSuggest(){
+  try{
+    const all=await api("/mm_part?select=part_name,dimension,note,vendor&order=created_at.desc&limit=500");
+    const fill=(id,vals)=>{document.getElementById(id).innerHTML=[...new Set(vals.filter(Boolean))].slice(0,30).map(v=>`<option value="${esc(v)}">`).join('')};
+    fill('dl-pn',all.map(x=>x.part_name));
+    fill('dl-pz',all.map(x=>x.dimension));
+    fill('dl-pw',all.map(x=>x.note));
+    fill('dl-pv',all.map(x=>x.vendor));
+  }catch(e){}
+}
 
 async function setStatus(procId,op,status){
   const m=MASTER.find(x=>x.op_code===op);
@@ -604,6 +702,34 @@ async function setStatus(procId,op,status){
 }
 async function hist(op,action,detail,worker){
   await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,action,detail,worker:worker||null})});
+}
+
+/* ---------- 게시판 ---------- */
+async function loadBoard(){
+  const rows=await api("/mm_board?select=*&order=created_at.desc&limit=100");
+  document.getElementById('boardlist').innerHTML=rows.map(r=>`<div class="bcard ${r.status==='완료'?'bdone':''}">
+    <div class="btop">
+      <span class="bst ${r.status==='완료'?'ok':''}" onclick="toggleBoard(${r.id},'${r.status}')">${r.status}</span>
+      <b class="btt">${esc(r.title)}</b>
+      <span class="bmeta">${esc(r.writer||'')} · ${fmt(r.created_at)}</span>
+      <button class="del" onclick="delBoard(${r.id})">✕</button>
+    </div>
+    ${r.content?`<div class="bct">${esc(r.content)}</div>`:''}
+  </div>`).join('')||'<div class="empty">등록된 요청이 없습니다.</div>';
+}
+async function addBoard(){
+  const tt=g('b-tt');if(!tt)return toast('제목을 입력하세요');
+  await api("/mm_board",{method:"POST",body:JSON.stringify({title:tt,content:g('b-ct')||null,writer:g('b-wr')||null})});
+  ['b-tt','b-ct','b-wr'].forEach(x=>document.getElementById(x).value='');
+  toast('요청 등록 완료');loadBoard();
+}
+async function toggleBoard(id,cur){
+  await api(`/mm_board?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({status:cur==='접수'?'완료':'접수'})});
+  loadBoard();
+}
+async function delBoard(id){
+  if(!confirm('이 요청을 삭제할까요?'))return;
+  await api(`/mm_board?id=eq.${id}`,{method:"DELETE"});loadBoard();
 }
 
 /* ---------- 이력 ---------- */
