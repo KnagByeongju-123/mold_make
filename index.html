@@ -42,7 +42,7 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .projcard .nm{font-weight:700;font-size:16px}
 .projcard .cs{color:var(--gray);font-size:13px}
 .badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
-.b-run{background:#e3edfc;color:var(--blue)}.b-done{background:#e0f5ea;color:var(--green)}
+.b-run{background:#fdecd9;color:#c25e0a}.b-done{background:#e0f5ea;color:var(--green)}
 .b-hold{background:#f0f1f4;color:var(--gray)}.b-ng{background:#fbe4e4;color:var(--red)}
 .pbar{height:8px;background:#eceef3;border-radius:5px;margin-top:12px;overflow:hidden}
 .pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#4d8be8);border-radius:5px}
@@ -72,7 +72,9 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .op.st-OK .opcode{background:#e3edfc;border-right-color:#c5daf7}
 .op.st-OK .opcode b{color:var(--blue)}
 .op.st-OK .nm{color:#2b4a7a}
-.op.st-진행{border-color:var(--yellow);box-shadow:0 0 0 2px #fdf3cd}
+.op.st-진행{border-color:#f0a04b;box-shadow:0 0 0 2px #fde9d5;background:#fffaf5}
+.op.st-진행 .opcode{background:#fdecd9;border-right-color:#f2cfa8}
+.op.st-진행 .opcode b{color:#c25e0a}
 .op.st-NG{border-color:var(--red);box-shadow:0 0 0 2px #f8dcdc}
 .opcode{background:var(--yellowbg);border-right:1px solid #eee0a8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px}
 .opcode b{font-size:16px;font-weight:600;color:#6b5200;letter-spacing:-.5px}
@@ -83,7 +85,7 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .dept{font-size:11px;font-weight:700;background:#eef1f6;color:#4a5568;padding:1px 8px;border-radius:4px}
 .st{font-size:11px;font-weight:800;padding:2px 10px;border-radius:20px}
 .st-w{background:#f0f1f4;color:var(--gray)}
-.st-r{background:#fdf3cd;color:#9a7500}
+.st-r{background:#fdecd9;color:#c25e0a}
 .st-ok{background:#dbe8fb;color:var(--blue)}
 .st-ng{background:#fbe4e4;color:var(--red)}
 .ngc{font-size:11px;color:var(--red);font-weight:700}
@@ -95,8 +97,8 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .opmeta{margin-top:5px;font-size:11px;color:#98a0ae}
 .opacts{display:flex;flex-direction:column;gap:5px;min-width:74px}
 .opacts button{padding:6px 0;border-radius:6px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
-.b-start{color:#9a7500;border-color:#ecd587}
-.b-start:hover{background:#fdf8e4}
+.b-start{color:#c25e0a;border-color:#f2cfa8}
+.b-start:hover{background:#fdf3ea}
 .b-ok{color:var(--blue);border-color:#b9d1f5}
 .b-ok:hover{background:#eef4fd}
 .b-ng2{color:var(--red);border-color:#efb9b9}
@@ -339,7 +341,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.3</span>
+    <span class="rev">Rev 3.4</span>
   </div>
 </header>
 
