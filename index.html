@@ -152,7 +152,14 @@ th,td{padding:9px 12px;text-align:left;font-size:12.5px;border-bottom:1px solid 
 th{background:var(--navy);color:#dbe4f5;font-size:12px;font-weight:700}
 tr:last-child td{border-bottom:none}
 .a-OK{color:var(--green);font-weight:700}.a-NG{color:var(--red);font-weight:700}
-.a-시작{color:var(--blue);font-weight:700}.a-부품{color:var(--out);font-weight:700}
+.a-시작{color:var(--blue);font-weight:700}.a-부품{color:var(--out);font-weight:700}.a-Tryout{color:var(--cust);font-weight:700}
+
+/* 이력 필터 */
+.hfilter{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.hfilter input[type=date],.hfilter select{padding:8px 10px;border:1px solid var(--line);border-radius:7px;font-size:13px;font-family:inherit;background:#fff}
+.hfilter .tilde{color:var(--gray)}
+.hfilter .hbtn{padding:8px 18px}
+.hfilter .hclr{padding:8px 14px;background:#eef1f6;color:#4a5568}
 
 /* 게시판 */
 .bcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:8px}
@@ -164,6 +171,29 @@ tr:last-child td{border-bottom:none}
 .btt{font-size:14px}
 .bmeta{margin-left:auto;font-size:11.5px;color:var(--gray)}
 .bct{margin-top:7px;font-size:13px;color:#4a5260;line-height:1.65;white-space:pre-wrap}
+
+/* Tryout */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{padding:7px 16px;border:1px solid var(--line);border-radius:20px;background:#fff;font-size:13px;font-weight:600;color:#5a6478;cursor:pointer;font-family:inherit}
+.chips button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chips.st2 button.on{background:var(--blue);border-color:var(--blue)}
+.tplist{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tp{position:relative}
+.tp img{width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+.tp button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--red);color:#fff;font-size:10px;cursor:pointer}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:8px}
+.ttop{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tdate{font-size:12px;font-weight:600;color:#6b5200;background:var(--yellowbg);border:1px solid #ecd587;padding:1px 8px;border-radius:5px}
+.tstage{font-size:11px;font-weight:700;background:#f1eafa;color:var(--cust);padding:2px 9px;border-radius:20px}
+.tst{font-size:11px;font-weight:800;padding:2px 9px;border-radius:20px;background:#f0f1f4;color:var(--gray)}
+.tst.ok{background:#e0f5ea;color:var(--green)}
+.tst.run{background:#e3edfc;color:var(--blue)}
+.tst.issue{background:#fbe4e4;color:var(--red)}
+.trow{margin-top:6px;font-size:13px;color:#3c4450;line-height:1.6;white-space:pre-wrap}
+.trow b{display:inline-block;font-size:10.5px;color:var(--gray);background:#eef1f6;padding:1px 7px;border-radius:4px;margin-right:7px;vertical-align:1px}
+.trow.iss b{background:#fbe4e4;color:var(--red)}
+.tphotos{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.tphotos img{width:74px;height:74px;object-fit:cover;border-radius:7px;border:1px solid var(--line);cursor:pointer}
 
 /* 사용안내 */
 .hp{color:#5a6478;font-size:13.5px;line-height:1.7;margin-bottom:18px;padding:12px 16px;background:var(--yellowbg);border:1px solid #ecd587;border-radius:9px}
@@ -217,7 +247,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <header>
   <div>
     <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 2.1 (2026-08-11)</span></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 2.2 (2026-08-11)</span></div>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
@@ -225,6 +255,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <button data-v="flow" onclick="go('flow')">공정 진행</button>
     <button data-v="hist" onclick="go('hist')">이력</button>
     <button data-v="board" onclick="go('board')">게시판</button>
+    <button data-v="tryout" onclick="go('tryout')">Tryout</button>
     <button data-v="help" onclick="go('help')">사용안내</button>
   </nav>
 </header>
@@ -275,6 +306,16 @@ h1.pt em{font-style:normal;color:var(--blue)}
   <!-- 이력 -->
   <section id="v-hist" class="hide">
     <h1 class="pt">공정 이력</h1>
+    <div class="hfilter">
+      <input type="date" id="h-from"><span class="tilde">~</span><input type="date" id="h-to">
+      <select id="h-proj"><option value="">전체 금형</option></select>
+      <select id="h-act">
+        <option value="">전체 구분</option>
+        <option>등록</option><option>시작</option><option>OK</option><option>NG</option><option>부품</option>
+      </select>
+      <button class="btn btn-p hbtn" onclick="loadHist()">조회</button>
+      <button class="btn hclr" onclick="clearHistFilter()">초기화</button>
+    </div>
     <table>
       <thead><tr><th>일시</th><th>금형</th><th>공정</th><th>구분</th><th>내용</th><th>작업자</th></tr></thead>
       <tbody id="histbody"></tbody>
@@ -293,6 +334,52 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <button class="btn btn-p" onclick="addBoard()">요청 등록</button>
     </div>
     <div id="boardlist"></div>
+  </section>
+
+  <!-- Tryout -->
+  <section id="v-tryout" class="hide">
+    <h1 class="pt">Tryout 작업일지</h1>
+
+    <div class="panel" style="max-width:none;margin-bottom:16px">
+      <h2>일지 작성</h2>
+      <div class="row2">
+        <div class="fg"><label>작업일 *</label><input type="date" id="t-date"></div>
+        <div class="fg"><label>금형 *</label><select id="t-proj"></select></div>
+      </div>
+      <div class="fg"><label>차수 *</label>
+        <div class="chips" id="t-stage">
+          <button data-v="1차">1차</button><button data-v="2차">2차</button><button data-v="3차">3차</button>
+          <button data-v="양산전">양산전</button><button data-v="기타">기타</button>
+        </div>
+      </div>
+      <div class="fg"><label>상태 *</label>
+        <div class="chips st2" id="t-status">
+          <button data-v="완료">완료</button><button data-v="진행중">진행중</button>
+          <button data-v="이슈">이슈</button><button data-v="보류">보류</button>
+        </div>
+      </div>
+      <div class="fg"><label>작업 내용</label><textarea id="t-work" rows="3" placeholder="GAP·FLASH 확인 결과, 수정 내용 등"></textarea></div>
+      <div class="row2">
+        <div class="fg"><label>이슈 사항</label><textarea id="t-issue" rows="2"></textarea></div>
+        <div class="fg"><label>다음 계획</label><textarea id="t-plan" rows="2"></textarea></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>작성자</label><input id="t-author"></div>
+        <div class="fg"><label>사진 첨부 (최대 3장)</label><input type="file" id="t-photo" accept="image/*" multiple></div>
+      </div>
+      <div id="t-plist" class="tplist"></div>
+      <button class="btn btn-p" onclick="saveTryout()">일지 저장</button>
+    </div>
+
+    <div class="hfilter">
+      <input type="date" id="t-from"><span class="tilde">~</span><input type="date" id="t-to">
+      <select id="t-fproj"><option value="">전체 금형</option></select>
+      <select id="t-fstage"><option value="">전체 차수</option><option>1차</option><option>2차</option><option>3차</option><option>양산전</option><option>기타</option></select>
+      <select id="t-fstatus"><option value="">전체 상태</option><option>완료</option><option>진행중</option><option>이슈</option><option>보류</option></select>
+      <button class="btn btn-p hbtn" onclick="loadTryout()">조회</button>
+      <span id="t-count" style="font-size:12px;color:var(--gray)"></span>
+    </div>
+    <div id="tlist"></div>
   </section>
 
   <!-- 사용안내 -->
@@ -389,6 +476,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <li>원본 흐름도의 70(원자재 및 표준품 입고)과 110(열처리 완료품 입고)은 부품 관리의 입고 기록으로 대체하여 공정에서 제외했습니다.</li>
         <li>공정 마스터(업무 내용·결과물·담당·되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구를 바꾸려면 이 테이블을 수정하세요.</li>
         <li>[게시판] 탭에서 개선·수정 요청사항을 등록하고 접수/완료 상태를 눌러 전환할 수 있습니다.</li>
+        <li>[Tryout] 탭에서 차수(1차~양산전)·상태·작업/이슈/계획·사진을 일지로 기록하고, 기간·금형·차수·상태로 필터 조회합니다.</li>
+        <li>[이력] 탭 상단에서 기간·금형·구분으로 필터 조회할 수 있습니다.</li>
         <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
       </ul>
     </div>
@@ -434,11 +523,12 @@ async function api(path,opt={}){
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function go(v){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  ['dash','flow','new','hist','board','help'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
   if(v==='hist')loadHist();
   if(v==='board')loadBoard();
+  if(v==='tryout'){initTryout();loadTryout();}
 }
 
 /* ---------- 로드 ---------- */
@@ -580,6 +670,8 @@ function openOp(op){
 function closeOp(){document.getElementById('modal').classList.remove('show')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOp()});
 
+function nextDay(d){const x=new Date(d);x.setDate(x.getDate()+1);return x.toISOString().slice(0,10)}
+function clearHistFilter(){['h-from','h-to'].forEach(i=>document.getElementById(i).value='');document.getElementById('h-proj').value='';document.getElementById('h-act').value='';loadHist()}
 function fmt(t){return new Date(t).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
 
 /* ---------- 외주 부품 (OP40~OP130) ---------- */
@@ -732,13 +824,119 @@ async function delBoard(id){
   await api(`/mm_board?id=eq.${id}`,{method:"DELETE"});loadBoard();
 }
 
+/* ---------- Tryout ---------- */
+let TPHOTOS=[];
+function chipVal(id){const b=document.querySelector('#'+id+' button.on');return b?b.dataset.v:null}
+function initTryout(){
+  const d=document.getElementById('t-date');if(!d.value)d.value=new Date().toISOString().slice(0,10);
+  ['t-stage','t-status'].forEach(id=>{
+    document.querySelectorAll('#'+id+' button').forEach(b=>{
+      if(!b.dataset.bound){b.dataset.bound=1;
+        b.onclick=()=>{document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));b.classList.add('on');};}
+    });
+  });
+  const ph=document.getElementById('t-photo');
+  if(!ph.dataset.bound){ph.dataset.bound=1;ph.onchange=async e=>{
+    for(const f of e.target.files){
+      if(TPHOTOS.length>=3){toast('사진은 최대 3장입니다');break}
+      TPHOTOS.push(await shrink(f));
+    }
+    ph.value='';renderTP();
+  };}
+  // 금형 셀렉트 채우기
+  fillProjSel('t-proj',false);fillProjSel('t-fproj',true);
+}
+async function fillProjSel(id,withAll){
+  const el=document.getElementById(id);
+  if(el.dataset.filled)return;el.dataset.filled=1;
+  const pj=await api("/mm_project?select=id,mold_no,mold_name&order=created_at.desc");
+  el.innerHTML=(withAll?'<option value="">전체 금형</option>':'')+pj.map(x=>`<option value="${x.id}">${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`).join('');
+}
+function shrink(file){return new Promise(res=>{
+  const img=new Image();img.onload=()=>{
+    const MAX=900,r=Math.min(1,MAX/Math.max(img.width,img.height));
+    const c=document.createElement('canvas');c.width=img.width*r;c.height=img.height*r;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    res(c.toDataURL('image/jpeg',.72));
+  };img.src=URL.createObjectURL(file);
+})}
+function renderTP(){
+  document.getElementById('t-plist').innerHTML=TPHOTOS.map((d,i)=>
+    `<div class="tp"><img src="${d}" onclick="viewImg('${i}')"><button onclick="TPHOTOS.splice(${i},1);renderTP()">✕</button></div>`).join('');
+}
+function viewImg(i){const w=window.open('');w.document.write('<img src="'+TPHOTOS[i]+'" style="max-width:100%">')}
+async function saveTryout(){
+  const pid=document.getElementById('t-proj').value;
+  const stage=chipVal('t-stage'),status=chipVal('t-status');
+  if(!pid)return toast('금형을 선택하세요');
+  if(!stage)return toast('차수를 선택하세요');
+  if(!status)return toast('상태를 선택하세요');
+  await api("/mm_tryout",{method:"POST",body:JSON.stringify({
+    project_id:pid,log_date:g('t-date'),stage,status,
+    work_done:g('t-work')||null,issues:g('t-issue')||null,next_plan:g('t-plan')||null,
+    author:g('t-author')||null,photos:TPHOTOS})});
+  const sel=document.getElementById('t-proj');
+  CURPROJ=pid;
+  await hist(null,'Tryout','Tryout '+stage+' ['+status+'] '+(g('t-work')||'').slice(0,40),g('t-author')||null);
+  ['t-work','t-issue','t-plan'].forEach(x=>document.getElementById(x).value='');
+  document.querySelectorAll('#t-stage button.on,#t-status button.on').forEach(b=>b.classList.remove('on'));
+  TPHOTOS=[];renderTP();
+  toast('Tryout 일지 저장 완료');loadTryout();
+}
+async function loadTryout(){
+  let q="/mm_tryout?select=*,mm_project(mold_no,mold_name)&order=log_date.desc,created_at.desc&limit=100";
+  const f=g('t-from'),t=g('t-to');
+  const pv=document.getElementById('t-fproj').value;
+  const sv=document.getElementById('t-fstage').value;
+  const stv=document.getElementById('t-fstatus').value;
+  if(f)q+="&log_date=gte."+f;
+  if(t)q+="&log_date=lte."+t;
+  if(pv)q+="&project_id=eq."+pv;
+  if(sv)q+="&stage=eq."+encodeURIComponent(sv);
+  if(stv)q+="&status=eq."+encodeURIComponent(stv);
+  const rows=await api(q);
+  document.getElementById('t-count').textContent=rows.length+'건';
+  const sc={완료:'ok',진행중:'run',이슈:'issue',보류:'hold'};
+  document.getElementById('tlist').innerHTML=rows.map(r=>`<div class="tcard">
+    <div class="ttop">
+      <span class="tdate mono">${r.log_date}</span>
+      <b>${r.mm_project?esc(r.mm_project.mold_no):''}</b>
+      <span class="tstage">${esc(r.stage)}</span>
+      <span class="tst ${sc[r.status]||''}">${esc(r.status)}</span>
+      <span class="bmeta">${esc(r.author||'')}</span>
+      <button class="del" onclick="delTryout(${r.id})">✕</button>
+    </div>
+    ${r.work_done?`<div class="trow"><b>작업</b>${esc(r.work_done)}</div>`:''}
+    ${r.issues?`<div class="trow iss"><b>이슈</b>${esc(r.issues)}</div>`:''}
+    ${r.next_plan?`<div class="trow"><b>계획</b>${esc(r.next_plan)}</div>`:''}
+    ${(r.photos&&r.photos.length)?`<div class="tphotos">${r.photos.map(ph=>`<img src="${ph}" onclick="openBig(this.src)">`).join('')}</div>`:''}
+  </div>`).join('')||'<div class="empty">작성된 일지가 없습니다.</div>';
+}
+function openBig(src){const w=window.open('');w.document.write('<body style="margin:0;background:#111;display:flex;justify-content:center"><img src="'+src+'" style="max-width:100%;height:auto"></body>')}
+async function delTryout(id){
+  if(!confirm('이 일지를 삭제할까요?'))return;
+  await api(`/mm_tryout?id=eq.${id}`,{method:"DELETE"});loadTryout();
+}
+
 /* ---------- 이력 ---------- */
 async function loadHist(){
-  const rows=await api("/mm_history?select=*,mm_project(mold_no,mold_name)&order=created_at.desc&limit=200");
+  // 금형 선택 목록 채우기 (최초 1회)
+  const hp=document.getElementById('h-proj');
+  if(hp.options.length<=1){
+    const pj=await api("/mm_project?select=id,mold_no,mold_name&order=created_at.desc");
+    pj.forEach(x=>hp.insertAdjacentHTML('beforeend',`<option value="${x.id}">${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`));
+  }
+  let q="/mm_history?select=*,mm_project(mold_no,mold_name)&order=created_at.desc&limit=300";
+  const f=g('h-from'),t=g('h-to'),pjv=hp.value,av=document.getElementById('h-act').value;
+  if(f)q+="&created_at=gte."+f;
+  if(t)q+="&created_at=lt."+nextDay(t);
+  if(pjv)q+="&project_id=eq."+pjv;
+  if(av)q+="&action=eq."+encodeURIComponent(av);
+  const rows=await api(q);
   document.getElementById('histbody').innerHTML=rows.map(r=>`<tr>
     <td>${fmt(r.created_at)}</td>
     <td>${r.mm_project?esc(r.mm_project.mold_no):'-'}</td>
-    <td class="mono">${r.op_code||'-'}</td>
+    <td>${r.op_code?mName(r.op_code)||r.op_code:'-'}</td>
     <td class="a-${r.action}">${r.action}</td>
     <td>${esc(r.detail||'')}</td>
     <td>${esc(r.worker||'')}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">이력이 없습니다</td></tr>';
