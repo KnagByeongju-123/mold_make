@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>금형제작관리</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16233c; --navy2:#1f3154; --ink:#232a35; --line:#dde3ec;
+  --bg:#f2f4f8; --card:#ffffff;
+  --yellow:#f5c518; --yellowbg:#fdf3cd;
+  --blue:#2563c9; --red:#d43a3a; --green:#1e9e5a; --gray:#8a93a3;
+  --cust:#7c4dbd; --self:#2563c9; --out:#e07b1f;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+header{background:var(--navy);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+header .logo{font-weight:900;font-size:19px;letter-spacing:.5px}
+header .logo em{color:var(--yellow);font-style:normal}
+header .rev{margin-left:6px;font-size:10px;color:#7f92b8;border:1px solid #3a4a6e;padding:1px 6px;border-radius:4px;font-family:"IBM Plex Mono",monospace}
+header .sub{font-size:12px;color:#9db0d0}
+nav{margin-left:auto;display:flex;gap:6px}
+nav button{background:transparent;border:1px solid #3a4a6e;color:#c8d4ea;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit}
+nav button.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy);font-weight:700}
+
+main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+.hide{display:none!important}
+
+/* 대시보드 */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px}
+.stat .k{font-size:12px;color:var(--gray);font-weight:500}
+.stat .v{font-size:28px;font-weight:900;margin-top:2px}
+.stat.s1 .v{color:var(--blue)}.stat.s2 .v{color:var(--green)}.stat.s3 .v{color:var(--red)}.stat.s4 .v{color:var(--ink)}
+
+.projcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.projcard:hover{border-color:var(--blue)}
+.projcard .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.projcard .no{font-weight:700;background:var(--yellowbg);border:1px solid #ecd587;color:#6b5200;padding:2px 9px;border-radius:5px;font-size:12px}
+.projcard .nm{font-weight:700;font-size:16px}
+.projcard .cs{color:var(--gray);font-size:13px}
+.badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+.b-run{background:#e3edfc;color:var(--blue)}.b-done{background:#e0f5ea;color:var(--green)}
+.b-hold{background:#f0f1f4;color:var(--gray)}.b-ng{background:#fbe4e4;color:var(--red)}
+.pbar{height:8px;background:#eceef3;border-radius:5px;margin-top:12px;overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#4d8be8);border-radius:5px}
+.projcard .meta{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;color:var(--gray)}
+.projcard .cur{color:var(--navy);font-weight:700}
+.del{margin-left:auto;background:none;border:none;color:#c3cad6;cursor:pointer;font-size:16px;padding:2px 6px}
+.del:hover{color:var(--red)}
+
+/* 등록 폼 */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px;max-width:560px}
+.panel h2{font-size:16px;margin-bottom:16px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;font-weight:700;color:#5a6478;margin-bottom:4px}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;font-size:14px;font-family:inherit;background:#fbfcfe}
+.fg input:focus,.fg select:focus{outline:2px solid #bcd3f5;border-color:var(--blue)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:10px 22px;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-p{background:var(--navy);color:#fff}
+.btn-p:hover{background:var(--navy2)}
+
+/* 공정 보드 */
+.psel{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.psel select{padding:9px 12px;border:1px solid var(--line);border-radius:7px;font-size:14px;font-family:inherit;background:#fff;min-width:280px}
+.lanehead{display:grid;grid-template-columns:64px 108px 1fr;gap:0;margin-bottom:4px;font-size:11px;font-weight:700;color:var(--gray)}
+.lanehead .lanes{display:flex}
+.lanehead .lanes span{width:36px;text-align:center}
+.lanehead .lanes .lc{color:var(--cust)}.lanehead .lanes .ls{color:var(--self)}.lanehead .lanes .lo{color:var(--out)}
+
+.op{display:grid;grid-template-columns:64px 108px 1fr;background:var(--card);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;overflow:hidden}
+.op.st-OK{opacity:.82}
+.op.st-진행{border-color:var(--blue);box-shadow:0 0 0 2px #dbe8fb}
+.op.st-NG{border-color:var(--red);box-shadow:0 0 0 2px #f8dcdc}
+.opcode{background:var(--yellowbg);border-right:1px solid #eee0a8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px}
+.opcode b{font-size:13px;color:#6b5200}
+.lanecell{display:flex;align-items:center;justify-content:flex-start;border-right:1px solid var(--line);padding-left:0}
+.lanewrap{display:flex;width:108px}
+.laneslot{width:36px;display:flex;align-items:center;justify-content:center;position:relative}
+.laneslot::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:#eef1f6}
+.dot{width:14px;height:14px;border-radius:3px;position:relative;z-index:1}
+.dot.cust{background:var(--cust);border-radius:50%}
+.dot.self{background:var(--self)}
+.dot.out{background:var(--out);border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--out);width:10px;height:10px}
+.opbody{padding:11px 14px;display:flex;gap:14px;align-items:flex-start}
+.opinfo{flex:1;min-width:0}
+.opinfo .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.opinfo .nm{font-weight:700;font-size:15px}
+.dept{font-size:11px;font-weight:700;background:#eef1f6;color:#4a5568;padding:1px 8px;border-radius:4px}
+.st{font-size:11px;font-weight:800;padding:2px 10px;border-radius:20px}
+.st-w{background:#f0f1f4;color:var(--gray)}
+.st-r{background:#e3edfc;color:var(--blue)}
+.st-ok{background:#e0f5ea;color:var(--green)}
+.st-ng{background:#fbe4e4;color:var(--red)}
+.ngc{font-size:11px;color:var(--red);font-weight:700}
+.tasks{margin-top:6px;font-size:12.5px;color:#4a5260;line-height:1.55}
+.tasks li{list-style:none;padding-left:11px;position:relative}
+.tasks li::before{content:'–';position:absolute;left:0;color:#a8b0be}
+.outs{margin-top:5px;font-size:11.5px;color:var(--gray)}
+.outs b{color:#6b7484;font-weight:700}
+.opmeta{margin-top:5px;font-size:11px;color:#98a0ae}
+.opacts{display:flex;flex-direction:column;gap:5px;min-width:74px}
+.opacts button{padding:6px 0;border-radius:6px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.b-start{color:var(--blue);border-color:#b9d1f5}
+.b-start:hover{background:#eef4fd}
+.b-ok{color:var(--green);border-color:#a9dfc3}
+.b-ok:hover{background:#ecf9f2}
+.b-ng2{color:var(--red);border-color:#efb9b9}
+.b-ng2:hover{background:#fdf0f0}
+.ngline{grid-column:1/4;background:#fdf0f0;border-top:1px dashed #efb9b9;color:var(--red);font-size:12px;font-weight:600;padding:6px 14px}
+
+/* 이력 */
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{padding:9px 12px;text-align:left;font-size:12.5px;border-bottom:1px solid #eef1f6}
+th{background:var(--navy);color:#dbe4f5;font-size:12px;font-weight:700}
+tr:last-child td{border-bottom:none}
+.a-OK{color:var(--green);font-weight:700}.a-NG{color:var(--red);font-weight:700}
+.a-시작{color:var(--blue);font-weight:700}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+.empty{text-align:center;color:var(--gray);padding:50px 0;font-size:14px}
+h1.pt{font-size:17px;font-weight:900;margin-bottom:14px}
+h1.pt em{font-style:normal;color:var(--blue)}
+@media(max-width:760px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .op{grid-template-columns:52px 1fr}
+  .lanecell{display:none}
+  .lanehead{display:none}
+  .row2{grid-template-columns:1fr}
+  .opbody{flex-direction:column}
+  .opacts{flex-direction:row;width:100%}
+  .opacts button{flex:1}
+  .ngline{grid-column:1/3}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">금형<em>제작관리</em></div>
+    <div class="sub">Mold Making Management <span class="rev">Rev 1.0 (2026-08-11)</span></div>
+  </div>
+  <nav>
+    <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
+    <button data-v="flow" onclick="go('flow')">공정 진행</button>
+    <button data-v="new" onclick="go('new')">금형 등록</button>
+    <button data-v="hist" onclick="go('hist')">이력</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 대시보드 -->
+  <section id="v-dash">
+    <div class="stats">
+      <div class="stat s1"><div class="k">진행중 금형</div><div class="v" id="st-run">0</div></div>
+      <div class="stat s2"><div class="k">완료 금형</div><div class="v" id="st-done">0</div></div>
+      <div class="stat s3"><div class="k">NG 발생(누적)</div><div class="v" id="st-ng">0</div></div>
+      <div class="stat s4"><div class="k">전체 금형</div><div class="v" id="st-all">0</div></div>
+    </div>
+    <h1 class="pt">금형 프로젝트 현황</h1>
+    <div id="projlist"></div>
+  </section>
+
+  <!-- 공정 진행 -->
+  <section id="v-flow" class="hide">
+    <div class="psel">
+      <select id="flowsel" onchange="renderFlow()"></select>
+      <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
+    </div>
+    <div class="lanehead">
+      <div></div>
+      <div class="lanes"><span class="lc">고객사</span><span class="ls">당사</span><span class="lo">외주</span></div>
+      <div style="padding-left:14px">업무 내용 / 결과물</div>
+    </div>
+    <div id="flowboard"></div>
+  </section>
+
+  <!-- 금형 등록 -->
+  <section id="v-new" class="hide">
+    <div class="panel">
+      <h2>신규 금형 등록</h2>
+      <div class="row2">
+        <div class="fg"><label>금형번호 *</label><input id="f-no" placeholder="예: M-2026-001"></div>
+        <div class="fg"><label>금형명 *</label><input id="f-nm" placeholder="예: 브라켓 PRG 금형"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>고객사</label><input id="f-cs"></div>
+        <div class="fg"><label>제품명</label><input id="f-pd"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>담당자</label><input id="f-mg"></div>
+        <div class="fg"><label>납기일</label><input id="f-due" type="date"></div>
+      </div>
+      <div class="fg"><label>비고</label><textarea id="f-nt" rows="2"></textarea></div>
+      <button class="btn btn-p" onclick="createProject()">등록 (OP10~OP180 공정 자동 생성)</button>
+    </div>
+  </section>
+
+  <!-- 이력 -->
+  <section id="v-hist" class="hide">
+    <h1 class="pt">공정 이력</h1>
+    <table>
+      <thead><tr><th>일시</th><th>금형</th><th>공정</th><th>구분</th><th>내용</th><th>작업자</th></tr></thead>
+      <tbody id="histbody"></tbody>
+    </table>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const URL_="https://pllwltojbofjaftcemvn.supabase.co/rest/v1";
+const KEY="sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
+const H={"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"};
+
+let MASTER=[], PROJECTS=[], PROCS=[];
+
+async function api(path,opt={}){
+  const r=await fetch(URL_+path,{headers:{...H,Prefer:opt.method&&opt.method!=="GET"?"return=representation":""},...opt});
+  if(!r.ok){const t=await r.text();throw new Error(t)}
+  if(r.status===204)return null;
+  return r.json();
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function go(v){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  ['dash','flow','new','hist'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  if(v==='dash')loadDash();
+  if(v==='flow')loadFlowSel();
+  if(v==='hist')loadHist();
+}
+
+/* ---------- 로드 ---------- */
+async function loadMaster(){ MASTER=await api("/mm_master?select=*&order=seq"); }
+async function loadDash(){
+  PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
+  PROCS=await api("/mm_process?select=project_id,op_code,status,ng_count");
+  const run=PROJECTS.filter(p=>p.status==='진행').length;
+  const done=PROJECTS.filter(p=>p.status==='완료').length;
+  const ng=PROCS.reduce((s,p)=>s+p.ng_count,0);
+  st('st-run',run);st('st-done',done);st('st-ng',ng);st('st-all',PROJECTS.length);
+  const box=document.getElementById('projlist');
+  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [금형 등록] 탭에서 등록하세요.</div>';return}
+  box.innerHTML=PROJECTS.map(p=>{
+    const ps=PROCS.filter(x=>x.project_id===p.id);
+    const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
+    const pct=Math.round(ok/tot*100);
+    const cur=curProc(ps);
+    const bcls=p.status==='완료'?'b-done':p.status==='보류'?'b-hold':'b-run';
+    return `<div class="projcard" onclick="openFlow('${p.id}')">
+      <div class="top">
+        <span class="no mono">${esc(p.mold_no)}</span>
+        <span class="nm">${esc(p.mold_name)}</span>
+        <span class="cs">${esc(p.customer||'')} ${p.product?'· '+esc(p.product):''}</span>
+        <span class="badge ${bcls}">${p.status}</span>
+        <button class="del" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')">✕</button>
+      </div>
+      <div class="pbar"><i style="width:${pct}%"></i></div>
+      <div class="meta">
+        <span>현재 공정: <span class="cur">${cur}</span></span>
+        <span>${ok}/${tot} 완료 (${pct}%) ${p.due_date?'· 납기 '+p.due_date:''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function curProc(ps){
+  const ngp=ps.find(x=>x.status==='NG');
+  if(ngp)return ngp.op_code+' NG';
+  const runp=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='진행');
+  if(runp)return runp.op_code+' '+(mName(runp.op_code));
+  const wait=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='대기');
+  if(wait)return wait.op_code+' 대기';
+  return ps.length?'전공정 완료':'-';
+}
+function mName(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name:''}
+function st(id,v){document.getElementById(id).textContent=v}
+function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ---------- 등록 ---------- */
+async function createProject(){
+  const no=g('f-no'),nm=g('f-nm');
+  if(!no||!nm)return toast('금형번호와 금형명은 필수입니다');
+  try{
+    const [p]=await api("/mm_project",{method:"POST",body:JSON.stringify({
+      mold_no:no,mold_name:nm,customer:g('f-cs')||null,product:g('f-pd')||null,
+      manager:g('f-mg')||null,due_date:g('f-due')||null,note:g('f-nt')||null})});
+    const rows=MASTER.map((m,i)=>({project_id:p.id,op_code:m.op_code,status:i===0?'진행':'대기',started_at:i===0?new Date().toISOString():null}));
+    await api("/mm_process",{method:"POST",body:JSON.stringify(rows)});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' 금형 등록, OP10 개시',worker:g('f-mg')||null})});
+    ['f-no','f-nm','f-cs','f-pd','f-mg','f-due','f-nt'].forEach(x=>document.getElementById(x).value='');
+    toast('등록 완료 — OP10 견적 요청부터 진행합니다');
+    openFlow(p.id);
+  }catch(e){toast('등록 실패: '+e.message)}
+}
+function g(id){return document.getElementById(id).value.trim()}
+async function delProject(id,no){
+  if(!confirm(no+' 금형과 모든 공정/이력을 삭제할까요?'))return;
+  await api("/mm_project?id=eq."+id,{method:"DELETE"});
+  toast('삭제 완료');loadDash();
+}
+
+/* ---------- 공정 보드 ---------- */
+let CURPROJ=null;
+async function loadFlowSel(sel){
+  PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
+  const s=document.getElementById('flowsel');
+  s.innerHTML=PROJECTS.map(p=>`<option value="${p.id}">${esc(p.mold_no)} — ${esc(p.mold_name)} (${p.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
+  if(sel)s.value=sel;
+  renderFlow();
+}
+function openFlow(id){go('flow');loadFlowSel(id)}
+async function renderFlow(){
+  const pid=document.getElementById('flowsel').value;
+  CURPROJ=pid;
+  const box=document.getElementById('flowboard');
+  if(!pid){box.innerHTML='<div class="empty">금형을 먼저 등록하세요.</div>';document.getElementById('flowprog').textContent='';return}
+  const ps=await api("/mm_process?select=*&project_id=eq."+pid);
+  const ok=ps.filter(x=>x.status==='OK').length;
+  document.getElementById('flowprog').textContent=`진행률 ${ok}/${ps.length} (${Math.round(ok/(ps.length||1)*100)}%)`;
+  box.innerHTML=MASTER.map(m=>{
+    const p=ps.find(x=>x.op_code===m.op_code)||{status:'대기',ng_count:0};
+    const lane=m.actor==='고객사'?0:m.actor==='당사'?1:2;
+    const dots=[0,1,2].map(i=>`<div class="laneslot">${i===lane?`<div class="dot ${['cust','self','out'][lane]}" title="${m.actor}"></div>`:''}</div>`).join('');
+    const stc=p.status==='OK'?'st-ok':p.status==='진행'?'st-r':p.status==='NG'?'st-ng':'st-w';
+    const acts=[];
+    if(p.status==='대기')acts.push(`<button class="b-start" onclick="setStatus('${p.id}','${m.op_code}','진행')">시작</button>`);
+    if(p.status==='진행'||p.status==='NG'){
+      acts.push(`<button class="b-ok" onclick="setStatus('${p.id}','${m.op_code}','OK')">OK</button>`);
+      if(p.status!=='NG')acts.push(`<button class="b-ng2" onclick="setStatus('${p.id}','${m.op_code}','NG')">NG</button>`);
+    }
+    if(p.status==='OK')acts.push(`<button class="b-ng2" onclick="setStatus('${p.id}','${m.op_code}','NG')">NG처리</button>`);
+    const ngline=m.ng_return_op?`<div class="ngline">↩ NG 시 ${m.ng_return_op} ${mName(m.ng_return_op)} 공정으로 재진행</div>`:'';
+    return `<div class="op st-${p.status}">
+      <div class="opcode"><b class="mono">${m.op_code}</b></div>
+      <div class="lanecell"><div class="lanewrap">${dots}</div></div>
+      <div class="opbody">
+        <div class="opinfo">
+          <div class="t">
+            <span class="nm">${esc(m.process_name)}</span>
+            <span class="dept">${m.dept}</span>
+            <span class="st ${stc}">${p.status}</span>
+            ${p.ng_count?`<span class="ngc">NG ${p.ng_count}회</span>`:''}
+          </div>
+          <ul class="tasks">${m.tasks.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+          ${m.outputs.length?`<div class="outs"><b>결과물:</b> ${m.outputs.map(esc).join(', ')}</div>`:''}
+          <div class="opmeta">${p.started_at?'시작 '+fmt(p.started_at):''} ${p.finished_at?' · 완료 '+fmt(p.finished_at):''} ${p.worker?' · '+esc(p.worker):''}</div>
+        </div>
+        <div class="opacts">${acts.join('')}</div>
+      </div>
+      ${p.status==='NG'&&ngline?ngline:''}
+    </div>`;
+  }).join('');
+}
+function fmt(t){return new Date(t).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+
+async function setStatus(procId,op,status){
+  const m=MASTER.find(x=>x.op_code===op);
+  let worker=null;
+  if(status==='진행'||status==='OK'){worker=prompt('작업자명 (생략 가능)')||null}
+  const now=new Date().toISOString();
+  const body={status,worker};
+  if(status==='진행')body.started_at=now;
+  if(status==='OK')body.finished_at=now;
+  try{
+    if(status==='NG'){
+      const [cur]=await api(`/mm_process?id=eq.${procId}&select=ng_count`);
+      await api(`/mm_process?id=eq.${procId}`,{method:"PATCH",
+        body:JSON.stringify({status:'NG',finished_at:null,ng_count:(cur.ng_count||0)+1})});
+      let detail=op+' '+m.process_name+' NG 발생';
+      if(m.ng_return_op){
+        await api(`/mm_process?project_id=eq.${CURPROJ}&op_code=eq.${m.ng_return_op}`,{method:"PATCH",
+          body:JSON.stringify({status:'진행',finished_at:null,started_at:now})});
+        detail+=' → '+m.ng_return_op+' 재진행';
+      }
+      await hist(op,'NG',detail);
+      toast(detail);
+    }else{
+      await api(`/mm_process?id=eq.${procId}`,{method:"PATCH",body:JSON.stringify(body)});
+      if(status==='OK'){
+        // 다음 대기 공정 자동 개시
+        const ps=await api(`/mm_process?select=*&project_id=eq.${CURPROJ}`);
+        const idx=MASTER.findIndex(x=>x.op_code===op);
+        const next=MASTER.slice(idx+1).map(mm=>ps.find(x=>x.op_code===mm.op_code)).find(x=>x&&x.status==='대기');
+        if(next)await api(`/mm_process?id=eq.${next.id}`,{method:"PATCH",body:JSON.stringify({status:'진행',started_at:now})});
+        const allOk=ps.filter(x=>x.op_code!==op).every(x=>x.status==='OK');
+        if(allOk){
+          await api(`/mm_project?id=eq.${CURPROJ}`,{method:"PATCH",body:JSON.stringify({status:'완료'})});
+          toast('전 공정 완료 — 금형 이관 완료 처리되었습니다');
+        }else toast(op+' OK 완료'+(next?' → 다음 공정 개시':''));
+        await hist(op,'OK',op+' '+m.process_name+' 완료',worker);
+      }else{
+        await hist(op,'시작',op+' '+m.process_name+' 개시',worker);
+        toast(op+' 개시');
+      }
+    }
+    renderFlow();
+  }catch(e){toast('오류: '+e.message)}
+}
+async function hist(op,action,detail,worker){
+  await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,action,detail,worker:worker||null})});
+}
+
+/* ---------- 이력 ---------- */
+async function loadHist(){
+  const rows=await api("/mm_history?select=*,mm_project(mold_no,mold_name)&order=created_at.desc&limit=200");
+  document.getElementById('histbody').innerHTML=rows.map(r=>`<tr>
+    <td>${fmt(r.created_at)}</td>
+    <td>${r.mm_project?esc(r.mm_project.mold_no):'-'}</td>
+    <td class="mono">${r.op_code||'-'}</td>
+    <td class="a-${r.action}">${r.action}</td>
+    <td>${esc(r.detail||'')}</td>
+    <td>${esc(r.worker||'')}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">이력이 없습니다</td></tr>';
+}
+
+(async()=>{await loadMaster();loadDash();})();
+</script>
+</body>
+</html>
