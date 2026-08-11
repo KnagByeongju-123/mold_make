@@ -17,13 +17,15 @@
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
 .mono{font-family:'IBM Plex Mono',monospace}
 
-header{background:var(--navy);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
-header .logo{font-weight:900;font-size:19px;letter-spacing:.5px}
-header .logo em{color:var(--yellow);font-style:normal}
-header .rev{margin-left:6px;font-size:10px;color:#7f92b8;border:1px solid #3a4a6e;padding:1px 6px;border-radius:4px;font-family:"IBM Plex Mono",monospace}
-header .sub{font-size:12px;color:#9db0d0}
-nav{margin-left:auto;display:flex;gap:6px}
-nav button{background:transparent;border:1px solid #3a4a6e;color:#c8d4ea;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit}
+header{background:var(--navy);color:#fff;padding:14px 0 14px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+header>div:first-child{flex-shrink:0}
+header .hleft{display:flex;align-items:center;gap:8px}
+.ubadge{background:rgba(245,197,24,.14);border:1px solid #6b5d2a;color:var(--yellow);font-size:12px;font-weight:700;padding:4px 12px;border-radius:16px;cursor:pointer;white-space:nowrap}
+.ubadge:hover{background:rgba(245,197,24,.25)}
+header .rev{font-size:10px;color:#7f92b8;border:1px solid #3a4a6e;padding:1px 6px;border-radius:4px;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+nav{margin-left:auto;display:flex;gap:6px;overflow-x:auto;white-space:nowrap;padding:2px 22px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav button{background:transparent;border:1px solid #3a4a6e;color:#c8d4ea;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;white-space:nowrap;flex-shrink:0}
 nav button.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy);font-weight:700}
 
 main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
@@ -223,6 +225,24 @@ tr:last-child td{border-bottom:none}
 .hnotebox li{list-style:none;font-size:12.5px;color:#4a5260;line-height:1.75;padding-left:13px;position:relative;margin-top:4px}
 .hnotebox li::before{content:'·';position:absolute;left:2px;color:#8794a8;font-weight:900}
 h1.pt em{font-size:13px;font-weight:500;color:var(--gray)}
+/* PIN 로그인 */
+#login{position:fixed;inset:0;background:linear-gradient(160deg,#101a30,#1b2c4e);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.lgbox{text-align:center;width:100%;max-width:320px}
+.lgtitle{font-size:34px;font-weight:900;color:#fff;letter-spacing:1px}
+.lgtitle em{color:var(--yellow);font-style:normal}
+.lgsub{font-size:12px;color:#8fa3c8;margin-top:4px;letter-spacing:2px}
+.pinview{display:flex;gap:14px;justify-content:center;margin:30px 0 12px}
+.pinview i{width:16px;height:16px;border-radius:50%;border:2px solid #4c6392;transition:.12s}
+.pinview i.f{background:var(--yellow);border-color:var(--yellow)}
+.pinview.shake{animation:shk .4s}
+@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.lgmsg{font-size:12.5px;color:#8fa3c8;min-height:18px;margin-bottom:18px}
+.lgmsg.err{color:#ff8a8a}
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pinpad button{padding:16px 0;font-size:20px;font-weight:700;border:1px solid #33456e;border-radius:12px;background:rgba(255,255,255,.05);color:#e6ecf7;cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:.1s}
+.pinpad button:active{background:var(--yellow);color:var(--navy)}
+.pinpad .pfn{color:#8fa3c8;font-size:16px}
+
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99}
 .toast.show{opacity:1}
 .empty{text-align:center;color:var(--gray);padding:50px 0;font-size:14px}
@@ -245,10 +265,26 @@ h1.pt em{font-style:normal;color:var(--blue)}
 </style>
 </head>
 <body>
+<!-- PIN 로그인 -->
+<div id="login">
+  <div class="lgbox">
+    <div class="lgtitle">금형<em>제작관리</em></div>
+    <div class="lgsub">Mold Making Management</div>
+    <div class="pinview" id="pinview"><i></i><i></i><i></i><i></i></div>
+    <div class="lgmsg" id="lgmsg">PIN 번호 4자리를 입력하세요</div>
+    <div class="pinpad">
+      <button onclick="pinKey(1)">1</button><button onclick="pinKey(2)">2</button><button onclick="pinKey(3)">3</button>
+      <button onclick="pinKey(4)">4</button><button onclick="pinKey(5)">5</button><button onclick="pinKey(6)">6</button>
+      <button onclick="pinKey(7)">7</button><button onclick="pinKey(8)">8</button><button onclick="pinKey(9)">9</button>
+      <button class="pfn" onclick="pinClear()">C</button><button onclick="pinKey(0)">0</button><button class="pfn" onclick="pinBack()">←</button>
+    </div>
+  </div>
+</div>
+
 <header>
-  <div>
-    <div class="logo">금형<em>제작관리</em></div>
-    <div class="sub">Mold Making Management <span class="rev">Rev 2.3 (2026-08-11)</span></div>
+  <div class="hleft">
+    <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
+    <span class="rev">Rev 2.5</span>
   </div>
   <nav>
     <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
@@ -258,6 +294,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <button data-v="board" onclick="go('board')">게시판</button>
     <button data-v="tryout" onclick="go('tryout')">Tryout</button>
     <button data-v="help" onclick="go('help')">사용안내</button>
+    <button data-v="set" onclick="goSet()">설정</button>
   </nav>
 </header>
 
@@ -384,6 +421,26 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div id="tlist"></div>
   </section>
 
+  <!-- 설정 -->
+  <section id="v-set" class="hide">
+    <h1 class="pt">설정 <em>— 사원 PIN 관리</em></h1>
+    <div class="panel">
+      <h2>사원 등록</h2>
+      <div class="row2">
+        <div class="fg"><label>이름 *</label><input id="u-nm"></div>
+        <div class="fg"><label>PIN (4자리) *</label><input id="u-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리"></div>
+      </div>
+      <button class="btn btn-p" onclick="addUser()">사원 추가</button>
+    </div>
+    <div style="margin-top:14px">
+      <table>
+        <thead><tr><th>이름</th><th>PIN</th><th>등록일</th><th style="width:36px"></th></tr></thead>
+        <tbody id="userbody"></tbody>
+      </table>
+    </div>
+    <p class="hnote" style="margin-top:10px">마스터 PIN(관리자)은 프로그램에 내장되어 있으며 삭제할 수 없습니다.</p>
+  </section>
+
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
     <h1 class="pt">사용안내 <em>— 금형 제작 흐름도 기준 진행 절차</em></h1>
@@ -480,6 +537,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <li>[게시판] 탭에서 개선·수정 요청사항을 등록하고 접수/완료 상태를 눌러 전환할 수 있습니다.</li>
         <li>[Tryout] 탭에서 차수(1차~양산전)·상태·작업/이슈/계획·사진을 일지로 기록하고, 기간·금형·차수·상태로 필터 조회합니다.</li>
         <li>[이력] 탭 상단에서 기간·금형·구분으로 필터 조회하고, 조회 결과를 엑셀(CSV)로 출력할 수 있습니다. 각 행의 ✕로 개별 삭제도 가능합니다.</li>
+        <li>프로그램 진입 시 PIN 4자리로 로그인합니다. 사원 PIN은 [설정] 탭(마스터 비밀번호 필요)에서 등록·삭제하며, 로그인한 사용자 이름이 작업자·작성자에 자동 기록됩니다.</li>
         <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
       </ul>
     </div>
@@ -515,6 +573,73 @@ const KEY="sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
 const H={"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"};
 
 let MASTER=[], PROJECTS=[], PROCS=[];
+const MASTER_PIN="2580";
+let USER=sessionStorage.getItem('mm_user')||null;
+let PIN="";
+
+/* ---------- PIN 로그인 ---------- */
+function pinKey(n){if(PIN.length>=4)return;PIN+=n;pinDraw();if(PIN.length===4)pinSubmit();}
+function pinBack(){PIN=PIN.slice(0,-1);pinDraw()}
+function pinClear(){PIN="";pinDraw()}
+function pinDraw(){
+  document.querySelectorAll('#pinview i').forEach((el,i)=>el.classList.toggle('f',i<PIN.length));
+}
+async function pinSubmit(){
+  const msg=document.getElementById('lgmsg');
+  if(PIN===MASTER_PIN){enter('관리자');return}
+  try{
+    const u=await api("/mm_user?select=name&pin=eq."+PIN);
+    if(u.length){enter(u[0].name);return}
+  }catch(e){}
+  msg.textContent='등록되지 않은 PIN입니다';
+  msg.classList.add('err');
+  document.getElementById('pinview').classList.add('shake');
+  setTimeout(()=>{PIN='';pinDraw();document.getElementById('pinview').classList.remove('shake');},500);
+}
+function enter(name){
+  USER=name;sessionStorage.setItem('mm_user',name);
+  document.getElementById('login').style.display='none';
+  document.getElementById('ubadge').textContent='👤 '+name;
+  loadDash();
+}
+function logout(){
+  if(!confirm('로그아웃할까요?'))return;
+  sessionStorage.removeItem('mm_user');location.reload();
+}
+
+/* ---------- 설정: 사원 관리 ---------- */
+let SET_AUTH=false;
+function goSet(){
+  if(!SET_AUTH){
+    const pw=prompt('설정 마스터 비밀번호를 입력하세요');
+    if(pw!==MASTER_PIN)return toast('비밀번호가 올바르지 않습니다');
+    SET_AUTH=true;
+  }
+  go('set');loadUsers();
+}
+async function loadUsers(){
+  const rows=await api("/mm_user?select=*&order=created_at");
+  document.getElementById('userbody').innerHTML=rows.map(u=>`<tr>
+    <td>${esc(u.name)}</td><td class="mono">${esc(u.pin)}</td>
+    <td>${fmt(u.created_at)}</td>
+    <td><button class="del" onclick="delUser(${u.id},'${esc(u.name)}')">✕</button></td></tr>`).join('')
+    ||'<tr><td colspan="4" class="empty">등록된 사원이 없습니다</td></tr>';
+}
+async function addUser(){
+  const nm=g('u-nm'),pin=g('u-pin');
+  if(!nm)return toast('이름을 입력하세요');
+  if(!/^\d{4}$/.test(pin))return toast('PIN은 숫자 4자리입니다');
+  if(pin===MASTER_PIN)return toast('마스터 PIN과 동일한 번호는 사용할 수 없습니다');
+  const dup=await api("/mm_user?select=id&pin=eq."+pin);
+  if(dup.length)return toast('이미 사용중인 PIN입니다');
+  await api("/mm_user",{method:"POST",body:JSON.stringify({name:nm,pin})});
+  document.getElementById('u-nm').value='';document.getElementById('u-pin').value='';
+  toast('사원 등록 완료');loadUsers();
+}
+async function delUser(id,nm){
+  if(!confirm(nm+' 사원을 삭제할까요?'))return;
+  await api(`/mm_user?id=eq.${id}`,{method:"DELETE"});loadUsers();
+}
 
 async function api(path,opt={}){
   const r=await fetch(URL_+path,{headers:{...H,Prefer:opt.method&&opt.method!=="GET"?"return=representation":""},...opt});
@@ -525,11 +650,11 @@ async function api(path,opt={}){
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function go(v){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  ['dash','flow','new','hist','board','tryout','help'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
   if(v==='hist')loadHist();
-  if(v==='board')loadBoard();
+  if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
   if(v==='tryout'){initTryout();loadTryout();}
 }
 
@@ -777,7 +902,7 @@ async function loadSuggest(){
 async function setStatus(procId,op,status){
   const m=MASTER.find(x=>x.op_code===op);
   let worker=null;
-  if(status==='진행'||status==='OK'){worker=prompt('작업자명 (생략 가능)')||null}
+  if(status==='진행'||status==='OK'){worker=USER}
   const now=new Date().toISOString();
   const body={status,worker};
   if(status==='진행')body.started_at=now;
@@ -854,6 +979,7 @@ let TPHOTOS=[];
 function chipVal(id){const b=document.querySelector('#'+id+' button.on');return b?b.dataset.v:null}
 function initTryout(){
   const d=document.getElementById('t-date');if(!d.value)d.value=new Date().toISOString().slice(0,10);
+  const au=document.getElementById('t-author');if(!au.value&&USER)au.value=USER;
   ['t-stage','t-status'].forEach(id=>{
     document.querySelectorAll('#'+id+' button').forEach(b=>{
       if(!b.dataset.bound){b.dataset.bound=1;
@@ -969,7 +1095,14 @@ async function loadHist(){
   LASTHIST=rows;
 }
 
-(async()=>{await loadMaster();loadDash();})();
+(async()=>{
+  await loadMaster();
+  if(USER){
+    document.getElementById('login').style.display='none';
+    document.getElementById('ubadge').textContent='👤 '+USER;
+    loadDash();
+  }
+})();
 </script>
 </body>
 </html>
