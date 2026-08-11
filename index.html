@@ -17,18 +17,15 @@
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
 .mono{font-family:'IBM Plex Mono',monospace}
 
-header{background:var(--navy);color:#fff;padding:14px 0 14px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
-header>div:first-child{flex-shrink:0}
-header .hleft{display:flex;align-items:center;gap:8px}
+header{background:var(--navy);color:#fff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
+header .hleft{display:flex;align-items:center;gap:8px;min-width:0}
+header .hright{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.htitle{font-size:17px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ubadge{background:rgba(245,197,24,.14);border:1px solid #6b5d2a;color:var(--yellow);font-size:12px;font-weight:700;padding:4px 12px;border-radius:16px;cursor:pointer;white-space:nowrap}
 .ubadge:hover{background:rgba(245,197,24,.25)}
 header .rev{font-size:10px;color:#7f92b8;border:1px solid #3a4a6e;padding:1px 6px;border-radius:4px;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
-nav{margin-left:auto;display:flex;gap:6px;overflow-x:auto;white-space:nowrap;padding:2px 22px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-nav::-webkit-scrollbar{display:none}
-nav button{background:transparent;border:1px solid #3a4a6e;color:#c8d4ea;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;white-space:nowrap;flex-shrink:0}
-nav button.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy);font-weight:700}
 
-main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 96px}
 .hide{display:none!important}
 
 /* 대시보드 */
@@ -263,7 +260,27 @@ h1.pt em{font-size:13px;font-weight:500;color:var(--gray)}
 .pinpad button:active{background:var(--yellow);color:var(--navy)}
 .pinpad .pfn{color:#8fa3c8;font-size:16px}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99}
+/* 하단 네비 */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:1px solid #2c3d61;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.bnav button{flex:1;background:none;border:none;color:#8fa3c8;font-size:11px;font-weight:600;padding:8px 0 9px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bnav button .bi{font-size:18px;line-height:1}
+.bnav button.on{color:var(--yellow)}
+.bnav .bmain{position:relative}
+.bnav .bmain .bi{width:44px;height:44px;border-radius:50%;background:var(--yellow);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;margin-top:-20px;box-shadow:0 4px 12px rgba(0,0,0,.35);border:3px solid var(--navy)}
+.bnav .bmain.on .bi{background:#ffd94d}
+
+/* 전체 메뉴 시트 */
+.msheet{position:fixed;inset:0;background:rgba(16,24,42,.55);z-index:150;display:none;align-items:flex-end}
+.msheet.show{display:flex}
+.msbox{background:#fff;width:100%;border-radius:16px 16px 0 0;padding:16px 18px calc(20px + env(safe-area-inset-bottom));animation:slideup .2s ease}
+@keyframes slideup{from{transform:translateY(30%)}to{transform:translateY(0)}}
+.mshead{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:800;margin-bottom:14px}
+.msgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.msgrid button{background:#f4f6fa;border:1px solid var(--line);border-radius:12px;padding:15px 4px;font-size:12.5px;font-weight:700;color:#3c4450;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:6px}
+.msgrid button span{font-size:22px}
+.msgrid button:hover{background:#eaeefb;border-color:var(--blue)}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99}
 .toast.show{opacity:1}
 .empty{text-align:center;color:var(--gray);padding:50px 0;font-size:14px}
 h1.pt{font-size:17px;font-weight:900;margin-bottom:14px}
@@ -303,20 +320,12 @@ h1.pt em{font-style:normal;color:var(--blue)}
 
 <header>
   <div class="hleft">
-    <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 2.6</span>
+    <span class="htitle" id="htitle">대시보드</span>
   </div>
-  <nav>
-    <button class="on" data-v="dash" onclick="go('dash')">대시보드</button>
-    <button data-v="new" onclick="go('new')">신규 등록</button>
-    <button data-v="flow" onclick="go('flow')">공정 진행</button>
-    <button data-v="plan" onclick="go('plan')">제작계획</button>
-    <button data-v="hist" onclick="go('hist')">이력</button>
-    <button data-v="board" onclick="go('board')">게시판</button>
-    <button data-v="tryout" onclick="go('tryout')">Tryout</button>
-    <button data-v="help" onclick="go('help')">사용안내</button>
-    <button data-v="set" onclick="goSet()">설정</button>
-  </nav>
+  <div class="hright">
+    <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
+    <span class="rev">Rev 2.7</span>
+  </div>
 </header>
 
 <main>
@@ -497,7 +506,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <div class="hn mono">02</div>
       <div class="hb">
         <h3>공정 진행 — 상태 처리</h3>
-        <p>[공정 진행] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. <b>공정명을 클릭</b>하면 업무 내용·결과물·되돌림 경로가 팝업으로 열립니다.</p>
+        <p>[공정 진행] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 화면 이동은 하단 고정 메뉴(홈·공정·등록·Tryout)와 [메뉴] 버튼의 전체 메뉴를 사용합니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. <b>공정명을 클릭</b>하면 업무 내용·결과물·되돌림 경로가 팝업으로 열립니다.</p>
         <table class="htbl">
           <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 작업자명을 입력하면 이력에 기록됩니다.</td></tr>
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
@@ -601,6 +610,33 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <datalist id="dl-pw"></datalist>
 <datalist id="dl-pv"></datalist>
 
+<!-- 하단 네비게이션 -->
+<div class="bnav" id="bnav">
+  <button data-v="dash" class="on" onclick="go('dash')"><span class="bi">🏠</span>홈</button>
+  <button data-v="flow" onclick="go('flow')"><span class="bi">⚙️</span>공정</button>
+  <button data-v="new" class="bmain" onclick="go('new')"><span class="bi">＋</span>등록</button>
+  <button data-v="tryout" onclick="go('tryout')"><span class="bi">🔧</span>Tryout</button>
+  <button data-v="__menu" onclick="openMenu()"><span class="bi">☰</span>메뉴</button>
+</div>
+
+<!-- 전체 메뉴 시트 -->
+<div class="msheet" id="msheet" onclick="if(event.target===this)closeMenu()">
+  <div class="msbox">
+    <div class="mshead">전체 메뉴 <button class="mx" onclick="closeMenu()">✕</button></div>
+    <div class="msgrid">
+      <button onclick="go('dash')"><span>🏠</span>대시보드</button>
+      <button onclick="go('new')"><span>＋</span>신규 등록</button>
+      <button onclick="go('flow')"><span>⚙️</span>공정 진행</button>
+      <button onclick="go('plan')"><span>📅</span>제작계획</button>
+      <button onclick="go('hist')"><span>📜</span>이력</button>
+      <button onclick="go('board')"><span>📋</span>게시판</button>
+      <button onclick="go('tryout')"><span>🔧</span>Tryout</button>
+      <button onclick="go('help')"><span>❓</span>사용안내</button>
+      <button onclick="goSet()"><span>🔒</span>설정</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -638,6 +674,8 @@ function enter(name){
   document.getElementById('ubadge').textContent='👤 '+name;
   loadDash();
 }
+function openMenu(){document.getElementById('msheet').classList.add('show')}
+function closeMenu(){document.getElementById('msheet').classList.remove('show')}
 function logout(){
   if(!confirm('로그아웃할까요?'))return;
   sessionStorage.removeItem('mm_user');location.reload();
@@ -684,8 +722,11 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+const VIEWTITLE={dash:'대시보드',new:'신규 등록',flow:'공정 진행',plan:'제작계획',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
 function go(v){
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  closeMenu();
+  document.querySelectorAll('.bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
