@@ -191,6 +191,8 @@ tr:last-child td{border-bottom:none}
 .hfilter .hbtn{padding:8px 18px}
 .hfilter .hclr{padding:8px 14px;background:#eef1f6;color:#4a5568}
 .hfilter .hxls{padding:8px 16px;background:var(--green);color:#fff;margin-left:auto}
+.hfilter .hpdf{padding:8px 16px;background:var(--red);color:#fff}
+.hfilter .hxls+.hpdf{margin-left:0}
 
 /* 게시판 */
 .bcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:8px}
@@ -224,6 +226,8 @@ tr:last-child td{border-bottom:none}
 .trow b{display:inline-block;font-size:10.5px;color:var(--gray);background:#eef1f6;padding:1px 7px;border-radius:4px;margin-right:7px;vertical-align:1px}
 .trow.iss b{background:#fbe4e4;color:var(--red)}
 .tphotos{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.tedit{background:#eef4fd;border:1px solid #b9d1f5;color:var(--blue);font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;cursor:pointer;font-family:inherit}
+.tedit:hover{background:#dbe8fb}
 .tphotos img{width:74px;height:74px;object-fit:cover;border-radius:7px;border:1px solid var(--line);cursor:pointer}
 
 /* 사용안내 */
@@ -335,7 +339,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 3.0</span>
+    <span class="rev">Rev 3.2</span>
   </div>
 </header>
 
@@ -465,7 +469,11 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <div class="fg"><label>사진 첨부 (최대 3장)</label><input type="file" id="t-photo" accept="image/*" multiple></div>
       </div>
       <div id="t-plist" class="tplist"></div>
-      <button class="btn btn-p" onclick="saveTryout()">일지 저장</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-p" id="t-savebtn" onclick="saveTryout()">일지 저장</button>
+        <button class="btn hclr" id="t-cancel" style="display:none" onclick="cancelEdit()">수정 취소</button>
+        <span id="t-editmsg" style="font-size:12px;color:var(--blue);font-weight:700"></span>
+      </div>
     </div>
 
     <div class="hfilter">
@@ -475,6 +483,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
       <select id="t-fstatus"><option value="">전체 상태</option><option>완료</option><option>진행중</option><option>이슈</option><option>보류</option></select>
       <button class="btn btn-p hbtn" onclick="loadTryout()">조회</button>
       <span id="t-count" style="font-size:12px;color:var(--gray)"></span>
+      <button class="btn hxls" onclick="exportTryoutCSV()">엑셀</button>
+      <button class="btn hpdf" onclick="exportTryoutPDF()">PDF</button>
     </div>
     <div id="tlist"></div>
   </section>
@@ -522,8 +532,8 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div class="hstep">
       <div class="hn mono">02</div>
       <div class="hb">
-        <h3>공정 진행 — 상태 처리</h3>
-        <p>[공정 진행] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 화면 이동은 하단 고정 메뉴(홈·공정·등록·Tryout)와 [메뉴] 버튼의 전체 메뉴를 사용합니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. <b>공정명을 클릭</b>하면 업무 내용·결과물·되돌림 경로가 팝업으로 열립니다.</p>
+        <h3>진행현황 — 상태 처리</h3>
+        <p>[진행현황] 탭 상단에서 금형을 선택하면 공정 보드가 표시됩니다. 화면 이동은 하단 고정 메뉴(홈·진행현황·등록·Tryout)와 [메뉴] 버튼의 전체 메뉴를 사용합니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. <b>공정명을 클릭</b>하면 업무 내용·결과물·되돌림 경로가 팝업으로 열립니다.</p>
         <table class="htbl">
           <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 작업자명을 입력하면 이력에 기록됩니다.</td></tr>
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격 처리. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
@@ -571,7 +581,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <p>[대시보드] 탭에서 진행중·완료·NG 누적·전체 금형 수와 금형별 진행률을 확인합니다.</p>
         <ul>
           <li>진행률 바 아래에 <b>현재 공정</b>이 표시됩니다. NG가 있으면 NG 공정이 우선 표시됩니다.</li>
-          <li>카드를 클릭하면 해당 금형의 공정 진행 화면으로 이동합니다.</li>
+          <li>카드를 클릭하면 해당 금형의 진행현황 화면으로 이동합니다.</li>
           <li>카드 우측 <b>✕</b>는 금형과 그 공정·이력을 함께 삭제합니다. 복구되지 않습니다.</li>
         </ul>
       </div>
@@ -597,7 +607,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
         <li>공정 마스터(업무 내용·결과물·담당·되돌림 경로)는 DB의 mm_master 테이블에 있습니다. 공정 문구를 바꾸려면 이 테이블을 수정하세요.</li>
         <li>[게시판] 탭에서 개선·수정 요청사항을 등록하고 접수/완료 상태를 눌러 전환할 수 있습니다.</li>
         <li>[제작계획] 탭에서 공정별 계획 시작·완료일을 입력해 금형제작 계획을 수립하고, 실적과 대비합니다. 계획완료일 경과 미완료 공정은 지연 표시되며 엑셀 출력을 지원합니다.</li>
-        <li>[Tryout] 탭에서 차수(1차~양산전)·상태·작업/이슈/계획·사진을 일지로 기록하고, 기간·금형·차수·상태로 필터 조회합니다.</li>
+        <li>[Tryout] 탭에서 차수(1차~양산전)·상태·작업/이슈/계획·사진을 일지로 기록하고, 기간·금형·차수·상태로 필터 조회합니다. 조회 결과는 <b>엑셀(CSV)</b>과 <b>PDF(인쇄)</b>로 출력할 수 있으며, 각 일지의 [수정] 버튼으로 내용과 사진을 다시 편집할 수 있습니다.</li>
         <li>[이력] 탭 상단에서 기간·금형·구분으로 필터 조회하고, 조회 결과를 엑셀(CSV)로 출력할 수 있습니다. 각 행의 ✕로 개별 삭제도 가능합니다.</li>
         <li>프로그램 진입 시 PIN 4자리로 로그인합니다. 사원 PIN은 [설정] 탭(마스터 비밀번호 필요)에서 등록·삭제하며, 로그인한 사용자 이름이 작업자·작성자에 자동 기록됩니다.</li>
         <li>데이터는 Supabase에 저장되며 여러 PC에서 같은 현황을 공유합니다.</li>
@@ -630,7 +640,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
 <!-- 하단 네비게이션 -->
 <div class="bnav" id="bnav">
   <button data-v="dash" class="on" onclick="go('dash')"><span class="bi">🏠</span>홈</button>
-  <button data-v="flow" onclick="go('flow')"><span class="bi">⚙️</span>공정</button>
+  <button data-v="flow" onclick="go('flow')"><span class="bi">📊</span>진행현황</button>
   <button data-v="new" class="bmain" onclick="go('new')"><span class="bi">＋</span>등록</button>
   <button data-v="tryout" onclick="go('tryout')"><span class="bi">🔧</span>Tryout</button>
   <button data-v="__menu" onclick="openMenu()"><span class="bi">☰</span>메뉴</button>
@@ -643,7 +653,7 @@ h1.pt em{font-style:normal;color:var(--blue)}
     <div class="msgrid">
       <button onclick="go('dash')"><span>🏠</span>대시보드</button>
       <button onclick="go('new')"><span>＋</span>신규 등록</button>
-      <button onclick="go('flow')"><span>⚙️</span>공정 진행</button>
+      <button onclick="go('flow')"><span>📊</span>진행현황</button>
       <button onclick="go('plan')"><span>📅</span>제작계획</button>
       <button onclick="go('hist')"><span>📜</span>이력</button>
       <button onclick="go('board')"><span>📋</span>게시판</button>
@@ -739,7 +749,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'대시보드',new:'신규 등록',flow:'공정 진행',plan:'제작계획',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'대시보드',new:'신규 등록',flow:'진행현황',plan:'제작계획',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
 function go(v){
   closeMenu();
   document.querySelectorAll('.bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
@@ -1214,23 +1224,114 @@ function renderTP(){
     `<div class="tp"><img src="${d}" onclick="viewImg('${i}')"><button onclick="TPHOTOS.splice(${i},1);renderTP()">✕</button></div>`).join('');
 }
 function viewImg(i){const w=window.open('');w.document.write('<img src="'+TPHOTOS[i]+'" style="max-width:100%">')}
+let TEDIT=null, TROWS=[];
+async function editTryout(id){
+  const [r]=await api("/mm_tryout?select=*&id=eq."+id);
+  if(!r)return;
+  TEDIT=id;
+  document.getElementById('t-date').value=r.log_date;
+  document.getElementById('t-proj').value=r.project_id;
+  ['t-stage','t-status'].forEach(gid=>document.querySelectorAll('#'+gid+' button').forEach(b=>b.classList.remove('on')));
+  const sb=document.querySelector(`#t-stage button[data-v="${r.stage}"]`);if(sb)sb.classList.add('on');
+  const tb=document.querySelector(`#t-status button[data-v="${r.status}"]`);if(tb)tb.classList.add('on');
+  document.getElementById('t-work').value=r.work_done||'';
+  document.getElementById('t-issue').value=r.issues||'';
+  document.getElementById('t-plan').value=r.next_plan||'';
+  document.getElementById('t-author').value=r.author||'';
+  TPHOTOS=(r.photos||[]).slice();renderTP();
+  document.getElementById('t-savebtn').textContent='수정 저장';
+  document.getElementById('t-cancel').style.display='';
+  document.getElementById('t-editmsg').textContent='수정 중 ('+r.log_date+')';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelEdit(){
+  TEDIT=null;
+  ['t-work','t-issue','t-plan'].forEach(x=>document.getElementById(x).value='');
+  document.querySelectorAll('#t-stage button.on,#t-status button.on').forEach(b=>b.classList.remove('on'));
+  TPHOTOS=[];renderTP();
+  document.getElementById('t-savebtn').textContent='일지 저장';
+  document.getElementById('t-cancel').style.display='none';
+  document.getElementById('t-editmsg').textContent='';
+}
+function exportTryoutCSV(){
+  if(!TROWS.length)return toast('출력할 일지가 없습니다');
+  const head=['작업일','금형번호','금형명','차수','상태','작업내용','이슈사항','다음계획','작성자','사진'];
+  const rows=TROWS.map(r=>[r.log_date,r.mm_project?r.mm_project.mold_no:'',r.mm_project?r.mm_project.mold_name:'',
+    r.stage,r.status,r.work_done||'',r.issues||'',r.next_plan||'',r.author||'',(r.photos||[]).length+'장']);
+  const csv=[['Tryout 작업일지'],head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='Tryout일지_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
+}
+function exportTryoutPDF(){
+  if(!TROWS.length)return toast('출력할 일지가 없습니다');
+  const f=g('t-from'),t=g('t-to');
+  const period=(f||t)?`${f||'~'} ~ ${t||'~'}`:'전체 기간';
+  const body=TROWS.map(r=>`
+    <div class="rp">
+      <div class="rh">
+        <span class="rd">${r.log_date}</span>
+        <b>${esc(r.mm_project?r.mm_project.mold_no+' — '+r.mm_project.mold_name:'')}</b>
+        <span class="rt">${esc(r.stage)} / ${esc(r.status)}</span>
+        <span class="ra">작성자: ${esc(r.author||'')}</span>
+      </div>
+      <table>
+        <tr><th>작업 내용</th><td>${esc(r.work_done||'-').replace(/\n/g,'<br>')}</td></tr>
+        <tr><th>이슈 사항</th><td>${esc(r.issues||'-').replace(/\n/g,'<br>')}</td></tr>
+        <tr><th>다음 계획</th><td>${esc(r.next_plan||'-').replace(/\n/g,'<br>')}</td></tr>
+      </table>
+      ${(r.photos&&r.photos.length)?`<div class="rimgs">${r.photos.map(p=>`<img src="${p}">`).join('')}</div>`:''}
+    </div>`).join('');
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>Tryout 작업일지</title>
+  <style>
+    @page{size:A4;margin:14mm}
+    body{font-family:'Malgun Gothic','Noto Sans KR',sans-serif;color:#232a35;font-size:11px}
+    h1{font-size:19px;text-align:center;margin:0 0 4px;letter-spacing:2px}
+    .sub{text-align:center;font-size:11px;color:#777;margin-bottom:14px;border-bottom:2px solid #16233c;padding-bottom:8px}
+    .rp{border:1px solid #ccc;border-radius:5px;padding:9px 11px;margin-bottom:9px;page-break-inside:avoid}
+    .rh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:7px;font-size:11.5px}
+    .rd{background:#fdf3cd;border:1px solid #e2cd7e;padding:1px 8px;border-radius:4px;font-weight:700}
+    .rt{background:#eef2f8;padding:1px 8px;border-radius:4px}
+    .ra{margin-left:auto;color:#777}
+    table{width:100%;border-collapse:collapse}
+    th{width:70px;background:#f4f6fa;border:1px solid #ddd;padding:4px 7px;text-align:left;font-size:10.5px;color:#555;vertical-align:top}
+    td{border:1px solid #ddd;padding:4px 8px;line-height:1.55}
+    .rimgs{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+    .rimgs img{width:150px;height:110px;object-fit:cover;border:1px solid #ddd;border-radius:4px}
+    .ft{margin-top:14px;text-align:right;font-size:10px;color:#999}
+    @media print{.noprint{display:none}}
+  </style></head><body>
+  <h1>Tryout 작업일지</h1>
+  <div class="sub">기간: ${period} &nbsp;|&nbsp; 총 ${TROWS.length}건 &nbsp;|&nbsp; 출력: ${new Date().toLocaleString('ko-KR')} (${USER||''})</div>
+  ${body}
+  <div class="ft">금형제작관리 시스템</div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(!w)return toast('팝업이 차단되었습니다. 허용 후 다시 시도하세요');
+  w.document.write(html);w.document.close();
+}
+
 async function saveTryout(){
   const pid=document.getElementById('t-proj').value;
   const stage=chipVal('t-stage'),status=chipVal('t-status');
   if(!pid)return toast('금형을 선택하세요');
   if(!stage)return toast('차수를 선택하세요');
   if(!status)return toast('상태를 선택하세요');
-  await api("/mm_tryout",{method:"POST",body:JSON.stringify({
-    project_id:pid,log_date:g('t-date'),stage,status,
+  const body={project_id:pid,log_date:g('t-date'),stage,status,
     work_done:g('t-work')||null,issues:g('t-issue')||null,next_plan:g('t-plan')||null,
-    author:g('t-author')||null,photos:TPHOTOS})});
-  const sel=document.getElementById('t-proj');
+    author:g('t-author')||null,photos:TPHOTOS};
   CURPROJ=pid;
-  await hist(null,'Tryout','Tryout '+stage+' ['+status+'] '+(g('t-work')||'').slice(0,40),g('t-author')||null);
-  ['t-work','t-issue','t-plan'].forEach(x=>document.getElementById(x).value='');
-  document.querySelectorAll('#t-stage button.on,#t-status button.on').forEach(b=>b.classList.remove('on'));
-  TPHOTOS=[];renderTP();
-  toast('Tryout 일지 저장 완료');loadTryout();
+  if(TEDIT){
+    await api(`/mm_tryout?id=eq.${TEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
+    await hist(null,'Tryout','Tryout '+stage+' ['+status+'] 수정',g('t-author')||null);
+    toast('Tryout 일지 수정 완료');
+  }else{
+    await api("/mm_tryout",{method:"POST",body:JSON.stringify(body)});
+    await hist(null,'Tryout','Tryout '+stage+' ['+status+'] '+(g('t-work')||'').slice(0,40),g('t-author')||null);
+    toast('Tryout 일지 저장 완료');
+  }
+  cancelEdit();loadTryout();
 }
 async function loadTryout(){
   let q="/mm_tryout?select=*,mm_project(mold_no,mold_name)&order=log_date.desc,created_at.desc&limit=100";
@@ -1244,6 +1345,7 @@ async function loadTryout(){
   if(sv)q+="&stage=eq."+encodeURIComponent(sv);
   if(stv)q+="&status=eq."+encodeURIComponent(stv);
   const rows=await api(q);
+  TROWS=rows;
   document.getElementById('t-count').textContent=rows.length+'건';
   const sc={완료:'ok',진행중:'run',이슈:'issue',보류:'hold'};
   document.getElementById('tlist').innerHTML=rows.map(r=>`<div class="tcard">
@@ -1253,6 +1355,7 @@ async function loadTryout(){
       <span class="tstage">${esc(r.stage)}</span>
       <span class="tst ${sc[r.status]||''}">${esc(r.status)}</span>
       <span class="bmeta">${esc(r.author||'')}</span>
+      <button class="tedit" onclick="editTryout(${r.id})">수정</button>
       <button class="del" onclick="delTryout(${r.id})">✕</button>
     </div>
     ${r.work_done?`<div class="trow"><b>작업</b>${esc(r.work_done)}</div>`:''}
