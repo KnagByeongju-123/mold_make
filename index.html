@@ -190,6 +190,16 @@ h2.pt{font-size:25px;font-weight:900;letter-spacing:-.6px;margin:6px 0 6px}
 .dtab{flex-shrink:0;font-size:12.5px;font-weight:800;padding:8px 14px;border-radius:18px;background:var(--card);border:1.5px solid var(--line);color:var(--sub);cursor:pointer;white-space:nowrap;touch-action:manipulation}
 .dtab.on{background:rgba(226,176,74,.14);border-color:rgba(226,176,74,.55);color:var(--gold)}
 .dnav{display:flex;gap:8px;margin-top:4px}
+/* 스타터 미리보기 팝업 */
+.stprev{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;flex-direction:column;padding:14px}
+.stprev.on{display:flex}
+.stprev .win{flex:1;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;max-width:520px;width:100%;margin:0 auto}
+.stprev .hd2{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.stprev .hd2 .t{flex:1;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stprev .hd2 button{flex-shrink:0;font-size:12px;font-weight:800;padding:8px 13px;border-radius:9px;cursor:pointer;font-family:inherit;touch-action:manipulation}
+.stprev .dl{border:none;background:var(--gold);color:#241a05}
+.stprev .cl{border:1.5px solid var(--line);background:none;color:var(--sub)}
+.stprev iframe{flex:1;width:100%;border:none;background:#fff}
 .dsec{margin-bottom:30px}
 .dsec .dh{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
 .dsec .no{font-size:12px;font-weight:800;color:var(--gold);background:rgba(226,176,74,.13);
@@ -1668,6 +1678,17 @@ footer{text-align:center;padding:30px 0 40px;font-size:11px;color:rgba(255,255,2
     <button class="copy-btn" onclick="copySel()">복사</button>
   </div>
 </div>
+<div class="stprev" id="st-prev">
+  <div class="win">
+    <div class="hd2">
+      <span class="t" id="st-prev-t">미리보기</span>
+      <button class="dl" onclick="stPrevDl()">⬇ 다운로드</button>
+      <button class="cl" onclick="stPrevClose()">닫기</button>
+    </div>
+    <iframe id="st-prev-frame"></iframe>
+  </div>
+</div>
+
 <div class="toast" id="toast">요청서가 복사되었습니다</div>
 
 <script>
@@ -2609,7 +2630,30 @@ function stRun(i){
   if(!d) return;
   document.getElementById('st-pick').style.display = 'none';
   if(window._stMode === 'prompt') stCopyPrompt(d);
-  else stDownloadHtml(d);
+  else stPreview(d);
+}
+
+/* 미리보기 팝업 */
+function stPreview(d){
+  window._stHtml = stBuildHtml(d);
+  window._stName = (d.company ? d.company.replace(/[\\/:*?"<>| ]/g,'_') : 'starter') + '_index.html';
+  document.getElementById('st-prev-t').textContent = (d.company || '스타터') + ' · ' + stDesignStr(d) + ' 미리보기';
+  document.getElementById('st-prev-frame').srcdoc = window._stHtml;
+  document.getElementById('st-prev').classList.add('on');
+}
+function stPrevClose(){
+  document.getElementById('st-prev').classList.remove('on');
+  document.getElementById('st-prev-frame').srcdoc = '';
+}
+function stPrevDl(){
+  if(!window._stHtml) return;
+  const blob = new Blob([window._stHtml], { type:'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = window._stName || 'starter_index.html';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast('스타터 index.html이 다운로드되었습니다');
 }
 
 /* --- Claude 개발 지시문 --- */
