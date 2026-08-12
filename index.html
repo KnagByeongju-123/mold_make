@@ -190,6 +190,9 @@ h2.pt{font-size:25px;font-weight:900;letter-spacing:-.6px;margin:6px 0 6px}
 .dtab{flex-shrink:0;font-size:12.5px;font-weight:800;padding:8px 14px;border-radius:18px;background:var(--card);border:1.5px solid var(--line);color:var(--sub);cursor:pointer;white-space:nowrap;touch-action:manipulation}
 .dtab.on{background:rgba(226,176,74,.14);border-color:rgba(226,176,74,.55);color:var(--gold)}
 .dnav{display:flex;gap:8px;margin-top:4px}
+.pal2{display:flex;height:58px;border-radius:10px;overflow:hidden;margin-bottom:8px;border:1px solid rgba(0,0,0,.35);position:relative}
+.pal2 i{flex:1}
+.pal2 .lab{position:absolute;left:8px;bottom:6px;font-size:10px;font-weight:800;padding:2px 8px;border-radius:8px;background:rgba(0,0,0,.6);color:#fff}
 /* 스타터 미리보기 팝업 */
 .stprev{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;flex-direction:column;padding:14px}
 .stprev.on{display:flex}
@@ -738,122 +741,67 @@ footer{text-align:center;padding:30px 0 40px;font-size:11px;color:rgba(255,255,2
   <!-- ---------- 1. 색상 테마 ---------- -->
   <div class="dsec" data-dtab="2">
     <div class="dh"><span class="no">3-1</span><h3>디자인 · 색상 테마</h3></div>
-    <div class="dd">같은 화면 구성을 각 테마로 렌더링한 샘플</div>
+    <div class="dd">디자인별 색상표에서 원하는 분위기를 선택하세요 (실제 적용 모습은 스타터 미리보기로 확인 가능)</div>
     <div class="dgrid" data-g="T">
 
       <div class="opt" data-c="T1" data-n="다크 그래파이트 (블루+앰버)">
-        <div class="ph" style="--b:#0e141c;--c:#18222e;--ln:#293747;--tx:#e9eff5;--sb:#aabccd;--p:#4d94dd;--a:#f2a03c;--hd:linear-gradient(135deg,#0a111b,#15263c)">
-          <div class="hd"><span class="tt">자재관리</span><span class="bd">v1.0</span></div>
-          <div class="bd2">
-            <div class="mstats">
-              <div class="mstat"><div class="v">128</div><div class="k">전체 재고</div></div>
-              <div class="mstat am"><div class="v">7</div><div class="k">검사 대기</div></div>
-            </div>
-            <div class="lcard"><div class="r1"><span class="t">M40556 · SUS316L</span><span class="tag">진행</span></div><div class="mbar"><i></i></div></div>
-            <div class="lcard"><div class="r1"><span class="t">M40312 · Inconel</span><span class="tag p">완료</span></div><div class="mbar"><i style="width:100%"></i></div></div>
-            <div class="btnrow"><span class="pbtn">등록</span><span class="obtn">조회</span></div>
-          </div>
-          <div class="nv"><span class="it on"><b></b>홈</span><span class="it"><b></b>재고</span><span class="it"><b></b>출하</span><span class="it"><b></b>메뉴</span></div>
-        </div>
+        <div class="pal2"><i style="background:#0e141c"></i><i style="background:#18222e"></i><i style="background:#4d94dd"></i><i style="background:#f2a03c"></i><i style="background:#43c184"></i><span class="lab">다크 · 블루+앰버</span></div>
         <div class="code">T1</div><div class="nm">다크 그래파이트</div>
         <div class="ds">차콜 배경 + 블루 메인 + 앰버 포인트. 공장·현장 시스템</div>
       </div>
 
       <div class="opt" data-c="T2" data-n="네이비 글래스 (시안+퍼플)">
-        <div class="ph" style="--b:#0b1220;--c:rgba(30,41,59,.75);--ln:rgba(56,189,248,.2);--tx:#e2e8f0;--sb:#8ea3bf;--p:#38bdf8;--a:#a78bfa;--pb:#062033;--hd:rgba(15,23,42,.85)">
-          <div style="position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,rgba(56,189,248,.14),transparent 45%),radial-gradient(circle at 100% 100%,rgba(139,92,246,.14),transparent 45%)"></div>
-          <div class="hd" style="position:relative"><span class="tt" style="background:linear-gradient(135deg,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">스마트팩토리</span><span class="bd">v2.0</span></div>
-          <div class="bd2" style="position:relative">
-            <div class="mstats">
-              <div class="mstat"><div class="v">96%</div><div class="k">가동률</div></div>
-              <div class="mstat am"><div class="v">3</div><div class="k">경보</div></div>
-            </div>
-            <div class="lcard"><div class="r1"><span class="t">1라인 · 프레스</span><span class="tag p">가동</span></div><div class="mbar"><i></i></div></div>
-            <div class="lcard"><div class="r1"><span class="t">2라인 · 조립</span><span class="tag">점검</span></div><div class="mbar"><i style="width:35%;background:var(--a)"></i></div></div>
-            <div class="btnrow"><span class="pbtn">현황</span><span class="obtn">이력</span></div>
-          </div>
-          <div class="nv" style="position:relative"><span class="it on"><b></b>홈</span><span class="it"><b></b>설비</span><span class="it"><b></b>점검</span><span class="it"><b></b>설정</span></div>
-        </div>
+        <div class="pal2"><i style="background:#0b1220"></i><i style="background:#1e293b"></i><i style="background:#38bdf8"></i><i style="background:#a78bfa"></i><i style="background:#60a5fa"></i><span class="lab">다크 · 시안+퍼플</span></div>
         <div class="code">T2</div><div class="nm">네이비 글래스</div>
         <div class="ds">블러·글로우 배경 + 시안→퍼플 그라디언트 타이틀</div>
       </div>
 
       <div class="opt sel" data-c="T3" data-n="다크 골드 시머">
-        <div class="ph" style="--b:#0f1117;--c:#1a1d27;--ln:#2a2e3d;--tx:#e8eaf0;--sb:#8b8fa3;--p:#e2b04a;--a:#4f8cff;--pb:#241a05;--hd:linear-gradient(180deg,#181b26,#0f1117)">
-          <div class="hd"><span class="tt" style="background:linear-gradient(135deg,#f6d365,#e2b04a,#fda085);-webkit-background-clip:text;-webkit-text-fill-color:transparent">ESG 점검관리</span><span class="bd">v3.5</span></div>
-          <div class="bd2">
-            <div class="mstats">
-              <div class="mstat"><div class="v">42</div><div class="k">점검 완료</div></div>
-              <div class="mstat am"><div class="v">5</div><div class="k">미조치</div></div>
-            </div>
-            <div class="lcard"><div class="r1"><span class="t">환경 · 폐수처리</span><span class="tag" style="background:rgba(226,176,74,.16);color:#e2b04a">점검중</span></div><div class="mbar"><i></i></div></div>
-            <div class="lcard"><div class="r1"><span class="t">안전 · 소방설비</span><span class="tag p">완료</span></div><div class="mbar"><i style="width:100%;background:var(--a)"></i></div></div>
-            <div class="btnrow"><span class="pbtn">점검 시작</span><span class="obtn">보고서</span></div>
-          </div>
-          <div class="nv"><span class="it on"><b></b>홈</span><span class="it"><b></b>점검</span><span class="it"><b></b>통계</span><span class="it"><b></b>설정</span></div>
-        </div>
+        <div class="pal2"><i style="background:#0f1117"></i><i style="background:#1a1d27"></i><i style="background:#e2b04a"></i><i style="background:#f6d365"></i><i style="background:#4f8cff"></i><span class="lab">다크 · 골드</span></div>
         <div class="code">T3</div><div class="nm">다크 골드 시머</div>
-        <div class="ds">골드 그라디언트 타이틀(시머 애니메이션). 고급·감사 대응</div>
+        <div class="ds">골드 그라디언트 타이틀(시머). 고급·감사 대응</div>
       </div>
 
       <div class="opt" data-c="T4" data-n="라이트 네이비+옐로">
-        <div class="ph" style="--b:#f2f4f8;--c:#ffffff;--ln:#dde3ec;--tx:#232a35;--sb:#8a93a3;--p:#2563c9;--a:#e07b1f;--hd:#16233c">
-          <div class="hd"><span class="tt" style="color:#fff">금형제작관리</span><span class="bd" style="background:rgba(245,197,24,.15);color:#f5c518;border-color:#6b5d2a">담당자</span></div>
-          <div class="bd2">
-            <div class="mstats">
-              <div class="mstat"><div class="v">12</div><div class="k">진행중</div></div>
-              <div class="mstat"><div class="v" style="color:#1e9e5a">8</div><div class="k">완료</div></div>
-            </div>
-            <div class="lcard"><div class="r1"><span class="t">M-2601 · 도어패널</span><span class="tag">가공</span></div><div class="mbar"><i></i></div></div>
-            <div class="lcard"><div class="r1"><span class="t">M-2602 · 브라켓</span><span class="tag p">설계</span></div><div class="mbar"><i style="width:25%"></i></div></div>
-            <div class="btnrow"><span class="pbtn">＋등록</span><span class="obtn">PDF</span></div>
-          </div>
-          <div class="nv" style="--nvbg:#ffffff;--sb:#8a93a3"><span class="it on"><b></b>홈</span><span class="it"><b></b>진행</span><span class="it"><b></b>등록</span><span class="it"><b></b>메뉴</span></div>
-        </div>
+        <div class="pal2"><i style="background:#f2f4f8"></i><i style="background:#ffffff"></i><i style="background:#16233c"></i><i style="background:#f5c518"></i><i style="background:#2563c9"></i><span class="lab">라이트 · 네이비+옐로</span></div>
         <div class="code">T4</div><div class="nm">라이트 네이비+옐로</div>
         <div class="ds">밝은 배경 + 네이비 헤더. 문서·출력·결재 중심 업무</div>
       </div>
 
       <div class="opt" data-c="T5" data-n="다크 그린+골드">
-        <div class="ph" style="--b:#0F1512;--c:#18211C;--ln:#2A3830;--tx:#E9EDE8;--sb:#8FA096;--p:#3DDC84;--a:#D4AF5A;--pb:#07130C;--hd:linear-gradient(120deg,#03100A,#123D28,#0A2418)">
-          <div class="hd"><span class="tt" style="color:#fff">모임 관리</span><span class="bd" style="background:rgba(212,175,90,.15);color:#D4AF5A;border-color:rgba(212,175,90,.4)">회원</span></div>
-          <div class="bd2">
-            <div class="mstats">
-              <div class="mstat"><div class="v">24</div><div class="k">회원</div></div>
-              <div class="mstat am"><div class="v">9/12</div><div class="k">회비 납부</div></div>
-            </div>
-            <div class="lcard"><div class="r1"><span class="t">8월 정기모임</span><span class="tag">D-5</span></div><div class="mbar"><i></i></div></div>
-            <div class="lcard"><div class="r1"><span class="t">참석 신청</span><span class="tag p">18명</span></div><div class="mbar"><i style="width:75%"></i></div></div>
-            <div class="btnrow"><span class="pbtn">참석</span><span class="obtn">일정</span></div>
-          </div>
-          <div class="nv"><span class="it on"><b></b>홈</span><span class="it"><b></b>일정</span><span class="it"><b></b>회비</span><span class="it"><b></b>내정보</span></div>
-        </div>
+        <div class="pal2"><i style="background:#0F1512"></i><i style="background:#18211C"></i><i style="background:#3DDC84"></i><i style="background:#D4AF5A"></i><i style="background:#1E5238"></i><span class="lab">다크 · 그린+골드</span></div>
         <div class="code">T5</div><div class="nm">다크 그린+골드</div>
         <div class="ds">그린 액센트 + 골드 배지. 모임·클럽·커뮤니티</div>
       </div>
 
-      <div class="opt" data-c="T6" data-n="라이트 클린 화이트">
-        <div class="ph" style="--b:#ffffff;--c:#f8fafc;--ln:#e2e8f0;--tx:#0f172a;--sb:#64748b;--p:#3b82f6;--a:#22c55e;--hd:#ffffff">
-          <div class="hd"><span class="tt">업무 관리</span><span class="bd">일반</span></div>
-          <div class="bd2">
-            <div class="mstats">
-              <div class="mstat"><div class="v">36</div><div class="k">전체</div></div>
-              <div class="mstat am"><div class="v">4</div><div class="k">신규</div></div>
-            </div>
-            <div class="lcard"><div class="r1"><span class="t">문서 검토</span><span class="tag p">진행</span></div><div class="mbar"><i></i></div></div>
-            <div class="lcard"><div class="r1"><span class="t">보고서 제출</span><span class="tag">대기</span></div><div class="mbar"><i style="width:20%"></i></div></div>
-            <div class="btnrow"><span class="pbtn">등록</span><span class="obtn">조회</span></div>
-          </div>
-          <div class="nv" style="--nvbg:#ffffff"><span class="it on"><b></b>홈</span><span class="it"><b></b>목록</span><span class="it"><b></b>통계</span><span class="it"><b></b>설정</span></div>
-        </div>
+      <div class="opt" data-c="T6" data-n="라이트 클린">
+        <div class="pal2"><i style="background:#ffffff"></i><i style="background:#f8fafc"></i><i style="background:#3b82f6"></i><i style="background:#0f172a"></i><i style="background:#22c55e"></i><span class="lab">라이트 · 클린</span></div>
         <div class="code">T6</div><div class="nm">라이트 클린</div>
-        <div class="ds">순백 배경 + 블루 포인트. 밝은 사무 환경·문서 업무</div>
+        <div class="ds">흰 배경 + 파랑 포인트. 가장 무난한 표준 스타일</div>
+      </div>
+
+      <div class="opt" data-c="T7" data-n="다크 미니멀 모노">
+        <div class="pal2"><i style="background:#09090b"></i><i style="background:#18181b"></i><i style="background:#fafafa"></i><i style="background:#71717a"></i><i style="background:#27272a"></i><span class="lab">다크 · 모노</span></div>
+        <div class="code">T7</div><div class="nm">다크 미니멀 모노</div>
+        <div class="ds">무채색 흑백. 명도 대비로만 위계 표현, 절제된 느낌</div>
+      </div>
+
+      <div class="opt" data-c="T8" data-n="웜 베이지">
+        <div class="pal2"><i style="background:#faf6ef"></i><i style="background:#f0e9dd"></i><i style="background:#8b5e3c"></i><i style="background:#2d2a26"></i><i style="background:#a8875f"></i><span class="lab">라이트 · 웜톤</span></div>
+        <div class="code">T8</div><div class="nm">웜 베이지</div>
+        <div class="ds">따뜻한 종이 질감 + 브라운. 기록·일지·안내 페이지</div>
+      </div>
+
+      <div class="opt" data-c="T9" data-n="딥 퍼플 테크">
+        <div class="pal2"><i style="background:#0d0a1a"></i><i style="background:#191330"></i><i style="background:#8b5cf6"></i><i style="background:#ec4899"></i><i style="background:#22d3ee"></i><span class="lab">다크 · 네온</span></div>
+        <div class="code">T9</div><div class="nm">딥 퍼플 테크</div>
+        <div class="ds">퍼플+시안 네온. 대시보드·모니터링·데이터 화면</div>
       </div>
 
     </div>
   </div>
 
-  <!-- ---------- 2. 첫화면(인증) ---------- -->
+  <!-- ---------- ③-2 첫화면 ---------- -->
   <div class="dsec" data-dtab="2">
     <div class="dh"><span class="no">3-2</span><h3>디자인 · 첫화면 유형 (인증·진입)</h3></div>
     <div class="dd">앱 실행 직후 만나는 화면 (색상은 예시)</div>
@@ -904,17 +852,17 @@ footer{text-align:center;padding:30px 0 40px;font-size:11px;color:rgba(255,255,2
         <div class="ds">아이디+비밀번호 폼. 계정 단위 권한 관리 시 사용</div>
       </div>
 
-      <div class="opt sel" data-c="L4" data-n="인트로 스플래시 후 자동 진입">
+      <div class="opt sel" data-c="L4" data-n="인트로 스플래시 → 비밀번호 입력">
         <div class="ph" style="--b:#0f1117;--c:#1a1d27;--ln:#2a2e3d;--tx:#e8eaf0;--sb:#8b8fa3;--p:#e2b04a;--a:#f6d365">
           <div class="center" style="background:radial-gradient(circle at 50% 38%,rgba(226,176,74,.22),transparent 55%)">
             <div class="mlogo" style="width:38px;height:38px;font-size:16px;background:linear-gradient(135deg,#f6d365,#e2b04a)">S</div>
             <div class="lt2" style="font-size:12px">시스템 이름</div>
-            <div class="ls2">잠시 후 자동으로 시작됩니다</div>
+            <div class="ls2">스플래시 후 비밀번호 입력 화면</div>
             <div style="width:40%;height:3px;border-radius:2px;background:var(--ln);margin-top:6px;overflow:hidden"><i style="display:block;width:65%;height:100%;background:var(--p)"></i></div>
           </div>
         </div>
         <div class="code">L4</div><div class="nm">인트로 스플래시</div>
-        <div class="ds">로고·메인이미지 애니메이션 후 자동 진입 (인증 없음)</div>
+        <div class="ds">로고 애니메이션 후 비밀번호(PIN/입장) 화면 — 현재 페이지와 동일 방식</div>
       </div>
 
       <div class="opt" data-c="L5" data-n="게스트 열람형 (기능별 잠금)">
@@ -2599,7 +2547,7 @@ const ST_THEMES = {
   T8:{ n:'웜 베이지',       bg:'#faf6ef', card:'#ffffff', line:'#e8dfd0', ink:'#2d2a26', sub:'#8f8577', pt:'#8b5e3c', ac:'#b8860b', light:true },
   T9:{ n:'딥 퍼플 테크',    bg:'#0d0a1a', card:'#191330', line:'#2d2352', ink:'#ede9fe', sub:'#8b81b8', pt:'#8b5cf6', ac:'#22d3ee', light:false }
 };
-const ST_LOCK = { L1:'PIN 도트+원형 키패드', L2:'게이트 카드(이름+PIN)', L3:'ID/비밀번호 로그인', L4:'인트로 스플래시', L5:'게스트 열람형' };
+const ST_LOCK = { L1:'PIN 도트+원형 키패드', L2:'게이트 카드(이름+PIN)', L3:'ID/비밀번호 로그인', L4:'인트로 스플래시 → PIN 입력', L5:'게스트 열람형' };
 const ST_MAIN = { M1:'하단탭+중앙 FAB+바텀시트', M2:'하단 탭바 기본', M3:'상단 pill 탭', M4:'아코디언 리스트', M5:'햄버거 드로어', M6:'홈 그리드 런처', M7:'통계 대시보드+하단탭' };
 
 function stParseDesign(x){
@@ -2719,42 +2667,69 @@ function stBuildHtml(d){
     return '<div class="page" id="pg-m'+i+'"><h2>'+esc(k)+'</h2><div class="pd">'+esc(m ? m.d : '기능 준비 중')+'</div><div class="card"><b>스타터 골격</b><br>이 화면에 '+esc(k)+' 기능을 구현하세요.</div></div>';
   }).join('\n');
 
+  /* 설정 페이지 (마스터/일반 비밀번호 관리) */
+  const setPage = '<div class="page" id="pg-set"><h2>설정</h2><div class="pd">비밀번호 관리 — 마스터(관리자용)와 일반(사용자용)을 구분해 사용합니다.</div>'+
+    '<div class="card"><b>비밀번호 변경</b><br><br>'+
+    '<input class="tin" id="set-cur" type="password" inputmode="numeric" maxlength="4" placeholder="현재 마스터 비밀번호 (4자리)">'+
+    '<input class="tin" id="set-m" type="password" inputmode="numeric" maxlength="4" placeholder="새 마스터 비밀번호 (변경 시에만 입력)">'+
+    '<input class="tin" id="set-u" type="password" inputmode="numeric" maxlength="4" placeholder="일반 비밀번호 (설정/변경 시 입력)">'+
+    '<button class="btn" onclick="pinSave()">저장</button>'+
+    '<div style="font-size:11.5px;color:var(--sub);margin-top:10px">· 마스터: 관리자 진입 · 일반: 일반 사용자 진입<br>· 일반 비밀번호를 비워두면 기존 값이 유지됩니다</div></div></div>';
+
   /* 첫화면 */
+  const pinCore = [
+    "var MP = localStorage.getItem('pin_m') || '';",
+    "var UP = localStorage.getItem('pin_u') || '';",
+    "var setup = !MP, stage = 0, first = '', buf = '', role = '';",
+    "function lockMsg(t,d){ var a=document.getElementById('lk-t'), b=document.getElementById('lk-d'); if(a) a.textContent=t; if(b) b.textContent=d; }",
+    "if(setup){ lockMsg('마스터 비밀번호 설정','처음 실행입니다. 사용할 마스터 비밀번호 4자리를 입력하세요'); }",
+    "var kp=document.getElementById('kpad');",
+    "['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(function(k){ var b=document.createElement('div'); b.className='key'+(k?'':' blank'); b.textContent=k; b.onclick=function(){key(k)}; kp.appendChild(b); });",
+    "function key(k){ if(!k) return; if(k==='⌫'){ buf=buf.slice(0,-1); } else if(buf.length<4){ buf+=k; } paint(); if(buf.length===4){ setTimeout(judge,120); } }",
+    "function judge(){",
+    "  if(setup){",
+    "    if(stage===0){ first=buf; buf=''; stage=1; paint(); lockMsg('마스터 비밀번호 설정','확인을 위해 한 번 더 입력하세요'); }",
+    "    else { if(buf===first){ localStorage.setItem('pin_m', first); MP=first; setup=false; unlock('admin'); } else { buf=''; stage=0; paint(); lockMsg('마스터 비밀번호 설정','일치하지 않습니다 — 처음부터 다시 입력하세요'); } }",
+    "    return;",
+    "  }",
+    "  if(buf===MP){ unlock('admin'); }",
+    "  else if(UP && buf===UP){ unlock('user'); }",
+    "  else { buf=''; paint(); lockMsg('비밀번호 입력','비밀번호가 올바르지 않습니다'); }",
+    "}",
+    "function unlock(r){ role=r; var bd=document.getElementById('rolebd'); if(bd) bd.textContent = r==='admin' ? '관리자' : '일반'; document.getElementById('lock').classList.add('hide'); buf=''; paint(); }",
+    "function paint(){ var ds=document.querySelectorAll('#dots i'); for(var i=0;i<ds.length;i++){ ds[i].classList.toggle('f', i<buf.length); } }"
+  ].join('\n');
+  const pinLockHtml = '<div id="lock" class="lock"><div class="lt" id="lk-t">비밀번호 입력</div><div class="ls" id="lk-d">PIN 4자리를 입력하세요</div><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="kpad" id="kpad"></div></div>';
+
   let lockHtml = '', lockJs = '';
   if(p.L === 'L4'){
-    lockHtml = '<div id="lock" class="lock"><div class="logo">'+esc(co.charAt(0))+'</div><div class="lt">'+esc(co)+'</div><div class="ls">잠시 후 시작됩니다</div></div>';
-    lockJs = "setTimeout(function(){document.getElementById('lock').classList.add('hide')}, 2200);";
+    lockHtml = '<div id="splash" class="lock" style="z-index:110"><div class="logo">'+esc(co.charAt(0))+'</div><div class="lt">'+esc(co)+'</div><div class="ls">시스템을 준비하고 있습니다</div></div>' + pinLockHtml;
+    lockJs = "setTimeout(function(){document.getElementById('splash').classList.add('hide')}, 2200);\n" + pinCore;
   }else if(p.L === 'L5'){
-    lockHtml = ''; lockJs = '';
+    lockHtml = ''; lockJs = "var role='guest';";
   }else if(p.L === 'L3'){
     lockHtml = '<div id="lock" class="lock"><div class="logo">'+esc(co.charAt(0))+'</div><div class="lt">로그인</div><input class="tin" placeholder="아이디"><input class="tin" type="password" placeholder="비밀번호"><button class="btn" onclick="document.getElementById(&quot;lock&quot;).classList.add(&quot;hide&quot;)">로그인</button></div>';
-    lockJs = '';
+    lockJs = "var role='user';";
   }else{
-    lockHtml = '<div id="lock" class="lock"><div class="lt">'+esc(co)+'</div><div class="ls">PIN 4자리를 입력하세요 (기본 2580)</div><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="kpad" id="kpad"></div></div>';
-    lockJs = [
-      "var PIN='2580', buf='';",
-      "var kp=document.getElementById('kpad');",
-      "['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(function(k){ var b=document.createElement('div'); b.className='key'+(k?'':' blank'); b.textContent=k; b.onclick=function(){key(k)}; kp.appendChild(b); });",
-      "function key(k){ if(!k) return; if(k==='⌫'){ buf=buf.slice(0,-1); } else if(buf.length<4){ buf+=k; } paint(); if(buf.length===4){ if(buf===PIN){ document.getElementById('lock').classList.add('hide'); } else { buf=''; setTimeout(paint,250); } } }",
-      "function paint(){ var ds=document.querySelectorAll('#dots i'); for(var i=0;i<ds.length;i++){ ds[i].classList.toggle('f', i<buf.length); } }"
-    ].join('\n');
+    lockHtml = pinLockHtml;
+    lockJs = pinCore;
   }
 
   /* 메인 구조 */
-  const menuList = mods.map((k,i)=>'<div class="mi" onclick="go(&quot;m'+i+'&quot;)">'+esc(k)+'</div>').join('');
+  const menuList = mods.map((k,i)=>'<div class="mi" onclick="go(&quot;m'+i+'&quot;)">'+esc(k)+'</div>').join('') + '<div class="mi" onclick="go(&quot;set&quot;)">⚙ 설정</div>';
   const homeStats = '<div class="stats"><div class="stat"><div class="v">0</div><div class="k">오늘</div></div><div class="stat"><div class="v ac">0</div><div class="k">대기</div></div></div>';
   let navHtml = '', homeBody = homeStats, headerExtra = '', navJs = '';
 
   if(p.M === 'M3'){
-    navHtml = '<div class="ptabs"><span class="pt2 on" data-p="home" onclick="go(&quot;home&quot;)">홈</span>' + mods.map((k,i)=>'<span class="pt2" data-p="m'+i+'" onclick="go(&quot;m'+i+'&quot;)">'+esc(k)+'</span>').join('') + '</div>';
+    navHtml = '<div class="ptabs"><span class="pt2 on" data-p="home" onclick="go(&quot;home&quot;)">홈</span>' + mods.map((k,i)=>'<span class="pt2" data-p="m'+i+'" onclick="go(&quot;m'+i+'&quot;)">'+esc(k)+'</span>').join('') + '<span class="pt2" data-p="set" onclick="go(&quot;set&quot;)">⚙ 설정</span></div>';
   }else if(p.M === 'M4'){
-    homeBody = mods.map((k,i)=>'<div class="acc" onclick="go(&quot;m'+i+'&quot;)">'+esc(k)+'<span>›</span></div>').join('') || homeStats;
+    homeBody = (mods.map((k,i)=>'<div class="acc" onclick="go(&quot;m'+i+'&quot;)">'+esc(k)+'<span>›</span></div>').join('') || homeStats) + '<div class="acc" onclick="go(&quot;set&quot;)">⚙ 설정<span>›</span></div>';
   }else if(p.M === 'M5'){
     headerExtra = '<span class="ham" onclick="drw(true)">☰</span> ';
     navHtml = '<div id="drawer" class="drawer"><div class="mi" data-p="home" onclick="go(&quot;home&quot;)">🏠 대시보드</div>' + menuList + '</div><div id="dim" class="dim" onclick="drw(false)"></div>';
     navJs = "function drw(on){ document.getElementById('drawer').classList.toggle('on', on); document.getElementById('dim').classList.toggle('on', on); }";
   }else if(p.M === 'M6'){
-    homeBody = '<div class="grid2">' + mods.map((k,i)=>'<div class="tile" onclick="go(&quot;m'+i+'&quot;)"><b></b><span>'+esc(k)+'</span></div>').join('') + '</div>';
+    homeBody = '<div class="grid2">' + mods.map((k,i)=>'<div class="tile" onclick="go(&quot;m'+i+'&quot;)"><b></b><span>'+esc(k)+'</span></div>').join('') + '<div class="tile" onclick="go(&quot;set&quot;)"><b style="background:var(--sub)"></b><span>⚙ 설정</span></div></div>';
   }else{
     const navItems = mods.slice(0,2);
     const fab = p.M === 'M1' ? '<span class="fab" onclick="toast(&quot;등록 기능을 구현하세요&quot;)">＋</span>' : '';
@@ -2778,6 +2753,20 @@ function stBuildHtml(d){
     "  window.scrollTo(0,0);",
     "}",
     "var tmr; function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(tmr); tmr=setTimeout(function(){t.classList.remove('on')},1800); }",
+    "function pinSave(){",
+    "  var cur=document.getElementById('set-cur').value.trim();",
+    "  var nm=document.getElementById('set-m').value.trim();",
+    "  var nu=document.getElementById('set-u').value.trim();",
+    "  var mp=localStorage.getItem('pin_m')||'';",
+    "  if(!mp){ toast('먼저 첫 화면에서 마스터 비밀번호를 설정하세요'); return; }",
+    "  if(cur!==mp){ toast('현재 마스터 비밀번호가 올바르지 않습니다'); return; }",
+    "  if(nm && !/^[0-9]{4}$/.test(nm)){ toast('새 마스터 비밀번호는 숫자 4자리입니다'); return; }",
+    "  if(nu && !/^[0-9]{4}$/.test(nu)){ toast('일반 비밀번호는 숫자 4자리입니다'); return; }",
+    "  if(nm){ localStorage.setItem('pin_m', nm); if(typeof MP!=='undefined') MP=nm; }",
+    "  if(nu){ localStorage.setItem('pin_u', nu); if(typeof UP!=='undefined') UP=nu; }",
+    "  document.getElementById('set-cur').value=''; document.getElementById('set-m').value=''; document.getElementById('set-u').value='';",
+    "  toast('저장되었습니다' + (nm?' - 마스터 변경':'') + (nu?' - 일반 설정':''));",
+    "}",
     navJs, lockJs
   ].join('\n');
 
@@ -2795,6 +2784,7 @@ function stBuildHtml(d){
 '*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}',
 'body{font-family:Pretendard,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;padding-bottom:86px}',
 'header{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:14px 16px;font-size:17px;font-weight:800}',
+'.rbd{float:right;font-size:11px;font-weight:800;padding:3px 10px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--pt)}',
 '.ham{margin-right:8px;cursor:pointer}',
 '.gban{padding:7px 16px;font-size:11.5px;color:var(--sub);background:var(--card);border-bottom:1px solid var(--line)}',
 'main{max-width:760px;margin:0 auto;padding:16px 14px}',
@@ -2839,12 +2829,13 @@ function stBuildHtml(d){
 '</head>',
 '<body>',
 lockHtml,
-'<header>'+headerExtra+esc(co)+'</header>',
+'<header>'+headerExtra+esc(co)+'<span id="rolebd" class="rbd"></span></header>',
 guestBanner,
 (p.M === 'M3' ? navHtml : ''),
 '<main>',
 '<div class="page on" id="pg-home"><h2>홈</h2><div class="pd">'+esc(co)+' 스마트 시스템 · 디자인 '+stDesignStr(d)+'</div>'+homeBody+'</div>',
 modPages,
+setPage,
 '</main>',
 (p.M !== 'M3' ? navHtml : ''),
 '<div class="toast" id="toast"></div>',
