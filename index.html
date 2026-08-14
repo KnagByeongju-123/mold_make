@@ -70,9 +70,27 @@ main{max-width:1180px;margin:0 auto;padding:81px 16px 60px}
 .hide{display:none!important}
 
 /* 대시보드 */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 6px;text-align:center}
+.stat .k{font-size:11.5px;color:var(--sub);font-weight:600}
+.stat .v{font-size:24px;font-weight:900;line-height:1.1}
+.stat.s1 .v{color:var(--blue)}.stat.s2 .v{color:var(--green)}.stat.s3 .v{color:var(--red)}.stat.s4 .v{color:var(--gold)}
+
+.projcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.projcard:hover{border-color:var(--goldbd)}
+.projcard .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.projcard .no{font-weight:700;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);padding:2px 9px;border-radius:6px;font-size:12px}
+.projcard .nm{font-weight:700;font-size:16px}
+.projcard .cs{color:var(--sub);font-size:13px}
 .badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
 .b-run{background:rgba(240,160,75,.16);color:var(--out)}.b-done{background:rgba(126,224,160,.14);color:var(--green)}
 .b-hold{background:rgba(255,255,255,.07);color:var(--sub)}.b-ng{background:rgba(255,123,123,.14);color:var(--red)}
+.pbar{height:8px;background:var(--line2);border-radius:5px;margin-top:12px;overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:5px}
+.projcard .meta{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;color:var(--sub)}
+.projcard .cur{color:var(--gold);font-weight:700}
+.del{margin-left:auto;background:none;border:none;color:#5a6478;cursor:pointer;font-size:16px;padding:2px 6px}
+.del:hover{color:var(--red)}
 
 /* 등록 폼 */
 .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;max-width:560px}
@@ -375,6 +393,9 @@ section{animation:fadein .35s}
 .wempty{font-size:11.5px;color:var(--gray)}
 
 /* 모드 탭 */
+.modetab{display:flex;gap:6px;margin-bottom:13px}
+.modetab button{padding:9px 20px;border:1.5px solid #4a5268;background:var(--card2);border-radius:10px;font-size:13px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.modetab button.on{background:linear-gradient(160deg,var(--gold2),var(--gold));border-color:var(--gold);color:#241a05}
 
 /* 전체 현황판 매트릭스 */
 .mxlegend{display:flex;gap:15px;align-items:center;margin-bottom:10px;font-size:11.5px;color:var(--sub);flex-wrap:wrap}
@@ -391,24 +412,24 @@ section{animation:fadein .35s}
 .mxtbl thead th{background:var(--navy2);color:var(--gold);font-size:11px;font-weight:700;padding:8px 4px;position:sticky;top:0;z-index:3;text-align:center}
 .mxtbl th.opc{width:36px;min-width:36px;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
 .mxtbl th.stick{position:sticky;left:0;z-index:4;background:var(--navy2);min-width:134px;text-align:left;padding-left:12px}
-.mxtbl tbody th.stick{background:var(--card2);color:var(--ink);border-right:2px solid var(--line);padding:0;z-index:2;position:sticky;left:0}
-.mxtbl tbody th.stick{display:flex;align-items:center;gap:4px;padding:7px 6px 7px 12px}
-.mxname{flex:1;min-width:0;cursor:pointer}
-.mxname:hover b{text-decoration:underline}
-.del{background:none;border:none;color:#5a6274;font-size:15px;cursor:pointer;padding:2px 6px;border-radius:5px}
-.del:hover{color:var(--red);background:rgba(255,123,123,.12)}
-.mxdel{background:none;border:none;color:#5a6274;font-size:13px;cursor:pointer;padding:2px 5px;border-radius:5px;flex-shrink:0}
-.mxdel:hover{color:var(--red);background:rgba(255,123,123,.12)}
-
+.mxtbl tbody th.stick{background:var(--card2);color:var(--ink);border-right:2px solid var(--line);cursor:pointer;padding:8px 12px;z-index:2}
+.mxtbl tbody th.stick:hover{background:rgba(226,176,74,.1)}
 .mxtbl tbody th.stick b{display:block;font-size:12.5px;color:var(--gold)}
 .mxtbl tbody th.stick span{display:block;font-size:11px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:134px}
-.mxtbl td.cell{text-align:center;padding:7px 4px}
-
+.mxtbl td.cell{text-align:center;padding:7px 4px;cursor:pointer}
+.mxtbl td.cell:hover{background:rgba(226,176,74,.1)}
 .mxtbl td.cell.late{background:rgba(255,123,123,.12)}
 .mxtbl td.rate{position:relative;font-size:11px;font-weight:700;color:var(--sub);text-align:center;min-width:58px;padding:7px 6px 10px}
 .mxtbl td.rate i{position:absolute;left:6px;bottom:5px;height:3px;background:var(--blue);border-radius:2px}
 
 /* 셀 모달 */
+.cmold{font-size:13px;color:var(--sub);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin-bottom:13px}
+.cmold b{color:var(--gold)}
+.ctbl{width:100%;border:1px solid var(--line);border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden;margin-bottom:15px;background:var(--card2)}
+.ctbl th{width:80px;background:var(--navy2);font-size:11px;color:var(--sub);text-align:left;padding:7px 11px;border-bottom:1px solid var(--line2);font-weight:700}
+.ctbl td{font-size:12.5px;padding:6px 11px;border-bottom:1px solid var(--line2);color:var(--ink);background:var(--card2)}
+.ctbl tr:last-child th,.ctbl tr:last-child td{border-bottom:none}
+.ctbl input[type=date]{padding:5px 8px;border:1px solid #4a5268;border-radius:7px;font-size:12px;font-family:inherit;background:var(--card);color:var(--ink)}
 .csec{margin-bottom:15px}
 .csec h4{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:7px;letter-spacing:.5px}
 .csec li{list-style:none;font-size:12.5px;color:var(--sub);line-height:1.65;padding-left:13px;position:relative}
@@ -425,7 +446,9 @@ section{animation:fadein .35s}
   .mxtbl th.stick{min-width:110px}
   .mxtbl tbody th.stick span{max-width:110px}
   .mxtip{display:none}
-      .op{grid-template-columns:52px 1fr}
+  .stats{gap:6px}
+  .stat .v{font-size:21px}
+  .op{grid-template-columns:52px 1fr}
   .row2{grid-template-columns:1fr}
   .hstep{grid-template-columns:44px 1fr}
   .htbl td:first-child{width:auto}
@@ -463,7 +486,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 4.7</span>
+    <span class="rev">Rev 4.6</span>
   </div>
 </header>
 
@@ -490,26 +513,43 @@ section{animation:fadein .35s}
 <main>
   <!-- 대시보드 -->
   <section id="v-dash">
+    <div class="stats">
+      <div class="stat s1"><div class="v" id="st-run">0</div><div class="k">진행</div></div>
+      <div class="stat s2"><div class="v" id="st-done">0</div><div class="k">완료</div></div>
+      <div class="stat s3"><div class="v" id="st-ng">0</div><div class="k">NG</div></div>
+      <div class="stat s4"><div class="v" id="st-all">0</div><div class="k">전체</div></div>
+    </div>
     <h1 class="pt">전체진행현황</h1>
-    <div class="mxlegend">
-      <span><i class="cd c-w"></i>대기</span>
-      <span><i class="cd c-r">●</i>진행</span>
-      <span><i class="cd c-ok">✓</i>완료</span>
-      <span><i class="cd c-ng">✕</i>NG</span>
-      <span class="mxtip">금형명을 누르면 개별 상세로 이동</span>
-    </div>
-    <div class="tscroll mxscroll">
-      <table class="mxtbl" id="mxtbl"></table>
-    </div>
+    <div id="projlist"></div>
   </section>
 
   <!-- 진행현황 -->
   <section id="v-flow" class="hide">
-    <div class="psel">
-      <select id="flowsel" onchange="renderFlow()"></select>
-      <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
+    <div class="modetab">
+      <button id="mode-mx" class="on" onclick="setMode('mx')">전체 현황판</button>
+      <button id="mode-dt" onclick="setMode('dt')">개별 상세</button>
     </div>
-    <div id="flowboard"></div>
+
+    <div id="mxwrap">
+      <div class="mxlegend">
+        <span><i class="cd c-w"></i>대기</span>
+        <span><i class="cd c-r">●</i>진행</span>
+        <span><i class="cd c-ok">✓</i>완료</span>
+        <span><i class="cd c-ng">✕</i>NG</span>
+        <span class="mxtip">칸을 누르면 계획일·진행내용 확인 및 상태 전환</span>
+      </div>
+      <div class="tscroll mxscroll">
+        <table class="mxtbl" id="mxtbl"></table>
+      </div>
+    </div>
+
+    <div id="dtwrap" class="hide">
+      <div class="psel">
+        <select id="flowsel" onchange="renderFlow()"></select>
+        <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
+      </div>
+      <div id="flowboard"></div>
+    </div>
   </section>
 
   <!-- 제작계획 -->
@@ -710,7 +750,13 @@ section{animation:fadein .35s}
       <div class="hn mono">03</div>
       <div class="hb">
         <h3>진행현황 — 공정 상태 처리</h3>
-        <p>상단에서 금형을 선택하면 공정 카드가 순서대로 표시됩니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다. 출력물 체크리스트와 부품 관리도 이 화면에서 다룹니다.</p>
+        <p><b>전체 현황판</b>과 <b>개별 상세</b> 두 가지 방식이 있습니다.</p>
+        <ul>
+          <li><b>전체 현황판</b>: 세로 = 금형, 가로 = 공정(10~180)의 표로 모든 금형의 진행 상태를 한눈에 봅니다. <i class="cd c-w"></i>대기 · <i class="cd c-r">●</i>진행 · <i class="cd c-ok">✓</i>완료 · <i class="cd c-ng">✕</i>NG로 구분되며, 계획완료일이 지난 칸은 배경이 붉게 표시됩니다.</li>
+          <li>칸을 누르면 팝업에서 <b>계획 시작·완료일 입력</b>, 실적 일시, 업무 내용, 진행 메모를 확인하고 <b>진행 / 완료 / NG</b>로 상태를 전환합니다.</li>
+          <li>왼쪽 금형명을 누르면 해당 금형의 <b>개별 상세</b>로 이동합니다.</li>
+          <li><b>개별 상세</b>: 공정 카드가 순서대로 표시되며, 출력물 체크리스트와 부품 관리를 여기서 다룹니다.</li>
+        </ul>
         <table class="htbl">
           <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 시작 시각과 로그인 사용자가 기록됩니다.</td></tr>
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
@@ -782,13 +828,12 @@ section{animation:fadein .35s}
     <div class="hstep">
       <div class="hn mono">08</div>
       <div class="hb">
-        <h3>홈 — 전체진행현황</h3>
-        <p>세로 = 금형, 가로 = 공정(10~180)의 표로 모든 금형의 진행 상태를 한눈에 확인합니다. 보기 전용 화면이며 상태 변경은 진행현황에서 합니다.</p>
+        <h3>홈 — 전체진행현황 확인</h3>
+        <p>진행중 · 완료 · NG 누적 · 전체 금형 수와 금형별 진행률을 한 화면에서 확인합니다.</p>
         <ul>
-          <li>칸 표시: <i class="cd c-w"></i>대기 · <i class="cd c-r">●</i>진행 · <i class="cd c-ok">✓</i>완료 · <i class="cd c-ng">✕</i>NG. 계획완료일이 지난 칸은 배경이 붉게 표시되고, 칸에 손을 올리면 공정명·상태·계획일이 보입니다.</li>
-          <li>오른쪽 끝에 금형별 진행률이 표시됩니다.</li>
-          <li>왼쪽 <b>금형명</b>을 누르면 해당 금형의 진행현황(개별 상세)으로 이동합니다.</li>
-          <li>금형명 옆 <b>✕</b>는 금형과 그 공정 · 부품 · 출력물 · 이력을 함께 삭제합니다. 복구되지 않습니다.</li>
+          <li>진행률 바 아래에 현재 공정이 표시되며, NG가 있으면 NG 공정이 우선 표시됩니다.</li>
+          <li>카드를 누르면 해당 금형의 진행현황으로 이동합니다.</li>
+          <li>카드 우측 <b>✕</b>는 금형과 그 공정 · 부품 · 출력물 · 이력을 함께 삭제합니다. 복구되지 않습니다.</li>
         </ul>
       </div>
     </div>
@@ -857,6 +902,31 @@ section{animation:fadein .35s}
         <button class="cb" onclick="wizSkip()">건너뛰기</button>
         <button class="cb ok" onclick="wizSave()">저장</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="cellmodal" onclick="if(event.target===this)closeCell()">
+  <div class="mbox">
+    <div class="mhead">
+      <span class="mno mono" id="c-no"></span>
+      <span class="mtitle" id="c-title"></span>
+      <button class="mx" onclick="closeCell()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="cmold" id="c-mold"></div>
+      <table class="ctbl">
+        <tr><th>현재 상태</th><td id="c-status"></td></tr>
+        <tr><th>계획 시작</th><td><input type="date" id="c-ps" onchange="saveCellPlan('plan_start',this.value)"></td></tr>
+        <tr><th>계획 완료</th><td><input type="date" id="c-pe" onchange="saveCellPlan('plan_end',this.value)"></td></tr>
+        <tr><th>실적 시작</th><td id="c-as"></td></tr>
+        <tr><th>실적 완료</th><td id="c-ae"></td></tr>
+        <tr><th>작업자</th><td id="c-wk"></td></tr>
+      </table>
+      <div class="csec"><h4>업무 내용</h4><ul id="c-tasks"></ul></div>
+      <div class="csec"><h4>진행 메모</h4><textarea id="c-note" rows="2" placeholder="진행 내용을 입력하세요"></textarea>
+        <button class="btn hclr" style="padding:7px 15px;margin-top:7px" onclick="saveCellNote()">메모 저장</button></div>
+      <div class="cbtns" id="c-btns"></div>
     </div>
   </div>
 </div>
@@ -991,7 +1061,7 @@ function go(v,fromPop){
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
-  if(v==='flow')loadFlowSel();
+  if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
   if(v==='plan')loadPlanSel();
   if(v==='doc')loadDocSel();
   if(v==='hist')loadHist();
@@ -1001,7 +1071,47 @@ function go(v,fromPop){
 
 /* ---------- 로드 ---------- */
 async function loadMaster(){ MASTER=await api("/mm_master?select=*&order=seq"); }
-async function loadDash(){ await renderMatrix(); }
+async function loadDash(){
+  PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
+  PROCS=await api("/mm_process?select=project_id,op_code,status,ng_count");
+  const run=PROJECTS.filter(p=>p.status==='진행').length;
+  const done=PROJECTS.filter(p=>p.status==='완료').length;
+  const ng=PROCS.reduce((s,p)=>s+p.ng_count,0);
+  st('st-run',run);st('st-done',done);st('st-ng',ng);st('st-all',PROJECTS.length);
+  const box=document.getElementById('projlist');
+  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [신규 등록] 탭에서 등록하세요.</div>';return}
+  box.innerHTML=PROJECTS.map(p=>{
+    const ps=PROCS.filter(x=>x.project_id===p.id);
+    const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
+    const pct=Math.round(ok/tot*100);
+    const cur=curProc(ps);
+    const bcls=p.status==='완료'?'b-done':p.status==='보류'?'b-hold':'b-run';
+    return `<div class="projcard" onclick="openFlow('${p.id}')">
+      <div class="top">
+        <span class="no mono">${esc(p.mold_no)}</span>
+        <span class="nm">${esc(p.mold_name)}</span>
+        <span class="cs">${esc(p.customer||'')} ${p.product?'· '+esc(p.product):''}</span>
+        <span class="badge ${bcls}">${p.status}</span>
+        <button class="del" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')">✕</button>
+      </div>
+      <div class="pbar"><i style="width:${pct}%"></i></div>
+      <div class="meta">
+        <span>현재 공정: <span class="cur">${cur}</span></span>
+        <span>${ok}/${tot} 완료 (${pct}%) ${p.due_date?'· 납기 '+p.due_date:''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function curProc(ps){
+  const ngp=ps.find(x=>x.status==='NG');
+  if(ngp)return opN(ngp.op_code)+' '+mName(ngp.op_code)+' NG';
+  const runp=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='진행');
+  if(runp)return opN(runp.op_code)+' '+mName(runp.op_code);
+  const wait=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='대기');
+  if(wait)return opN(wait.op_code)+' '+mName(wait.op_code)+' 대기';
+  return ps.length?'전공정 완료':'-';
+}
+function opN(c){return (c||'').replace('OP','')}
 function mName(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name:''}
 function st(id,v){document.getElementById(id).textContent=v}
 function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -1026,13 +1136,21 @@ function g(id){return document.getElementById(id).value.trim()}
 async function delProject(id,no){
   if(!confirm(no+' 금형과 모든 공정/이력을 삭제할까요?'))return;
   await api("/mm_project?id=eq."+id,{method:"DELETE"});
-  toast('삭제 완료');renderMatrix();
+  toast('삭제 완료');loadDash();
 }
 
 /* ---------- 공정 보드 ---------- */
 let CURPROJ=null;
 /* ---------- 전체 현황판 (매트릭스) ---------- */
-let MXPJ=[],MXPS=[];
+let MXPJ=[],MXPS=[],CELL=null,FLOWMODE='mx';
+function setMode(m){
+  FLOWMODE=m;
+  document.getElementById('mode-mx').classList.toggle('on',m==='mx');
+  document.getElementById('mode-dt').classList.toggle('on',m==='dt');
+  document.getElementById('mxwrap').classList.toggle('hide',m!=='mx');
+  document.getElementById('dtwrap').classList.toggle('hide',m!=='dt');
+  if(m==='mx')renderMatrix(); else loadFlowSel();
+}
 async function renderMatrix(){
   const [pj,ps]=await Promise.all([
     api("/mm_project?select=id,mold_no,mold_name,status,due_date&order=created_at.desc"),
@@ -1053,22 +1171,79 @@ async function renderMatrix(){
       const late=pr.plan_end&&pr.status!=='OK'&&pr.plan_end<today;
       const cls={'대기':'c-w','진행':'c-r','OK':'c-ok','NG':'c-ng'}[pr.status]||'c-w';
       const mk={'대기':'','진행':'●','OK':'✓','NG':'✕'}[pr.status]||'';
-      const tip=`${opN(m.op_code)} ${m.process_name} · ${pr.status}${pr.plan_end?' · 계획 '+pr.plan_end:''}`;
-      return `<td class="cell${late?' late':''}" title="${esc(tip)}"><i class="cd ${cls}">${mk}</i></td>`;
+      return `<td class="cell${late?' late':''}" onclick="openCell('${p.id}','${m.op_code}')" title="${esc(m.process_name)} · ${pr.status}">
+        <i class="cd ${cls}">${mk}</i></td>`;
     }).join('');
     return `<tr>
-      <th class="stick">
-        <div class="mxname" onclick="openFlow('${p.id}')" title="개별 상세 보기">
-          <b>${esc(p.mold_no)}</b><span>${esc(p.mold_name)}</span>
-        </div>
-        <button class="mxdel" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')" title="금형 삭제">✕</button>
-      </th>
+      <th class="stick" onclick="openFlow('${p.id}')" title="상세 보기">
+        <b>${esc(p.mold_no)}</b><span>${esc(p.mold_name)}</span></th>
       ${cells}
       <td class="rate">${ok}/${mine.length}<i style="width:${Math.round(ok/(mine.length||1)*100)}%"></i></td>
     </tr>`;
   }).join('');
   t.innerHTML=head+'<tbody>'+body+'</tbody>';
 }
+function openCell(pid,op){
+  const p=MXPJ.find(x=>x.id===pid), m=MASTER.find(x=>x.op_code===op);
+  const pr=MXPS.find(x=>x.project_id===pid&&x.op_code===op);
+  if(!p||!m||!pr)return;
+  CELL={pid,op,pr};CURPROJ=pid;
+  document.getElementById('c-no').textContent=opN(op);
+  document.getElementById('c-title').textContent=m.process_name;
+  document.getElementById('c-mold').innerHTML=`<b>${esc(p.mold_no)}</b> ${esc(p.mold_name)}${p.due_date?' · 납기 '+p.due_date:''}`;
+  const stc={'대기':'st-w','진행':'st-r','OK':'st-ok','NG':'st-ng'}[pr.status];
+  document.getElementById('c-status').innerHTML=`<span class="st ${stc}">${pr.status}</span>${pr.ng_count?` <span class="ngc">NG ${pr.ng_count}회</span>`:''}`;
+  document.getElementById('c-ps').value=pr.plan_start||'';
+  document.getElementById('c-pe').value=pr.plan_end||'';
+  document.getElementById('c-as').textContent=pr.started_at?fmt(pr.started_at):'-';
+  document.getElementById('c-ae').textContent=pr.finished_at?fmt(pr.finished_at):'-';
+  document.getElementById('c-wk').textContent=pr.worker||'-';
+  document.getElementById('c-tasks').innerHTML=m.tasks.map(x=>`<li>${esc(x)}</li>`).join('');
+  document.getElementById('c-note').value=pr.note||'';
+  const b=[];
+  if(pr.status==='대기')b.push(`<button class="cb start" onclick="cellSet('진행')">진행으로 전환</button>`);
+  if(pr.status==='진행'||pr.status==='NG')b.push(`<button class="cb ok" onclick="cellSet('OK')">완료로 전환</button>`);
+  if(pr.status!=='NG'&&pr.status!=='대기')b.push(`<button class="cb ng" onclick="cellSet('NG')">NG 처리</button>`);
+  if(pr.status==='OK')b.push(`<button class="cb back" onclick="cellSet('진행')">진행으로 되돌리기</button>`);
+  document.getElementById('c-btns').innerHTML=b.join('');
+  document.getElementById('cellmodal').classList.add('show');
+  history.pushState({t:'ov'},'');
+}
+function anyOverlay(){
+  return document.getElementById('wizmodal').classList.contains('show')
+    ||document.getElementById('cellmodal').classList.contains('show')
+    ||document.getElementById('modal').classList.contains('show')
+    ||document.getElementById('drawer').classList.contains('on');
+}
+function closeAllOverlay(){
+  document.getElementById('wizmodal').classList.remove('show');WIZ=null;
+  document.getElementById('cellmodal').classList.remove('show');CELL=null;
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('drawer').classList.remove('on');
+  document.getElementById('dim').classList.remove('on');
+}
+function closeCell(){
+  if(history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('cellmodal').classList.remove('show');CELL=null;
+}
+async function saveCellPlan(field,val){
+  if(!CELL)return;
+  await api(`/mm_process?id=eq.${CELL.pr.id}`,{method:"PATCH",body:JSON.stringify({[field]:val||null})});
+  CELL.pr[field]=val||null;toast('계획일 저장');renderMatrix();
+}
+async function saveCellNote(){
+  if(!CELL)return;
+  const v=document.getElementById('c-note').value.trim();
+  await api(`/mm_process?id=eq.${CELL.pr.id}`,{method:"PATCH",body:JSON.stringify({note:v||null})});
+  CELL.pr.note=v;toast('메모 저장');
+}
+async function cellSet(next){
+  if(!CELL)return;
+  const {op,pr}=CELL;
+  await setStatus(pr.id,op,next,true);
+  closeCell();renderMatrix();
+}
+
 async function loadFlowSel(sel){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
   const s=document.getElementById('flowsel');
@@ -1076,7 +1251,7 @@ async function loadFlowSel(sel){
   if(sel)s.value=sel;
   renderFlow();
 }
-function openFlow(id){go('flow');loadFlowSel(id)}
+function openFlow(id){go('flow');setMode('dt');loadFlowSel(id)}
 async function renderFlow(){
   const pid=document.getElementById('flowsel').value;
   CURPROJ=pid;
@@ -1147,7 +1322,7 @@ window.addEventListener('popstate',e=>{
   if(st&&st.t==='view'){go(st.v,true);return}
   go('dash',true);
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOp();closeWizard();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOp();closeCell();closeWizard();}});
 
 let LASTHIST=[];
 async function delHist(id){
