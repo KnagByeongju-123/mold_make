@@ -494,7 +494,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 4.9</span>
+    <span class="rev">Rev 5.0</span>
   </div>
 </header>
 
@@ -567,10 +567,10 @@ section{animation:fadein .35s}
       <button class="btn wizbtn" onclick="startWizard()">📅 연속계획수립</button>
       <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportPlan()">엑셀 출력</button>
     </div>
-    <div class="hp" style="margin-bottom:12px">각 공정의 <b>완료일</b>만 눌러 달력에서 선택하면 계획이 세워집니다. 시작일은 이전 공정 완료일로 자동 연결됩니다. <b>연속계획수립</b>은 달력에서 10번 공정부터 차례로 날짜를 클릭하면 순서대로 일정이 잡힙니다. 계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시됩니다.</div>
+    <div class="hp" style="margin-bottom:12px">각 공정의 <b>완료일</b>만 눌러 달력에서 선택하면 계획이 세워집니다. 시작일은 이전 공정 완료일로 자동 연결되어 일수로 표시됩니다. <b>연속계획수립</b>은 달력에서 10번 공정부터 차례로 날짜를 클릭하면 순서대로 일정이 잡힙니다. 계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시됩니다.</div>
     <div class="tscroll">
       <table class="wide">
-        <thead><tr><th>공정</th><th>부서</th><th>계획 시작</th><th>계획 완료</th><th>일수</th><th>실적 완료</th><th>상태</th></tr></thead>
+        <thead><tr><th>공정</th><th>계획 완료</th><th>실적 완료</th><th>일수</th><th>상태</th><th>부서</th></tr></thead>
         <tbody id="planbody"></tbody>
       </table>
     </div>
@@ -1643,7 +1643,7 @@ async function loadDocSel(){
 async function renderDoc(){
   const pid=document.getElementById('docsel').value;
   const tb=document.getElementById('docbody');
-  if(!pid){tb.innerHTML='<tr><td colspan="7" class="empty">금형을 먼저 등록하세요</td></tr>';document.getElementById('docrate').textContent='';return}
+  if(!pid){tb.innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';document.getElementById('docrate').textContent='';return}
   const outs=await api("/mm_output?select=*&project_id=eq."+pid);
   DOCROWS=[];
   MASTER.forEach(m=>m.outputs.forEach(o=>{
@@ -1738,7 +1738,7 @@ async function loadPlanSel(){
 async function renderPlan(){
   const pid=document.getElementById('plansel').value;
   const tb=document.getElementById('planbody');
-  if(!pid){tb.innerHTML='<tr><td colspan="7" class="empty">금형을 먼저 등록하세요</td></tr>';return}
+  if(!pid){tb.innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';return}
   const ps=await api("/mm_process?select=*&project_id=eq."+pid);
   const today=new Date().toISOString().slice(0,10);
   PLANROWS=[];
@@ -1753,13 +1753,12 @@ async function renderPlan(){
     PLANROWS.push({m,pr,delayed,start,days});
     return `<tr class="${delayed?'late':''}">
       <td><b class="mono" style="color:var(--gold)">${opN(m.op_code)}</b>&nbsp;${esc(m.process_name)}</td>
-      <td>${m.dept}</td>
-      <td class="mono" style="color:var(--gray)">${start||'-'}</td>
-      <td><label class="dpick${pr.plan_end?' set':''}">${pr.plan_end||'날짜 선택'}
+      <td><label class="dpick${pr.plan_end?' set':''}" title="${start?'시작 '+start:''}">${pr.plan_end||'날짜 선택'}
         <input type="date" value="${pr.plan_end||''}" onchange="setPlan('${pr.id}','plan_end',this.value)"></label></td>
-      <td class="mono" style="color:var(--sub)">${days!==''?days+'일':'-'}</td>
       <td class="mono">${pr.finished_at?pr.finished_at.slice(0,10):'-'}</td>
+      <td class="mono" style="color:var(--sub)">${days!==''?days+'일':'-'}</td>
       <td><span class="st ${stc}">${pr.status}</span>${delayed?' <span class="ngc">지연</span>':''}</td>
+      <td style="color:var(--sub)">${m.dept}</td>
     </tr>`;
   }).join('');
 }
