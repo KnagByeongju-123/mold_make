@@ -343,7 +343,61 @@ h1.pt{font-size:19px;font-weight:900;margin-bottom:14px;letter-spacing:-.4px}
 h1.pt em{font-style:normal;color:var(--gold)}
 section{animation:fadein .35s}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 모드 탭 */
+.modetab{display:flex;gap:6px;margin-bottom:13px}
+.modetab button{padding:9px 20px;border:1.5px solid #4a5268;background:var(--card2);border-radius:10px;font-size:13px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.modetab button.on{background:linear-gradient(160deg,var(--gold2),var(--gold));border-color:var(--gold);color:#241a05}
+
+/* 전체 현황판 매트릭스 */
+.mxlegend{display:flex;gap:15px;align-items:center;margin-bottom:10px;font-size:11.5px;color:var(--sub);flex-wrap:wrap}
+.mxlegend span{display:flex;align-items:center;gap:5px}
+.mxtip{margin-left:auto;color:var(--gray);font-size:11px}
+.cd{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:900;line-height:1}
+.c-w{background:rgba(240,160,75,.12);border:1.5px solid rgba(240,160,75,.45)}
+.c-r{background:var(--out);color:#241a05;border:1.5px solid #f7b96c}
+.c-ok{background:var(--blue);color:#fff;border:1.5px solid #7fabff}
+.c-ng{background:var(--red);color:#3b1010;border:1.5px solid #ff9d9d}
+.mxscroll{background:var(--card)}
+.mxtbl{border-collapse:separate;border-spacing:0;background:var(--card);width:auto;min-width:100%;border:none}
+.mxtbl th,.mxtbl td{border-bottom:1px solid var(--line2);border-right:1px solid var(--line2)}
+.mxtbl thead th{background:var(--navy2);color:var(--gold);font-size:11px;font-weight:700;padding:8px 4px;position:sticky;top:0;z-index:3;text-align:center}
+.mxtbl th.opc{width:36px;min-width:36px;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+.mxtbl th.stick{position:sticky;left:0;z-index:4;background:var(--navy2);min-width:134px;text-align:left;padding-left:12px}
+.mxtbl tbody th.stick{background:var(--card2);color:var(--ink);border-right:2px solid var(--line);cursor:pointer;padding:8px 12px;z-index:2}
+.mxtbl tbody th.stick:hover{background:rgba(226,176,74,.1)}
+.mxtbl tbody th.stick b{display:block;font-size:12.5px;color:var(--gold)}
+.mxtbl tbody th.stick span{display:block;font-size:11px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:134px}
+.mxtbl td.cell{text-align:center;padding:7px 4px;cursor:pointer}
+.mxtbl td.cell:hover{background:rgba(226,176,74,.1)}
+.mxtbl td.cell.late{background:rgba(255,123,123,.12)}
+.mxtbl td.rate{position:relative;font-size:11px;font-weight:700;color:var(--sub);text-align:center;min-width:58px;padding:7px 6px 10px}
+.mxtbl td.rate i{position:absolute;left:6px;bottom:5px;height:3px;background:var(--blue);border-radius:2px}
+
+/* 셀 모달 */
+.cmold{font-size:13px;color:var(--sub);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin-bottom:13px}
+.cmold b{color:var(--gold)}
+.ctbl{width:100%;border:1px solid var(--line);border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden;margin-bottom:15px;background:var(--card2)}
+.ctbl th{width:80px;background:var(--navy2);font-size:11px;color:var(--sub);text-align:left;padding:7px 11px;border-bottom:1px solid var(--line2);font-weight:700}
+.ctbl td{font-size:12.5px;padding:6px 11px;border-bottom:1px solid var(--line2);color:var(--ink);background:var(--card2)}
+.ctbl tr:last-child th,.ctbl tr:last-child td{border-bottom:none}
+.ctbl input[type=date]{padding:5px 8px;border:1px solid #4a5268;border-radius:7px;font-size:12px;font-family:inherit;background:var(--card);color:var(--ink)}
+.csec{margin-bottom:15px}
+.csec h4{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:7px;letter-spacing:.5px}
+.csec li{list-style:none;font-size:12.5px;color:var(--sub);line-height:1.65;padding-left:13px;position:relative}
+.csec li::before{content:'–';position:absolute;left:0;color:var(--gray)}
+.csec textarea{width:100%;padding:9px 11px;border:1.5px solid #4a5268;border-radius:9px;font-size:13px;font-family:inherit;background:var(--card2);color:var(--ink)}
+.cbtns{display:flex;gap:7px;flex-wrap:wrap}
+.cb{flex:1;min-width:112px;padding:12px 0;border-radius:10px;border:1.5px solid var(--line);background:var(--card2);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
+.cb.start{color:var(--out);border-color:rgba(240,160,75,.5)}
+.cb.ok{background:var(--blue);border-color:var(--blue);color:#fff}
+.cb.ng{color:var(--red);border-color:rgba(255,123,123,.5)}
+.cb.back{color:var(--gray)}
+
 @media(max-width:760px){
+  .mxtbl th.stick{min-width:110px}
+  .mxtbl tbody th.stick span{max-width:110px}
+  .mxtip{display:none}
   .stats{gap:6px}
   .stat .v{font-size:21px}
   .op{grid-template-columns:52px 1fr}
@@ -385,7 +439,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 4.1</span>
+    <span class="rev">Rev 4.2</span>
   </div>
 </header>
 
@@ -422,13 +476,33 @@ section{animation:fadein .35s}
     <div id="projlist"></div>
   </section>
 
-  <!-- 공정 진행 -->
+  <!-- 진행현황 -->
   <section id="v-flow" class="hide">
-    <div class="psel">
-      <select id="flowsel" onchange="renderFlow()"></select>
-      <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
+    <div class="modetab">
+      <button id="mode-mx" class="on" onclick="setMode('mx')">전체 현황판</button>
+      <button id="mode-dt" onclick="setMode('dt')">개별 상세</button>
     </div>
-    <div id="flowboard"></div>
+
+    <div id="mxwrap">
+      <div class="mxlegend">
+        <span><i class="cd c-w"></i>대기</span>
+        <span><i class="cd c-r">●</i>진행</span>
+        <span><i class="cd c-ok">✓</i>완료</span>
+        <span><i class="cd c-ng">✕</i>NG</span>
+        <span class="mxtip">칸을 누르면 계획일·진행내용 확인 및 상태 전환</span>
+      </div>
+      <div class="tscroll mxscroll">
+        <table class="mxtbl" id="mxtbl"></table>
+      </div>
+    </div>
+
+    <div id="dtwrap" class="hide">
+      <div class="psel">
+        <select id="flowsel" onchange="renderFlow()"></select>
+        <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
+      </div>
+      <div id="flowboard"></div>
+    </div>
   </section>
 
   <!-- 제작계획 -->
@@ -628,7 +702,13 @@ section{animation:fadein .35s}
       <div class="hn mono">03</div>
       <div class="hb">
         <h3>진행현황 — 공정 상태 처리</h3>
-        <p>상단에서 금형을 선택하면 공정 카드가 순서대로 표시됩니다. 카드 왼쪽 숫자가 공정 번호이고, 오른쪽 버튼으로 상태를 처리합니다.</p>
+        <p><b>전체 현황판</b>과 <b>개별 상세</b> 두 가지 방식이 있습니다.</p>
+        <ul>
+          <li><b>전체 현황판</b>: 세로 = 금형, 가로 = 공정(10~180)의 표로 모든 금형의 진행 상태를 한눈에 봅니다. <i class="cd c-w"></i>대기 · <i class="cd c-r">●</i>진행 · <i class="cd c-ok">✓</i>완료 · <i class="cd c-ng">✕</i>NG로 구분되며, 계획완료일이 지난 칸은 배경이 붉게 표시됩니다.</li>
+          <li>칸을 누르면 팝업에서 <b>계획 시작·완료일 입력</b>, 실적 일시, 업무 내용, 진행 메모를 확인하고 <b>진행 / 완료 / NG</b>로 상태를 전환합니다.</li>
+          <li>왼쪽 금형명을 누르면 해당 금형의 <b>개별 상세</b>로 이동합니다.</li>
+          <li><b>개별 상세</b>: 공정 카드가 순서대로 표시되며, 출력물 체크리스트와 부품 관리를 여기서 다룹니다.</li>
+        </ul>
         <table class="htbl">
           <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 시작 시각과 로그인 사용자가 기록됩니다.</td></tr>
           <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격. 완료 시각이 기록되고 <b>다음 공정이 자동 개시</b>됩니다.</td></tr>
@@ -748,6 +828,31 @@ section{animation:fadein .35s}
   </section>
 </main>
 
+<div class="modal" id="cellmodal" onclick="if(event.target===this)closeCell()">
+  <div class="mbox">
+    <div class="mhead">
+      <span class="mno mono" id="c-no"></span>
+      <span class="mtitle" id="c-title"></span>
+      <button class="mx" onclick="closeCell()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="cmold" id="c-mold"></div>
+      <table class="ctbl">
+        <tr><th>현재 상태</th><td id="c-status"></td></tr>
+        <tr><th>계획 시작</th><td><input type="date" id="c-ps" onchange="saveCellPlan('plan_start',this.value)"></td></tr>
+        <tr><th>계획 완료</th><td><input type="date" id="c-pe" onchange="saveCellPlan('plan_end',this.value)"></td></tr>
+        <tr><th>실적 시작</th><td id="c-as"></td></tr>
+        <tr><th>실적 완료</th><td id="c-ae"></td></tr>
+        <tr><th>작업자</th><td id="c-wk"></td></tr>
+      </table>
+      <div class="csec"><h4>업무 내용</h4><ul id="c-tasks"></ul></div>
+      <div class="csec"><h4>진행 메모</h4><textarea id="c-note" rows="2" placeholder="진행 내용을 입력하세요"></textarea>
+        <button class="btn hclr" style="padding:7px 15px;margin-top:7px" onclick="saveCellNote()">메모 저장</button></div>
+      <div class="cbtns" id="c-btns"></div>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="modal" onclick="if(event.target===this)closeOp()">
   <div class="mbox">
     <div class="mhead">
@@ -863,7 +968,7 @@ function go(v){
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
-  if(v==='flow')loadFlowSel();
+  if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
   if(v==='plan')loadPlanSel();
   if(v==='doc')loadDocSel();
   if(v==='hist')loadHist();
@@ -943,6 +1048,92 @@ async function delProject(id,no){
 
 /* ---------- 공정 보드 ---------- */
 let CURPROJ=null;
+/* ---------- 전체 현황판 (매트릭스) ---------- */
+let MXPJ=[],MXPS=[],CELL=null,FLOWMODE='mx';
+function setMode(m){
+  FLOWMODE=m;
+  document.getElementById('mode-mx').classList.toggle('on',m==='mx');
+  document.getElementById('mode-dt').classList.toggle('on',m==='dt');
+  document.getElementById('mxwrap').classList.toggle('hide',m!=='mx');
+  document.getElementById('dtwrap').classList.toggle('hide',m!=='dt');
+  if(m==='mx')renderMatrix(); else loadFlowSel();
+}
+async function renderMatrix(){
+  const [pj,ps]=await Promise.all([
+    api("/mm_project?select=id,mold_no,mold_name,status,due_date&order=created_at.desc"),
+    api("/mm_process?select=id,project_id,op_code,status,plan_start,plan_end,started_at,finished_at,worker,note,ng_count")
+  ]);
+  MXPJ=pj;MXPS=ps;
+  const t=document.getElementById('mxtbl');
+  if(!pj.length){t.innerHTML='<tr><td class="empty">등록된 금형이 없습니다</td></tr>';return}
+  const today=new Date().toISOString().slice(0,10);
+  const head=`<thead><tr><th class="stick">금형</th>${MASTER.map(m=>
+    `<th class="opc" title="${esc(m.process_name)}">${opN(m.op_code)}</th>`).join('')}<th class="rate">진행률</th></tr></thead>`;
+  const body=pj.map(p=>{
+    const mine=MXPS.filter(x=>x.project_id===p.id);
+    const ok=mine.filter(x=>x.status==='OK').length;
+    const cells=MASTER.map(m=>{
+      const pr=mine.find(x=>x.op_code===m.op_code);
+      if(!pr)return '<td class="cell"></td>';
+      const late=pr.plan_end&&pr.status!=='OK'&&pr.plan_end<today;
+      const cls={'대기':'c-w','진행':'c-r','OK':'c-ok','NG':'c-ng'}[pr.status]||'c-w';
+      const mk={'대기':'','진행':'●','OK':'✓','NG':'✕'}[pr.status]||'';
+      return `<td class="cell${late?' late':''}" onclick="openCell('${p.id}','${m.op_code}')" title="${esc(m.process_name)} · ${pr.status}">
+        <i class="cd ${cls}">${mk}</i></td>`;
+    }).join('');
+    return `<tr>
+      <th class="stick" onclick="openFlow('${p.id}')" title="상세 보기">
+        <b>${esc(p.mold_no)}</b><span>${esc(p.mold_name)}</span></th>
+      ${cells}
+      <td class="rate">${ok}/${mine.length}<i style="width:${Math.round(ok/(mine.length||1)*100)}%"></i></td>
+    </tr>`;
+  }).join('');
+  t.innerHTML=head+'<tbody>'+body+'</tbody>';
+}
+function openCell(pid,op){
+  const p=MXPJ.find(x=>x.id===pid), m=MASTER.find(x=>x.op_code===op);
+  const pr=MXPS.find(x=>x.project_id===pid&&x.op_code===op);
+  if(!p||!m||!pr)return;
+  CELL={pid,op,pr};CURPROJ=pid;
+  document.getElementById('c-no').textContent=opN(op);
+  document.getElementById('c-title').textContent=m.process_name;
+  document.getElementById('c-mold').innerHTML=`<b>${esc(p.mold_no)}</b> ${esc(p.mold_name)}${p.due_date?' · 납기 '+p.due_date:''}`;
+  const stc={'대기':'st-w','진행':'st-r','OK':'st-ok','NG':'st-ng'}[pr.status];
+  document.getElementById('c-status').innerHTML=`<span class="st ${stc}">${pr.status}</span>${pr.ng_count?` <span class="ngc">NG ${pr.ng_count}회</span>`:''}`;
+  document.getElementById('c-ps').value=pr.plan_start||'';
+  document.getElementById('c-pe').value=pr.plan_end||'';
+  document.getElementById('c-as').textContent=pr.started_at?fmt(pr.started_at):'-';
+  document.getElementById('c-ae').textContent=pr.finished_at?fmt(pr.finished_at):'-';
+  document.getElementById('c-wk').textContent=pr.worker||'-';
+  document.getElementById('c-tasks').innerHTML=m.tasks.map(x=>`<li>${esc(x)}</li>`).join('');
+  document.getElementById('c-note').value=pr.note||'';
+  const b=[];
+  if(pr.status==='대기')b.push(`<button class="cb start" onclick="cellSet('진행')">진행으로 전환</button>`);
+  if(pr.status==='진행'||pr.status==='NG')b.push(`<button class="cb ok" onclick="cellSet('OK')">완료로 전환</button>`);
+  if(pr.status!=='NG'&&pr.status!=='대기')b.push(`<button class="cb ng" onclick="cellSet('NG')">NG 처리</button>`);
+  if(pr.status==='OK')b.push(`<button class="cb back" onclick="cellSet('진행')">진행으로 되돌리기</button>`);
+  document.getElementById('c-btns').innerHTML=b.join('');
+  document.getElementById('cellmodal').classList.add('show');
+}
+function closeCell(){document.getElementById('cellmodal').classList.remove('show');CELL=null}
+async function saveCellPlan(field,val){
+  if(!CELL)return;
+  await api(`/mm_process?id=eq.${CELL.pr.id}`,{method:"PATCH",body:JSON.stringify({[field]:val||null})});
+  CELL.pr[field]=val||null;toast('계획일 저장');renderMatrix();
+}
+async function saveCellNote(){
+  if(!CELL)return;
+  const v=document.getElementById('c-note').value.trim();
+  await api(`/mm_process?id=eq.${CELL.pr.id}`,{method:"PATCH",body:JSON.stringify({note:v||null})});
+  CELL.pr.note=v;toast('메모 저장');
+}
+async function cellSet(next){
+  if(!CELL)return;
+  const {op,pr}=CELL;
+  await setStatus(pr.id,op,next,true);
+  closeCell();renderMatrix();
+}
+
 async function loadFlowSel(sel){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
   const s=document.getElementById('flowsel');
@@ -950,7 +1141,7 @@ async function loadFlowSel(sel){
   if(sel)s.value=sel;
   renderFlow();
 }
-function openFlow(id){go('flow');loadFlowSel(id)}
+function openFlow(id){go('flow');setMode('dt');loadFlowSel(id)}
 async function renderFlow(){
   const pid=document.getElementById('flowsel').value;
   CURPROJ=pid;
@@ -1011,7 +1202,7 @@ function openOp(op){
   document.getElementById('modal').classList.add('show');
 }
 function closeOp(){document.getElementById('modal').classList.remove('show')}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOp()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOp();closeCell();}});
 
 let LASTHIST=[];
 async function delHist(id){
@@ -1169,7 +1360,7 @@ async function loadSuggest(){
   }catch(e){}
 }
 
-async function setStatus(procId,op,status){
+async function setStatus(procId,op,status,fromCell){
   const m=MASTER.find(x=>x.op_code===op);
   let worker=null;
   if(status==='진행'||status==='OK'){worker=USER}
@@ -1209,7 +1400,7 @@ async function setStatus(procId,op,status){
         toast(opN(op)+' '+m.process_name+' 개시');
       }
     }
-    renderFlow();
+    if(!fromCell)renderFlow();
   }catch(e){toast('오류: '+e.message)}
 }
 async function hist(op,action,detail,worker){
