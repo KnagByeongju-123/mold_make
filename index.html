@@ -311,6 +311,10 @@ tr:last-child td{border-bottom:none}
 .htbl.ng td:first-child{color:var(--red)}
 .htbl tr:last-child td{border-bottom:none}
 .htbl button{width:74px}
+.uin{width:100%;padding:6px 9px;border:1.5px solid #4a5268;border-radius:7px;font-size:12.5px;font-family:inherit;background:var(--card2);color:var(--ink)}
+.ubtn{background:var(--card2);border:1px solid var(--line);border-radius:6px;color:var(--sub);font-size:11.5px;font-weight:700;padding:4px 10px;cursor:pointer;font-family:inherit}
+.ubtn:hover{border-color:var(--gold);color:var(--gold)}
+.ubtn.save{background:linear-gradient(160deg,var(--gold2),var(--gold));border-color:var(--gold);color:#241a05}
 .hnote{margin-top:10px;font-size:12.5px;color:var(--gray)}
 .dotin{display:inline-block;width:11px;height:11px;vertical-align:-1px;margin-right:2px}
 .dotin.cust{background:var(--cust);border-radius:50%}
@@ -421,6 +425,10 @@ section{animation:fadein .35s}
 .mxtbl td.cell.late{background:rgba(255,123,123,.12)}
 .mxtbl td.rate{position:relative;font-size:11px;font-weight:700;color:var(--sub);text-align:center;min-width:58px;padding:7px 6px 10px}
 .mxtbl td.rate i{position:absolute;left:6px;bottom:5px;height:3px;background:var(--blue);border-radius:2px}
+.mxtbl th.mxdelh{width:46px;min-width:46px}
+.mxtbl td.mxdelc{text-align:center;padding:6px 4px}
+.mxdel{background:none;border:1px solid var(--line);border-radius:7px;color:#5a6274;font-size:13px;cursor:pointer;padding:4px 8px;line-height:1}
+.mxdel:hover{color:var(--red);border-color:rgba(255,123,123,.55);background:rgba(255,123,123,.12)}
 
 /* 셀 모달 */
 .cmold{font-size:13px;color:var(--sub);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin-bottom:13px}
@@ -469,7 +477,7 @@ section{animation:fadein .35s}
     <div class="lgtitle">금형<em>제작관리</em></div>
     <div class="lgsub">Mold Making Management</div>
     <div class="pinview" id="pinview"><i></i><i></i><i></i><i></i></div>
-    <div class="lgmsg" id="lgmsg">PIN 번호 4자리를 입력하세요</div>
+    <div class="lgmsg" id="lgmsg">PIN 번호 4자리를 입력하세요 (초기 0000)</div>
     <div class="pinpad">
       <button onclick="pinKey(1)">1</button><button onclick="pinKey(2)">2</button><button onclick="pinKey(3)">3</button>
       <button onclick="pinKey(4)">4</button><button onclick="pinKey(5)">5</button><button onclick="pinKey(6)">6</button>
@@ -486,7 +494,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 4.6</span>
+    <span class="rev">Rev 4.9</span>
   </div>
 </header>
 
@@ -696,7 +704,19 @@ section{animation:fadein .35s}
 
   <!-- 설정 -->
   <section id="v-set" class="hide">
-    <h1 class="pt">설정 <em>— 사원 PIN 관리</em></h1>
+    <h1 class="pt">설정 <em>— PIN 관리</em></h1>
+
+    <div class="panel" style="margin-bottom:14px">
+      <h2>마스터 비밀번호 변경</h2>
+      <div class="row2">
+        <div class="fg"><label>현재 비밀번호 *</label><input id="m-cur" type="password" maxlength="4" inputmode="numeric" placeholder="4자리"></div>
+        <div class="fg"><label>새 비밀번호 *</label><input id="m-new" type="password" maxlength="4" inputmode="numeric" placeholder="숫자 4자리"></div>
+      </div>
+      <div class="fg"><label>새 비밀번호 확인 *</label><input id="m-new2" type="password" maxlength="4" inputmode="numeric" placeholder="한번 더 입력"></div>
+      <button class="btn btn-p" onclick="changeMaster()">마스터 비밀번호 변경</button>
+      <p class="hnote" style="margin-top:8px">마스터 비밀번호는 로그인과 설정 진입에 함께 사용됩니다. 초기값은 <b>0000</b>입니다.</p>
+    </div>
+
     <div class="panel">
       <h2>사원 등록</h2>
       <div class="row2">
@@ -708,12 +728,12 @@ section{animation:fadein .35s}
     <div style="margin-top:14px">
       <div class="tscroll">
         <table class="wide">
-          <thead><tr><th>이름</th><th>PIN</th><th>등록일</th><th style="width:36px"></th></tr></thead>
+          <thead><tr><th>이름</th><th>PIN</th><th>등록일</th><th style="width:110px">관리</th></tr></thead>
           <tbody id="userbody"></tbody>
         </table>
       </div>
     </div>
-    <p class="hnote" style="margin-top:10px">마스터 PIN(관리자)은 프로그램에 내장되어 있으며 삭제할 수 없습니다.</p>
+    <p class="hnote" style="margin-top:10px">사원 행의 <b>수정</b>을 누르면 이름과 PIN을 바꿀 수 있습니다. 마스터 계정은 목록에 표시되지 않습니다.</p>
   </section>
 
   <!-- 사용안내 -->
@@ -725,9 +745,10 @@ section{animation:fadein .35s}
       <div class="hn mono">01</div>
       <div class="hb">
         <h3>로그인</h3>
-        <p>접속 시 PIN 4자리를 입력합니다. 로그인한 사람의 이름이 이후 모든 작업의 작업자·작성자로 자동 기록됩니다.</p>
+        <p>접속 시 PIN 4자리를 입력합니다. 초기 관리자 PIN은 <b>0000</b>입니다. 로그인한 사람의 이름이 이후 모든 작업의 작업자·작성자로 자동 기록됩니다.</p>
         <ul>
-          <li>사원 PIN은 <b>메뉴 → 설정</b>에서 등록·삭제합니다. 설정 진입 시 마스터 비밀번호가 필요합니다.</li>
+          <li>사원 PIN은 <b>메뉴 → 설정</b>에서 등록·수정·삭제합니다. 설정 진입 시 마스터 비밀번호가 필요합니다.</li>
+          <li>설정 화면에서 <b>마스터 비밀번호</b>도 변경할 수 있습니다(현재 비밀번호 확인 후 새 비밀번호 2회 입력). 변경값은 DB에 저장되어 모든 기기에 적용됩니다.</li>
           <li>상단 우측의 이름 배지를 누르면 로그아웃됩니다.</li>
         </ul>
       </div>
@@ -962,7 +983,8 @@ const KEY="sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
 const H={"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"};
 
 let MASTER=[], PROJECTS=[], PROCS=[];
-const MASTER_PIN="2580";
+const MASTER_KEY="__MASTER__";        // 마스터 PIN 저장용 예약 이름
+let MASTER_PIN="0000";                // 초기 마스터 PIN (설정에서 변경 가능)
 let USER=sessionStorage.getItem('mm_user')||null;
 let PIN="";
 
@@ -978,7 +1000,7 @@ async function pinSubmit(){
   if(PIN===MASTER_PIN){enter('관리자');return}
   try{
     const u=await api("/mm_user?select=name&pin=eq."+PIN);
-    if(u.length){enter(u[0].name);return}
+    if(u.length){enter(u[0].name===MASTER_KEY?'관리자':u[0].name);return}
   }catch(e){}
   msg.textContent='등록되지 않은 PIN입니다';
   msg.classList.add('err');
@@ -1018,13 +1040,47 @@ function goSet(){
   }
   go('set');loadUsers();
 }
+let EDITU=null;
 async function loadUsers(){
-  const rows=await api("/mm_user?select=*&order=created_at");
-  document.getElementById('userbody').innerHTML=rows.map(u=>`<tr>
-    <td>${esc(u.name)}</td><td class="mono">${esc(u.pin)}</td>
-    <td>${fmt(u.created_at)}</td>
-    <td><button class="del" onclick="delUser(${u.id},'${esc(u.name)}')">✕</button></td></tr>`).join('')
-    ||'<tr><td colspan="4" class="empty">등록된 사원이 없습니다</td></tr>';
+  const rows=(await api("/mm_user?select=*&order=created_at")).filter(u=>u.name!==MASTER_KEY);
+  document.getElementById('userbody').innerHTML=rows.map(u=>{
+    if(EDITU===u.id)return `<tr>
+      <td><input class="uin" id="e-nm" value="${esc(u.name)}"></td>
+      <td><input class="uin mono" id="e-pin" maxlength="4" inputmode="numeric" value="${esc(u.pin)}"></td>
+      <td>${fmt(u.created_at)}</td>
+      <td><button class="ubtn save" onclick="saveUser(${u.id})">저장</button>
+          <button class="ubtn" onclick="EDITU=null;loadUsers()">취소</button></td></tr>`;
+    return `<tr>
+      <td>${esc(u.name)}</td><td class="mono">${esc(u.pin)}</td>
+      <td>${fmt(u.created_at)}</td>
+      <td><button class="ubtn" onclick="EDITU=${u.id};loadUsers()">수정</button>
+          <button class="del" onclick="delUser(${u.id},'${esc(u.name)}')">✕</button></td></tr>`;
+  }).join('')||'<tr><td colspan="4" class="empty">등록된 사원이 없습니다</td></tr>';
+}
+async function saveUser(id){
+  const nm=document.getElementById('e-nm').value.trim();
+  const pin=document.getElementById('e-pin').value.trim();
+  if(!nm)return toast('이름을 입력하세요');
+  if(!/^\d{4}$/.test(pin))return toast('PIN은 숫자 4자리입니다');
+  if(pin===MASTER_PIN)return toast('마스터 PIN과 동일한 번호는 사용할 수 없습니다');
+  const dup=await api("/mm_user?select=id&pin=eq."+pin);
+  if(dup.length&&dup[0].id!==id)return toast('이미 사용중인 PIN입니다');
+  await api(`/mm_user?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({name:nm,pin})});
+  EDITU=null;toast('사원 정보 수정 완료');loadUsers();
+}
+async function changeMaster(){
+  const cur=g('m-cur'),n1=g('m-new'),n2=g('m-new2');
+  if(cur!==MASTER_PIN)return toast('현재 비밀번호가 올바르지 않습니다');
+  if(!/^\d{4}$/.test(n1))return toast('새 비밀번호는 숫자 4자리입니다');
+  if(n1!==n2)return toast('새 비밀번호가 서로 다릅니다');
+  const dup=(await api("/mm_user?select=id,name&pin=eq."+n1)).filter(u=>u.name!==MASTER_KEY);
+  if(dup.length)return toast('사원 PIN과 중복됩니다');
+  const ex=await api("/mm_user?select=id&name=eq."+encodeURIComponent(MASTER_KEY));
+  if(ex.length)await api(`/mm_user?id=eq.${ex[0].id}`,{method:"PATCH",body:JSON.stringify({pin:n1})});
+  else await api("/mm_user",{method:"POST",body:JSON.stringify({name:MASTER_KEY,pin:n1})});
+  MASTER_PIN=n1;
+  ['m-cur','m-new','m-new2'].forEach(x=>document.getElementById(x).value='');
+  toast('마스터 비밀번호가 변경되었습니다');
 }
 async function addUser(){
   const nm=g('u-nm'),pin=g('u-pin');
@@ -1070,6 +1126,12 @@ function go(v,fromPop){
 }
 
 /* ---------- 로드 ---------- */
+async function loadMasterPin(){
+  try{
+    const r=await api("/mm_user?select=pin&name=eq."+encodeURIComponent(MASTER_KEY));
+    if(r.length)MASTER_PIN=r[0].pin;
+  }catch(e){}
+}
 async function loadMaster(){ MASTER=await api("/mm_master?select=*&order=seq"); }
 async function loadDash(){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
@@ -1134,9 +1196,9 @@ async function createProject(){
 }
 function g(id){return document.getElementById(id).value.trim()}
 async function delProject(id,no){
-  if(!confirm(no+' 금형과 모든 공정/이력을 삭제할까요?'))return;
+  if(!confirm(no+' 금형을 삭제합니다.\n\n공정 진행 · 부품 · 출력물 · Tryout · 이력이 모두 함께 삭제되며 복구되지 않습니다.\n계속할까요?'))return;
   await api("/mm_project?id=eq."+id,{method:"DELETE"});
-  toast('삭제 완료');loadDash();
+  toast('삭제 완료');loadDash();if(typeof renderMatrix==='function'&&document.getElementById('mxtbl'))renderMatrix();
 }
 
 /* ---------- 공정 보드 ---------- */
@@ -1161,7 +1223,7 @@ async function renderMatrix(){
   if(!pj.length){t.innerHTML='<tr><td class="empty">등록된 금형이 없습니다</td></tr>';return}
   const today=new Date().toISOString().slice(0,10);
   const head=`<thead><tr><th class="stick">금형</th>${MASTER.map(m=>
-    `<th class="opc" title="${esc(m.process_name)}">${opN(m.op_code)}</th>`).join('')}<th class="rate">진행률</th></tr></thead>`;
+    `<th class="opc" title="${esc(m.process_name)}">${opN(m.op_code)}</th>`).join('')}<th class="rate">진행률</th><th class="mxdelh">삭제</th></tr></thead>`;
   const body=pj.map(p=>{
     const mine=MXPS.filter(x=>x.project_id===p.id);
     const ok=mine.filter(x=>x.status==='OK').length;
@@ -1179,6 +1241,7 @@ async function renderMatrix(){
         <b>${esc(p.mold_no)}</b><span>${esc(p.mold_name)}</span></th>
       ${cells}
       <td class="rate">${ok}/${mine.length}<i style="width:${Math.round(ok/(mine.length||1)*100)}%"></i></td>
+      <td class="mxdelc"><button class="mxdel" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')" title="금형 삭제">✕</button></td>
     </tr>`;
   }).join('');
   t.innerHTML=head+'<tbody>'+body+'</tbody>';
@@ -2074,6 +2137,7 @@ async function loadHist(){
 
 (async()=>{
   await loadMaster();
+  await loadMasterPin();
   if(USER){
     document.getElementById('login').style.display='none';
     document.getElementById('ubadge').textContent='👤 '+USER;
