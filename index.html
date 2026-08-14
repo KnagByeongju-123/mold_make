@@ -359,6 +359,23 @@ h1.pt em{font-style:normal;color:var(--gold)}
 section{animation:fadein .35s}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
+/* 공정설계 */
+.opcard{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:8px}
+.opord{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.opord button{width:26px;height:21px;border:1px solid var(--line);border-radius:5px;background:var(--card2);color:var(--sub);font-size:9px;cursor:pointer;line-height:1;padding:0}
+.opord button:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.opord button:disabled{opacity:.25;cursor:default}
+.opinf{flex:1;min-width:0}
+.opt{font-size:14px;font-weight:700}
+.opt b{color:var(--gold);margin-right:5px}
+.opsub{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px}
+.atag{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:5px}
+.atag.a-c{background:rgba(196,157,255,.16);color:var(--cust)}
+.atag.a-s{background:rgba(79,140,255,.16);color:var(--blue)}
+.atag.a-o{background:rgba(240,160,75,.16);color:var(--out)}
+.ocnt{font-size:10.5px;color:var(--gray)}
+.opact{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+
 /* 계획 수립 */
 .wizbtn{padding:8px 16px;background:rgba(79,140,255,.16);border:1px solid rgba(79,140,255,.45);color:var(--blue)}
 .dpick{display:inline-block;padding:7px 13px;border:1.5px dashed #4a5268;border-radius:8px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gray);cursor:pointer;white-space:nowrap;background:transparent}
@@ -501,7 +518,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 5.2</span>
+    <span class="rev">Rev 5.3</span>
   </div>
 </header>
 
@@ -711,8 +728,13 @@ section{animation:fadein .35s}
 
   <!-- 설정 -->
   <section id="v-set" class="hide">
-    <h1 class="pt">설정 <em>— PIN 관리</em></h1>
+    <h1 class="pt">설정</h1>
+    <div class="modetab">
+      <button id="set-pin" class="on" onclick="setTab('pin')">PIN 관리</button>
+      <button id="set-op" onclick="setTab('op')">공정설계</button>
+    </div>
 
+    <div id="setpin">
     <div class="panel" style="margin-bottom:14px">
       <h2>마스터 비밀번호 변경</h2>
       <div class="row2">
@@ -741,6 +763,13 @@ section{animation:fadein .35s}
       </div>
     </div>
     <p class="hnote" style="margin-top:10px">사원 행의 <b>수정</b>을 누르면 이름과 PIN을 바꿀 수 있습니다. 마스터 계정은 목록에 표시되지 않습니다.</p>
+    </div>
+
+    <div id="setop" class="hide">
+      <div class="hp" style="margin-bottom:12px">금형 제작 공정을 순서대로 설계합니다. <b>▲▼</b>로 순서를 바꾸고, <b>수정</b>에서 공정명 · 담당(사내/외주 중복 선택 가능) · 담당부서 · 업무내용 · 출력물 · NG 되돌림을 설정합니다. 변경 내용은 <b>이후 등록되는 금형</b>부터 적용됩니다.</div>
+      <button class="btn btn-p" style="margin-bottom:12px" onclick="editOpMaster(null)">＋ 공정 추가</button>
+      <div id="oplist"></div>
+    </div>
   </section>
 
   <!-- 사용안내 -->
@@ -755,6 +784,7 @@ section{animation:fadein .35s}
         <p>접속 시 PIN 4자리를 입력합니다. 초기 관리자 PIN은 <b>0000</b>입니다. 로그인한 사람의 이름이 이후 모든 작업의 작업자·작성자로 자동 기록됩니다.</p>
         <ul>
           <li>사원 PIN은 <b>메뉴 → 설정</b>에서 등록·수정·삭제합니다. 설정 진입 시 마스터 비밀번호가 필요합니다.</li>
+          <li>설정 화면의 <b>공정설계</b> 탭에서 공정 순서 · 공정명 · 담당(사내/외주 중복 선택) · 담당부서 · 업무내용 · 출력물 · NG 되돌림을 직접 설계할 수 있습니다. 회사마다 다른 공정 구성에 맞춰 추가·수정·삭제하며, 변경 내용은 이후 등록되는 금형부터 적용됩니다.</li>
           <li>설정 화면에서 <b>마스터 비밀번호</b>도 변경할 수 있습니다(현재 비밀번호 확인 후 새 비밀번호 2회 입력). 변경값은 DB에 저장되어 모든 기기에 적용됩니다.</li>
           <li>상단 우측의 이름 배지를 누르면 로그아웃됩니다.</li>
         </ul>
@@ -906,6 +936,37 @@ section{animation:fadein .35s}
     </div>
   </section>
 </main>
+
+<div class="modal" id="opedit" onclick="if(event.target===this)closeOpEdit()">
+  <div class="mbox" style="max-width:460px">
+    <div class="mhead">
+      <span class="mtitle" id="oe-title">공정 설정</span>
+      <button class="mx" onclick="closeOpEdit()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="row2">
+        <div class="fg"><label>공정번호 *</label><input id="oe-code" inputmode="numeric" placeholder="예: 45"></div>
+        <div class="fg"><label>담당부서 *</label><input id="oe-dept" list="dl-dept" placeholder="예: 가공"></div>
+      </div>
+      <datalist id="dl-dept"><option value="영업"><option value="설계"><option value="구매"><option value="가공"><option value="조립"><option value="품질"></datalist>
+      <div class="fg"><label>공정명 *</label><input id="oe-name" placeholder="예: 방전 가공"></div>
+      <div class="fg"><label>담당 (중복 선택 가능)</label>
+        <div class="chips" id="oe-actor">
+          <button data-v="고객사" onclick="this.classList.toggle('on')">고객사</button>
+          <button data-v="사내" onclick="this.classList.toggle('on')">사내</button>
+          <button data-v="외주" onclick="this.classList.toggle('on')">외주</button>
+        </div>
+      </div>
+      <div class="fg"><label>업무 내용 (한 줄에 하나씩)</label><textarea id="oe-tasks" rows="4" placeholder="MCT 가공(3D)&#10;평면연삭 가공"></textarea></div>
+      <div class="fg"><label>출력물 (한 줄에 하나씩)</label><textarea id="oe-outs" rows="3" placeholder="작업일보&#10;금형제작 일정"></textarea></div>
+      <div class="fg"><label>NG 시 되돌아갈 공정</label><select id="oe-ng"></select></div>
+      <div class="cbtns">
+        <button class="cb back" onclick="closeOpEdit()">취소</button>
+        <button class="cb ok" onclick="saveOpMaster()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="dcalmodal" onclick="if(event.target===this)closeDCal()">
   <div class="mbox" style="max-width:400px">
@@ -1071,8 +1132,104 @@ function goSet(){
     if(pw!==MASTER_PIN)return toast('비밀번호가 올바르지 않습니다');
     SET_AUTH=true;
   }
-  go('set');loadUsers();
+  go('set');setTab('pin');loadUsers();
 }
+function setTab(t){
+  document.getElementById('set-pin').classList.toggle('on',t==='pin');
+  document.getElementById('set-op').classList.toggle('on',t==='op');
+  document.getElementById('setpin').classList.toggle('hide',t!=='pin');
+  document.getElementById('setop').classList.toggle('hide',t!=='op');
+  if(t==='op')renderOpList();
+}
+
+/* ---------- 공정설계 ---------- */
+function actorList(a){return (a||'').split(',').map(x=>x.trim()).filter(Boolean).map(x=>x==='당사'?'사내':x)}
+function renderOpList(){
+  document.getElementById('oplist').innerHTML=MASTER.map((m,i)=>`<div class="opcard">
+    <div class="opord">
+      <button ${i===0?'disabled':''} onclick="moveOp(${i},-1)">▲</button>
+      <button ${i===MASTER.length-1?'disabled':''} onclick="moveOp(${i},1)">▼</button>
+    </div>
+    <div class="opinf">
+      <div class="opt"><b class="mono">${opN(m.op_code)}</b> ${esc(m.process_name)}</div>
+      <div class="opsub">
+        <span class="dept">${esc(m.dept)}</span>
+        ${actorList(m.actor).map(a=>`<span class="atag a-${a==='고객사'?'c':a==='사내'?'s':'o'}">${a}</span>`).join('')}
+        <span class="ocnt">업무 ${m.tasks.length} · 출력물 ${m.outputs.length}</span>
+        ${m.ng_return_op?`<span class="ngc">NG→${opN(m.ng_return_op)}</span>`:''}
+      </div>
+    </div>
+    <div class="opact">
+      <button class="ubtn" onclick="editOpMaster('${m.op_code}')">수정</button>
+      <button class="del" onclick="delOpMaster('${m.op_code}','${esc(m.process_name)}')">✕</button>
+    </div>
+  </div>`).join('')||'<div class="empty">공정이 없습니다</div>';
+}
+async function moveOp(i,d){
+  const a=MASTER[i], b=MASTER[i+d];if(!b)return;
+  await api(`/mm_master?op_code=eq.${a.op_code}`,{method:"PATCH",body:JSON.stringify({seq:b.seq})});
+  await api(`/mm_master?op_code=eq.${b.op_code}`,{method:"PATCH",body:JSON.stringify({seq:a.seq})});
+  await loadMaster();renderOpList();toast('순서 변경');
+}
+let OEDIT=null;
+function editOpMaster(code){
+  OEDIT=code;
+  const m=code?MASTER.find(x=>x.op_code===code):null;
+  document.getElementById('oe-title').textContent=m?'공정 수정':'공정 추가';
+  document.getElementById('oe-code').value=m?opN(m.op_code):'';
+  document.getElementById('oe-code').disabled=!!m;
+  document.getElementById('oe-name').value=m?m.process_name:'';
+  document.getElementById('oe-dept').value=m?m.dept:'';
+  const acts=m?actorList(m.actor):['사내'];
+  document.querySelectorAll('#oe-actor button').forEach(b=>b.classList.toggle('on',acts.includes(b.dataset.v)));
+  document.getElementById('oe-tasks').value=m?m.tasks.join('\n'):'';
+  document.getElementById('oe-outs').value=m?m.outputs.join('\n'):'';
+  document.getElementById('oe-ng').innerHTML='<option value="">없음</option>'+
+    MASTER.filter(x=>!m||x.op_code!==m.op_code).map(x=>
+      `<option value="${x.op_code}" ${m&&m.ng_return_op===x.op_code?'selected':''}>${opN(x.op_code)} ${esc(x.process_name)}</option>`).join('');
+  document.getElementById('opedit').classList.add('show');
+  history.pushState({t:'ov'},'');
+}
+function closeOpEdit(){
+  if(document.getElementById('opedit').classList.contains('show')&&history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('opedit').classList.remove('show');OEDIT=null;
+}
+async function saveOpMaster(){
+  const num=g('oe-code'),nm=g('oe-name'),dp=g('oe-dept');
+  if(!/^\d{1,4}$/.test(num))return toast('공정번호는 숫자로 입력하세요');
+  if(!nm)return toast('공정명을 입력하세요');
+  if(!dp)return toast('담당부서를 입력하세요');
+  const acts=[...document.querySelectorAll('#oe-actor button.on')].map(b=>b.dataset.v);
+  if(!acts.length)return toast('담당을 하나 이상 선택하세요');
+  const code='OP'+num;
+  const tasks=document.getElementById('oe-tasks').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  const outs=document.getElementById('oe-outs').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  const body={process_name:nm,dept:dp,actor:acts.join(','),tasks,outputs:outs,
+    ng_return_op:document.getElementById('oe-ng').value||null};
+  try{
+    if(OEDIT){
+      await api(`/mm_master?op_code=eq.${OEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
+    }else{
+      if(MASTER.find(x=>x.op_code===code))return toast('이미 있는 공정번호입니다');
+      body.op_code=code;body.seq=Number(num);
+      await api("/mm_master",{method:"POST",body:JSON.stringify(body)});
+      // 번호 순으로 seq 재정렬
+      const all=[...MASTER.map(x=>({op:x.op_code,n:Number(opN(x.op_code))})),{op:code,n:Number(num)}]
+        .sort((a,b)=>a.n-b.n);
+      for(let i=0;i<all.length;i++)
+        await api(`/mm_master?op_code=eq.${all[i].op}`,{method:"PATCH",body:JSON.stringify({seq:i+1})});
+    }
+    await loadMaster();closeOpEdit();renderOpList();toast('공정 저장 완료');
+  }catch(e){toast('저장 실패: '+e.message)}
+}
+async function delOpMaster(code,nm){
+  if(!confirm(opN(code)+' '+nm+' 공정을 삭제할까요?\n\n이미 등록된 금형에서 이 공정이 사용 중이면 삭제되지 않습니다.'))return;
+  try{
+    await api(`/mm_master?op_code=eq.${code}`,{method:"DELETE"});
+    await loadMaster();renderOpList();toast('공정 삭제 완료');
+  }catch(e){toast('사용 중인 공정은 삭제할 수 없습니다')}
+}
+
 let EDITU=null;
 async function loadUsers(){
   const rows=(await api("/mm_user?select=*&order=created_at")).filter(u=>u.name!==MASTER_KEY);
@@ -1306,13 +1463,15 @@ function openCell(pid,op){
   history.pushState({t:'ov'},'');
 }
 function anyOverlay(){
-  return document.getElementById('dcalmodal').classList.contains('show')
+  return document.getElementById('opedit').classList.contains('show')
+    ||document.getElementById('dcalmodal').classList.contains('show')
     ||document.getElementById('wizmodal').classList.contains('show')
     ||document.getElementById('cellmodal').classList.contains('show')
     ||document.getElementById('modal').classList.contains('show')
     ||document.getElementById('drawer').classList.contains('on');
 }
 function closeAllOverlay(){
+  document.getElementById('opedit').classList.remove('show');OEDIT=null;
   document.getElementById('dcalmodal').classList.remove('show');DCAL=null;
   document.getElementById('wizmodal').classList.remove('show');WIZ=null;
   document.getElementById('cellmodal').classList.remove('show');CELL=null;
@@ -1399,7 +1558,7 @@ function openOp(op){
   const m=MASTER.find(x=>x.op_code===op);if(!m)return;
   document.getElementById('m-no').textContent=opN(op);
   document.getElementById('m-title').textContent=m.process_name;
-  document.getElementById('m-dept').textContent=m.dept;
+  document.getElementById('m-dept').textContent=m.dept+(actorList(m.actor).length?' · '+actorList(m.actor).join('/'):'');
   document.getElementById('m-tasks').innerHTML=m.tasks.map(t=>`<li>${esc(t)}</li>`).join('');
   const ow=document.getElementById('m-outwrap');
   ow.classList.toggle('hide',!m.outputs.length);
@@ -1891,6 +2050,7 @@ async function wizSave(){
 }
 function closeWizard(){
   if(document.getElementById('wizmodal').classList.contains('show')&&history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('opedit').classList.remove('show');OEDIT=null;
   document.getElementById('dcalmodal').classList.remove('show');DCAL=null;
   document.getElementById('wizmodal').classList.remove('show');WIZ=null;
 }
@@ -1957,6 +2117,7 @@ async function dcalClear(){
 }
 function closeDCal(){
   if(document.getElementById('dcalmodal').classList.contains('show')&&history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('opedit').classList.remove('show');OEDIT=null;
   document.getElementById('dcalmodal').classList.remove('show');DCAL=null;
 }
 
