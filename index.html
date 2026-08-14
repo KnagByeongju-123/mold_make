@@ -213,9 +213,20 @@ tr.undone td{background:rgba(255,123,123,.05)}
 .pdel{background:none;border:none;color:#5a6478;cursor:pointer;font-size:13px}
 .pdel:hover{color:var(--red)}
 .pempty{text-align:center;color:var(--gray);font-size:11.5px}
-.padd{display:flex;gap:6px;margin-top:7px}
-.padd input{flex:1;padding:6px 9px;border:1.5px solid #4a5268;border-radius:7px;font-size:12px;font-family:inherit;background:var(--card2);color:var(--ink);min-width:0}
-.padd button{padding:6px 14px;border:none;border-radius:7px;background:linear-gradient(160deg,var(--gold2),var(--gold));color:#241a05;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+.paddwrap{margin-top:8px}
+.paddtoggle{width:100%;padding:9px 0;border:1.5px dashed #4a5268;border-radius:9px;background:transparent;color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.paddtoggle span{color:var(--gold);font-weight:900;font-size:14px}
+.paddtoggle:hover{border-color:var(--goldbd);color:var(--gold)}
+.paddwrap.open .paddtoggle{display:none}
+.padd{display:none;flex-direction:column;gap:9px;padding:13px;border:1.5px solid var(--goldbd);border-radius:11px;background:var(--card2)}
+.paddwrap.open .padd{display:flex}
+.pf{display:flex;flex-direction:column;gap:4px}
+.pf label{font-size:11px;font-weight:700;color:var(--gray)}
+.pf input{width:100%;padding:9px 11px;border:1.5px solid #4a5268;border-radius:8px;font-size:13px;font-family:inherit;background:var(--card);color:var(--ink)}
+.pf input:focus{outline:none;border-color:var(--gold)}
+.pbtns{display:flex;gap:7px;margin-top:2px}
+.pcancel{flex:1;padding:10px 0;border:1.5px solid var(--line);border-radius:9px;background:transparent;color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.psave{flex:2;padding:10px 0;border:none;border-radius:9px;background:linear-gradient(160deg,var(--gold2),var(--gold));color:#241a05;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
 
 /* 이력 */
 table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -409,7 +420,6 @@ section{animation:fadein .35s}
   .opacts button{flex:1}
   .ngline{grid-column:1/3}
   .partsec{grid-column:1/3}
-  .padd{flex-wrap:wrap}
   .ptbl{font-size:11px}
 }
 </style>
@@ -439,7 +449,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 4.3</span>
+    <span class="rev">Rev 4.4</span>
   </div>
 </header>
 
@@ -740,7 +750,7 @@ section{animation:fadein .35s}
         <h3>부품 발주·입출고 관리 (40 ~ 130)</h3>
         <p>설계부터 사상·조립까지의 공정(40 · 50 · 60 · 80 · 90 · 100 · 120 · 130) 카드 하단 <b>「외주 부품」</b> 영역에서 부품 단위로 관리합니다.</p>
         <ul>
-          <li>부품명 · 치수 · 가공내용 · 외주업체를 입력하고 <b>＋추가</b>로 등록합니다.</li>
+          <li><b>＋ 부품 등록</b>을 누르면 입력란이 세로로 펼쳐집니다. 부품명 · 치수 · 가공내용 · 외주업체를 입력하고 <b>＋추가</b>로 등록합니다.</li>
           <li>한번 등록한 값은 몇 글자만 입력하면 <b>자동완성 목록</b>으로 나타납니다.</li>
           <li><b>발주 → 출고 → 입고</b> 버튼을 순서대로 눌러 날짜를 기록합니다. 오늘 날짜가 기본값이며 수정 가능합니다.</li>
           <li>기록된 날짜는 초록색으로 표시되고, 제목줄에 입고완료 건수가 집계됩니다. 전 부품 입고 후 공정을 OK 처리하는 것을 권장합니다.</li>
@@ -1353,12 +1363,18 @@ function partBlock(op){
         <thead><tr><th>부품명</th><th>치수</th><th>가공내용</th><th>외주업체</th><th>발주</th><th>출고</th><th>입고</th><th></th></tr></thead>
         <tbody>${rows||'<tr><td colspan="8" class="pempty">등록된 부품 없음</td></tr>'}</tbody>
       </table></div>
-      <div class="padd">
-        <input id="pn-${num}" placeholder="부품명" list="dl-pn">
-        <input id="pz-${num}" placeholder="치수 (예: 100x50x20)" list="dl-pz">
-        <input id="pw-${num}" placeholder="가공내용 (예: MCT 3D가공, Wire Cut)" list="dl-pw">
-        <input id="pv-${num}" placeholder="외주업체" list="dl-pv">
-        <button onclick="addPart('${op}')">+ 추가</button>
+      <div class="paddwrap${addOpen===op?' open':''}" id="paw-${num}">
+        <button class="paddtoggle" onclick="toggleAdd('${op}')"><span>＋</span> 부품 등록</button>
+        <div class="padd">
+          <div class="pf"><label>부품명</label><input id="pn-${num}" placeholder="예: 상형 코어" list="dl-pn"></div>
+          <div class="pf"><label>치수</label><input id="pz-${num}" placeholder="예: 100x50x20" list="dl-pz"></div>
+          <div class="pf"><label>가공내용</label><input id="pw-${num}" placeholder="예: MCT 3D가공, Wire Cut" list="dl-pw"></div>
+          <div class="pf"><label>외주업체</label><input id="pv-${num}" placeholder="예: OO정밀" list="dl-pv"></div>
+          <div class="pbtns">
+            <button class="pcancel" onclick="toggleAdd('${op}')">취소</button>
+            <button class="psave" onclick="addPart('${op}')">＋ 추가</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>`;
@@ -1372,7 +1388,8 @@ async function addPart(op){
   const vd=document.getElementById('pv-'+num).value.trim()||null;
   await api("/mm_part",{method:"POST",body:JSON.stringify({project_id:CURPROJ,op_code:op,part_name:nm,dimension:dim,note:wk,vendor:vd})});
   await hist(op,'부품',opN(op)+' '+mName(op)+' 부품 등록: '+nm+(wk?' / '+wk:'')+(vd?' ('+vd+')':''));
-  openParts=op;renderFlow();
+  ['pn-','pz-','pw-','pv-'].forEach(k=>{const el=document.getElementById(k+num);if(el)el.value='';});
+  addOpen=null;openParts=op;renderFlow();
 }
 async function setPartDate(id,field){
   const today=new Date().toISOString().slice(0,10);
@@ -1388,7 +1405,14 @@ async function delPart(id,nm){
   await api(`/mm_part?id=eq.${id}`,{method:"DELETE"});
   renderFlow();
 }
-let openParts=null;
+let openParts=null, addOpen=null;
+function toggleAdd(op){
+  const w=document.getElementById('paw-'+op.replace('OP',''));
+  if(!w)return;
+  const on=w.classList.toggle('open');
+  addOpen=on?op:null;
+  if(on)setTimeout(()=>document.getElementById('pn-'+op.replace('OP','')).focus(),120);
+}
 async function loadSuggest(){
   try{
     const all=await api("/mm_part?select=part_name,dimension,note,vendor&order=created_at.desc&limit=500");
