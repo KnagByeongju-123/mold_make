@@ -439,7 +439,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 4.2</span>
+    <span class="rev">Rev 4.3</span>
   </div>
 </header>
 
@@ -911,10 +911,20 @@ function enter(name){
   USER=name;sessionStorage.setItem('mm_user',name);
   document.getElementById('login').style.display='none';
   document.getElementById('ubadge').textContent='👤 '+name;
+  history.replaceState({t:'view',v:'dash'},'');
   loadDash();
 }
-function toggleDrawer(on){document.getElementById('drawer').classList.toggle('on',on);document.getElementById('dim').classList.toggle('on',on)}
-function closeMenu(){toggleDrawer(false)}
+function toggleDrawer(on){
+  const wasOn=document.getElementById('drawer').classList.contains('on');
+  document.getElementById('drawer').classList.toggle('on',on);
+  document.getElementById('dim').classList.toggle('on',on);
+  if(on&&!wasOn)history.pushState({t:'ov'},'');
+}
+function closeMenu(){
+  if(document.getElementById('drawer').classList.contains('on')&&history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('drawer').classList.remove('on');
+  document.getElementById('dim').classList.remove('on');
+}
 function logout(){
   if(!confirm('로그아웃할까요?'))return;
   sessionStorage.removeItem('mm_user');location.reload();
@@ -962,8 +972,13 @@ async function api(path,opt={}){
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
-function go(v){
-  closeMenu();
+function go(v,fromPop){
+  document.getElementById('drawer').classList.remove('on');
+  document.getElementById('dim').classList.remove('on');
+  if(!fromPop){
+    if(!history.state||history.state.t!=='view'||history.state.v!==v)
+      history.pushState({t:'view',v},'');
+  }
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
@@ -1114,8 +1129,23 @@ function openCell(pid,op){
   if(pr.status==='OK')b.push(`<button class="cb back" onclick="cellSet('진행')">진행으로 되돌리기</button>`);
   document.getElementById('c-btns').innerHTML=b.join('');
   document.getElementById('cellmodal').classList.add('show');
+  history.pushState({t:'ov'},'');
 }
-function closeCell(){document.getElementById('cellmodal').classList.remove('show');CELL=null}
+function anyOverlay(){
+  return document.getElementById('cellmodal').classList.contains('show')
+    ||document.getElementById('modal').classList.contains('show')
+    ||document.getElementById('drawer').classList.contains('on');
+}
+function closeAllOverlay(){
+  document.getElementById('cellmodal').classList.remove('show');CELL=null;
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('drawer').classList.remove('on');
+  document.getElementById('dim').classList.remove('on');
+}
+function closeCell(){
+  if(history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('cellmodal').classList.remove('show');CELL=null;
+}
 async function saveCellPlan(field,val){
   if(!CELL)return;
   await api(`/mm_process?id=eq.${CELL.pr.id}`,{method:"PATCH",body:JSON.stringify({[field]:val||null})});
@@ -1200,8 +1230,18 @@ function openOp(op){
   nw.classList.toggle('hide',!m.ng_return_op);
   if(m.ng_return_op)document.getElementById('m-ng').textContent=opN(m.ng_return_op)+' '+mName(m.ng_return_op)+' 공정으로 재진행';
   document.getElementById('modal').classList.add('show');
+  history.pushState({t:'ov'},'');
 }
-function closeOp(){document.getElementById('modal').classList.remove('show')}
+function closeOp(){
+  if(history.state&&history.state.t==='ov'){history.back();return}
+  document.getElementById('modal').classList.remove('show');
+}
+window.addEventListener('popstate',e=>{
+  if(anyOverlay()){closeAllOverlay();return}
+  const st=e.state;
+  if(st&&st.t==='view'){go(st.v,true);return}
+  go('dash',true);
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOp();closeCell();}});
 
 let LASTHIST=[];
@@ -1828,6 +1868,7 @@ async function loadHist(){
   if(USER){
     document.getElementById('login').style.display='none';
     document.getElementById('ubadge').textContent='👤 '+USER;
+    history.replaceState({t:'view',v:'dash'},'');
     loadDash();
   }
 })();
