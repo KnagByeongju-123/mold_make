@@ -627,7 +627,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.1</span>
+    <span class="rev">Rev 8.2</span>
   </div>
 </header>
 
@@ -718,6 +718,7 @@ section{animation:fadein .35s}
       <button class="btn wizbtn" onclick="startWizard()">📅 계획수립</button>
       <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportPlan()">엑셀 출력</button>
     </div>
+    <div id="plantype" style="margin:-6px 0 12px;font-size:13px;color:var(--sub);display:flex;align-items:center;gap:7px;flex-wrap:wrap"></div>
     
     <div class="tscroll">
       <table class="wide">
@@ -2380,10 +2381,12 @@ function exportDocPDF(){
 
 /* ---------- 제작계획 ---------- */
 let PLANROWS=[];
+let PLANPJ=[];
 async function loadPlanSel(){
-  const pj=await api("/mm_project?select=id,mold_no,mold_name,status&order=created_at.desc");
+  const pj=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type&order=created_at.desc");
+  PLANPJ=pj;
   const el=document.getElementById('plansel');
-  el.innerHTML=pj.map(x=>`<option value="${x.id}">${esc(x.mold_no)} — ${esc(x.mold_name)} (${x.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
+  el.innerHTML=pj.map(x=>`<option value="${x.id}">${x.mold_type==='수리'?'[수리] ':'[신작] '}${esc(x.mold_no)} — ${esc(x.mold_name)} (${x.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
   renderPlan();
 }
 async function renderPlan(){
@@ -2391,10 +2394,13 @@ async function renderPlan(){
   const tb=document.getElementById('planbody');
   if(!pid){tb.innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';return}
   const ps=await api("/mm_process?select=*&project_id=eq."+pid);
+  const pj=PLANPJ.find(x=>x.id===pid);
+  const badge=document.getElementById('plantype');
+  if(badge)badge.innerHTML=pj?`<span class="badge ${pj.mold_type==='수리'?'b-arch':'b-run'}">${pj.mold_type==='수리'?'🔧 금형수리':'🆕 금형신작'}</span> <b class="mono">${esc(pj.mold_no)}</b> ${esc(pj.mold_name)}`:'';
   const today=new Date().toISOString().slice(0,10);
   PLANROWS=[];
   let prevEnd=null;
-  tb.innerHTML=MASTER.map(m=>{
+  tb.innerHTML=FM(pflow(pj)).map(m=>{
     const pr=ps.find(x=>x.op_code===m.op_code);if(!pr)return '';
     const start=prevEnd||pr.plan_start||'';
     const delayed=pr.plan_end&&pr.status!=='OK'&&pr.plan_end<today;
