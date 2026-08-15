@@ -596,7 +596,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 7.2</span>
+    <span class="rev">Rev 7.3</span>
   </div>
 </header>
 
@@ -1067,14 +1067,21 @@ section{animation:fadein .35s}
       <datalist id="dl-skcat"><option value="금형부품"><option value="스프링"><option value="핀류"><option value="볼트/체결"><option value="소모공구"><option value="윤활/유지류"><option value="기타"></datalist>
       <div class="row2">
         <div class="fg"><label>규격</label><input id="ske-spec" placeholder="예: Φ20 × 150L" onfocus="SYMTGT=this"></div>
-        <div class="fg"><label>단위</label><input id="ske-unit" placeholder="EA" value="EA"></div>
+        <div class="fg"><label>단위</label>
+          <select id="ske-unit">
+            <option value="">선택</option>
+            <option>EA</option><option>SET</option><option>BOX</option><option>PCS</option>
+            <option>KG</option><option>g</option><option>M</option><option>㎜</option>
+            <option>L</option><option>롤</option><option>포</option><option>기타</option>
+          </select>
+        </div>
       </div>
       <div class="row2">
-        <div class="fg"><label>현재고</label><input id="ske-stock" type="number" min="0" value="0"></div>
-        <div class="fg"><label>안전재고</label><input id="ske-min" type="number" min="0" value="0"></div>
+        <div class="fg"><label>현재고</label><input id="ske-stock" type="number" min="0" inputmode="numeric" placeholder="수량"></div>
+        <div class="fg"><label>안전재고</label><input id="ske-min" type="number" min="0" inputmode="numeric" placeholder="수량"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>단가(원)</label><input id="ske-price" type="number" min="0" value="0"></div>
+        <div class="fg"><label>단가(원)</label><input id="ske-price" type="number" min="0" inputmode="numeric" placeholder="원"></div>
         <div class="fg"><label>위치(랙)</label><input id="ske-loc" placeholder="예: A랙-3"></div>
       </div>
       <div class="row2">
@@ -2590,8 +2597,8 @@ function editStockItem(id){
   document.getElementById('ske-title').textContent=m?'품목 수정':'품목 등록';
   const set=(k,v)=>document.getElementById(k).value=v??'';
   set('ske-name',m?.name);set('ske-cat',m?.category);set('ske-spec',m?.spec);
-  set('ske-unit',m?m.unit:'EA');set('ske-stock',m?m.stock:0);set('ske-min',m?m.min_stock:0);
-  set('ske-price',m?m.price:0);set('ske-loc',m?.location);set('ske-vendor',m?.vendor);set('ske-memo',m?.memo);
+  set('ske-unit',m?m.unit:'');set('ske-stock',m?m.stock:'');set('ske-min',m?m.min_stock:'');
+  set('ske-price',m?m.price:'');set('ske-loc',m?.location);set('ske-vendor',m?.vendor);set('ske-memo',m?.memo);
   document.getElementById('ske-photo').value='';
   document.getElementById('ske-pv').innerHTML=m&&m.photo?`<img src="${m.photo}" style="width:70px;height:70px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
     <button class="ubtn" style="vertical-align:top;margin-left:6px" onclick="SKRMPHOTO=true;this.parentNode.innerHTML=''">사진 삭제</button>`:'';
@@ -2608,7 +2615,7 @@ async function saveStockItem(){
   const f=document.getElementById('ske-photo').files[0];
   if(f){try{toast('사진 업로드 중...');photo=await uploadImg(f,'stock');}catch(e){return toast(e.message)}}
   else if(SKRMPHOTO){if(m&&m.photo)deleteImg(m.photo);photo=null;}
-  const body={name:nm,category:g('ske-cat')||null,spec:g('ske-spec')||null,unit:g('ske-unit')||'EA',
+  const body={name:nm,category:g('ske-cat')||null,spec:g('ske-spec')||null,unit:document.getElementById('ske-unit').value||'EA',
     stock:Number(g('ske-stock')||0),min_stock:Number(g('ske-min')||0),price:Number(g('ske-price')||0),
     location:g('ske-loc')||null,vendor:g('ske-vendor')||null,memo:g('ske-memo')||null,photo};
   try{
