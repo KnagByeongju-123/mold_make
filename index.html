@@ -453,6 +453,10 @@ section{animation:fadein .35s}
 .jd-ok{color:var(--blue);font-weight:800}.jd-ng{color:var(--red);font-weight:800}.jd-cond{color:var(--out);font-weight:800}
 tr.insp-ng td{background:rgba(255,123,123,.07)}
 .qbx2{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px}
+.qfbox{border:1px dashed var(--line);border-radius:13px;padding:12px 13px 4px;margin-bottom:14px;position:relative}
+.qfbox>.qflb{position:absolute;top:-9px;left:12px;background:var(--bg);padding:0 8px;font-size:11px;font-weight:800;color:var(--gray);letter-spacing:1px}
+.wrbtn{padding:9px 16px;border-radius:10px;border:1px solid var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
+.wrbtn.open{background:var(--gold);color:#1a1d27}
 .apstep{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .apstep span{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:14px;border:1px solid var(--line);color:var(--sub);background:var(--card2)}
 .apstep span.done{border-color:rgba(126,224,160,.5);color:var(--green);background:rgba(126,224,160,.1)}
@@ -660,7 +664,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 9.8</span>
+    <span class="rev">Rev 10.0</span>
   </div>
 </header>
 
@@ -688,6 +692,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
       <div class="mi" data-v="insp" onclick="go('insp')"><span class="ic">📐</span>검사성적</div>
       <div class="mi" data-v="ncr" onclick="go('ncr')"><span class="ic">🚨</span>부적합·시정조치</div>
       <div class="mi" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
+      <div class="mi" data-v="gauge" onclick="go('gauge')"><span class="ic">📏</span>계측기관리</div>
       <div class="mi" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
     </div>
   </div>
@@ -978,6 +983,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 
   <!-- 검사성적 -->
   <section id="v-insp" class="hide">
+    <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
     <div class="psel">
       <select id="inspsel" onchange="renderInsp()"></select>
       <span id="insprate" style="font-weight:700;color:var(--blue)"></span>
@@ -991,8 +997,10 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportInspPDF()">PDF</button>
       <button class="btn" style="padding:8px 14px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)" onclick="submitInsp()">✍️ 결재 상신</button>
     </div>
-    <div class="panel" style="margin-bottom:14px">
-      <h2>검사성적 입력</h2>
+    </div>
+    <button class="wrbtn" style="margin-bottom:12px" onclick="toggleWrite('inspwrite',this)">✏️ 신규 작성</button>
+    <div class="panel hide" id="inspwrite" style="margin-bottom:14px">
+      <h2>✏️ 검사성적 입력</h2>
       <div id="in-quick" style="display:none;margin-bottom:12px">
         <label style="font-size:12px;font-weight:700;color:var(--gold)">📌 등록된 검사항목 — 누르면 항목·규격이 채워집니다. 실측값만 입력하세요</label>
         <div class="symrow" id="in-quickchips" style="margin-top:6px"></div>
@@ -1026,6 +1034,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 
   <!-- 부적합·시정조치 -->
   <section id="v-ncr" class="hide">
+    <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
     <div class="psel">
       <select id="ncrsel" onchange="renderNcr()"><option value="">전체 금형</option></select>
       <span id="ncrrate" style="font-weight:700;color:var(--red)"></span>
@@ -1038,8 +1047,10 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
       <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportNcrCSV()">엑셀</button>
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportNcrPDF()">PDF</button>
     </div>
-    <div class="panel" style="margin-bottom:14px">
-      <h2>부적합 보고 (NCR)</h2>
+    </div>
+    <button class="wrbtn" style="margin-bottom:12px" onclick="toggleWrite('ncrwrite',this)">✏️ 신규 작성</button>
+    <div class="panel hide" id="ncrwrite" style="margin-bottom:14px">
+      <h2>✏️ 부적합 보고 (NCR) 작성</h2>
       <div class="row2">
         <div class="fg"><label>금형 *</label><select id="nc-proj"></select></div>
         <div class="fg"><label>공정</label><select id="nc-op"></select></div>
@@ -1064,6 +1075,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 
   <!-- 설계변경 (4M) -->
   <section id="v-ecn" class="hide">
+    <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
     <div class="psel">
       <select id="ecnsel" onchange="renderEcn()"><option value="">전체 금형</option></select>
       <span id="ecnrate" style="font-weight:700;color:var(--out)"></span>
@@ -1076,8 +1088,10 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
       <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportEcnCSV()">엑셀</button>
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportEcnPDF()">PDF</button>
     </div>
-    <div class="panel" style="margin-bottom:14px">
-      <h2>설계·4M 변경 등록</h2>
+    </div>
+    <button class="wrbtn" style="margin-bottom:12px" onclick="toggleWrite('ecnwrite',this)">✏️ 신규 작성</button>
+    <div class="panel hide" id="ecnwrite" style="margin-bottom:14px">
+      <h2>✏️ 설계·4M 변경 작성</h2>
       <div class="row2">
         <div class="fg"><label>금형 *</label><select id="ec-proj"></select></div>
         <div class="fg"><label>변경일</label><input id="ec-date" type="date"></div>
@@ -1094,6 +1108,27 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
       <button class="btn btn-p" onclick="saveEcn()">변경 등록</button>
     </div>
     <div id="ecnlist"></div>
+  </section>
+
+  <!-- 계측기관리 -->
+  <section id="v-gauge" class="hide">
+    <div class="stats">
+      <div class="stat s1"><div class="v" id="gu-cnt">0</div><div class="k">총 대수</div></div>
+      <div class="stat s2"><div class="v" id="gu-use">0</div><div class="k">사용중</div></div>
+      <div class="stat s3" style="cursor:pointer" onclick="GU_DUE=!GU_DUE;renderGauge()"><div class="v" id="gu-due">0</div><div class="k">교정임박·초과</div></div>
+      <div class="stat s4"><div class="v" id="gu-over">0</div><div class="k">기한초과</div></div>
+    </div>
+    <div class="stkbar">
+      <input type="text" id="gu-q" placeholder="관리번호 · 계측기명 · 위치 검색" oninput="renderGauge()">
+      <select id="gu-st" onchange="renderGauge()"><option value="">전체 상태</option><option>사용</option><option>교정중</option><option>수리</option><option>폐기</option></select>
+      <button class="lowtg" id="gu-duebtn" onclick="GU_DUE=!GU_DUE;this.classList.toggle('on',GU_DUE);renderGauge()">⚠ 임박·초과만</button>
+    </div>
+    <div class="stkbar">
+      <button class="btn btn-p" onclick="editGauge(null)">＋ 계측기 등록</button>
+      <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportGaugeCSV()">엑셀</button>
+      <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportGaugePDF()">PDF 대장</button>
+    </div>
+    <div id="gaugelist"></div>
   </section>
 
   <!-- 결재함 -->
@@ -1287,6 +1322,71 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
         <button class="cb back" onclick="closeTrace()">닫기</button>
         <button class="cb" onclick="exportTraceCSV()">엑셀</button>
         <button class="cb ok" onclick="exportTracePDF()">PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="guedit" onclick="if(event.target===this)closeGuEdit()">
+  <div class="mbox">
+    <div class="mhead"><span class="mtitle" id="gue-title">계측기 등록</span><button class="mx" onclick="closeGuEdit()">✕</button></div>
+    <div class="mbody">
+      <div class="row2">
+        <div class="fg"><label>관리번호 *</label><input id="gue-no" placeholder="예: MG-001"></div>
+        <div class="fg"><label>계측기명 *</label><input id="gue-name" placeholder="예: 버니어 캘리퍼스"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>형식 / 모델</label><input id="gue-model" placeholder="예: CD-15APX"></div>
+        <div class="fg"><label>제조사</label><input id="gue-maker" placeholder="예: Mitutoyo"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Serial No</label><input id="gue-sn"></div>
+        <div class="fg"><label>측정범위</label><input id="gue-range" placeholder="예: 0~150㎜" onfocus="SYMTGT=this"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>정밀도 / 분해능</label><input id="gue-acc" placeholder="예: 0.01㎜" onfocus="SYMTGT=this"></div>
+        <div class="fg"><label>교정주기 (개월) *</label><input id="gue-cycle" type="number" min="1" placeholder="12"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>최근 교정일</label><input id="gue-last" type="date"></div>
+        <div class="fg"><label>교정기관</label><input id="gue-agency" placeholder="예: KTC, KOLAS 인정기관"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>성적서 번호</label><input id="gue-cert"></div>
+        <div class="fg"><label>보관위치 / 사용부서</label><input id="gue-loc" placeholder="예: 검사실, 가공팀"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>담당자</label><input id="gue-worker"></div>
+        <div class="fg"><label>상태</label><select id="gue-st"><option>사용</option><option>교정중</option><option>수리</option><option>폐기</option></select></div>
+      </div>
+      <div class="fg"><label>성적서 사진</label><input type="file" id="gue-photo" accept="image/*"><div id="gue-pv" style="margin-top:6px"></div></div>
+      <div class="fg"><label>비고</label><input id="gue-memo"></div>
+      <div class="cbtns">
+        <button class="cb back" onclick="closeGuEdit()">취소</button>
+        <button class="cb ok" onclick="saveGauge()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="gucal" onclick="if(event.target===this)closeGuCal()">
+  <div class="mbox">
+    <div class="mhead"><span class="mtitle" id="guc-title">교정 실시 등록</span><button class="mx" onclick="closeGuCal()">✕</button></div>
+    <div class="mbody">
+      <div class="row2">
+        <div class="fg"><label>교정일 *</label><input id="guc-date" type="date"></div>
+        <div class="fg"><label>판정</label><select id="guc-result"><option>합격</option><option>조건부 합격</option><option>불합격</option></select></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>교정기관</label><input id="guc-agency"></div>
+        <div class="fg"><label>성적서 번호</label><input id="guc-cert"></div>
+      </div>
+      <div class="fg"><label>담당자</label><input id="guc-worker"></div>
+      <div class="fg"><label>성적서 사진</label><input type="file" id="guc-photo" accept="image/*"></div>
+      <div id="guc-hist" style="margin-top:8px"></div>
+      <div class="cbtns">
+        <button class="cb back" onclick="closeGuCal()">취소</button>
+        <button class="cb ok" onclick="saveGuCal()">교정 등록</button>
       </div>
     </div>
   </div>
@@ -1883,8 +1983,8 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',help:'사용안내',set:'설정'};
-const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa',appr:'qa'};
+const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function goNew(t){
   go('new');
@@ -1903,7 +2003,7 @@ function go(v,fromPop){
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','insp','ncr','ecn','appr'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','insp','ncr','ecn','appr','gauge'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
   if(v==='plan')loadPlanSel();
@@ -1916,6 +2016,7 @@ function go(v,fromPop){
   if(v==='ncr')loadNcr();
   if(v==='ecn')loadEcn();
   if(v==='appr')loadAppr();
+  if(v==='gauge')loadGauge();
 }
 
 /* ---------- 로드 ---------- */
@@ -3042,6 +3143,13 @@ function exportTracePDF(){
 
 
 /* ---------- 품질관리 (SQ): 검사성적 / NCR / ECN ---------- */
+function toggleWrite(id,btn){
+  const p=document.getElementById(id);
+  const open=p.classList.toggle('hide');
+  btn.classList.toggle('open',!open);
+  btn.textContent=open?'✏️ 신규 작성':'✏️ 작성 닫기';
+  if(!open)p.scrollIntoView({behavior:'smooth',block:'start'});
+}
 let QAPJ=[],INSP=[],INSPV=[],NCRS=[],ECNS=[];
 async function loadQaProjects(){
   QAPJ=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type&order=created_at.desc");
@@ -3785,6 +3893,173 @@ function dlCSV(title,head,rows,fname){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
   a.download=fname+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
+}
+
+
+/* ---------- 계측기관리 ---------- */
+let GAUGES=[],GU_DUE=false,GUEDIT=null,GUCAL=null,GURMPHOTO=false;
+function guNext(g){ // 차기 교정일
+  if(!g.last_cal||!g.cal_cycle)return null;
+  const d=new Date(g.last_cal);d.setMonth(d.getMonth()+Number(g.cal_cycle));
+  return d.toISOString().slice(0,10);
+}
+function guDday(g){const n=guNext(g);return n?dday(n):null}
+async function loadGauge(){
+  try{GAUGES=await api("/mm_gauge?select=*&order=mgmt_no");}
+  catch(e){document.getElementById('gaugelist').innerHTML='<div class="empty">patch_rev99.sql을 Supabase에서 실행하세요</div>';return}
+  renderGauge();
+}
+function renderGauge(){
+  const q=(g('gu-q')||'').toLowerCase(),st=document.getElementById('gu-st').value;
+  document.getElementById('gu-duebtn').classList.toggle('on',GU_DUE);
+  const act=GAUGES.filter(x=>x.status!=='폐기');
+  const dues=act.filter(x=>{const d=guDday(x);return d!==null&&d<=30});
+  const overs=act.filter(x=>{const d=guDday(x);return d!==null&&d<0});
+  document.getElementById('gu-cnt').textContent=GAUGES.length;
+  document.getElementById('gu-use').textContent=GAUGES.filter(x=>x.status==='사용').length;
+  document.getElementById('gu-due').textContent=dues.length;
+  document.getElementById('gu-over').textContent=overs.length;
+  const rows=GAUGES.filter(x=>{
+    const hit=!q||[x.mgmt_no,x.name,x.model,x.location,x.serial_no].some(v=>(v||'').toLowerCase().includes(q));
+    const ms=!st||x.status===st;
+    const d=guDday(x);
+    return hit&&ms&&(!GU_DUE||(d!==null&&d<=30&&x.status!=='폐기'));
+  });
+  document.getElementById('gaugelist').innerHTML=rows.map(x=>{
+    const nx=guNext(x),d=guDday(x);
+    const late=d!==null&&d<0,soon=d!==null&&d>=0&&d<=30;
+    return `<div class="qacard ${late?'open-ncr':''}">
+      <div class="qahd">
+        <span class="no2 mono">${esc(x.mgmt_no)}</span>
+        <b>${esc(x.name)}</b>
+        ${x.model?`<span class="kd">${esc(x.model)}</span>`:''}
+        <span class="kd">${esc(x.status)}</span>
+        ${nx?`<span class="dd ${late?'dd-over':soon?'dd-soon':'dd-ok'}" style="margin-left:auto">${late?'초과 D+'+(-d):d===0?'D-DAY':'D-'+d}</span>`:'<span style="margin-left:auto"></span>'}
+      </div>
+      <div class="qaft" style="margin-top:7px">
+        ${x.range_val?`<span>범위 ${esc(x.range_val)}</span>`:''}
+        ${x.accuracy?`<span>정밀도 ${esc(x.accuracy)}</span>`:''}
+        <span>주기 ${x.cal_cycle||'-'}개월</span>
+        <span>최근교정 ${x.last_cal||'-'}</span>
+        <span>차기 <b style="color:${late?'var(--red)':soon?'var(--out)':'var(--blue)'}">${nx||'-'}</b></span>
+        ${x.location?`<span>📍${esc(x.location)}</span>`:''}
+        ${x.photo?`<span style="cursor:pointer" onclick="openBig('${x.photo}')">📎성적서</span>`:''}
+      </div>
+      <div class="qaft">
+        <span style="margin-left:auto;display:flex;gap:5px">
+          <button class="ubtn save" onclick="openGuCal(${x.id})">📅 교정 실시</button>
+          <button class="ubtn" onclick="editGauge(${x.id})">수정</button>
+          <button class="del" onclick="delGauge(${x.id},'${esc(x.mgmt_no)}')">✕</button>
+        </span>
+      </div>
+    </div>`;
+  }).join('')||'<div class="empty">계측기가 없습니다. [＋ 계측기 등록]으로 시작하세요.</div>';
+}
+function editGauge(id){
+  GUEDIT=id;GURMPHOTO=false;
+  const m=id?GAUGES.find(x=>x.id===id):null;
+  document.getElementById('gue-title').textContent=m?'계측기 수정':'계측기 등록';
+  const set=(k,v)=>document.getElementById(k).value=v??'';
+  set('gue-no',m?.mgmt_no);set('gue-name',m?.name);set('gue-model',m?.model);set('gue-maker',m?.maker);
+  set('gue-sn',m?.serial_no);set('gue-range',m?.range_val);set('gue-acc',m?.accuracy);
+  set('gue-cycle',m?m.cal_cycle:12);set('gue-last',m?.last_cal);set('gue-agency',m?.agency);
+  set('gue-cert',m?.cert_no);set('gue-loc',m?.location);set('gue-worker',m?m.worker:(USER||''));set('gue-memo',m?.memo);
+  document.getElementById('gue-st').value=m?m.status:'사용';
+  document.getElementById('gue-photo').value='';
+  document.getElementById('gue-pv').innerHTML=m&&m.photo?`<img src="${m.photo}" style="width:70px;height:70px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
+    <button class="ubtn" style="vertical-align:top;margin-left:6px" onclick="GURMPHOTO=true;this.parentNode.innerHTML=''">사진 삭제</button>`:'';
+  document.getElementById('guedit').classList.add('show');
+}
+function closeGuEdit(){document.getElementById('guedit').classList.remove('show');GUEDIT=null;}
+async function saveGauge(){
+  const no=g('gue-no'),nm=g('gue-name');
+  if(!no||!nm)return toast('관리번호와 계측기명은 필수입니다');
+  const cyc=Number(g('gue-cycle')||0);
+  if(!cyc)return toast('교정주기를 입력하세요');
+  const m=GUEDIT?GAUGES.find(x=>x.id===GUEDIT):null;
+  if(GAUGES.find(x=>x.mgmt_no===no&&(!m||x.id!==m.id)))return toast('이미 있는 관리번호입니다');
+  let photo=m?m.photo:null;
+  const f=document.getElementById('gue-photo').files[0];
+  if(f){try{toast('성적서 업로드 중...');photo=await uploadImg(f,'gauge');}catch(e){return toast(e.message)}}
+  else if(GURMPHOTO){if(m&&m.photo)deleteImg(m.photo);photo=null;}
+  const body={mgmt_no:no,name:nm,model:g('gue-model')||null,maker:g('gue-maker')||null,
+    serial_no:g('gue-sn')||null,range_val:g('gue-range')||null,accuracy:g('gue-acc')||null,
+    cal_cycle:cyc,last_cal:g('gue-last')||null,agency:g('gue-agency')||null,cert_no:g('gue-cert')||null,
+    location:g('gue-loc')||null,worker:g('gue-worker')||null,
+    status:document.getElementById('gue-st').value,memo:g('gue-memo')||null,photo};
+  try{
+    if(GUEDIT)await api(`/mm_gauge?id=eq.${GUEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
+    else await api("/mm_gauge",{method:"POST",body:JSON.stringify(body)});
+    closeGuEdit();toast('계측기 저장 완료');loadGauge();
+  }catch(e){toast('저장 실패: '+e.message)}
+}
+async function delGauge(id,no){
+  if(!confirm(no+' 계측기를 삭제할까요?\n교정 이력도 함께 삭제됩니다.'))return;
+  await api(`/mm_gauge?id=eq.${id}`,{method:"DELETE"});loadGauge();
+}
+/* 교정 실시 */
+async function openGuCal(id){
+  const m=GAUGES.find(x=>x.id===id);if(!m)return;
+  GUCAL=m;
+  document.getElementById('guc-title').textContent='📅 교정 실시 — '+m.mgmt_no+' '+m.name;
+  document.getElementById('guc-date').value=today();
+  document.getElementById('guc-result').value='합격';
+  document.getElementById('guc-agency').value=m.agency||'';
+  document.getElementById('guc-cert').value='';
+  document.getElementById('guc-worker').value=USER||'';
+  document.getElementById('guc-photo').value='';
+  let hist=[];
+  try{hist=await api("/mm_gauge_cal?select=*&gauge_id=eq."+id+"&order=cal_date.desc&limit=10");}catch(e){}
+  document.getElementById('guc-hist').innerHTML=hist.length?'<label style="font-size:12px;font-weight:700;color:var(--gold)">교정 이력</label>'+
+    hist.map(h=>`<div class="strow"><span class="tp in">${esc(h.result||'합격')}</span>
+      <span class="nm2">${h.cal_date} · ${esc(h.agency||'-')}${h.cert_no?' · '+esc(h.cert_no):''}</span>
+      ${h.photo?`<span style="cursor:pointer" onclick="openBig('${h.photo}')">📎</span>`:''}
+      <span class="dt2">${esc(h.worker||'')}</span></div>`).join(''):'';
+  document.getElementById('gucal').classList.add('show');
+}
+function closeGuCal(){document.getElementById('gucal').classList.remove('show');GUCAL=null;}
+async function saveGuCal(){
+  const m=GUCAL;if(!m)return;
+  const dt=g('guc-date');if(!dt)return toast('교정일을 입력하세요');
+  const result=document.getElementById('guc-result').value;
+  let photo=null;
+  const f=document.getElementById('guc-photo').files[0];
+  if(f){try{toast('성적서 업로드 중...');photo=await uploadImg(f,'gauge');}catch(e){return toast(e.message)}}
+  try{
+    await api("/mm_gauge_cal",{method:"POST",body:JSON.stringify({
+      gauge_id:m.id,cal_date:dt,result,agency:g('guc-agency')||null,
+      cert_no:g('guc-cert')||null,worker:g('guc-worker')||null,photo})});
+    await api(`/mm_gauge?id=eq.${m.id}`,{method:"PATCH",body:JSON.stringify({
+      last_cal:dt,agency:g('guc-agency')||m.agency,cert_no:g('guc-cert')||m.cert_no,
+      photo:photo||m.photo,status:result==='불합격'?'수리':'사용'})});
+    toast('교정 등록 완료'+(result==='불합격'?' — 상태를 수리로 변경했습니다':''));
+    closeGuCal();loadGauge();
+  }catch(e){toast('등록 실패: '+e.message)}
+}
+function exportGaugeCSV(){
+  if(!GAUGES.length)return toast('출력할 계측기가 없습니다');
+  const head=['관리번호','계측기명','형식/모델','제조사','Serial','측정범위','정밀도','교정주기(월)','최근교정','차기교정','교정기관','성적서번호','위치/부서','담당자','상태','비고'];
+  const rows=GAUGES.map(x=>[x.mgmt_no,x.name,x.model||'',x.maker||'',x.serial_no||'',x.range_val||'',x.accuracy||'',
+    x.cal_cycle,x.last_cal||'',guNext(x)||'',x.agency||'',x.cert_no||'',x.location||'',x.worker||'',x.status,x.memo||'']);
+  dlCSV('계측기 관리대장',head,rows,'계측기관리대장');
+}
+async function exportGaugePDF(){
+  if(!GAUGES.length)return toast('출력할 계측기가 없습니다');
+  const act=GAUGES.filter(x=>x.status!=='폐기');
+  const body=`<div class="sect">계측기 관리대장 (총 ${GAUGES.length}대 · 사용 ${GAUGES.filter(x=>x.status==='사용').length}대)</div>
+  <table class="dt"><thead><tr><th style="width:52px">관리번호</th><th>계측기명 / 모델</th><th style="width:70px">측정범위</th><th style="width:50px">정밀도</th><th style="width:36px">주기</th><th style="width:62px">최근교정</th><th style="width:62px">차기교정</th><th style="width:64px">교정기관</th><th style="width:56px">위치</th><th style="width:36px">상태</th></tr></thead>
+  <tbody>${GAUGES.map(x=>{
+    const nx=guNext(x),d=guDday(x);const late=d!==null&&d<0;
+    return `<tr><td class="mono">${esc(x.mgmt_no)}</td>
+    <td><b>${esc(x.name)}</b>${x.model?'<br><span style="font-size:9px;color:#666">'+esc(x.model)+(x.serial_no?' · SN '+esc(x.serial_no):'')+'</span>':''}</td>
+    <td class="mono">${esc(x.range_val||'-')}</td><td class="mono">${esc(x.accuracy||'-')}</td>
+    <td style="text-align:center">${x.cal_cycle||'-'}</td>
+    <td class="mono">${x.last_cal||'-'}</td>
+    <td class="mono ${late?'ng':''}">${nx||'-'}${late?' 초과':''}</td>
+    <td style="font-size:9px">${esc(x.agency||'-')}${x.cert_no?'<br>'+esc(x.cert_no):''}</td>
+    <td style="font-size:9px">${esc(x.location||'-')}</td>
+    <td class="${x.status==='폐기'?'ng':x.status==='사용'?'ok':''}" style="text-align:center">${esc(x.status)}</td></tr>`}).join('')}</tbody></table>`;
+  qaPdf('MG-'+today().replace(/-/g,''),'계측기 관리대장','전체 계측기','교정주기 기준 차기 교정일 자동계산 · 출력일 '+today(),body);
 }
 
 /* ---------- 재고관리 (금형부품) ---------- */
