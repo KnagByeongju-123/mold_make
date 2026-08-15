@@ -234,7 +234,18 @@ const PROGS = [0,25,50,75,100];
 const scolor = k => (STATUS.find(s=>s.k===k)||{c:'#3a4152'}).c;
 
 /* ================= 상태 ================= */
-let USER = sessionStorage.getItem('mm_user') || null;
+let USER = (function(){
+  try{
+    const o=JSON.parse(localStorage.getItem('mm_session')||'null');
+    if(o&&o.exp>Date.now()){
+      localStorage.setItem('mm_session',JSON.stringify({name:o.name,exp:Date.now()+7*864e5}));
+      sessionStorage.setItem('mm_user',o.name);
+      return o.name;
+    }
+    if(o)localStorage.removeItem('mm_session');
+  }catch(e){}
+  return sessionStorage.getItem('mm_user') || null;
+})();
 let users = [];
 let rows = {};
 let els  = {};
