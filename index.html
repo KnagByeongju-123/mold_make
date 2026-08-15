@@ -417,7 +417,7 @@ section{animation:fadein .35s}
 .cday.dis{opacity:.28;cursor:not-allowed;background:transparent}
 .cday.dis:hover{border-color:var(--line2);background:transparent}
 .cday.has{background:rgba(79,140,255,.18);border-color:rgba(79,140,255,.55)}
-.cday i{font-size:8.5px;font-weight:800;color:var(--blue);font-style:normal;font-family:'IBM Plex Mono',monospace;margin-top:2px;line-height:1}
+.cday i{font-size:9px;font-weight:800;color:var(--blue);font-style:normal;margin-top:2px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wlist{display:flex;flex-wrap:wrap;gap:4px;margin-top:11px;max-height:76px;overflow-y:auto}
 .wtag{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-size:10.5px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .wtag i{color:var(--gold);font-style:normal;font-weight:700}
@@ -521,7 +521,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 5.4</span>
+    <span class="rev">Rev 5.5</span>
   </div>
 </header>
 
@@ -1369,6 +1369,7 @@ function curProc(ps){
   return ps.length?'전공정 완료':'-';
 }
 function opN(c){return (c||'').replace('OP','')}
+function opAbbr(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name.replace(/\s/g,'').slice(0,2):opN(c)}
 function mName(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name:''}
 function st(id,v){document.getElementById(id).textContent=v}
 function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -1997,7 +1998,7 @@ function wizDraw(){
   calDraw();
   const done=list.filter(x=>x.end);
   document.getElementById('w-list').innerHTML=done.length
-    ? done.map(x=>`<span class="wtag"><i class="mono">${opN(x.op)}</i>${x.end.slice(5)}</span>`).join('')
+    ? done.map(x=>`<span class="wtag"><i>${opAbbr(x.op)}</i>${x.end.slice(5)}</span>`).join('')
     : '<span class="wempty">아직 선택된 일정이 없습니다</span>';
 }
 function calMove(n){
@@ -2012,7 +2013,7 @@ function calDraw(){
   const pad=first.getDay(), days=last.getDate();
   const today=new Date().toISOString().slice(0,10);
   const minD=wizPrevEnd();
-  const picked={};WIZ.list.forEach(x=>{if(x.end)(picked[x.end]=picked[x.end]||[]).push(opN(x.op))});
+  const picked={};WIZ.list.forEach(x=>{if(x.end)(picked[x.end]=picked[x.end]||[]).push(opAbbr(x.op))});
   let html='';
   for(let k=0;k<pad;k++)html+='<div class="cempty"></div>';
   for(let d=1;d<=days;d++){
@@ -2093,7 +2094,7 @@ function dcalDraw(){
   const marks={};
   PLANROWS.forEach(r=>{
     if(!r.pr.plan_end)return;
-    (marks[r.pr.plan_end]=marks[r.pr.plan_end]||[]).push({n:opN(r.m.op_code),me:r.m.op_code===op});
+    (marks[r.pr.plan_end]=marks[r.pr.plan_end]||[]).push({n:opAbbr(r.m.op_code),me:r.m.op_code===op});
   });
   let html='';
   for(let k=0;k<pad;k++)html+='<div class="cempty"></div>';
