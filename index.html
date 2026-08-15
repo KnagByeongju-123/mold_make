@@ -553,7 +553,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 6.9</span>
+    <span class="rev">Rev 7.0</span>
   </div>
 </header>
 
@@ -565,7 +565,7 @@ section{animation:fadein .35s}
   </div>
   <div class="mi on" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
   <div class="mi" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
-  <div class="mi" data-v="new" onclick="go('new')"><span class="ic">＋</span>신규 등록</div>
+  <div class="mi" data-v="new" onclick="go('new')"><span class="ic">＋</span>신규금형등록</div>
   <div class="mi" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
   <div class="mg" id="mg-out">
     <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
@@ -835,7 +835,7 @@ section{animation:fadein .35s}
     <div class="hstep">
       <div class="hn mono">02</div>
       <div class="hb">
-        <h3>신규 등록 — 제작 건 개설</h3>
+        <h3>신규금형등록 — 제작 건 개설</h3>
         <p>하단 ＋<b>등록</b>에서 금형번호와 금형명을 입력합니다. 고객사·제품명·담당자·납기일은 선택 입력입니다.</p>
         <ul>
           <li>등록하면 10 ~ 180까지 <b>17개 공정이 자동 생성</b>됩니다.</li>
@@ -1409,7 +1409,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',help:'사용안내',set:'설정'};
 const GRP={doc:'out',tryout:'out'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function go(v,fromPop){
@@ -1448,7 +1448,7 @@ async function loadDash(){
   const ng=PROCS.reduce((s,p)=>s+p.ng_count,0);
   st('st-run',run);st('st-done',done);st('st-ng',ng);st('st-all',PROJECTS.length);
   const box=document.getElementById('projlist');
-  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [신규 등록] 탭에서 등록하세요.</div>';return}
+  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [신규금형등록] 메뉴에서 등록하세요.</div>';return}
   box.innerHTML=PROJECTS.map(p=>{
     const ps=PROCS.filter(x=>x.project_id===p.id);
     const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
