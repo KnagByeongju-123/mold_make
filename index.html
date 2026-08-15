@@ -627,7 +627,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.3</span>
+    <span class="rev">Rev 8.4</span>
   </div>
 </header>
 
@@ -1746,7 +1746,9 @@ function renderDash(){
       <div class="top">
         <span class="no mono">${esc(p.mold_no)}</span>
         <span class="nm">${esc(p.mold_name)}</span>
-        ${p.mold_type==='수리'?'<span class="badge" style="background:rgba(196,157,255,.16);color:var(--cust)">🔧수리</span>':''}
+        ${p.mold_type==='수리'
+          ?'<span class="badge" style="background:rgba(196,157,255,.16);color:var(--cust)">🔧 수리</span>'
+          :'<span class="badge" style="background:rgba(79,140,255,.16);color:var(--blue)">🗜️ 신작</span>'}
         <span class="cs">${esc(p.customer||'')} ${p.product?'· '+esc(p.product):''}</span>
         <span class="badge ${bcls}">${p.archived?'보관':p.status}</span>
         <button class="del" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')">✕</button>
