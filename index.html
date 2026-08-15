@@ -648,7 +648,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 9.0</span>
+    <span class="rev">Rev 9.1</span>
   </div>
 </header>
 
@@ -952,6 +952,10 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     </div>
     <div class="panel" style="margin-bottom:14px">
       <h2>검사성적 입력</h2>
+      <div id="in-quick" style="display:none;margin-bottom:12px">
+        <label style="font-size:12px;font-weight:700;color:var(--gold)">📌 등록된 검사항목 — 누르면 항목·규격이 채워집니다. 실측값만 입력하세요</label>
+        <div class="symrow" id="in-quickchips" style="margin-top:6px"></div>
+      </div>
       <div class="row2">
         <div class="fg"><label>공정</label><select id="in-op"></select></div>
         <div class="fg"><label>검사 구분</label>
@@ -2965,6 +2969,7 @@ async function renderInsp(){
   catch(e){tb.innerHTML='<tr><td colspan="9" class="empty">patch_rev90.sql을 Supabase에서 실행하세요</td></tr>';return}
   const ng=INSP.filter(r=>r.judge==='NG').length;
   document.getElementById('insprate').textContent=INSP.length?`총 ${INSP.length}건 · NG ${ng}건`:'';
+  renderInspQuick();
   tb.innerHTML=INSP.map(r=>`<tr class="${r.judge==='NG'?'insp-ng':''}">
     <td class="mono">${fmt(r.created_at)}</td>
     <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
@@ -2976,6 +2981,29 @@ async function renderInsp(){
     <td>${esc(r.worker||'-')}</td>
     <td><button class="del" onclick="delInsp(${r.id})">✕</button></td>
   </tr>`).join('')||'<tr><td colspan="9" class="empty">검사 기록이 없습니다</td></tr>';
+}
+function renderInspQuick(){
+  const box=document.getElementById('in-quick');
+  // 최근 등록 순으로 중복 없는 항목 템플릿 수집 (항목+구분 기준)
+  const seen=new Set(),tpl=[];
+  INSP.forEach(r=>{
+    const key=r.kind+'|'+r.item;
+    if(seen.has(key))return;seen.add(key);
+    tpl.push(r);
+  });
+  if(!tpl.length){box.style.display='none';return}
+  box.style.display='';
+  document.getElementById('in-quickchips').innerHTML=tpl.slice(0,20).map(r=>
+    `<button type="button" style="font-family:inherit;font-size:12px" onclick='fillInsp(${JSON.stringify({op:r.op_code||"",kind:r.kind||"",item:r.item,spec:r.spec||""}).replace(/'/g,"&#39;")})'>${esc(r.item)}${r.spec?' <span style="opacity:.6">'+esc(r.spec)+'</span>':''}</button>`).join('');
+}
+function fillInsp(t){
+  document.getElementById('in-op').value=t.op;
+  document.getElementById('in-kind').value=t.kind||'부품 치수';
+  document.getElementById('in-item').value=t.item;
+  document.getElementById('in-spec').value=t.spec;
+  document.getElementById('in-actual').value='';
+  document.getElementById('in-judge').value='OK';
+  const a=document.getElementById('in-actual');a.focus();
 }
 async function saveInsp(){
   const pid=document.getElementById('inspsel').value;
