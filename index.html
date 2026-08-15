@@ -42,6 +42,9 @@ header .hright{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left
 .ubadge{font-size:11px;font-weight:800;color:var(--gold);border:1px solid var(--goldbd);
   background:var(--goldbg);padding:3px 12px;border-radius:14px;cursor:pointer;white-space:nowrap}
 .ubadge:hover{background:rgba(226,176,74,.2)}
+.abell{position:relative;font-size:16px;cursor:pointer;padding:4px 6px;border-radius:9px;line-height:1;animation:bellpulse 2s infinite}
+.abell i{position:absolute;top:-4px;right:-5px;background:var(--red);color:#fff;font-style:normal;font-size:9.5px;font-weight:900;min-width:16px;height:16px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 3px;border:1.5px solid var(--bg)}
+@keyframes bellpulse{0%,100%{transform:none}8%{transform:rotate(-12deg)}16%{transform:rotate(10deg)}24%{transform:rotate(-6deg)}32%{transform:none}}
 header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding:1px 6px;border-radius:4px;
   font-family:'IBM Plex Mono',monospace;white-space:nowrap;opacity:.7}
 
@@ -655,8 +658,9 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     <span class="htitle gold-txt" id="htitle">홈</span>
   </div>
   <div class="hright">
+    <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 9.7</span>
+    <span class="rev">Rev 9.8</span>
   </div>
 </header>
 
@@ -1598,7 +1602,7 @@ function enter(name){
   document.getElementById('login').style.display='none';
   document.getElementById('ubadge').textContent='👤 '+name;
   history.replaceState({t:'view',v:'dash'},'');
-  loadDash();
+  loadDash();startApprWatch();
 }
 function toggleDrawer(on){
   const wasOn=document.getElementById('drawer').classList.contains('on');
@@ -3331,6 +3335,24 @@ function exportEcnCSV(){
 }
 
 
+/* ----- 결재 알림 (헤더 벨) ----- */
+let ABELL_TIMER=null;
+async function checkApprTodo(){
+  if(!USER)return;
+  try{
+    const rows=await api("/mm_approval?select=steps,cur&status=eq.진행&limit=200");
+    const n=rows.filter(a=>a.steps[a.cur]&&a.steps[a.cur].name===USER).length;
+    const b=document.getElementById('abell');
+    document.getElementById('abellcnt').textContent=n;
+    b.classList.toggle('hide',!n);
+  }catch(e){}
+}
+function startApprWatch(){
+  checkApprTodo();
+  clearInterval(ABELL_TIMER);
+  ABELL_TIMER=setInterval(checkApprTodo,120000); // 2분 폴링
+}
+
 /* ========== 전자결재 ========== */
 let ROUTES=[],RTEDIT=null,APPRS=[],APPRTAB='todo',SUBMITCTX=null,SIGNCTX=null;
 
@@ -3427,7 +3449,7 @@ async function doSubmitAppr(){
     if(SUBMITCTX.projectId)await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:SUBMITCTX.projectId,action:'결재',
       detail:'결재 상신: '+SUBMITCTX.title,worker:USER})});
     toast('결재 상신 완료 — 다음 결재자: '+steps[1].name);
-    closeSubmit();
+    closeSubmit();checkApprTodo();
     if(document.getElementById('v-ncr')&&!document.getElementById('v-ncr').classList.contains('hide'))renderNcr();
     if(document.getElementById('v-ecn')&&!document.getElementById('v-ecn').classList.contains('hide'))renderEcn();
   }catch(e){toast('상신 실패: '+e.message)}
@@ -3527,7 +3549,7 @@ async function doApprove(){
     if(a.project_id)await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:a.project_id,action:'결재',
       detail:(last?'결재 완료: ':steps[a.cur].role+' 승인: ')+a.title,worker:USER})});
     toast(last?'최종 승인 완료':'승인 완료 — 다음: '+steps[a.cur+1].name);
-    closeSign();loadAppr();
+    closeSign();loadAppr();checkApprTodo();
   }catch(e){toast('처리 실패: '+e.message)}
 }
 async function doReject(){
@@ -3540,7 +3562,7 @@ async function doReject(){
     await api(`/mm_approval?id=eq.${a.id}`,{method:"PATCH",body:JSON.stringify({steps,status:'반려',reject_reason:reason||null})});
     if(a.project_id)await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:a.project_id,action:'결재',
       detail:'반려: '+a.title+(reason?' — '+reason:''),worker:USER})});
-    toast('반려 처리되었습니다');closeSign();loadAppr();
+    toast('반려 처리되었습니다');closeSign();loadAppr();checkApprTodo();
   }catch(e){toast('처리 실패: '+e.message)}
 }
 
@@ -4164,7 +4186,7 @@ async function loadHist(){
     document.getElementById('login').style.display='none';
     document.getElementById('ubadge').textContent='👤 '+USER;
     history.replaceState({t:'view',v:'dash'},'');
-    loadDash();
+    loadDash();startApprWatch();
   }
 })();
 </script>
