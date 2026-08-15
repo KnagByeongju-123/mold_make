@@ -622,7 +622,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 7.5</span>
+    <span class="rev">Rev 7.8</span>
   </div>
 </header>
 
@@ -634,7 +634,8 @@ section{animation:fadein .35s}
   </div>
   <div class="mi on" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
   <div class="mi" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
-  <div class="mi" data-v="new" onclick="go('new')"><span class="ic">＋</span>신규금형등록</div>
+  <div class="mi" data-v="new" onclick="goNew('신작')"><span class="ic">＋</span>신규금형등록</div>
+  <div class="mi" data-v="new" onclick="goNew('수리')"><span class="ic">🔧</span>신규수리등록</div>
   <div class="mi" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
   <div class="mg" id="mg-out">
     <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
@@ -1553,13 +1554,13 @@ async function saveOpMaster(){
 async function seedRepairFlow(){
   if(!confirm('기본 금형수리 공정 7단계를 생성할까요?\n(수리 접수 → 분해/세척 → 상태 진단 → 부품 가공/교체 → 조립 → T/O 검증 → 출하)'))return;
   const rows=[
-    {op_code:'RP10',seq:1,process_name:'수리 접수/견적',dept:'영업',actor:'고객사,사내',tasks:['수리 의뢰 접수','증상 확인','견적 산출'],outputs:['수리 견적서'],flow:'수리'},
-    {op_code:'RP20',seq:2,process_name:'금형 입고/분해·세척',dept:'조립',actor:'사내',tasks:['금형 입고 검수','분해','세척'],outputs:['입고 검수서'],flow:'수리'},
-    {op_code:'RP30',seq:3,process_name:'상태 진단',dept:'품질',actor:'사내',tasks:['마모/파손 부위 진단','수리 범위 확정'],outputs:['진단 보고서'],flow:'수리'},
+    {op_code:'RP10',seq:1,process_name:'수리 접수/견적',dept:'영업',actor:'고객사,사내',tasks:['수리 의뢰 접수','증상 확인','견적 산출'],outputs:['수리 견적서'],flow:'수리',ng_return_op:null},
+    {op_code:'RP20',seq:2,process_name:'금형 입고/분해·세척',dept:'조립',actor:'사내',tasks:['금형 입고 검수','분해','세척'],outputs:['입고 검수서'],flow:'수리',ng_return_op:null},
+    {op_code:'RP30',seq:3,process_name:'상태 진단',dept:'품질',actor:'사내',tasks:['마모/파손 부위 진단','수리 범위 확정'],outputs:['진단 보고서'],flow:'수리',ng_return_op:null},
     {op_code:'RP40',seq:4,process_name:'부품 가공/교체',dept:'가공',actor:'사내,외주',tasks:['파손 부품 가공','표준부품 교체','용접/육성'],outputs:['가공 작업일보'],flow:'수리',ng_return_op:'RP30'},
     {op_code:'RP50',seq:5,process_name:'조립',dept:'조립',actor:'사내',tasks:['재조립','습합 확인'],outputs:['조립 체크시트'],flow:'수리',ng_return_op:'RP40'},
     {op_code:'RP60',seq:6,process_name:'Tryout 검증',dept:'품질',actor:'사내',tasks:['T/O 사출/타발 검증','치수 확인'],outputs:['T/O 보고서'],flow:'수리',ng_return_op:'RP40'},
-    {op_code:'RP70',seq:7,process_name:'출하/이관',dept:'영업',actor:'고객사,사내',tasks:['최종 검수','출하'],outputs:['수리 완료 보고서'],flow:'수리'}
+    {op_code:'RP70',seq:7,process_name:'출하/이관',dept:'영업',actor:'고객사,사내',tasks:['최종 검수','출하'],outputs:['수리 완료 보고서'],flow:'수리',ng_return_op:null}
   ];
   try{
     await api("/mm_master",{method:"POST",body:JSON.stringify(rows)});
@@ -1644,6 +1645,13 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',help:'사용안내',set:'설정'};
 const GRP={doc:'out',tryout:'out'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
+function goNew(t){
+  go('new');
+  document.querySelectorAll('#f-type button').forEach(b=>b.classList.toggle('on',b.dataset.v===t));
+  const h=document.querySelector('#v-new .panel h2');
+  if(h)h.textContent=t==='수리'?'신규 수리 등록':'신규 금형 등록';
+  document.getElementById('htitle').textContent=t==='수리'?'신규수리등록':'신규금형등록';
+}
 function go(v,fromPop){
   document.getElementById('drawer').classList.remove('on');
   document.getElementById('dim').classList.remove('on');
