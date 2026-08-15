@@ -514,14 +514,17 @@ section{animation:fadein .35s}
 .cday:hover{border-color:var(--gold);background:rgba(226,176,74,.12)}
 .cday.today{border-color:var(--goldbd)}
 .cday.today b{color:var(--gold)}
-.cday.dis{opacity:.28;cursor:not-allowed;background:transparent}
+.cday.dis{opacity:.4;cursor:not-allowed;background:transparent}
 .cday.dis:hover{border-color:var(--line2);background:transparent}
-.cday.has{background:rgba(79,140,255,.18);border-color:rgba(79,140,255,.55)}
+.cday.has{background:rgba(79,140,255,.34);border:1.5px solid var(--blue);box-shadow:0 0 0 1px rgba(79,140,255,.25) inset}
+.cday.has b{color:#eaf1ff;font-weight:800}
+.cday.has i{color:#bcd4ff;font-weight:800}
+.cday.dis.has{opacity:.75}
 .cday.moving{outline:2px solid var(--gold);outline-offset:-2px;background:rgba(226,176,74,.28);animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.55}}
 .cday.target{border-style:dashed;border-color:rgba(226,176,74,.5)}
 .cday.target:hover{background:rgba(226,176,74,.22);border-color:var(--gold)}
-.cday i{font-size:9px;font-weight:800;color:var(--blue);font-style:normal;margin-top:2px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cday i{font-size:9.5px;font-weight:800;color:var(--blue);font-style:normal;margin-top:2px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wlist{display:flex;flex-wrap:wrap;gap:4px;margin-top:11px;max-height:76px;overflow-y:auto}
 .wtag{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-size:10.5px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .wtag i{color:var(--gold);font-style:normal;font-weight:700}
@@ -627,7 +630,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.4</span>
+    <span class="rev">Rev 8.5</span>
   </div>
 </header>
 
@@ -2479,7 +2482,7 @@ function calDraw(){
   const first=new Date(CALY,CALM,1), last=new Date(CALY,CALM+1,0);
   const pad=first.getDay(), days=last.getDate();
   const today=new Date().toISOString().slice(0,10);
-  const minD=wizPrevEnd();
+  const minD=(WIZ.i>=WIZ.list.length)?null:wizPrevEnd();
   const picked={};WIZ.list.forEach(x=>{if(x.end)(picked[x.end]=picked[x.end]||[]).push(opAbbr(x.op))});
   let html='';
   for(let k=0;k<pad;k++)html+='<div class="cempty"></div>';
