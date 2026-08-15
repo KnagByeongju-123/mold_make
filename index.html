@@ -121,6 +121,11 @@ main{max-width:1180px;margin:0 auto;padding:81px 16px 60px}
 .pbar{height:8px;background:var(--line2);border-radius:5px;margin-top:12px;overflow:hidden}
 .pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:5px}
 .projcard .meta{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;color:var(--sub)}
+.projcard .meta{flex-wrap:wrap;gap:6px}
+.dd{font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:5px;font-family:'IBM Plex Mono',monospace}
+.dd-ok{background:rgba(79,140,255,.16);color:var(--blue)}
+.dd-soon{background:rgba(240,160,75,.18);color:var(--out)}
+.dd-over{background:rgba(255,123,123,.16);color:var(--red)}
 .projcard .cur{color:var(--gold);font-weight:700}
 .del{margin-left:auto;background:none;border:none;color:#5a6478;cursor:pointer;font-size:16px;padding:2px 6px}
 .del:hover{color:var(--red)}
@@ -622,7 +627,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.0</span>
+    <span class="rev">Rev 8.1</span>
   </div>
 </header>
 
@@ -1708,7 +1713,7 @@ function setPF(v){PF=v;
   renderDash();}
 async function loadDash(){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
-  PROCS=await api("/mm_process?select=project_id,op_code,status,ng_count");
+  PROCS=await api("/mm_process?select=project_id,op_code,status,ng_count,plan_end");
   const live=PROJECTS.filter(p=>!p.archived);
   const run=live.filter(p=>p.status==='진행').length;
   const done=live.filter(p=>p.status==='완료').length;
@@ -1731,7 +1736,10 @@ function renderDash(){
     const ps=PROCS.filter(x=>x.project_id===p.id);
     const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
     const pct=Math.round(ok/tot*100);
-    const cur=curProc(ps);
+    const co=curProcObj(ps);
+    const cno=co.pr?opN(co.pr.op_code):'-';
+    const cnm=co.pr?nm4(co.pr.op_code):(ps.length?'전공정완료':'');
+    const ctag=co.tag, cpe=co.pr?co.pr.plan_end:null;
     const bcls=p.archived?'b-arch':p.status==='완료'?'b-done':p.status==='보류'?'b-hold':'b-run';
     return `<div class="projcard ${p.archived?'arch':''}" onclick="openFlow('${p.id}')">
       <div class="top">
@@ -1744,8 +1752,9 @@ function renderDash(){
       </div>
       <div class="pbar"><i style="width:${pct}%"></i></div>
       <div class="meta">
-        <span>현재 공정: <span class="cur">${cur}</span></span>
-        <span>${ok}/${tot} 완료 (${pct}%) ${p.due_date?'· 납기 '+p.due_date:''}</span>
+        <span>공정 <span class="cur">${cno} ${cnm}</span>${ctag?` <span class="ngc">${ctag}</span>`:''}
+          ${cpe?` · 목표 <b class="mono">${md(cpe)}</b> ${ddTag(cpe)}`:''}</span>
+        <span>${ok}/${tot} (${pct}%)${p.due_date?` · 납기 <b class="mono">${md(p.due_date)}</b> ${ddTag(p.due_date)}`:''}</span>
       </div>
       <div class="pcbtns" onclick="event.stopPropagation()">
         <button class="trc" onclick="openTrace('${p.id}')">📜 전체이력</button>
@@ -1769,13 +1778,31 @@ async function archiveProject(id,on){
   }catch(e){toast('처리 실패: '+e.message)}
 }
 function curProc(ps){
-  const ngp=ps.find(x=>x.status==='NG');
-  if(ngp)return opN(ngp.op_code)+' '+mName(ngp.op_code)+' NG';
-  const runp=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='진행');
-  if(runp)return opN(runp.op_code)+' '+mName(runp.op_code);
+  const c=curProcObj(ps);
+  return c.pr?opN(c.pr.op_code)+' '+mName(c.pr.op_code)+(c.tag?' '+c.tag:''):(ps.length?'전공정 완료':'-');
+}
+/* 현재 공정 객체 (NG > 진행 > 대기 순) */
+function curProcObj(ps){
+  const ng=ps.find(x=>x.status==='NG');
+  if(ng)return {pr:ng,tag:'NG'};
+  const run=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='진행');
+  if(run)return {pr:run,tag:''};
   const wait=MASTER.map(m=>ps.find(x=>x.op_code===m.op_code)).find(x=>x&&x.status==='대기');
-  if(wait)return opN(wait.op_code)+' '+mName(wait.op_code)+' 대기';
-  return ps.length?'전공정 완료':'-';
+  if(wait)return {pr:wait,tag:'대기'};
+  return {pr:null,tag:''};
+}
+function nm4(code){const n=mName(code)||'';return n.replace(/\s/g,'').slice(0,4);}
+function md(d){return d?String(d).slice(5,10).replace('-','/'):''}
+function dday(d){
+  if(!d)return null;
+  const t=new Date();t.setHours(0,0,0,0);
+  const g=new Date(d);g.setHours(0,0,0,0);
+  return Math.round((g-t)/864e5);
+}
+function ddTag(d){
+  const n=dday(d);if(n===null)return '';
+  const cls=n<0?'dd-over':n<=3?'dd-soon':'dd-ok';
+  return `<span class="dd ${cls}">${n<0?'D+'+(-n):n===0?'D-DAY':'D-'+n}</span>`;
 }
 function opN(c){return (c||'').replace(/^OP|^RP/,'')}
 function FM(flow){return MASTER.filter(m=>(m.flow||'신작')===flow)}
