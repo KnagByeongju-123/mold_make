@@ -439,6 +439,9 @@ section{animation:fadein .35s}
 .strow .nm2{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .strow .qt{font-family:'IBM Plex Mono',monospace;font-weight:800;flex-shrink:0}
 .strow .dt2{font-size:10.5px;color:var(--gray);flex-shrink:0}
+.symrow{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.symrow button{min-width:38px;padding:7px 10px;border-radius:8px;border:1px solid var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:14px;font-weight:800;cursor:pointer;font-family:'IBM Plex Mono',monospace;line-height:1}
+.symrow button:active{transform:scale(.93)}
 .opact{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 
 /* 계획 수립 */
@@ -593,7 +596,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 7.1</span>
+    <span class="rev">Rev 7.2</span>
   </div>
 </header>
 
@@ -1048,12 +1051,22 @@ section{animation:fadein .35s}
     <div class="mhead"><span class="mtitle" id="ske-title">품목 등록</span><button class="mx" onclick="closeSkEdit()">✕</button></div>
     <div class="mbody">
       <div class="row2">
-        <div class="fg"><label>품명 *</label><input id="ske-name" placeholder="예: 리턴핀 Φ20"></div>
+        <div class="fg"><label>품명 *</label><input id="ske-name" placeholder="예: 리턴핀 Φ20" onfocus="SYMTGT=this"></div>
         <div class="fg"><label>분류</label><input id="ske-cat" list="dl-skcat" placeholder="예: 금형부품"></div>
+      </div>
+      <div class="symrow">
+        <button type="button" onclick="insSym('Φ')">Φ</button>
+        <button type="button" onclick="insSym('°')">°</button>
+        <button type="button" onclick="insSym('t')">t</button>
+        <button type="button" onclick="insSym('×')">×</button>
+        <button type="button" onclick="insSym('±')">±</button>
+        <button type="button" onclick="insSym('㎜')">㎜</button>
+        <button type="button" onclick="insSym('R')">R</button>
+        <button type="button" onclick="insSym('M')">M</button>
       </div>
       <datalist id="dl-skcat"><option value="금형부품"><option value="스프링"><option value="핀류"><option value="볼트/체결"><option value="소모공구"><option value="윤활/유지류"><option value="기타"></datalist>
       <div class="row2">
-        <div class="fg"><label>규격</label><input id="ske-spec" placeholder="예: Φ20 x 150L"></div>
+        <div class="fg"><label>규격</label><input id="ske-spec" placeholder="예: Φ20 × 150L" onfocus="SYMTGT=this"></div>
         <div class="fg"><label>단위</label><input id="ske-unit" placeholder="EA" value="EA"></div>
       </div>
       <div class="row2">
@@ -2496,6 +2509,13 @@ function exportPlan(){
 
 /* ---------- 재고관리 (금형부품) ---------- */
 let SITEMS=[],SHIST=[],STK_LOW=false,SKEDIT=null,SKIO=null,SKIOTYPE='in';
+let SYMTGT=null;
+function insSym(ch){
+  const el=SYMTGT||document.getElementById('ske-name');
+  const st=el.selectionStart??el.value.length, en=el.selectionEnd??el.value.length;
+  el.value=el.value.slice(0,st)+ch+el.value.slice(en);
+  el.focus();el.setSelectionRange(st+ch.length,st+ch.length);
+}
 const wonM=n=>{const v=Number(n||0);return v>=1e8?(v/1e8).toFixed(1)+'억':Math.round(v/1e4).toLocaleString()};
 async function loadStock(){
   try{
@@ -2576,6 +2596,7 @@ function editStockItem(id){
   document.getElementById('ske-pv').innerHTML=m&&m.photo?`<img src="${m.photo}" style="width:70px;height:70px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
     <button class="ubtn" style="vertical-align:top;margin-left:6px" onclick="SKRMPHOTO=true;this.parentNode.innerHTML=''">사진 삭제</button>`:'';
   SKRMPHOTO=false;
+  SYMTGT=document.getElementById('ske-name');
   document.getElementById('skedit').classList.add('show');
 }
 let SKRMPHOTO=false;
