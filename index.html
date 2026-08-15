@@ -664,7 +664,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 10.0</span>
+    <span class="rev">Rev 10.1</span>
   </div>
 </header>
 
@@ -991,7 +991,8 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     <div class="stkbar">
       <input type="date" id="if-from" onchange="renderInsp()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
       <input type="date" id="if-to" onchange="renderInsp()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
-      <select id="if-kind" onchange="renderInsp()"><option value="">전체 구분</option><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
+      <select id="if-op" onchange="renderInsp()"><option value="">전체 공정</option></select>
+      <select id="if-kind" onchange="renderInsp()"><option value="">전체 검사구분</option><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
       <select id="if-judge" onchange="renderInsp()"><option value="">전체 판정</option><option>OK</option><option>NG</option><option>조건부 OK</option></select>
       <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspCSV()">엑셀</button>
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportInspPDF()">PDF</button>
@@ -3179,13 +3180,19 @@ async function renderInsp(){
   const tb=document.getElementById('inspbody');
   if(!pid){tb.innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';return}
   inspOps();
+  // 조회용 공정 필터: 이 금형의 플로우(신작 OP / 수리 RP) 공정만
+  const pj=QAPJ.find(x=>x.id===pid);
+  const fo=document.getElementById('if-op');const foCur=fo.value;
+  fo.innerHTML='<option value="">전체 공정</option>'+
+    FM(pflow(pj)).map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
+  if([...fo.options].some(o=>o.value===foCur))fo.value=foCur;
   try{INSP=await api("/mm_inspect?select=*&project_id=eq."+pid+"&order=created_at.desc");}
   catch(e){tb.innerHTML='<tr><td colspan="9" class="empty">patch_rev90.sql을 Supabase에서 실행하세요</td></tr>';return}
   renderInspQuick();
-  const f1=g('if-from'),f2=g('if-to'),fk=document.getElementById('if-kind').value,fj=document.getElementById('if-judge').value;
+  const f1=g('if-from'),f2=g('if-to'),fk=document.getElementById('if-kind').value,fj=document.getElementById('if-judge').value,fop=document.getElementById('if-op').value;
   INSPV=INSP.filter(r=>{
     const d=String(r.created_at).slice(0,10);
-    return (!f1||d>=f1)&&(!f2||d<=f2)&&(!fk||r.kind===fk)&&(!fj||r.judge===fj);
+    return (!f1||d>=f1)&&(!f2||d<=f2)&&(!fk||r.kind===fk)&&(!fj||r.judge===fj)&&(!fop||r.op_code===fop);
   });
   const ng=INSPV.filter(r=>r.judge==='NG').length;
   document.getElementById('insprate').textContent=INSPV.length?`${INSPV.length}건 · NG ${ng}건`:'';
@@ -3826,7 +3833,8 @@ function submitInsp(){
   const pid=document.getElementById('inspsel').value;
   if(!pid)return toast('금형을 선택하세요');
   if(!INSPV.length)return toast('상신할 검사 기록이 없습니다');
-  const fl=qaFilterLabel(g('if-from'),g('if-to'),[['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
+  const fop=document.getElementById('if-op').value;
+  const fl=qaFilterLabel(g('if-from'),g('if-to'),[['공정',fop?opN(fop)+' '+mName(fop):''],['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
   openSubmit('insp',null,'검사성적서 '+qaMold(pid)+' ('+fl+' · '+INSPV.length+'건)',pid,INSPV.map(r=>r.id));
 }
 function inspTableHtml(rows){
@@ -3846,7 +3854,8 @@ function inspTableHtml(rows){
 async function exportInspPDF(){
   if(!INSPV.length)return toast('출력할 기록이 없습니다');
   const pid=document.getElementById('inspsel').value;
-  const fl=qaFilterLabel(g('if-from'),g('if-to'),[['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
+  const fop=document.getElementById('if-op').value;
+  const fl=qaFilterLabel(g('if-from'),g('if-to'),[['공정',fop?opN(fop)+' '+mName(fop):''],['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
   const appr=await findAppr('insp',null,pid);
   const body=inspTableHtml(INSPV)+apprHistHtml(appr);
   qaPdf('QC-'+today().replace(/-/g,''),'검 사 성 적 서',qaMold(pid),fl,body,apprSigns(appr));
