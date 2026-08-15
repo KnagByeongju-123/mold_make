@@ -622,7 +622,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 7.8</span>
+    <span class="rev">Rev 8.0</span>
   </div>
 </header>
 
@@ -634,7 +634,7 @@ section{animation:fadein .35s}
   </div>
   <div class="mi on" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
   <div class="mi" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
-  <div class="mi" data-v="new" onclick="goNew('신작')"><span class="ic">＋</span>신규금형등록</div>
+  <div class="mi" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규금형등록</div>
   <div class="mi" data-v="new" onclick="goNew('수리')"><span class="ic">🔧</span>신규수리등록</div>
   <div class="mi" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
   <div class="mg" id="mg-out">
@@ -1335,7 +1335,28 @@ const H={"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/
 let MASTER=[], PROJECTS=[], PROCS=[];
 const MASTER_KEY="__MASTER__";        // 마스터 PIN 저장용 예약 이름
 let MASTER_PIN="0000";                // 초기 마스터 PIN (설정에서 변경 가능)
-let USER=sessionStorage.getItem('mm_user')||null;
+const SESS_KEY='mm_session', SESS_DAYS=7;
+function saveSession(name){
+  try{localStorage.setItem(SESS_KEY,JSON.stringify({name,exp:Date.now()+SESS_DAYS*864e5}));}catch(e){}
+  sessionStorage.setItem('mm_user',name);
+}
+function readSession(){
+  try{
+    const o=JSON.parse(localStorage.getItem(SESS_KEY)||'null');
+    if(o&&o.exp>Date.now()){
+      // 접속할 때마다 만료일 갱신 (슬라이딩 7일)
+      localStorage.setItem(SESS_KEY,JSON.stringify({name:o.name,exp:Date.now()+SESS_DAYS*864e5}));
+      return o.name;
+    }
+    if(o)localStorage.removeItem(SESS_KEY);
+  }catch(e){}
+  return sessionStorage.getItem('mm_user')||null;
+}
+function clearSession(){
+  try{localStorage.removeItem(SESS_KEY);}catch(e){}
+  sessionStorage.removeItem('mm_user');
+}
+let USER=readSession();
 let PIN="";
 
 /* ---------- PIN 로그인 ---------- */
@@ -1358,7 +1379,7 @@ async function pinSubmit(){
   setTimeout(()=>{PIN='';pinDraw();document.getElementById('pinview').classList.remove('shake');},500);
 }
 function enter(name){
-  USER=name;sessionStorage.setItem('mm_user',name);
+  USER=name;saveSession(name);
   document.getElementById('login').style.display='none';
   document.getElementById('ubadge').textContent='👤 '+name;
   history.replaceState({t:'view',v:'dash'},'');
@@ -1376,8 +1397,8 @@ function closeMenu(){
   document.getElementById('dim').classList.remove('on');
 }
 function logout(){
-  if(!confirm('로그아웃할까요?'))return;
-  sessionStorage.removeItem('mm_user');location.reload();
+  if(!confirm('로그아웃할까요?\n\n자동 로그인(7일)도 함께 해제됩니다.'))return;
+  clearSession();location.reload();
 }
 
 /* ---------- 설정: 사원 관리 ---------- */
