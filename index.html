@@ -627,7 +627,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.2</span>
+    <span class="rev">Rev 8.3</span>
   </div>
 </header>
 
@@ -2426,16 +2426,24 @@ async function startWizard(){
   const pid=document.getElementById('plansel').value;
   if(!pid)return toast('금형을 먼저 선택하세요');
   const ps=await api("/mm_process?select=id,op_code,plan_end&project_id=eq."+pid);
-  const list=MASTER.map(m=>{
+  const pj=PLANPJ.find(x=>x.id===pid);
+  const list=FM(pflow(pj)).map(m=>{
     const pr=ps.find(x=>x.op_code===m.op_code);
-    return pr?{op:m.op_code,name:m.process_name,dept:m.dept,id:pr.id,end:null}:null;
+    return pr?{op:m.op_code,name:m.process_name,dept:m.dept,id:pr.id,end:pr.plan_end||null}:null;
   }).filter(Boolean);
   if(!list.length)return toast('공정이 없습니다');
-  WIZ={pid,list,i:0};
-  const t=new Date();CALY=t.getFullYear();CALM=t.getMonth();
+  // 기존 계획을 그대로 불러오고, 첫 미입력 공정부터 이어서 진행
+  let idx=list.findIndex(x=>!x.end);
+  if(idx===-1)idx=list.length;
+  WIZ={pid,list,i:idx};
+  const base=list.find(x=>x.end);
+  const t=base?new Date(base.end):new Date();
+  CALY=t.getFullYear();CALM=t.getMonth();
   document.getElementById('wizmodal').classList.add('show');
   history.pushState({t:'ov'},'');
   wizDraw();
+  const has=list.filter(x=>x.end).length;
+  if(has)toast('기존 계획 '+has+'건을 불러왔습니다 — 날짜를 눌러 수정하세요');
 }
 function wizPrevEnd(){
   for(let k=WIZ.i-1;k>=0;k--)if(WIZ.list[k].end)return WIZ.list[k].end;
@@ -2445,7 +2453,7 @@ function wizDraw(){
   const {list,i}=WIZ;
   const now=document.getElementById('w-now');
   if(i>=list.length){
-    now.innerHTML='<b class="done">✓ 전 공정 입력 완료</b><span>저장을 눌러 반영하세요</span>';
+    now.innerHTML='<b class="done">✓ 전 공정 계획 입력 완료</b><span>날짜를 더블클릭하면 이동/수정할 수 있습니다 · 저장을 눌러 반영하세요</span>';
   }else{
     const c=list[i], pv=wizPrevEnd();
     now.innerHTML=`<b><i class="mono">${opN(c.op)}</i> ${esc(c.name)}</b>
