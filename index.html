@@ -399,6 +399,46 @@ section{animation:fadein .35s}
 .oadd input:focus{outline:none;border-color:var(--gold)}
 .oadd button{flex-shrink:0;padding:8px 14px;border-radius:8px;border:1px solid var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:12.5px;font-weight:700;cursor:pointer}
 .oempty{font-size:12px;color:var(--gray);padding:6px 2px}
+
+/* 재고관리 */
+.stat.s5 .v{color:var(--cust)}
+.stkbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.stkbar input[type=text]{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:9px 12px;font-size:13px;font-family:inherit}
+.stkbar input[type=text]:focus{outline:none;border-color:var(--gold)}
+.stkbar select{background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:9px 10px;font-size:13px;font-family:inherit}
+.stkbar .lowtg{padding:9px 13px;border-radius:9px;border:1px solid rgba(255,123,123,.4);background:transparent;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer}
+.stkbar .lowtg.on{background:rgba(255,123,123,.16)}
+.stkcard{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px;margin-bottom:9px;align-items:center}
+.stkcard.low{border-color:rgba(255,123,123,.55);background:rgba(255,123,123,.05)}
+.stkimg{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--card2);border:1px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+.stkinf{flex:1;min-width:0}
+.stknm{font-size:14.5px;font-weight:800;cursor:pointer}
+.stknm:hover{color:var(--gold)}
+.stkmeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;font-size:11px;color:var(--gray);align-items:center}
+.stkmeta .tag{background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:1px 7px;font-weight:600}
+.stkqty{text-align:right;flex-shrink:0}
+.stkqty .q{font-size:20px;font-weight:900;font-family:'IBM Plex Mono',monospace}
+.stkqty .q.low{color:var(--red)}
+.stkqty .m{font-size:10px;color:var(--gray)}
+.stkbtns{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.stkbtns button{border-radius:7px;font-size:11.5px;font-weight:800;cursor:pointer;padding:6px 11px;font-family:inherit}
+.stkbtns .in{background:rgba(79,140,255,.16);border:1px solid rgba(79,140,255,.45);color:var(--blue)}
+.stkbtns .out{background:rgba(240,160,75,.14);border:1px solid rgba(240,160,75,.45);color:var(--out)}
+.lowbadge{font-size:10px;font-weight:800;color:var(--red);background:rgba(255,123,123,.15);border:1px solid rgba(255,123,123,.4);border-radius:5px;padding:1px 7px}
+.iotype{display:flex;gap:7px;margin-bottom:14px}
+.iotype button{flex:1;padding:11px 0;border-radius:10px;border:1.5px solid var(--line);background:var(--card2);color:var(--sub);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+.iotype button.in.on{background:rgba(79,140,255,.18);border-color:var(--blue);color:var(--blue)}
+.iotype button.out.on{background:rgba(240,160,75,.16);border-color:var(--out);color:var(--out)}
+.qtyrow{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0 4px}
+.qtyrow button{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:22px;cursor:pointer}
+.qtyrow input{width:90px;text-align:center;font-size:24px;font-weight:800;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:8px 4px;font-family:'IBM Plex Mono',monospace}
+.strow{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-bottom:6px;font-size:12.5px}
+.strow .tp{font-weight:800;font-size:11px;padding:1px 8px;border-radius:5px;flex-shrink:0}
+.strow .tp.in{background:rgba(79,140,255,.16);color:var(--blue)}
+.strow .tp.out{background:rgba(240,160,75,.14);color:var(--out)}
+.strow .nm2{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.strow .qt{font-family:'IBM Plex Mono',monospace;font-weight:800;flex-shrink:0}
+.strow .dt2{font-size:10.5px;color:var(--gray);flex-shrink:0}
 .opact{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 
 /* 계획 수립 */
@@ -553,7 +593,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 7.0</span>
+    <span class="rev">Rev 7.1</span>
   </div>
 </header>
 
@@ -574,6 +614,7 @@ section{animation:fadein .35s}
       <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
     </div>
   </div>
+  <div class="mi" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
   <div class="mi" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
   <div class="mi" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
   <div class="mi" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
@@ -813,6 +854,29 @@ section{animation:fadein .35s}
     </div>
   </section>
 
+  <!-- 재고관리 (금형부품) -->
+  <section id="v-stock" class="hide">
+    <div class="stats">
+      <div class="stat s1"><div class="v" id="sk-cnt">0</div><div class="k">품목</div></div>
+      <div class="stat s5"><div class="v" id="sk-val">0</div><div class="k">재고총액(만원)</div></div>
+      <div class="stat s3"><div class="v" id="sk-low">0</div><div class="k">재고부족</div></div>
+      <div class="stat s2"><div class="v" id="sk-mon">0</div><div class="k">이달 입출고</div></div>
+    </div>
+    <h1 class="pt">금형부품 재고 <em id="sk-em"></em></h1>
+    <div class="stkbar">
+      <input type="text" id="sk-q" placeholder="품명 · 규격 · 위치 검색" oninput="renderStock()">
+      <select id="sk-cat" onchange="renderStock()"><option value="">전체 분류</option></select>
+      <button class="lowtg" id="sk-lowbtn" onclick="STK_LOW=!STK_LOW;this.classList.toggle('on',STK_LOW);renderStock()">⚠ 부족만</button>
+    </div>
+    <div class="stkbar">
+      <button class="btn btn-p" onclick="editStockItem(null)">＋ 품목 등록</button>
+      <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportStockCSV()">엑셀</button>
+    </div>
+    <div id="stocklist"></div>
+    <h1 class="pt" style="margin-top:22px">최근 입출고 <em>— 최근 30건</em></h1>
+    <div id="stockhist"></div>
+  </section>
+
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
     <h1 class="pt">사용안내 <em>— 금형 제작 흐름도 기준 진행 절차</em></h1>
@@ -978,6 +1042,65 @@ section{animation:fadein .35s}
     </div>
   </section>
 </main>
+
+<div class="modal" id="skedit" onclick="if(event.target===this)closeSkEdit()">
+  <div class="mbox">
+    <div class="mhead"><span class="mtitle" id="ske-title">품목 등록</span><button class="mx" onclick="closeSkEdit()">✕</button></div>
+    <div class="mbody">
+      <div class="row2">
+        <div class="fg"><label>품명 *</label><input id="ske-name" placeholder="예: 리턴핀 Φ20"></div>
+        <div class="fg"><label>분류</label><input id="ske-cat" list="dl-skcat" placeholder="예: 금형부품"></div>
+      </div>
+      <datalist id="dl-skcat"><option value="금형부품"><option value="스프링"><option value="핀류"><option value="볼트/체결"><option value="소모공구"><option value="윤활/유지류"><option value="기타"></datalist>
+      <div class="row2">
+        <div class="fg"><label>규격</label><input id="ske-spec" placeholder="예: Φ20 x 150L"></div>
+        <div class="fg"><label>단위</label><input id="ske-unit" placeholder="EA" value="EA"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>현재고</label><input id="ske-stock" type="number" min="0" value="0"></div>
+        <div class="fg"><label>안전재고</label><input id="ske-min" type="number" min="0" value="0"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>단가(원)</label><input id="ske-price" type="number" min="0" value="0"></div>
+        <div class="fg"><label>위치(랙)</label><input id="ske-loc" placeholder="예: A랙-3"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>거래처</label><input id="ske-vendor"></div>
+        <div class="fg"><label>비고</label><input id="ske-memo"></div>
+      </div>
+      <div class="fg"><label>사진</label><input type="file" id="ske-photo" accept="image/*"><div id="ske-pv" style="margin-top:6px"></div></div>
+      <div class="cbtns">
+        <button class="cb back" onclick="closeSkEdit()">취소</button>
+        <button class="cb ok" onclick="saveStockItem()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="skio" onclick="if(event.target===this)closeSkIO()">
+  <div class="mbox">
+    <div class="mhead"><span class="mtitle" id="skio-title">입출고</span><button class="mx" onclick="closeSkIO()">✕</button></div>
+    <div class="mbody">
+      <div class="iotype">
+        <button class="in" id="skio-in" onclick="setIOType('in')">📥 입고</button>
+        <button class="out" id="skio-out" onclick="setIOType('out')">📤 출고</button>
+      </div>
+      <div class="fg"><label>수량</label>
+        <div class="qtyrow">
+          <button onclick="ioQty(-1)">−</button>
+          <input id="skio-qty" type="number" min="1" value="1">
+          <button onclick="ioQty(1)">＋</button>
+        </div>
+        <p class="hnote" style="text-align:center;margin-top:4px" id="skio-cur"></p>
+      </div>
+      <div class="fg"><label>담당자 / 메모</label><input id="skio-memo" placeholder="예: 홍길동, M-123 금형 교체용"></div>
+      <div class="cbtns">
+        <button class="cb back" onclick="closeSkIO()">취소</button>
+        <button class="cb ok" onclick="saveStockIO()">처리</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="opedit" onclick="if(event.target===this)closeOpEdit()">
   <div class="mbox" style="max-width:460px">
@@ -1409,7 +1532,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',help:'사용안내',set:'설정'};
 const GRP={doc:'out',tryout:'out'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function go(v,fromPop){
@@ -1422,7 +1545,7 @@ function go(v,fromPop){
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
   if(v==='plan')loadPlanSel();
@@ -1430,6 +1553,7 @@ function go(v,fromPop){
   if(v==='hist')loadHist();
   if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
   if(v==='tryout'){initTryout();loadTryout();}
+  if(v==='stock')loadStock();
 }
 
 /* ---------- 로드 ---------- */
@@ -2367,6 +2491,149 @@ function exportPlan(){
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='금형제작계획_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
+}
+
+
+/* ---------- 재고관리 (금형부품) ---------- */
+let SITEMS=[],SHIST=[],STK_LOW=false,SKEDIT=null,SKIO=null,SKIOTYPE='in';
+const wonM=n=>{const v=Number(n||0);return v>=1e8?(v/1e8).toFixed(1)+'억':Math.round(v/1e4).toLocaleString()};
+async function loadStock(){
+  try{
+    [SITEMS,SHIST]=await Promise.all([
+      api("/mm_stock_item?select=*&order=name"),
+      api("/mm_stock_hist?select=*&order=created_at.desc&limit=30")
+    ]);
+  }catch(e){
+    document.getElementById('stocklist').innerHTML='<div class="empty">재고 테이블이 없습니다. patch_rev71.sql을 Supabase에서 실행하세요.</div>';
+    document.getElementById('stockhist').innerHTML='';return;
+  }
+  const cats=[...new Set(SITEMS.map(i=>i.category).filter(Boolean))].sort();
+  const sel=document.getElementById('sk-cat');const cur=sel.value;
+  sel.innerHTML='<option value="">전체 분류</option>'+cats.map(c=>`<option ${c===cur?'selected':''}>${esc(c)}</option>`).join('');
+  const low=SITEMS.filter(i=>Number(i.stock)<=Number(i.min_stock)&&Number(i.min_stock)>0).length;
+  const val=SITEMS.reduce((a,i)=>a+Number(i.stock||0)*Number(i.price||0),0);
+  const mon=new Date();mon.setDate(1);mon.setHours(0,0,0,0);
+  let monCnt=0;
+  try{const r=await api("/mm_stock_hist?select=id&created_at=gte."+mon.toISOString());monCnt=r.length;}catch(e){}
+  document.getElementById('sk-cnt').textContent=SITEMS.length;
+  document.getElementById('sk-val').textContent=wonM(val);
+  document.getElementById('sk-low').textContent=low;
+  document.getElementById('sk-mon').textContent=monCnt;
+  document.getElementById('sk-em').textContent='— 총 '+SITEMS.length+'품목 · 재고금액 '+Number(val).toLocaleString()+'원';
+  renderStock();renderStockHist();
+}
+function renderStock(){
+  const q=(document.getElementById('sk-q').value||'').trim().toLowerCase();
+  const cat=document.getElementById('sk-cat').value;
+  const rows=SITEMS.filter(i=>{
+    const hit=!q||[i.name,i.spec,i.location,i.vendor].some(x=>(x||'').toLowerCase().includes(q));
+    const mc=!cat||i.category===cat;
+    const isLow=Number(i.stock)<=Number(i.min_stock)&&Number(i.min_stock)>0;
+    return hit&&mc&&(!STK_LOW||isLow);
+  });
+  document.getElementById('stocklist').innerHTML=rows.map(i=>{
+    const isLow=Number(i.stock)<=Number(i.min_stock)&&Number(i.min_stock)>0;
+    return `<div class="stkcard ${isLow?'low':''}">
+      ${i.photo?`<img class="stkimg" src="${i.photo}" onclick="openBig('${i.photo}')">`:`<div class="stkimg">📦</div>`}
+      <div class="stkinf">
+        <div class="stknm" onclick="editStockItem(${i.id})">${esc(i.name)} ${isLow?'<span class="lowbadge">부족</span>':''}</div>
+        <div class="stkmeta">
+          ${i.category?`<span class="tag">${esc(i.category)}</span>`:''}
+          ${i.spec?`<span>${esc(i.spec)}</span>`:''}
+          ${i.location?`<span>📍${esc(i.location)}</span>`:''}
+          ${Number(i.price)?`<span>@${Number(i.price).toLocaleString()}원</span>`:''}
+        </div>
+      </div>
+      <div class="stkqty">
+        <div class="q ${isLow?'low':''}">${Number(i.stock)}</div>
+        <div class="m">${esc(i.unit||'EA')}${Number(i.min_stock)?' · 안전 '+Number(i.min_stock):''}</div>
+      </div>
+      <div class="stkbtns">
+        <button class="in" onclick="openSkIO(${i.id},'in')">입고</button>
+        <button class="out" onclick="openSkIO(${i.id},'out')">출고</button>
+      </div>
+    </div>`;
+  }).join('')||'<div class="empty">품목이 없습니다. [＋ 품목 등록]으로 시작하세요.</div>';
+}
+function renderStockHist(){
+  document.getElementById('stockhist').innerHTML=SHIST.map(h=>`<div class="strow">
+    <span class="tp ${h.type}">${h.type==='in'?'입고':'출고'}</span>
+    <span class="nm2">${esc(h.item_name)}${h.memo?' · '+esc(h.memo):''}</span>
+    <span class="qt" style="color:var(--${h.type==='in'?'blue':'out'})">${h.type==='in'?'+':'−'}${Number(h.qty)}</span>
+    <span class="dt2">${fmt(h.created_at)}</span>
+  </div>`).join('')||'<div class="empty">입출고 이력이 없습니다</div>';
+}
+/* 품목 등록/수정 */
+function editStockItem(id){
+  SKEDIT=id;
+  const m=id?SITEMS.find(x=>x.id===id):null;
+  document.getElementById('ske-title').textContent=m?'품목 수정':'품목 등록';
+  const set=(k,v)=>document.getElementById(k).value=v??'';
+  set('ske-name',m?.name);set('ske-cat',m?.category);set('ske-spec',m?.spec);
+  set('ske-unit',m?m.unit:'EA');set('ske-stock',m?m.stock:0);set('ske-min',m?m.min_stock:0);
+  set('ske-price',m?m.price:0);set('ske-loc',m?.location);set('ske-vendor',m?.vendor);set('ske-memo',m?.memo);
+  document.getElementById('ske-photo').value='';
+  document.getElementById('ske-pv').innerHTML=m&&m.photo?`<img src="${m.photo}" style="width:70px;height:70px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
+    <button class="ubtn" style="vertical-align:top;margin-left:6px" onclick="SKRMPHOTO=true;this.parentNode.innerHTML=''">사진 삭제</button>`:'';
+  SKRMPHOTO=false;
+  document.getElementById('skedit').classList.add('show');
+}
+let SKRMPHOTO=false;
+function closeSkEdit(){document.getElementById('skedit').classList.remove('show');SKEDIT=null;}
+async function saveStockItem(){
+  const nm=g('ske-name');if(!nm)return toast('품명을 입력하세요');
+  const m=SKEDIT?SITEMS.find(x=>x.id===SKEDIT):null;
+  let photo=m?m.photo:null;
+  const f=document.getElementById('ske-photo').files[0];
+  if(f){try{toast('사진 업로드 중...');photo=await uploadImg(f,'stock');}catch(e){return toast(e.message)}}
+  else if(SKRMPHOTO){if(m&&m.photo)deleteImg(m.photo);photo=null;}
+  const body={name:nm,category:g('ske-cat')||null,spec:g('ske-spec')||null,unit:g('ske-unit')||'EA',
+    stock:Number(g('ske-stock')||0),min_stock:Number(g('ske-min')||0),price:Number(g('ske-price')||0),
+    location:g('ske-loc')||null,vendor:g('ske-vendor')||null,memo:g('ske-memo')||null,photo};
+  try{
+    if(SKEDIT)await api(`/mm_stock_item?id=eq.${SKEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
+    else await api("/mm_stock_item",{method:"POST",body:JSON.stringify(body)});
+    closeSkEdit();toast('품목 저장 완료');loadStock();
+  }catch(e){toast('저장 실패: '+e.message)}
+}
+/* 입출고 */
+function openSkIO(id,type){
+  SKIO=id;setIOType(type);
+  const m=SITEMS.find(x=>x.id===id);if(!m)return;
+  document.getElementById('skio-title').textContent=m.name;
+  document.getElementById('skio-qty').value=1;
+  document.getElementById('skio-memo').value=USER||'';
+  document.getElementById('skio-cur').textContent='현재고 '+Number(m.stock)+' '+(m.unit||'EA');
+  document.getElementById('skio').classList.add('show');
+}
+function setIOType(t){SKIOTYPE=t;
+  document.getElementById('skio-in').classList.toggle('on',t==='in');
+  document.getElementById('skio-out').classList.toggle('on',t==='out');}
+function ioQty(d){const el=document.getElementById('skio-qty');el.value=Math.max(1,Number(el.value||1)+d);}
+function closeSkIO(){document.getElementById('skio').classList.remove('show');SKIO=null;}
+async function saveStockIO(){
+  const m=SITEMS.find(x=>x.id===SKIO);if(!m)return;
+  const qty=Number(g('skio-qty'));
+  if(!qty||qty<1)return toast('수량을 입력하세요');
+  if(SKIOTYPE==='out'&&qty>Number(m.stock))return toast('현재고('+m.stock+')보다 많이 출고할 수 없습니다');
+  const ns=SKIOTYPE==='in'?Number(m.stock)+qty:Number(m.stock)-qty;
+  try{
+    await api(`/mm_stock_item?id=eq.${m.id}`,{method:"PATCH",body:JSON.stringify({stock:ns})});
+    await api("/mm_stock_hist",{method:"POST",body:JSON.stringify({
+      item_id:m.id,item_name:m.name,type:SKIOTYPE,qty,memo:g('skio-memo')||null})});
+    closeSkIO();toast((SKIOTYPE==='in'?'입고':'출고')+' 처리 완료 (재고 '+ns+')');loadStock();
+  }catch(e){toast('처리 실패: '+e.message)}
+}
+function exportStockCSV(){
+  const head=['품명','분류','규격','단위','현재고','안전재고','단가','재고금액','위치','거래처','비고'];
+  const rows=SITEMS.map(i=>[i.name,i.category||'',i.spec||'',i.unit||'EA',i.stock,i.min_stock,i.price,
+    Number(i.stock||0)*Number(i.price||0),i.location||'',i.vendor||'',i.memo||'']);
+  const total=SITEMS.reduce((a,i)=>a+Number(i.stock||0)*Number(i.price||0),0);
+  const csv=[['금형부품 재고현황 - '+new Date().toISOString().slice(0,10)],head,...rows,[],['재고총액','','','','','','',total]]
+    .map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
+  a.download='금형부품재고_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
 
 /* ---------- Tryout ---------- */
