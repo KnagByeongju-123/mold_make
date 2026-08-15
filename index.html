@@ -111,6 +111,7 @@ main{max-width:1180px;margin:0 auto;padding:81px 16px 60px}
 .tlrow.k-OK:before{background:var(--blue)}.tlrow.k-NG:before{background:var(--red)}
 .tlrow.k-출력물:before{background:var(--gold)}.tlrow.k-부품:before{background:var(--out)}
 .tlrow.k-Tryout:before{background:var(--cust)}.tlrow.k-완료:before,.tlrow.k-보관:before{background:var(--green)}
+.tlrow.k-검사:before{background:var(--blue)}.tlrow.k-시정:before{background:var(--red)}.tlrow.k-변경:before{background:var(--out)}
 .tlhd{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .tlk{font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:5px;background:var(--card2);border:1px solid var(--line)}
 .tlt{font-size:10.5px;color:var(--gray);font-family:'IBM Plex Mono',monospace}
@@ -431,6 +432,23 @@ section{animation:fadein .35s}
 .oadd button{flex-shrink:0;padding:8px 14px;border-radius:8px;border:1px solid var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:12.5px;font-weight:700;cursor:pointer}
 .oempty{font-size:12px;color:var(--gray);padding:6px 2px}
 
+/* 품질관리 */
+.qacard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:9px}
+.qacard.open-ncr{border-color:rgba(255,123,123,.5)}
+.qahd{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.qahd .no2{font-weight:700;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);padding:1px 8px;border-radius:6px;font-size:11.5px}
+.qahd .kd{font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:5px;background:var(--card2);border:1px solid var(--line);color:var(--sub)}
+.qahd .stbt{margin-left:auto;font-size:11px;font-weight:800;padding:3px 11px;border-radius:20px;cursor:pointer;border:1px solid}
+.stbt.opened{background:rgba(255,123,123,.14);border-color:rgba(255,123,123,.45);color:var(--red)}
+.stbt.closed{background:rgba(126,224,160,.14);border-color:rgba(126,224,160,.45);color:var(--green)}
+.stbt.review{background:rgba(240,160,75,.14);border-color:rgba(240,160,75,.45);color:var(--out)}
+.qabody{margin-top:9px;font-size:13px;line-height:1.6}
+.qabody b{color:var(--gold);font-size:11.5px;display:block;margin-top:7px}
+.qabody b:first-child{margin-top:0}
+.qaft{margin-top:9px;font-size:11px;color:var(--gray);display:flex;gap:10px;flex-wrap:wrap}
+.jd-ok{color:var(--blue);font-weight:800}.jd-ng{color:var(--red);font-weight:800}.jd-cond{color:var(--out);font-weight:800}
+tr.insp-ng td{background:rgba(255,123,123,.07)}
+
 /* 재고관리 */
 .stat.s5 .v{color:var(--cust)}
 .stkbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
@@ -630,7 +648,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.7</span>
+    <span class="rev">Rev 9.0</span>
   </div>
 </header>
 
@@ -650,6 +668,14 @@ section{animation:fadein .35s}
     <div class="msub">
       <div class="mi" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
       <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
+    </div>
+  </div>
+  <div class="mg" id="mg-qa">
+    <div class="mi mgh" onclick="toggleGrp('qa')"><span class="ic">🛡️</span>품질관리 (SQ)<span class="arw">▾</span></div>
+    <div class="msub">
+      <div class="mi" data-v="insp" onclick="go('insp')"><span class="ic">📐</span>검사성적</div>
+      <div class="mi" data-v="ncr" onclick="go('ncr')"><span class="ic">🚨</span>부적합·시정조치</div>
+      <div class="mi" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
     </div>
   </div>
   <div class="mi" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
@@ -784,7 +810,7 @@ section{animation:fadein .35s}
       <select id="h-proj"><option value="">전체 금형</option></select>
       <select id="h-act">
         <option value="">전체 구분</option>
-        <option>등록</option><option>시작</option><option>OK</option><option>NG</option><option>부품</option><option>출력물</option><option>Tryout</option><option>계획</option><option>보관</option>
+        <option>등록</option><option>시작</option><option>OK</option><option>NG</option><option>부품</option><option>출력물</option><option>Tryout</option><option>계획</option><option>보관</option><option>검사</option><option>시정</option><option>변경</option>
       </select>
       <button class="btn btn-p hbtn" onclick="loadHist()">조회</button>
       <button class="btn hclr" onclick="clearHistFilter()">초기화</button>
@@ -915,6 +941,100 @@ section{animation:fadein .35s}
       </div>
       <div id="oplist"></div>
     </div>
+  </section>
+
+  <!-- 검사성적 -->
+  <section id="v-insp" class="hide">
+    <div class="psel">
+      <select id="inspsel" onchange="renderInsp()"></select>
+      <span id="insprate" style="font-weight:700;color:var(--blue)"></span>
+      <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspCSV()">엑셀</button>
+    </div>
+    <div class="panel" style="margin-bottom:14px">
+      <h2>검사성적 입력</h2>
+      <div class="row2">
+        <div class="fg"><label>공정</label><select id="in-op"></select></div>
+        <div class="fg"><label>검사 구분</label>
+          <select id="in-kind"><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select></div>
+      </div>
+      <div class="fg"><label>검사 항목 *</label><input id="in-item" placeholder="예: 코어 폭, 습합 확인, 경도 HRC" onfocus="SYMTGT=this"></div>
+      <div class="symrow">
+        <button type="button" onclick="insSym('Φ')">Φ</button><button type="button" onclick="insSym('°')">°</button>
+        <button type="button" onclick="insSym('±')">±</button><button type="button" onclick="insSym('×')">×</button>
+        <button type="button" onclick="insSym('㎜')">㎜</button><button type="button" onclick="insSym('R')">R</button>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>규격 / 기준</label><input id="in-spec" placeholder="예: 50.00 ±0.02" onfocus="SYMTGT=this"></div>
+        <div class="fg"><label>실측값</label><input id="in-actual" placeholder="예: 50.01" onfocus="SYMTGT=this"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>판정 *</label><select id="in-judge"><option>OK</option><option>NG</option><option>조건부 OK</option></select></div>
+        <div class="fg"><label>검사자</label><input id="in-worker"></div>
+      </div>
+      <div class="fg"><label>비고</label><input id="in-memo" placeholder="계측기, 조건 등"></div>
+      <button class="btn btn-p" onclick="saveInsp()">검사성적 저장</button>
+    </div>
+    <div class="tscroll"><table class="wide">
+      <thead><tr><th>일시</th><th>공정</th><th>구분</th><th>항목</th><th>규격</th><th>실측</th><th>판정</th><th>검사자</th><th></th></tr></thead>
+      <tbody id="inspbody"></tbody></table></div>
+  </section>
+
+  <!-- 부적합·시정조치 -->
+  <section id="v-ncr" class="hide">
+    <div class="psel">
+      <select id="ncrsel" onchange="renderNcr()"><option value="">전체 금형</option></select>
+      <span id="ncrrate" style="font-weight:700;color:var(--red)"></span>
+      <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportNcrCSV()">엑셀</button>
+    </div>
+    <div class="panel" style="margin-bottom:14px">
+      <h2>부적합 보고 (NCR)</h2>
+      <div class="row2">
+        <div class="fg"><label>금형 *</label><select id="nc-proj"></select></div>
+        <div class="fg"><label>공정</label><select id="nc-op"></select></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>발생일</label><input id="nc-date" type="date"></div>
+        <div class="fg"><label>부적합 구분</label>
+          <select id="nc-kind"><option>치수 불량</option><option>가공 불량</option><option>조립 불량</option><option>재질 문제</option><option>외주 불량</option><option>설계 오류</option><option>기타</option></select></div>
+      </div>
+      <div class="fg"><label>부적합 내용 *</label><textarea id="nc-desc" rows="2" placeholder="현상을 구체적으로 기록"></textarea></div>
+      <div class="fg"><label>원인 분석</label><textarea id="nc-cause" rows="2" placeholder="근본 원인 (5Why 등)"></textarea></div>
+      <div class="fg"><label>시정 조치</label><textarea id="nc-action" rows="2" placeholder="즉시 조치 내용"></textarea></div>
+      <div class="fg"><label>재발 방지 대책</label><textarea id="nc-prevent" rows="2" placeholder="표준화·공정 개선 등"></textarea></div>
+      <div class="row2">
+        <div class="fg"><label>조치자</label><input id="nc-worker"></div>
+        <div class="fg"><label>확인자 (승인)</label><input id="nc-checker"></div>
+      </div>
+      <button class="btn btn-p" onclick="saveNcr()">NCR 등록</button>
+    </div>
+    <div id="ncrlist"></div>
+  </section>
+
+  <!-- 설계변경 (4M) -->
+  <section id="v-ecn" class="hide">
+    <div class="psel">
+      <select id="ecnsel" onchange="renderEcn()"><option value="">전체 금형</option></select>
+      <span id="ecnrate" style="font-weight:700;color:var(--out)"></span>
+      <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportEcnCSV()">엑셀</button>
+    </div>
+    <div class="panel" style="margin-bottom:14px">
+      <h2>설계·4M 변경 등록</h2>
+      <div class="row2">
+        <div class="fg"><label>금형 *</label><select id="ec-proj"></select></div>
+        <div class="fg"><label>변경일</label><input id="ec-date" type="date"></div>
+      </div>
+      <div class="fg"><label>변경 구분 (4M)</label>
+        <select id="ec-kind"><option>설계 (도면/사양)</option><option>자재 (Material)</option><option>공법 (Method)</option><option>설비 (Machine)</option><option>작업자 (Man)</option><option>기타</option></select></div>
+      <div class="fg"><label>변경 전</label><textarea id="ec-before" rows="2"></textarea></div>
+      <div class="fg"><label>변경 후 *</label><textarea id="ec-after" rows="2"></textarea></div>
+      <div class="fg"><label>변경 사유</label><textarea id="ec-reason" rows="2" placeholder="고객 요청 / NG 대응 / 개선 등"></textarea></div>
+      <div class="row2">
+        <div class="fg"><label>요청자</label><input id="ec-worker"></div>
+        <div class="fg"><label>승인자</label><input id="ec-approver"></div>
+      </div>
+      <button class="btn btn-p" onclick="saveEcn()">변경 등록</button>
+    </div>
+    <div id="ecnlist"></div>
   </section>
 
   <!-- 재고관리 (금형부품) -->
@@ -1654,8 +1774,8 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',help:'사용안내',set:'설정'};
-const GRP={doc:'out',tryout:'out'};
+const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',help:'사용안내',set:'설정'};
+const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function goNew(t){
   go('new');
@@ -1674,7 +1794,7 @@ function go(v,fromPop){
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','insp','ncr','ecn'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
   if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
   if(v==='plan')loadPlanSel();
@@ -1683,6 +1803,9 @@ function go(v,fromPop){
   if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
   if(v==='tryout'){initTryout();loadTryout();}
   if(v==='stock')loadStock();
+  if(v==='insp')loadInsp();
+  if(v==='ncr')loadNcr();
+  if(v==='ecn')loadEcn();
 }
 
 /* ---------- 로드 ---------- */
@@ -2805,6 +2928,257 @@ function exportTracePDF(){
   <div class="sg"><div>작성</div><div>검토</div><div>승인</div></div>
   </body></html>`;
   const w=window.open('');w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);
+}
+
+
+/* ---------- 품질관리 (SQ): 검사성적 / NCR / ECN ---------- */
+let QAPJ=[],INSP=[],NCRS=[],ECNS=[];
+async function loadQaProjects(){
+  QAPJ=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type&order=created_at.desc");
+  return QAPJ;
+}
+function qaOpt(x){return `<option value="${x.id}">${x.mold_type==='수리'?'[수리] ':'[신작] '}${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`}
+function qaMold(id){const p=QAPJ.find(x=>x.id===id);return p?p.mold_no+' '+p.mold_name:''}
+function today(){return new Date().toISOString().slice(0,10)}
+
+/* ===== 검사성적 ===== */
+async function loadInsp(){
+  await loadQaProjects();
+  const sel=document.getElementById('inspsel');const cur=sel.value;
+  sel.innerHTML=QAPJ.map(qaOpt).join('')||'<option value="">등록된 금형 없음</option>';
+  if(cur)sel.value=cur;
+  document.getElementById('in-worker').value=USER||'';
+  renderInsp();
+}
+function inspOps(){
+  const pid=document.getElementById('inspsel').value;
+  const pj=QAPJ.find(x=>x.id===pid);
+  document.getElementById('in-op').innerHTML='<option value="">공정 선택 안함</option>'+
+    FM(pflow(pj)).map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
+}
+async function renderInsp(){
+  const pid=document.getElementById('inspsel').value;
+  const tb=document.getElementById('inspbody');
+  if(!pid){tb.innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';return}
+  inspOps();
+  try{INSP=await api("/mm_inspect?select=*&project_id=eq."+pid+"&order=created_at.desc");}
+  catch(e){tb.innerHTML='<tr><td colspan="9" class="empty">patch_rev90.sql을 Supabase에서 실행하세요</td></tr>';return}
+  const ng=INSP.filter(r=>r.judge==='NG').length;
+  document.getElementById('insprate').textContent=INSP.length?`총 ${INSP.length}건 · NG ${ng}건`:'';
+  tb.innerHTML=INSP.map(r=>`<tr class="${r.judge==='NG'?'insp-ng':''}">
+    <td class="mono">${fmt(r.created_at)}</td>
+    <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
+    <td>${esc(r.kind||'')}</td>
+    <td><b>${esc(r.item)}</b>${r.memo?'<br><span style="font-size:10.5px;color:var(--gray)">'+esc(r.memo)+'</span>':''}</td>
+    <td class="mono">${esc(r.spec||'-')}</td>
+    <td class="mono">${esc(r.actual||'-')}</td>
+    <td class="${r.judge==='NG'?'jd-ng':r.judge==='OK'?'jd-ok':'jd-cond'}">${esc(r.judge)}</td>
+    <td>${esc(r.worker||'-')}</td>
+    <td><button class="del" onclick="delInsp(${r.id})">✕</button></td>
+  </tr>`).join('')||'<tr><td colspan="9" class="empty">검사 기록이 없습니다</td></tr>';
+}
+async function saveInsp(){
+  const pid=document.getElementById('inspsel').value;
+  if(!pid)return toast('금형을 선택하세요');
+  const item=g('in-item');if(!item)return toast('검사 항목을 입력하세요');
+  const judge=document.getElementById('in-judge').value;
+  const body={project_id:pid,op_code:document.getElementById('in-op').value||null,
+    kind:document.getElementById('in-kind').value,item,spec:g('in-spec')||null,actual:g('in-actual')||null,
+    judge,worker:g('in-worker')||null,memo:g('in-memo')||null};
+  try{
+    await api("/mm_inspect",{method:"POST",body:JSON.stringify(body)});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,op_code:body.op_code,action:'검사',
+      detail:'검사 ['+judge+'] '+body.kind+' — '+item+(body.actual?' 실측 '+body.actual:''),worker:body.worker})});
+    ['in-item','in-spec','in-actual','in-memo'].forEach(x=>document.getElementById(x).value='');
+    toast('검사성적 저장 완료'+(judge==='NG'?' — NCR 등록을 권장합니다':''));renderInsp();
+  }catch(e){toast('저장 실패: '+e.message)}
+}
+async function delInsp(id){
+  if(!confirm('검사 기록을 삭제할까요?'))return;
+  await api(`/mm_inspect?id=eq.${id}`,{method:"DELETE"});renderInsp();
+}
+function exportInspCSV(){
+  if(!INSP.length)return toast('출력할 기록이 없습니다');
+  const pid=document.getElementById('inspsel').value;
+  const head=['일시','공정','구분','항목','규격','실측','판정','검사자','비고'];
+  const rows=INSP.map(r=>[fmt(r.created_at),r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.kind,r.item,r.spec||'',r.actual||'',r.judge,r.worker||'',r.memo||'']);
+  dlCSV('검사성적 - '+qaMold(pid),head,rows,'검사성적');
+}
+
+/* ===== NCR ===== */
+async function loadNcr(){
+  await loadQaProjects();
+  const s1=document.getElementById('ncrsel');const cur=s1.value;
+  s1.innerHTML='<option value="">전체 금형</option>'+QAPJ.map(qaOpt).join('');
+  if(cur)s1.value=cur;
+  document.getElementById('nc-proj').innerHTML=QAPJ.map(qaOpt).join('')||'<option value="">등록된 금형 없음</option>';
+  ncrOps();
+  document.getElementById('nc-proj').onchange=ncrOps;
+  if(!document.getElementById('nc-date').value)document.getElementById('nc-date').value=today();
+  document.getElementById('nc-worker').value=USER||'';
+  renderNcr();
+}
+function ncrOps(){
+  const pid=document.getElementById('nc-proj').value;
+  const pj=QAPJ.find(x=>x.id===pid);
+  document.getElementById('nc-op').innerHTML='<option value="">공정 선택 안함</option>'+
+    FM(pflow(pj)).map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
+}
+async function renderNcr(){
+  const pid=document.getElementById('ncrsel').value;
+  const box=document.getElementById('ncrlist');
+  let q="/mm_ncr?select=*&order=created_at.desc&limit=100";
+  if(pid)q+="&project_id=eq."+pid;
+  try{NCRS=await api(q);}catch(e){box.innerHTML='<div class="empty">patch_rev90.sql을 Supabase에서 실행하세요</div>';return}
+  const open=NCRS.filter(r=>r.status!=='완료').length;
+  document.getElementById('ncrrate').textContent=NCRS.length?`총 ${NCRS.length}건 · 조치중 ${open}건`:'';
+  box.innerHTML=NCRS.map(r=>`<div class="qacard ${r.status!=='완료'?'open-ncr':''}">
+    <div class="qahd">
+      <span class="no2 mono">NCR-${String(r.id).padStart(4,'0')}</span>
+      <b>${esc(qaMold(r.project_id))}</b>
+      ${r.op_code?`<span class="kd">${opN(r.op_code)} ${esc(mName(r.op_code))}</span>`:''}
+      <span class="kd">${esc(r.kind||'')}</span>
+      <span class="stbt ${r.status==='완료'?'closed':'opened'}" onclick="toggleNcr(${r.id},'${r.status}')">${r.status==='완료'?'✓ 완료':'⚠ 조치중'}</span>
+    </div>
+    <div class="qabody">
+      <b>부적합 내용</b>${esc(r.description)}
+      ${r.cause?'<b>원인 분석</b>'+esc(r.cause):''}
+      ${r.action?'<b>시정 조치</b>'+esc(r.action):''}
+      ${r.prevention?'<b>재발 방지</b>'+esc(r.prevention):''}
+    </div>
+    <div class="qaft">
+      <span>발생 ${r.occur_date||''}</span>
+      ${r.worker?`<span>조치자 ${esc(r.worker)}</span>`:''}
+      ${r.checker?`<span>확인자 ${esc(r.checker)}</span>`:''}
+      ${r.closed_date?`<span>완료 ${r.closed_date}</span>`:''}
+      <span style="margin-left:auto"><button class="del" onclick="delNcr(${r.id})">✕</button></span>
+    </div>
+  </div>`).join('')||'<div class="empty">등록된 부적합 보고가 없습니다</div>';
+}
+async function saveNcr(){
+  const pid=document.getElementById('nc-proj').value;
+  if(!pid)return toast('금형을 선택하세요');
+  const desc=document.getElementById('nc-desc').value.trim();
+  if(!desc)return toast('부적합 내용을 입력하세요');
+  const body={project_id:pid,op_code:document.getElementById('nc-op').value||null,
+    occur_date:document.getElementById('nc-date').value||today(),
+    kind:document.getElementById('nc-kind').value,description:desc,
+    cause:document.getElementById('nc-cause').value.trim()||null,
+    action:document.getElementById('nc-action').value.trim()||null,
+    prevention:document.getElementById('nc-prevent').value.trim()||null,
+    worker:g('nc-worker')||null,checker:g('nc-checker')||null,status:'조치중'};
+  try{
+    await api("/mm_ncr",{method:"POST",body:JSON.stringify(body)});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,op_code:body.op_code,action:'시정',
+      detail:'NCR 등록 ['+body.kind+'] '+desc.slice(0,50),worker:body.worker})});
+    ['nc-desc','nc-cause','nc-action','nc-prevent','nc-checker'].forEach(x=>document.getElementById(x).value='');
+    toast('NCR 등록 완료');renderNcr();
+  }catch(e){toast('등록 실패: '+e.message)}
+}
+async function toggleNcr(id,cur){
+  const done=cur!=='완료';
+  if(done&&!confirm('이 NCR을 완료(Close) 처리할까요?\n원인·조치·재발방지 기록을 확인하세요.'))return;
+  const r=NCRS.find(x=>x.id===id);
+  await api(`/mm_ncr?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({status:done?'완료':'조치중',closed_date:done?today():null})});
+  if(r)await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:r.project_id,op_code:r.op_code,action:'시정',
+    detail:'NCR-'+String(id).padStart(4,'0')+(done?' 완료 처리':' 재오픈'),worker:USER})});
+  renderNcr();
+}
+async function delNcr(id){
+  if(!confirm('NCR 기록을 삭제할까요?'))return;
+  await api(`/mm_ncr?id=eq.${id}`,{method:"DELETE"});renderNcr();
+}
+function exportNcrCSV(){
+  if(!NCRS.length)return toast('출력할 기록이 없습니다');
+  const head=['NCR번호','금형','공정','발생일','구분','부적합 내용','원인 분석','시정 조치','재발 방지','조치자','확인자','상태','완료일'];
+  const rows=NCRS.map(r=>['NCR-'+String(r.id).padStart(4,'0'),qaMold(r.project_id),
+    r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.occur_date||'',r.kind||'',r.description,
+    r.cause||'',r.action||'',r.prevention||'',r.worker||'',r.checker||'',r.status,r.closed_date||'']);
+  dlCSV('부적합·시정조치 관리대장',head,rows,'시정조치대장');
+}
+
+/* ===== ECN (4M) ===== */
+async function loadEcn(){
+  await loadQaProjects();
+  const s1=document.getElementById('ecnsel');const cur=s1.value;
+  s1.innerHTML='<option value="">전체 금형</option>'+QAPJ.map(qaOpt).join('');
+  if(cur)s1.value=cur;
+  document.getElementById('ec-proj').innerHTML=QAPJ.map(qaOpt).join('')||'<option value="">등록된 금형 없음</option>';
+  if(!document.getElementById('ec-date').value)document.getElementById('ec-date').value=today();
+  document.getElementById('ec-worker').value=USER||'';
+  renderEcn();
+}
+async function renderEcn(){
+  const pid=document.getElementById('ecnsel').value;
+  const box=document.getElementById('ecnlist');
+  let q="/mm_ecn?select=*&order=created_at.desc&limit=100";
+  if(pid)q+="&project_id=eq."+pid;
+  try{ECNS=await api(q);}catch(e){box.innerHTML='<div class="empty">patch_rev90.sql을 Supabase에서 실행하세요</div>';return}
+  const rev=ECNS.filter(r=>r.status==='검토중').length;
+  document.getElementById('ecnrate').textContent=ECNS.length?`총 ${ECNS.length}건 · 검토중 ${rev}건`:'';
+  box.innerHTML=ECNS.map(r=>`<div class="qacard">
+    <div class="qahd">
+      <span class="no2 mono">ECN-${String(r.id).padStart(4,'0')}</span>
+      <b>${esc(qaMold(r.project_id))}</b>
+      <span class="kd">${esc(r.kind||'')}</span>
+      <span class="stbt ${r.status==='승인'?'closed':r.status==='반려'?'opened':'review'}" onclick="cycleEcn(${r.id},'${r.status}')">${r.status}</span>
+    </div>
+    <div class="qabody">
+      ${r.before_val?'<b>변경 전</b>'+esc(r.before_val):''}
+      <b>변경 후</b>${esc(r.after_val)}
+      ${r.reason?'<b>사유</b>'+esc(r.reason):''}
+    </div>
+    <div class="qaft">
+      <span>변경일 ${r.change_date||''}</span>
+      ${r.worker?`<span>요청 ${esc(r.worker)}</span>`:''}
+      ${r.approver?`<span>승인 ${esc(r.approver)}</span>`:''}
+      <span style="margin-left:auto"><button class="del" onclick="delEcn(${r.id})">✕</button></span>
+    </div>
+  </div>`).join('')||'<div class="empty">등록된 변경 이력이 없습니다</div>';
+}
+async function saveEcn(){
+  const pid=document.getElementById('ec-proj').value;
+  if(!pid)return toast('금형을 선택하세요');
+  const after=document.getElementById('ec-after').value.trim();
+  if(!after)return toast('변경 후 내용을 입력하세요');
+  const body={project_id:pid,change_date:document.getElementById('ec-date').value||today(),
+    kind:document.getElementById('ec-kind').value,
+    before_val:document.getElementById('ec-before').value.trim()||null,after_val:after,
+    reason:document.getElementById('ec-reason').value.trim()||null,
+    worker:g('ec-worker')||null,approver:g('ec-approver')||null,status:'검토중'};
+  try{
+    await api("/mm_ecn",{method:"POST",body:JSON.stringify(body)});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,action:'변경',
+      detail:'4M 변경 ['+body.kind+'] '+after.slice(0,50),worker:body.worker})});
+    ['ec-before','ec-after','ec-reason','ec-approver'].forEach(x=>document.getElementById(x).value='');
+    toast('변경 등록 완료 (검토중)');renderEcn();
+  }catch(e){toast('등록 실패: '+e.message)}
+}
+async function cycleEcn(id,cur){
+  const next=cur==='검토중'?'승인':cur==='승인'?'반려':'검토중';
+  const r=ECNS.find(x=>x.id===id);
+  await api(`/mm_ecn?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({status:next,approver:next==='승인'?(r&&r.approver||USER):r&&r.approver})});
+  if(r)await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:r.project_id,action:'변경',
+    detail:'ECN-'+String(id).padStart(4,'0')+' → '+next,worker:USER})});
+  renderEcn();
+}
+async function delEcn(id){
+  if(!confirm('변경 기록을 삭제할까요?'))return;
+  await api(`/mm_ecn?id=eq.${id}`,{method:"DELETE"});renderEcn();
+}
+function exportEcnCSV(){
+  if(!ECNS.length)return toast('출력할 기록이 없습니다');
+  const head=['ECN번호','금형','변경일','구분','변경 전','변경 후','사유','요청자','승인자','상태'];
+  const rows=ECNS.map(r=>['ECN-'+String(r.id).padStart(4,'0'),qaMold(r.project_id),r.change_date||'',r.kind||'',
+    r.before_val||'',r.after_val,r.reason||'',r.worker||'',r.approver||'',r.status]);
+  dlCSV('설계·4M 변경 관리대장',head,rows,'변경관리대장');
+}
+/* 공통 CSV */
+function dlCSV(title,head,rows,fname){
+  const csv=[[title],head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
+  a.download=fname+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
 
 /* ---------- 재고관리 (금형부품) ---------- */
