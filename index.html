@@ -630,7 +630,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 8.5</span>
+    <span class="rev">Rev 8.6</span>
   </div>
 </header>
 
@@ -739,6 +739,7 @@ section{animation:fadein .35s}
       <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportDocCSV()">엑셀</button>
       <button class="btn hpdf" style="padding:8px 16px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportDocPDF()">PDF</button>
     </div>
+    <div id="doctype" style="margin:-6px 0 12px;font-size:13px;color:var(--sub);display:flex;align-items:center;gap:7px;flex-wrap:wrap"></div>
     <div class="hp" style="margin-bottom:12px">SQ 심사 대응 점검표입니다. 공정별 결과물의 작성 여부 · 작성일 · 작성자 · 증빙 유무를 한 장으로 확인하고 출력합니다. 미작성 항목은 <b style="color:var(--red)">미작성</b>으로 표시됩니다.</div>
     <div class="tscroll">
       <table class="wide">
@@ -2290,10 +2291,12 @@ async function delBoard(id){
 
 /* ---------- 출력물 점검표 (SQ) ---------- */
 let DOCROWS=[];
+let DOCPJ=[];
 async function loadDocSel(){
-  const pj=await api("/mm_project?select=id,mold_no,mold_name,status&order=created_at.desc");
+  const pj=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type&order=created_at.desc");
+  DOCPJ=pj;
   const el=document.getElementById('docsel');
-  el.innerHTML=pj.map(x=>`<option value="${x.id}">${esc(x.mold_no)} — ${esc(x.mold_name)} (${x.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
+  el.innerHTML=pj.map(x=>`<option value="${x.id}">${x.mold_type==='수리'?'[수리] ':'[신작] '}${esc(x.mold_no)} — ${esc(x.mold_name)} (${x.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
   renderDoc();
 }
 async function renderDoc(){
@@ -2301,7 +2304,9 @@ async function renderDoc(){
   const tb=document.getElementById('docbody');
   if(!pid){tb.innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';document.getElementById('docrate').textContent='';return}
   const outs=await api("/mm_output?select=*&project_id=eq."+pid);
-  const pj=(await api("/mm_project?select=mold_type&id=eq."+pid))[0];
+  const pj=DOCPJ.find(x=>x.id===pid)||(await api("/mm_project?select=mold_no,mold_name,mold_type&id=eq."+pid))[0];
+  const badge=document.getElementById('doctype');
+  if(badge)badge.innerHTML=pj?`<span class="badge ${pj.mold_type==='수리'?'b-arch':'b-run'}" style="${pj.mold_type==='수리'?'background:rgba(196,157,255,.16);color:var(--cust)':'background:rgba(79,140,255,.16);color:var(--blue)'}">${pj.mold_type==='수리'?'🔧 금형수리':'🗜️ 금형신작'}</span> <b class="mono">${esc(pj.mold_no||'')}</b> ${esc(pj.mold_name||'')}`:'';
   DOCROWS=[];
   FM(pflow(pj)).forEach(m=>m.outputs.forEach(o=>{
     const rec=outs.find(x=>x.op_code===m.op_code&&x.output_name===o);
