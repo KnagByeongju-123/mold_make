@@ -92,6 +92,32 @@ main{max-width:1180px;margin:0 auto;padding:81px 16px 60px}
 .badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
 .b-run{background:rgba(240,160,75,.16);color:var(--out)}.b-done{background:rgba(126,224,160,.14);color:var(--green)}
 .b-hold{background:rgba(255,255,255,.07);color:var(--sub)}.b-ng{background:rgba(255,123,123,.14);color:var(--red)}
+.b-arch{background:rgba(196,157,255,.16);color:var(--cust)}
+.projcard.arch{opacity:.72;border-style:dashed}
+.pfilter{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.pfilter button{padding:8px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.pfilter button.on{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold)}
+.pcbtns{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+.pcbtns button{padding:6px 12px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit;border:1px solid var(--line);background:var(--card2);color:var(--sub)}
+.pcbtns button.trc{border-color:var(--goldbd);color:var(--gold);background:var(--goldbg)}
+.pcbtns button.arc{border-color:rgba(196,157,255,.45);color:var(--cust);background:rgba(196,157,255,.1)}
+.pcbtns button.res{border-color:rgba(240,160,75,.45);color:var(--out)}
+/* 추적 타임라인 */
+.tlwrap{position:relative;padding-left:18px}
+.tlwrap:before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--line2)}
+.tlrow{position:relative;margin-bottom:11px}
+.tlrow:before{content:'';position:absolute;left:-16px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--gray);border:2px solid var(--card)}
+.tlrow.k-등록:before{background:var(--gold)}.tlrow.k-시작:before{background:var(--out)}
+.tlrow.k-OK:before{background:var(--blue)}.tlrow.k-NG:before{background:var(--red)}
+.tlrow.k-출력물:before{background:var(--gold)}.tlrow.k-부품:before{background:var(--out)}
+.tlrow.k-Tryout:before{background:var(--cust)}.tlrow.k-완료:before,.tlrow.k-보관:before{background:var(--green)}
+.tlhd{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tlk{font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:5px;background:var(--card2);border:1px solid var(--line)}
+.tlt{font-size:10.5px;color:var(--gray);font-family:'IBM Plex Mono',monospace}
+.tlw{font-size:10.5px;color:var(--sub)}
+.tld{font-size:13px;margin-top:3px;line-height:1.5}
+.tlsum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tlsum span{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--sub)}
 .pbar{height:8px;background:var(--line2);border-radius:5px;margin-top:12px;overflow:hidden}
 .pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:5px}
 .projcard .meta{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;color:var(--sub)}
@@ -596,7 +622,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 7.3</span>
+    <span class="rev">Rev 7.5</span>
   </div>
 </header>
 
@@ -637,6 +663,12 @@ section{animation:fadein .35s}
       <div class="stat s4"><div class="v" id="st-all">0</div><div class="k">전체</div></div>
     </div>
     <h1 class="pt">전체진행현황</h1>
+    <div class="pfilter" id="pfilter">
+      <button class="on" onclick="setPF('run')">진행중</button>
+      <button onclick="setPF('done')">완료</button>
+      <button onclick="setPF('arch')">📦 보관</button>
+      <button onclick="setPF('all')">전체</button>
+    </div>
     <div id="projlist"></div>
   </section>
 
@@ -648,6 +680,10 @@ section{animation:fadein .35s}
     </div>
 
     <div id="mxwrap">
+      <div class="pfilter" id="mxflow">
+        <button class="on" onclick="setMxFlow('신작')">🆕 신작</button>
+        <button onclick="setMxFlow('수리')">🔧 수리</button>
+      </div>
       <div class="mxlegend">
         <span><i class="cd c-w"></i>대기</span>
         <span><i class="cd c-r">●</i>진행</span>
@@ -706,6 +742,12 @@ section{animation:fadein .35s}
   <section id="v-new" class="hide">
     <div class="panel">
       <h2>신규 금형 등록</h2>
+      <div class="fg"><label>구분 *</label>
+        <div class="chips" id="f-type">
+          <button data-v="신작" class="on" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on')">🆕 금형신작</button>
+          <button data-v="수리" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on')">🔧 금형수리</button>
+        </div>
+      </div>
       <div class="row2">
         <div class="fg"><label>금형번호 *</label><input id="f-no" placeholder="예: M-2026-001"></div>
         <div class="fg"><label>금형명 *</label><input id="f-nm" placeholder="예: 브라켓 PRG 금형"></div>
@@ -731,7 +773,7 @@ section{animation:fadein .35s}
       <select id="h-proj"><option value="">전체 금형</option></select>
       <select id="h-act">
         <option value="">전체 구분</option>
-        <option>등록</option><option>시작</option><option>OK</option><option>NG</option><option>부품</option><option>출력물</option><option>Tryout</option><option>계획</option>
+        <option>등록</option><option>시작</option><option>OK</option><option>NG</option><option>부품</option><option>출력물</option><option>Tryout</option><option>계획</option><option>보관</option>
       </select>
       <button class="btn btn-p hbtn" onclick="loadHist()">조회</button>
       <button class="btn hclr" onclick="clearHistFilter()">초기화</button>
@@ -852,7 +894,14 @@ section{animation:fadein .35s}
     </div>
 
     <div id="setop" class="hide">
-      <button class="btn btn-p" style="margin-bottom:12px" onclick="editOpMaster(null)">＋ 공정 추가</button>
+      <div class="pfilter" id="opflow">
+        <button class="on" onclick="setOpFlow('신작')">🆕 금형신작 공정</button>
+        <button onclick="setOpFlow('수리')">🔧 금형수리 공정</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="editOpMaster(null)">＋ 공정 추가</button>
+        <button class="btn" id="seedrp" style="display:none;background:rgba(196,157,255,.12);border:1px solid rgba(196,157,255,.45);color:var(--cust)" onclick="seedRepairFlow()">기본 수리공정 자동생성</button>
+      </div>
       <div id="oplist"></div>
     </div>
   </section>
@@ -1045,6 +1094,22 @@ section{animation:fadein .35s}
     </div>
   </section>
 </main>
+
+<div class="modal" id="trace" onclick="if(event.target===this)closeTrace()">
+  <div class="mbox">
+    <div class="mhead"><span class="mno mono" id="tr-no"></span><span class="mtitle" id="tr-nm"></span><button class="mx" onclick="closeTrace()">✕</button></div>
+    <div class="mbody">
+      <div class="tlsum" id="tr-sum"></div>
+      <div class="pfilter" id="tr-filter"></div>
+      <div id="tr-body"></div>
+      <div class="cbtns" style="margin-top:16px">
+        <button class="cb back" onclick="closeTrace()">닫기</button>
+        <button class="cb" onclick="exportTraceCSV()">엑셀</button>
+        <button class="cb ok" onclick="exportTracePDF()">PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="skedit" onclick="if(event.target===this)closeSkEdit()">
   <div class="mbox">
@@ -1335,14 +1400,20 @@ function setTab(t){
 /* ---------- 공정설계 ---------- */
 function actorList(a){return (a||'').split(',').map(x=>x.trim()).filter(Boolean).map(x=>x==='당사'?'사내':x)}
 const OPENOUT=new Set();
+let SETFLOW='신작';
+function setOpFlow(f){SETFLOW=f;
+  document.querySelectorAll('#opflow button').forEach((b,k)=>b.classList.toggle('on',['신작','수리'][k]===f));
+  renderOpList();}
 function renderOpList(){
-  document.getElementById('oplist').innerHTML=MASTER.map((m,i)=>{
+  const L=FM(SETFLOW);
+  document.getElementById('seedrp').style.display=(SETFLOW==='수리'&&!L.length)?'':'none';
+  document.getElementById('oplist').innerHTML=L.map((m,i)=>{
     const open=OPENOUT.has(m.op_code);
     return `<div class="opwrap">
     <div class="opcard">
     <div class="opord">
       <button ${i===0?'disabled':''} onclick="moveOp(${i},-1)">▲</button>
-      <button ${i===MASTER.length-1?'disabled':''} onclick="moveOp(${i},1)">▼</button>
+      <button ${i===L.length-1?'disabled':''} onclick="moveOp(${i},1)">▼</button>
     </div>
     <div class="opinf">
       <div class="opt"><b class="mono">${opN(m.op_code)}</b> ${esc(m.process_name)}</div>
@@ -1421,7 +1492,8 @@ async function moveOut(code,j,d){
   if(await saveOuts(code,outs))toast('순서 변경');
 }
 async function moveOp(i,d){
-  const a=MASTER[i], b=MASTER[i+d];if(!b)return;
+  const L=FM(SETFLOW);
+  const a=L[i], b=L[i+d];if(!b)return;
   await api(`/mm_master?op_code=eq.${a.op_code}`,{method:"PATCH",body:JSON.stringify({seq:b.seq})});
   await api(`/mm_master?op_code=eq.${b.op_code}`,{method:"PATCH",body:JSON.stringify({seq:a.seq})});
   await loadMaster();renderOpList();toast('순서 변경');
@@ -1440,7 +1512,7 @@ function editOpMaster(code){
   document.getElementById('oe-tasks').value=m?m.tasks.join('\n'):'';
   document.getElementById('oe-outs').value=m?m.outputs.join('\n'):'';
   document.getElementById('oe-ng').innerHTML='<option value="">없음</option>'+
-    MASTER.filter(x=>!m||x.op_code!==m.op_code).map(x=>
+    FM(m?(m.flow||'신작'):SETFLOW).filter(x=>!m||x.op_code!==m.op_code).map(x=>
       `<option value="${x.op_code}" ${m&&m.ng_return_op===x.op_code?'selected':''}>${opN(x.op_code)} ${esc(x.process_name)}</option>`).join('');
   document.getElementById('opedit').classList.add('show');
   history.pushState({t:'ov'},'');
@@ -1456,10 +1528,11 @@ async function saveOpMaster(){
   if(!dp)return toast('담당부서를 입력하세요');
   const acts=[...document.querySelectorAll('#oe-actor button.on')].map(b=>b.dataset.v);
   if(!acts.length)return toast('담당을 하나 이상 선택하세요');
-  const code='OP'+num;
+  const pref=SETFLOW==='수리'?'RP':'OP';
+  const code=pref+num;
   const tasks=document.getElementById('oe-tasks').value.split('\n').map(x=>x.trim()).filter(Boolean);
   const outs=document.getElementById('oe-outs').value.split('\n').map(x=>x.trim()).filter(Boolean);
-  const body={process_name:nm,dept:dp,actor:acts.join(','),tasks,outputs:outs,
+  const body={process_name:nm,dept:dp,actor:acts.join(','),tasks,outputs:outs,flow:SETFLOW,
     ng_return_op:document.getElementById('oe-ng').value||null};
   try{
     if(OEDIT){
@@ -1468,14 +1541,30 @@ async function saveOpMaster(){
       if(MASTER.find(x=>x.op_code===code))return toast('이미 있는 공정번호입니다');
       body.op_code=code;body.seq=Number(num);
       await api("/mm_master",{method:"POST",body:JSON.stringify(body)});
-      // 번호 순으로 seq 재정렬
-      const all=[...MASTER.map(x=>({op:x.op_code,n:Number(opN(x.op_code))})),{op:code,n:Number(num)}]
+      // 번호 순으로 seq 재정렬 (같은 플로우 내)
+      const all=[...FM(SETFLOW).map(x=>({op:x.op_code,n:Number(opN(x.op_code))})),{op:code,n:Number(num)}]
         .sort((a,b)=>a.n-b.n);
       for(let i=0;i<all.length;i++)
         await api(`/mm_master?op_code=eq.${all[i].op}`,{method:"PATCH",body:JSON.stringify({seq:i+1})});
     }
     await loadMaster();closeOpEdit();renderOpList();toast('공정 저장 완료');
   }catch(e){toast('저장 실패: '+e.message)}
+}
+async function seedRepairFlow(){
+  if(!confirm('기본 금형수리 공정 7단계를 생성할까요?\n(수리 접수 → 분해/세척 → 상태 진단 → 부품 가공/교체 → 조립 → T/O 검증 → 출하)'))return;
+  const rows=[
+    {op_code:'RP10',seq:1,process_name:'수리 접수/견적',dept:'영업',actor:'고객사,사내',tasks:['수리 의뢰 접수','증상 확인','견적 산출'],outputs:['수리 견적서'],flow:'수리'},
+    {op_code:'RP20',seq:2,process_name:'금형 입고/분해·세척',dept:'조립',actor:'사내',tasks:['금형 입고 검수','분해','세척'],outputs:['입고 검수서'],flow:'수리'},
+    {op_code:'RP30',seq:3,process_name:'상태 진단',dept:'품질',actor:'사내',tasks:['마모/파손 부위 진단','수리 범위 확정'],outputs:['진단 보고서'],flow:'수리'},
+    {op_code:'RP40',seq:4,process_name:'부품 가공/교체',dept:'가공',actor:'사내,외주',tasks:['파손 부품 가공','표준부품 교체','용접/육성'],outputs:['가공 작업일보'],flow:'수리',ng_return_op:'RP30'},
+    {op_code:'RP50',seq:5,process_name:'조립',dept:'조립',actor:'사내',tasks:['재조립','습합 확인'],outputs:['조립 체크시트'],flow:'수리',ng_return_op:'RP40'},
+    {op_code:'RP60',seq:6,process_name:'Tryout 검증',dept:'품질',actor:'사내',tasks:['T/O 사출/타발 검증','치수 확인'],outputs:['T/O 보고서'],flow:'수리',ng_return_op:'RP40'},
+    {op_code:'RP70',seq:7,process_name:'출하/이관',dept:'영업',actor:'고객사,사내',tasks:['최종 검수','출하'],outputs:['수리 완료 보고서'],flow:'수리'}
+  ];
+  try{
+    await api("/mm_master",{method:"POST",body:JSON.stringify(rows)});
+    await loadMaster();renderOpList();toast('기본 수리공정 7단계 생성 완료');
+  }catch(e){toast('생성 실패: '+e.message)}
 }
 async function delOpMaster(code,nm){
   if(!confirm(opN(code)+' '+nm+' 공정을 삭제할까요?\n\n이미 등록된 금형에서 이 공정이 사용 중이면 삭제되지 않습니다.'))return;
@@ -1583,28 +1672,45 @@ async function loadMasterPin(){
     if(r.length)MASTER_PIN=r[0].pin;
   }catch(e){}
 }
-async function loadMaster(){ MASTER=await api("/mm_master?select=*&order=seq"); }
+async function loadMaster(){ MASTER=await api("/mm_master?select=*&order=flow.desc,seq"); }
+let PF='run';
+function setPF(v){PF=v;
+  document.querySelectorAll('#pfilter button').forEach((b,k)=>b.classList.toggle('on',['run','done','arch','all'][k]===v));
+  renderDash();}
 async function loadDash(){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
   PROCS=await api("/mm_process?select=project_id,op_code,status,ng_count");
-  const run=PROJECTS.filter(p=>p.status==='진행').length;
-  const done=PROJECTS.filter(p=>p.status==='완료').length;
+  const live=PROJECTS.filter(p=>!p.archived);
+  const run=live.filter(p=>p.status==='진행').length;
+  const done=live.filter(p=>p.status==='완료').length;
+  const arch=PROJECTS.filter(p=>p.archived).length;
   const ng=PROCS.reduce((s,p)=>s+p.ng_count,0);
   st('st-run',run);st('st-done',done);st('st-ng',ng);st('st-all',PROJECTS.length);
+  document.querySelectorAll('#pfilter button')[2].textContent='📦 보관 '+arch;
+  renderDash();
+}
+function renderDash(){
   const box=document.getElementById('projlist');
-  if(!PROJECTS.length){box.innerHTML='<div class="empty">등록된 금형이 없습니다. [신규금형등록] 메뉴에서 등록하세요.</div>';return}
-  box.innerHTML=PROJECTS.map(p=>{
+  const list=PROJECTS.filter(p=>{
+    if(PF==='arch')return p.archived;
+    if(PF==='all')return true;
+    if(p.archived)return false;
+    return PF==='done'?p.status==='완료':p.status!=='완료';
+  });
+  if(!list.length){box.innerHTML='<div class="empty">'+(PF==='arch'?'보관된 금형이 없습니다':PF==='done'?'완료된 금형이 없습니다':'해당하는 금형이 없습니다')+'</div>';return}
+  box.innerHTML=list.map(p=>{
     const ps=PROCS.filter(x=>x.project_id===p.id);
     const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
     const pct=Math.round(ok/tot*100);
     const cur=curProc(ps);
-    const bcls=p.status==='완료'?'b-done':p.status==='보류'?'b-hold':'b-run';
-    return `<div class="projcard" onclick="openFlow('${p.id}')">
+    const bcls=p.archived?'b-arch':p.status==='완료'?'b-done':p.status==='보류'?'b-hold':'b-run';
+    return `<div class="projcard ${p.archived?'arch':''}" onclick="openFlow('${p.id}')">
       <div class="top">
         <span class="no mono">${esc(p.mold_no)}</span>
         <span class="nm">${esc(p.mold_name)}</span>
+        ${p.mold_type==='수리'?'<span class="badge" style="background:rgba(196,157,255,.16);color:var(--cust)">🔧수리</span>':''}
         <span class="cs">${esc(p.customer||'')} ${p.product?'· '+esc(p.product):''}</span>
-        <span class="badge ${bcls}">${p.status}</span>
+        <span class="badge ${bcls}">${p.archived?'보관':p.status}</span>
         <button class="del" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')">✕</button>
       </div>
       <div class="pbar"><i style="width:${pct}%"></i></div>
@@ -1612,8 +1718,26 @@ async function loadDash(){
         <span>현재 공정: <span class="cur">${cur}</span></span>
         <span>${ok}/${tot} 완료 (${pct}%) ${p.due_date?'· 납기 '+p.due_date:''}</span>
       </div>
+      <div class="pcbtns" onclick="event.stopPropagation()">
+        <button class="trc" onclick="openTrace('${p.id}')">📜 전체이력</button>
+        ${p.archived
+          ? `<button class="res" onclick="archiveProject('${p.id}',false)">↩ 보관 해제</button>`
+          : (p.status==='완료'?`<button class="arc" onclick="archiveProject('${p.id}',true)">📦 완료보관</button>`:'')}
+        ${p.archived_at?`<span class="tlt" style="align-self:center">보관 ${String(p.archived_at).slice(0,10)}</span>`:''}
+      </div>
     </div>`;
   }).join('');
+}
+async function archiveProject(id,on){
+  const p=PROJECTS.find(x=>x.id===id);if(!p)return;
+  if(on&&!confirm(p.mold_no+' 금형을 완료보관 처리합니다.\n\n보관 금형은 홈 [📦 보관] 탭에서 조회되며, 이력은 그대로 보존됩니다.\n계속할까요?'))return;
+  try{
+    await api(`/mm_project?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({
+      archived:on,archived_at:on?new Date().toISOString():null})});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:id,action:on?'보관':'등록',
+      detail:p.mold_no+' '+p.mold_name+(on?' 완료보관 처리':' 보관 해제'),worker:USER||null})});
+    toast(on?'완료보관 처리했습니다':'보관을 해제했습니다');loadDash();
+  }catch(e){toast('처리 실패: '+e.message)}
 }
 function curProc(ps){
   const ngp=ps.find(x=>x.status==='NG');
@@ -1624,7 +1748,9 @@ function curProc(ps){
   if(wait)return opN(wait.op_code)+' '+mName(wait.op_code)+' 대기';
   return ps.length?'전공정 완료':'-';
 }
-function opN(c){return (c||'').replace('OP','')}
+function opN(c){return (c||'').replace(/^OP|^RP/,'')}
+function FM(flow){return MASTER.filter(m=>(m.flow||'신작')===flow)}
+function pflow(p){return p&&p.mold_type==='수리'?'수리':'신작'}
 function opAbbr(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name.replace(/\s/g,'').slice(0,2):opN(c)}
 function mName(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name:''}
 function st(id,v){document.getElementById(id).textContent=v}
@@ -1634,15 +1760,19 @@ function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<
 async function createProject(){
   const no=g('f-no'),nm=g('f-nm');
   if(!no||!nm)return toast('금형번호와 금형명은 필수입니다');
+  const tbtn=document.querySelector('#f-type button.on');
+  const mtype=tbtn?tbtn.dataset.v:'신작';
+  const fm=FM(mtype);
+  if(!fm.length)return toast(mtype+' 공정이 없습니다. 설정 > 공정설계에서 '+mtype+' 공정을 먼저 만드세요');
   try{
     const [p]=await api("/mm_project",{method:"POST",body:JSON.stringify({
-      mold_no:no,mold_name:nm,customer:g('f-cs')||null,product:g('f-pd')||null,
+      mold_no:no,mold_name:nm,mold_type:mtype,customer:g('f-cs')||null,product:g('f-pd')||null,
       manager:g('f-mg')||null,due_date:g('f-due')||null,note:g('f-nt')||null})});
-    const rows=MASTER.map((m,i)=>({project_id:p.id,op_code:m.op_code,status:i===0?'진행':'대기',started_at:i===0?new Date().toISOString():null}));
+    const rows=fm.map((m,i)=>({project_id:p.id,op_code:m.op_code,status:i===0?'진행':'대기',started_at:i===0?new Date().toISOString():null}));
     await api("/mm_process",{method:"POST",body:JSON.stringify(rows)});
-    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' 금형 등록, 10 견적 요청 개시',worker:g('f-mg')||null})});
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' ['+mtype+'] 등록, '+opN(fm[0].op_code)+' '+fm[0].process_name+' 개시',worker:g('f-mg')||null})});
     ['f-no','f-nm','f-cs','f-pd','f-mg','f-due','f-nt'].forEach(x=>document.getElementById(x).value='');
-    toast('등록 완료 — 10 견적 요청부터 진행합니다');
+    toast('등록 완료 — '+opN(fm[0].op_code)+' '+fm[0].process_name+'부터 진행합니다');
     openFlow(p.id);
   }catch(e){toast('등록 실패: '+e.message)}
 }
@@ -1665,21 +1795,27 @@ function setMode(m){
   document.getElementById('dtwrap').classList.toggle('hide',m!=='dt');
   if(m==='mx')renderMatrix(); else loadFlowSel();
 }
+let MXFLOW='신작';
+function setMxFlow(f){MXFLOW=f;
+  document.querySelectorAll('#mxflow button').forEach((b,k)=>b.classList.toggle('on',['신작','수리'][k]===f));
+  renderMatrix();}
 async function renderMatrix(){
-  const [pj,ps]=await Promise.all([
-    api("/mm_project?select=id,mold_no,mold_name,status,due_date&order=created_at.desc"),
+  const [pjAll,ps]=await Promise.all([
+    api("/mm_project?select=id,mold_no,mold_name,status,due_date,mold_type&order=created_at.desc"),
     api("/mm_process?select=id,project_id,op_code,status,plan_start,plan_end,started_at,finished_at,worker,note,ng_count")
   ]);
-  MXPJ=pj;MXPS=ps;
+  const pj=pjAll.filter(p=>pflow(p)===MXFLOW);
+  MXPJ=pjAll;MXPS=ps;
   const t=document.getElementById('mxtbl');
-  if(!pj.length){t.innerHTML='<tr><td class="empty">등록된 금형이 없습니다</td></tr>';return}
+  if(!pj.length){t.innerHTML='<tr><td class="empty">'+MXFLOW+' 금형이 없습니다</td></tr>';return}
   const today=new Date().toISOString().slice(0,10);
-  const head=`<thead><tr><th class="stick">금형</th>${MASTER.map(m=>
+  const COLS=FM(MXFLOW);
+  const head=`<thead><tr><th class="stick">금형</th>${COLS.map(m=>
     `<th class="opc" title="${esc(m.process_name)}"><b>${opN(m.op_code)}</b><span>${esc(opAbbr(m.op_code))}</span></th>`).join('')}<th class="rate">진행률</th><th class="mxdelh">삭제</th></tr></thead>`;
   const body=pj.map(p=>{
     const mine=MXPS.filter(x=>x.project_id===p.id);
     const ok=mine.filter(x=>x.status==='OK').length;
-    const cells=MASTER.map(m=>{
+    const cells=COLS.map(m=>{
       const pr=mine.find(x=>x.op_code===m.op_code);
       if(!pr)return '<td class="cell"></td>';
       const late=pr.plan_end&&pr.status!=='OK'&&pr.plan_end<today;
@@ -1766,7 +1902,7 @@ async function cellSet(next){
 async function loadFlowSel(sel){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
   const s=document.getElementById('flowsel');
-  s.innerHTML=PROJECTS.map(p=>`<option value="${p.id}">${esc(p.mold_no)} — ${esc(p.mold_name)} (${p.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
+  s.innerHTML=PROJECTS.map(p=>`<option value="${p.id}">${p.mold_type==='수리'?'🔧':''}${esc(p.mold_no)} — ${esc(p.mold_name)} (${p.status})</option>`).join('')||'<option value="">등록된 금형 없음</option>';
   if(sel)s.value=sel;
   renderFlow();
 }
@@ -1783,9 +1919,10 @@ async function renderFlow(){
   ]);
   PARTS=parts;OUTS=outs;
   loadSuggest();
+  const pj=PROJECTS.find(x=>x.id===pid);
   const ok=ps.filter(x=>x.status==='OK').length;
-  document.getElementById('flowprog').textContent=`진행률 ${ok}/${ps.length} (${Math.round(ok/(ps.length||1)*100)}%)`;
-  box.innerHTML=MASTER.map(m=>{
+  document.getElementById('flowprog').textContent=`${pj&&pj.mold_type==='수리'?'🔧수리 · ':''}진행률 ${ok}/${ps.length} (${Math.round(ok/(ps.length||1)*100)}%)`;
+  box.innerHTML=FM(pflow(pj)).map(m=>{
     const p=ps.find(x=>x.op_code===m.op_code)||{status:'대기',ng_count:0};
     const stc=p.status==='OK'?'st-ok':p.status==='진행'?'st-r':p.status==='NG'?'st-ng':'st-w';
     const acts=[];
@@ -2045,7 +2182,8 @@ async function setStatus(procId,op,status,fromCell){
         const allOk=ps.filter(x=>x.op_code!==op).every(x=>x.status==='OK');
         if(allOk){
           await api(`/mm_project?id=eq.${CURPROJ}`,{method:"PATCH",body:JSON.stringify({status:'완료'})});
-          toast('전 공정 완료 — 금형 이관 완료 처리되었습니다');
+          await api(`/mm_project?id=eq.${CURPROJ}`,{method:"PATCH",body:JSON.stringify({completed_at:now})});
+          toast('전 공정 완료 — 홈에서 [📦 완료보관] 처리할 수 있습니다');
         }else toast(opN(op)+' '+m.process_name+' 완료'+(next?' → 다음 공정 개시':''));
         await hist(op,'OK',opN(op)+' '+m.process_name+' 완료',worker);
       }else{
@@ -2101,8 +2239,9 @@ async function renderDoc(){
   const tb=document.getElementById('docbody');
   if(!pid){tb.innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';document.getElementById('docrate').textContent='';return}
   const outs=await api("/mm_output?select=*&project_id=eq."+pid);
+  const pj=(await api("/mm_project?select=mold_type&id=eq."+pid))[0];
   DOCROWS=[];
-  MASTER.forEach(m=>m.outputs.forEach(o=>{
+  FM(pflow(pj)).forEach(m=>m.outputs.forEach(o=>{
     const rec=outs.find(x=>x.op_code===m.op_code&&x.output_name===o);
     DOCROWS.push({op:m.op_code,pname:m.process_name,dept:m.dept,name:o,
       done:!!(rec&&rec.done),date:rec&&rec.done_date?rec.done_date:'',
@@ -2513,6 +2652,99 @@ function exportPlan(){
   a.download='금형제작계획_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
 
+
+
+/* ---------- 금형 전체이력 추적 ---------- */
+let TRPJ=null,TRALL=[],TRFILT='전체';
+async function openTrace(pid){
+  const p=PROJECTS.find(x=>x.id===pid)||(await api("/mm_project?select=*&id=eq."+pid))[0];
+  if(!p)return;
+  TRPJ=p;TRFILT='전체';
+  document.getElementById('tr-no').textContent=(p.mold_type==='수리'?'🔧 ':'')+p.mold_no;
+  document.getElementById('tr-nm').textContent=p.mold_name;
+  document.getElementById('tr-body').innerHTML='<div class="empty">불러오는 중...</div>';
+  document.getElementById('trace').classList.add('show');
+  const [hs,ps,pt,ou,ty]=await Promise.all([
+    api("/mm_history?select=*&project_id=eq."+pid+"&order=created_at"),
+    api("/mm_process?select=*&project_id=eq."+pid),
+    api("/mm_part?select=*&project_id=eq."+pid+"&order=created_at").catch(()=>[]),
+    api("/mm_output?select=*&project_id=eq."+pid).catch(()=>[]),
+    api("/mm_tryout?select=*&project_id=eq."+pid+"&order=log_date").catch(()=>[])
+  ]);
+  const ev=[];
+  hs.forEach(h=>ev.push({t:h.created_at,k:h.action||'기타',op:h.op_code,d:h.detail||'',w:h.worker||''}));
+  pt.forEach(x=>ev.push({t:x.created_at,k:'부품',op:x.op_code,
+    d:'부품 등록: '+x.part_name+(x.dimension?' ('+x.dimension+')':'')+(x.vendor?' · '+x.vendor:''),w:''}));
+  ou.filter(x=>x.done).forEach(x=>ev.push({t:x.done_date||x.created_at,k:'출력물',op:x.op_code,
+    d:'출력물 작성: '+x.output_name+(x.photo?' (증빙 첨부)':''),w:x.worker||''}));
+  ty.forEach(x=>ev.push({t:x.created_at||x.log_date,k:'Tryout',op:null,
+    d:'T/O '+(x.stage||'')+' ['+(x.status||'')+'] '+(x.work_done||'').slice(0,60)+((x.issues)?' / 이슈: '+String(x.issues).slice(0,40):''),w:x.author||''}));
+  if(p.archived&&p.archived_at)ev.push({t:p.archived_at,k:'보관',op:null,d:'완료보관 처리',w:''});
+  ev.sort((a,b)=>new Date(a.t)-new Date(b.t));
+  TRALL=ev;
+  const ok=ps.filter(x=>x.status==='OK').length, ngc=ps.reduce((a,x)=>a+(x.ng_count||0),0);
+  const d0=hs.length?new Date(hs[0].created_at):null;
+  const days=d0?Math.max(1,Math.round(((p.archived_at?new Date(p.archived_at):new Date())-d0)/864e5)):0;
+  document.getElementById('tr-sum').innerHTML=
+    `<span>공정 ${ok}/${ps.length} 완료</span><span>NG ${ngc}회</span><span>부품 ${pt.length}</span>`+
+    `<span>출력물 ${ou.filter(x=>x.done).length}/${ou.length}</span><span>T/O ${ty.length}회</span>`+
+    `<span>총 ${days}일</span><span>이벤트 ${ev.length}건</span>`;
+  const kinds=['전체',...[...new Set(ev.map(e=>e.k))]];
+  document.getElementById('tr-filter').innerHTML=kinds.map(k=>
+    `<button class="${k===TRFILT?'on':''}" onclick="setTraceFilter('${k}')">${k}</button>`).join('');
+  renderTrace();
+}
+function setTraceFilter(k){TRFILT=k;
+  document.querySelectorAll('#tr-filter button').forEach(b=>b.classList.toggle('on',b.textContent===k));
+  renderTrace();}
+function trList(){return TRFILT==='전체'?TRALL:TRALL.filter(e=>e.k===TRFILT)}
+function renderTrace(){
+  const rows=trList();
+  document.getElementById('tr-body').innerHTML=rows.length?'<div class="tlwrap">'+rows.map(e=>`<div class="tlrow k-${esc(e.k)}">
+    <div class="tlhd">
+      <span class="tlk">${esc(e.k)}</span>
+      ${e.op?`<span class="tlk mono">${opN(e.op)} ${esc(mName(e.op))}</span>`:''}
+      <span class="tlt">${fmt(e.t)}</span>
+      ${e.w?`<span class="tlw">👤 ${esc(e.w)}</span>`:''}
+    </div>
+    <div class="tld">${esc(e.d)}</div>
+  </div>`).join('')+'</div>':'<div class="empty">해당 이력이 없습니다</div>';
+}
+function closeTrace(){document.getElementById('trace').classList.remove('show');}
+function exportTraceCSV(){
+  if(!TRPJ)return;
+  const head=['일시','구분','공정','내용','담당'];
+  const rows=trList().map(e=>[fmt(e.t),e.k,e.op?opN(e.op)+' '+mName(e.op):'',e.d,e.w]);
+  const csv=[['금형 전체이력 - '+TRPJ.mold_no+' '+TRPJ.mold_name],head,...rows]
+    .map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
+  a.download='금형이력_'+TRPJ.mold_no+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
+}
+function exportTracePDF(){
+  if(!TRPJ)return;
+  const rows=trList().map(e=>`<tr><td class="mono">${fmt(e.t)}</td><td>${esc(e.k)}</td>
+    <td>${e.op?opN(e.op)+' '+esc(mName(e.op)):'-'}</td><td>${esc(e.d)}</td><td>${esc(e.w||'-')}</td></tr>`).join('');
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>금형 전체이력</title><style>
+  @page{size:A4;margin:14mm}
+  body{font-family:'Malgun Gothic',sans-serif;color:#111;font-size:11px}
+  h1{font-size:17px;margin:0 0 4px}.sub{color:#555;font-size:11px;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top}
+  th{background:#eee;font-size:10.5px}
+  .mono{font-family:Consolas,monospace;white-space:nowrap}
+  .sg{margin-top:14px;display:flex;gap:8px}
+  .sg div{flex:1;border:1px solid #999;height:52px;font-size:10px;padding:3px 5px}
+  </style></head><body>
+  <h1>금형 제작 전체이력 (추적성 기록)</h1>
+  <div class="sub">금형번호 ${esc(TRPJ.mold_no)} · 금형명 ${esc(TRPJ.mold_name)} ${TRPJ.customer?'· 고객사 '+esc(TRPJ.customer):''}
+   · 출력일 ${new Date().toISOString().slice(0,10)} · 총 ${trList().length}건</div>
+  <table><thead><tr><th style="width:80px">일시</th><th style="width:52px">구분</th><th style="width:90px">공정</th><th>내용</th><th style="width:60px">담당</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="sg"><div>작성</div><div>검토</div><div>승인</div></div>
+  </body></html>`;
+  const w=window.open('');w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);
+}
 
 /* ---------- 재고관리 (금형부품) ---------- */
 let SITEMS=[],SHIST=[],STK_LOW=false,SKEDIT=null,SKIO=null,SKIOTYPE='in';
