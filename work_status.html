@@ -84,6 +84,33 @@ body.ordmode .ordbar{display:flex}
 .card.filled{border-color:rgba(126,224,160,.35)}
 .card .bar{width:4px;border-radius:3px;background:var(--line);flex:0 0 4px}
 .card .body{flex:1;min-width:0}
+.cmbtn{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;gap:3px;align-items:center;min-width:44px}
+.cmbtn button{border:1px solid var(--line2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--sub);font-size:12px;cursor:pointer;padding:6px 8px;line-height:1;font-family:inherit}
+.cmbtn button:active{transform:scale(.94)}
+.cmbtn .rx{font-size:9.5px;color:var(--gray);display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.cmbtn .rx b{font-weight:700}
+/* 코멘트 시트 */
+#cmask{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:.25s;z-index:120}
+#cmask.on{opacity:1;visibility:visible}
+#csheet{position:fixed;left:0;right:0;bottom:0;z-index:121;background:#171b26;border-radius:18px 18px 0 0;border-top:1px solid var(--line);
+  padding:16px 16px 22px;max-height:78vh;overflow-y:auto;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.3,1)}
+#csheet.on{transform:none}
+#csheet h3{margin:0 0 2px;font-size:15px}
+#csheet .sub2{font-size:11px;color:var(--gray);margin-bottom:10px}
+.rxrow{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.rxrow button{flex:1;min-width:80px;padding:10px 0;border-radius:11px;border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.rxrow button.on{border-color:#7ee0a0;color:#7ee0a0;background:rgba(126,224,160,.1)}
+.rxrow button .cnt2{font-size:10px;opacity:.75;font-weight:600}
+.cmt{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:11px;padding:9px 11px;margin-bottom:7px}
+.cmt .ch{display:flex;gap:7px;align-items:center;font-size:11px;color:var(--gray)}
+.cmt .ch b{color:var(--ink);font-size:12px}
+.cmt .cb2{font-size:13px;margin-top:4px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.cmt .cdel{margin-left:auto;background:none;border:none;color:var(--gray);cursor:pointer;font-size:12px}
+.cmt .cdel:hover{color:#ff7b7b}
+.cin{display:flex;gap:7px;margin-top:10px}
+.cin input{flex:1;min-width:0;background:#10141d;border:1px solid var(--line2);border-radius:11px;color:var(--ink);padding:11px 12px;font-size:13px;font-family:inherit}
+.cin input:focus{outline:none;border-color:#7ee0a0}
+.cin button{flex:0 0 auto;padding:0 16px;border-radius:11px;border:1px solid rgba(126,224,160,.45);background:rgba(126,224,160,.14);color:#7ee0a0;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
 .card .top{display:flex;align-items:center;gap:6px}
 .card .nm{font-size:14px;font-weight:800;color:var(--ink)}
 .card .st{font-size:10px;font-weight:900;padding:2px 8px;border-radius:8px;margin-left:auto}
@@ -205,6 +232,18 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
   <div class="savebar">
     <button class="btn cancel" id="shCancel">닫기</button>
     <button class="btn save" id="shSave">저장</button>
+  </div>
+</div>
+
+<div id="cmask" onclick="closeCmt()"></div>
+<div id="csheet">
+  <h3 id="cm-name"></h3>
+  <div class="sub2" id="cm-meta"></div>
+  <div class="rxrow" id="cm-rx"></div>
+  <div id="cm-list"></div>
+  <div class="cin">
+    <input id="cm-input" placeholder="코멘트 입력 (Enter 전송)" onkeydown="if(event.key==='Enter')sendCmt()">
+    <button onclick="sendCmt()">전송</button>
   </div>
 </div>
 
@@ -347,6 +386,105 @@ function setOrderMode(on){
   render();
 }
 
+/* ================= 코멘트 · 확인/검토 ================= */
+const TBL_CM='hc_work_comment';
+const RX=[{k:'확인',ic:'👁'},{k:'검토',ic:'🔍'},{k:'수고',ic:'👍'}];
+let cmts={};      // target_user_id -> [rows]
+let cmUser=null;  // 열려있는 대상
+
+async function loadCmts(){
+  try{
+    const r=await fetch(BASE+'/rest/v1/'+TBL_CM+'?select=*&work_date=eq.'+curDate+'&order=created_at',{headers:HDR});
+    if(!r.ok){cmts={};return}
+    const list=await r.json();
+    cmts={};
+    list.forEach(x=>{(cmts[x.target_user_id]=cmts[x.target_user_id]||[]).push(x)});
+  }catch(e){cmts={}}
+}
+function cmOf(uid){return cmts[uid]||[]}
+function rxCount(uid,k){return cmOf(uid).filter(x=>x.reaction===k).length}
+function myRx(uid,k){return cmOf(uid).find(x=>x.reaction===k&&x.author===USER)}
+function cmCount(uid){return cmOf(uid).filter(x=>x.comment&&x.comment.trim()).length}
+
+function paintCmBadge(u){
+  const el=els[u.id];if(!el)return;
+  const bx=el.querySelector('.cmbtn');if(!bx)return;
+  const cm=cmCount(u.id);
+  bx.querySelector('button').textContent='💬'+(cm?cm:'');
+  const rxTxt=RX.map(r=>{const n=rxCount(u.id,r.k);return n?r.ic+'<b>'+n+'</b>':''}).filter(Boolean).join(' ');
+  bx.querySelector('.rx').innerHTML=rxTxt;
+}
+function paintAllCm(){users.forEach(u=>paintCmBadge(u))}
+
+function openCmt(u){
+  cmUser=u;
+  document.getElementById('cm-name').textContent='💬 '+u.name+' 님 업무 코멘트';
+  document.getElementById('cm-meta').textContent=curDate+' · 확인·검토 체크와 코멘트는 모두에게 공유됩니다';
+  document.getElementById('cm-input').value='';
+  drawCmt();
+  document.getElementById('cmask').classList.add('on');
+  document.getElementById('csheet').classList.add('on');
+}
+function closeCmt(){
+  document.getElementById('cmask').classList.remove('on');
+  document.getElementById('csheet').classList.remove('on');
+  cmUser=null;
+}
+function drawCmt(){
+  if(!cmUser)return;
+  const uid=cmUser.id;
+  // 반응 버튼
+  document.getElementById('cm-rx').innerHTML=RX.map(r=>{
+    const n=rxCount(uid,r.k),mine=!!myRx(uid,r.k);
+    const who=cmOf(uid).filter(x=>x.reaction===r.k).map(x=>x.author).join(', ');
+    return `<button class="${mine?'on':''}" onclick="toggleRx('${r.k}')" title="${who}">${r.ic} ${r.k} <span class="cnt2">${n||''}</span></button>`;
+  }).join('');
+  // 코멘트 목록
+  const list=cmOf(uid).filter(x=>x.comment&&x.comment.trim());
+  document.getElementById('cm-list').innerHTML=list.map(x=>`<div class="cmt">
+    <div class="ch"><b>${escHtml(x.author)}</b><span>${hhmm(x.created_at)}</span>
+      ${(x.author===USER||USER==='관리자')?`<button class="cdel" onclick="delCmt(${x.id})">✕</button>`:''}</div>
+    <div class="cb2">${escHtml(x.comment)}</div>
+  </div>`).join('')||'<div style="font-size:12px;color:var(--gray);padding:8px 2px">아직 코멘트가 없습니다</div>';
+}
+function escHtml(t){return (t??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+async function toggleRx(kind){
+  if(!cmUser||!USER)return;
+  const mine=myRx(cmUser.id,kind);
+  try{
+    if(mine){
+      await fetch(BASE+'/rest/v1/'+TBL_CM+'?id=eq.'+mine.id,{method:'DELETE',headers:HDR});
+    }else{
+      const r=await fetch(BASE+'/rest/v1/'+TBL_CM,{method:'POST',
+        headers:Object.assign({'Prefer':'return=representation'},HDRJ),
+        body:JSON.stringify({work_date:curDate,target_user_id:cmUser.id,target_user_name:cmUser.name,
+          author:USER,reaction:kind,comment:null})});
+      if(!r.ok)throw new Error(await r.text());
+    }
+    await loadCmts();drawCmt();paintCmBadge(cmUser);
+  }catch(e){alert('처리 실패\n'+(e.message||e))}
+}
+async function sendCmt(){
+  if(!cmUser||!USER)return;
+  const v=document.getElementById('cm-input').value.trim();
+  if(!v)return;
+  try{
+    const r=await fetch(BASE+'/rest/v1/'+TBL_CM,{method:'POST',
+      headers:Object.assign({'Prefer':'return=representation'},HDRJ),
+      body:JSON.stringify({work_date:curDate,target_user_id:cmUser.id,target_user_name:cmUser.name,
+        author:USER,reaction:null,comment:v})});
+    if(!r.ok)throw new Error(await r.text());
+    document.getElementById('cm-input').value='';
+    await loadCmts();drawCmt();paintCmBadge(cmUser);
+  }catch(e){alert('전송 실패\n'+(e.message||e))}
+}
+async function delCmt(id){
+  if(!confirm('코멘트를 삭제할까요?'))return;
+  await fetch(BASE+'/rest/v1/'+TBL_CM+'?id=eq.'+id,{method:'DELETE',headers:HDR});
+  await loadCmts();drawCmt();if(cmUser)paintCmBadge(cmUser);
+}
+
 /* ================= 업무현황 조회 ================= */
 async function loadAll(){
   const r = await fetch(BASE+'/rest/v1/'+TBL_WS
@@ -360,6 +498,7 @@ async function loadAll(){
     rows[x.user_id] = x;
     if(!lastSync || x.updated_at > lastSync) lastSync = x.updated_at;
   });
+  await loadCmts();
 }
 
 /* 증분 폴링: 변경분만 조회 (변경 없으면 빈 배열 = 최소 부하) */
@@ -380,6 +519,8 @@ async function poll(){
       if(u && els[u.id]) paintCard(els[u.id], u);
     });
     if(list.length){ renderStat(); }
+    await loadCmts(); paintAllCm();
+    if(cmUser) drawCmt();
     setLive(true, list.length);
   }catch(e){ setLive(false); }
 }
@@ -467,7 +608,13 @@ function makeCard(u){
   dn.addEventListener('click', e=>{ e.stopPropagation(); moveUser(u, 1); });
   mv.appendChild(up); mv.appendChild(dn);
 
-  el.appendChild(hd); el.appendChild(bar); el.appendChild(body); el.appendChild(mv);
+  const cmb=document.createElement('div');cmb.className='cmbtn';
+  const cb=document.createElement('button');cb.textContent='💬';
+  cb.addEventListener('click',e=>{e.stopPropagation();openCmt(u)});
+  const rx=document.createElement('span');rx.className='rx';
+  cmb.appendChild(cb);cmb.appendChild(rx);
+
+  el.appendChild(hd); el.appendChild(bar); el.appendChild(body); el.appendChild(cmb); el.appendChild(mv);
 
   if(orderMode){
     el.classList.add('ord');
@@ -498,6 +645,7 @@ function render(){
     const el = makeCard(u);
     els[u.id] = el;
     list.appendChild(el);
+    paintCmBadge(u);
   });
   renderStat();
 }
