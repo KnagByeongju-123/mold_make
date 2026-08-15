@@ -64,6 +64,13 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
 #drawer .mi .ic{font-size:16px;width:22px;text-align:center}
 #drawer .mi.on{background:var(--goldbg);color:var(--gold)}
 #drawer .mi:not(.on):hover{background:rgba(255,255,255,.04);color:var(--ink)}
+#drawer .mgh .arw{margin-left:auto;font-size:11px;opacity:.7;transition:transform .2s}
+#drawer .mg.open .mgh .arw{transform:rotate(180deg)}
+#drawer .mg.open .mgh{color:var(--gold)}
+#drawer .msub{display:none;margin:2px 0 4px 10px;padding-left:8px;border-left:1px dashed var(--line)}
+#drawer .mg.open .msub{display:block}
+#drawer .msub .mi{font-size:13px;padding:10px 10px}
+#drawer .msub .mi .ic{font-size:14px;width:20px}
 #drawer .foot{margin-top:auto;font-size:10.5px;color:var(--sub);opacity:.6;padding:10px 8px 4px;line-height:1.5}
 
 main{max-width:1180px;margin:0 auto;padding:81px 16px 60px}
@@ -528,7 +535,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 6.4</span>
+    <span class="rev">Rev 6.5</span>
   </div>
 </header>
 
@@ -542,10 +549,15 @@ section{animation:fadein .35s}
   <div class="mi" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
   <div class="mi" data-v="new" onclick="go('new')"><span class="ic">＋</span>신규 등록</div>
   <div class="mi" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
-  <div class="mi" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
+  <div class="mg" id="mg-out">
+    <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
+    <div class="msub">
+      <div class="mi" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
+      <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
+    </div>
+  </div>
   <div class="mi" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
   <div class="mi" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
-  <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>Tryout</div>
   <div class="mi" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
   <div class="mi" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
   <div class="mi" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
@@ -687,7 +699,7 @@ section{animation:fadein .35s}
 
   <!-- Tryout -->
   <section id="v-tryout" class="hide">
-    <h1 class="pt">Tryout 작업일지</h1>
+    <h1 class="pt">T/O보고서 (Tryout 작업일지)</h1>
 
     <div class="panel" style="max-width:none;margin-bottom:16px">
       <h2>일지 작성</h2>
@@ -786,7 +798,7 @@ section{animation:fadein .35s}
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
     <h1 class="pt">사용안내 <em>— 금형 제작 흐름도 기준 진행 절차</em></h1>
-    <div class="hp">화면 이동은 <b>하단 고정 메뉴</b>(홈 · 진행현황 · ＋등록 · Tryout)와 <b>☰ 메뉴</b>의 전체 메뉴를 사용합니다. 공정 번호는 흐름도의 OP 번호에서 앞 글자를 뺀 숫자이며, 10 견적 요청부터 180 금형 이관까지 17개 공정으로 관리됩니다.</div>
+    <div class="hp">화면 이동은 <b>☰ 메뉴</b>의 전체 메뉴를 사용합니다. <b>출력물</b> 메뉴 안에 <b>출력물 점검표</b>와 <b>T/O보고서</b>가 있습니다. 공정 번호는 흐름도의 OP 번호에서 앞 글자를 뺀 숫자이며, 10 견적 요청부터 180 금형 이관까지 17개 공정으로 관리됩니다.</div>
 
     <div class="hstep">
       <div class="hn mono">01</div>
@@ -885,8 +897,8 @@ section{animation:fadein .35s}
     <div class="hstep">
       <div class="hn mono">07</div>
       <div class="hb">
-        <h3>Tryout 작업일지</h3>
-        <p>하단 <b>Tryout</b>에서 Try-Out 진행 내역을 일지로 기록합니다.</p>
+        <h3>T/O보고서 (Tryout 작업일지)</h3>
+        <p>메뉴 → <b>출력물</b> → <b>T/O보고서</b>에서 Try-Out 진행 내역을 일지로 기록합니다.</p>
         <ul>
           <li>작업일 · 금형 · 차수(1차 / 2차 / 3차 / 양산전 / 기타) · 상태(완료 / 진행중 / 이슈 / 보류)를 선택하고, 작업 내용 · 이슈 사항 · 다음 계획을 작성합니다.</li>
           <li>사진은 최대 3장 첨부되며, 자동 축소 후 <b>Supabase Storage</b>에 파일로 저장됩니다(DB에는 주소만 보관).</li>
@@ -1312,7 +1324,9 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'Tryout',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'홈',new:'신규 등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',help:'사용안내',set:'설정'};
+const GRP={doc:'out',tryout:'out'};
+function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function go(v,fromPop){
   document.getElementById('drawer').classList.remove('on');
   document.getElementById('dim').classList.remove('on');
@@ -1321,6 +1335,7 @@ function go(v,fromPop){
       history.pushState({t:'view',v},'');
   }
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   if(v==='dash')loadDash();
@@ -2371,7 +2386,7 @@ function exportTryoutCSV(){
   const head=['작업일','금형번호','금형명','차수','상태','작업내용','이슈사항','다음계획','작성자','사진'];
   const rows=TROWS.map(r=>[r.log_date,r.mm_project?r.mm_project.mold_no:'',r.mm_project?r.mm_project.mold_name:'',
     r.stage,r.status,r.work_done||'',r.issues||'',r.next_plan||'',r.author||'',(r.photos||[]).length+'장']);
-  const csv=[['Tryout 작업일지'],head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const csv=[['T/O보고서 (Tryout 작업일지)'],head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
   a.download='Tryout일지_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
@@ -2395,7 +2410,7 @@ function exportTryoutPDF(){
       </table>
       ${(r.photos&&r.photos.length)?`<div class="rimgs">${r.photos.map(p=>`<img src="${p}">`).join('')}</div>`:''}
     </div>`).join('');
-  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>Tryout 작업일지</title>
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>T/O보고서</title>
   <style>
     @page{size:A4;margin:14mm}
     body{font-family:'Malgun Gothic','Noto Sans KR',sans-serif;color:#232a35;font-size:11px}
@@ -2414,7 +2429,7 @@ function exportTryoutPDF(){
     .ft{margin-top:14px;text-align:right;font-size:10px;color:#999}
     @media print{.noprint{display:none}}
   </style></head><body>
-  <h1>Tryout 작업일지</h1>
+  <h1>T/O보고서 (Tryout 작업일지)</h1>
   <div class="sub">기간: ${period} &nbsp;|&nbsp; 총 ${TROWS.length}건 &nbsp;|&nbsp; 출력: ${new Date().toLocaleString('ko-KR')} (${USER||''})</div>
   ${body}
   <div class="ft">금형제작관리 시스템</div>
