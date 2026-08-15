@@ -408,7 +408,7 @@ section{animation:fadein .35s}
 .caldow .sun{color:var(--red)}.caldow .sat{color:var(--blue)}
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cempty{height:42px}
-.cday{height:42px;border:1px solid var(--line2);border-radius:8px;background:var(--card2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.cday{height:42px;touch-action:manipulation;border:1px solid var(--line2);border-radius:8px;background:var(--card2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative}
 .cday b{font-size:13px;font-weight:600;color:var(--ink);line-height:1}
 .cday.sun b{color:#ff9b9b}.cday.sat b{color:#8fb5ff}
 .cday:hover{border-color:var(--gold);background:rgba(226,176,74,.12)}
@@ -417,9 +417,10 @@ section{animation:fadein .35s}
 .cday.dis{opacity:.28;cursor:not-allowed;background:transparent}
 .cday.dis:hover{border-color:var(--line2);background:transparent}
 .cday.has{background:rgba(79,140,255,.18);border-color:rgba(79,140,255,.55)}
-.cday.drag{touch-action:none;cursor:grab}
-.cday.dragging{opacity:.45;transform:scale(.92);cursor:grabbing}
-.cday.dropok{outline:2px solid var(--gold);outline-offset:-2px;background:rgba(226,176,74,.2)}
+.cday.moving{outline:2px solid var(--gold);outline-offset:-2px;background:rgba(226,176,74,.28);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.55}}
+.cday.target{border-style:dashed;border-color:rgba(226,176,74,.5)}
+.cday.target:hover{background:rgba(226,176,74,.22);border-color:var(--gold)}
 .cday i{font-size:9px;font-weight:800;color:var(--blue);font-style:normal;margin-top:2px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wlist{display:flex;flex-wrap:wrap;gap:4px;margin-top:11px;max-height:76px;overflow-y:auto}
 .wtag{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-size:10.5px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
@@ -524,7 +525,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 5.9</span>
+    <span class="rev">Rev 6.1</span>
   </div>
 </header>
 
@@ -868,9 +869,9 @@ section{animation:fadein .35s}
         <ul>
           <li>각 공정의 <b>완료일</b> 칸을 눌러 달력에서 선택합니다. 달력에는 <b>다른 공정의 계획일이 공정번호로 표시</b>되고, 해당 공정의 날짜는 진하게 강조됩니다. 선행 공정 완료일 이전은 선택할 수 없습니다.</li>
           <li>시작일은 이전 공정 완료일로 자동 연결되고 소요일수가 계산됩니다.</li>
-          <li>달력의 <b>이후 공정도 함께 이동</b>을 켜둔 상태에서 이미 잡힌 날짜를 옮기면, <b>이후 모든 공정이 같은 일수만큼 자동으로 앞뒤로 이동</b>합니다. 특정 공정만 바꾸려면 체크를 해제하세요.</li>
+          <li>달력의 <b>이후 공정도 함께 이동</b>을 켜둔 상태에서 이미 잡힌 날짜를 옮기면(더블클릭 후 대상 날짜 클릭), <b>이후 모든 공정이 같은 일수만큼 자동으로 앞뒤로 이동</b>합니다. 특정 공정만 바꾸려면 체크를 해제하세요.</li>
           <li><b>계획수립</b>: 달력이 열리고 상단에 현재 대상 공정이 표시됩니다. 날짜를 클릭하면 그 공정의 완료일로 지정되고 <b>자동으로 다음 공정</b>으로 넘어가, 계속 클릭만 하면 전 공정 일정이 잡힙니다.</li>
-          <li>이미 지정된 날짜를 <b>길게 눌러 다른 날짜로 끌어다 놓으면</b> 그 공정이 이동하고, 옵션이 켜져 있으면 이후 공정도 같은 일수만큼 따라 이동합니다. 지정된 날짜는 달력에 공정명 앞 두 글자로 표시되고, 이전 공정 완료일보다 앞선 날짜는 선택할 수 없습니다. <b>↩취소</b>로 직전 선택을 되돌리고, <b>건너뛰기</b>로 해당 공정을 비워두며, <b>저장</b>을 눌러 한 번에 반영합니다.</li>
+          <li>이미 지정된 날짜를 <b>더블클릭</b>하면 금색으로 깜빡이며 이동 대기 상태가 되고, 이때 <b>옮길 날짜를 클릭</b>하면 그 공정이 이동합니다. 옵션이 켜져 있으면 이후 공정도 같은 일수만큼 따라 이동합니다(다시 더블클릭하면 취소). 지정된 날짜는 달력에 공정명 앞 두 글자로 표시되고, 이전 공정 완료일보다 앞선 날짜는 선택할 수 없습니다. <b>↩취소</b>로 직전 선택을 되돌리고, <b>건너뛰기</b>로 해당 공정을 비워두며, <b>저장</b>을 눌러 한 번에 반영합니다.</li>
           <li>계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시되고 행이 강조됩니다.</li>
           <li><b>엑셀 출력</b>으로 금형제작 계획서(계획 대비 실적)를 내려받습니다.</li>
         </ul>
@@ -991,7 +992,7 @@ section{animation:fadein .35s}
       </div>
       <div class="caldow"><span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span></div>
       <div class="calgrid" id="dc-grid"></div>
-      <div class="dclegend"><span class="lg cur"></span>이 공정 &nbsp; <span class="lg oth"></span>다른 공정 계획일 &nbsp; <span style="margin-left:auto">길게 눌러 끌면 날짜 이동</span></div>
+      <div class="dclegend"><span class="lg cur"></span>이 공정 &nbsp; <span class="lg oth"></span>다른 공정 계획일 &nbsp; <span style="margin-left:auto">날짜 <b style="color:var(--gold)">더블클릭</b> 후 옮길 날짜 선택</span></div>
       <label class="dcshift"><input type="checkbox" id="dc-shift" checked> 날짜를 옮기면 <b>이후 공정도 같은 일수만큼 함께 이동</b></label>
       <div class="cbtns" style="margin-top:12px">
         <button class="cb back" onclick="dcalClear()">계획 지우기</button>
@@ -1018,7 +1019,7 @@ section{animation:fadein .35s}
       </div>
       <div class="caldow"><span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span></div>
       <div class="calgrid" id="cal-grid"></div>
-      <div class="dclegend"><span class="lg cur"></span>지정 대상 &nbsp; <span class="lg oth"></span>이미 잡힌 계획일 &nbsp; <span style="margin-left:auto">길게 눌러 끌면 날짜 이동</span></div>
+      <div class="dclegend"><span class="lg cur"></span>지정 대상 &nbsp; <span class="lg oth"></span>이미 잡힌 계획일 &nbsp; <span style="margin-left:auto">날짜 <b style="color:var(--gold)">더블클릭</b> 후 옮길 날짜 선택</span></div>
       <label class="dcshift"><input type="checkbox" id="w-shift" checked> 날짜를 옮기면 <b>이후 공정도 같은 일수만큼 함께 이동</b></label>
 
       <div class="wlist" id="w-list"></div>
@@ -2026,9 +2027,10 @@ function calDraw(){
     const dow=new Date(CALY,CALM,d).getDay();
     const dis=minD&&ds<minD;
     const tags=picked[ds];
-    html+=`<div class="cday${dis?' dis':''}${ds===today?' today':''}${tags?' has':''}${dow===0?' sun':dow===6?' sat':''}${tags?' drag':''}"
-      data-d="${ds}" ${dis?'':`onclick="calPick('${ds}')"`}
-      ${tags?`onpointerdown="calDragStart(event,'${ds}','wiz')"`:''}>
+    const moving=(MOVEKIND==='wiz'&&MOVEFROM===ds);
+    html+=`<div class="cday${dis?' dis':''}${ds===today?' today':''}${tags?' has':''}${dow===0?' sun':dow===6?' sat':''}${moving?' moving':''}${MOVEFROM&&MOVEKIND==='wiz'&&!dis&&!moving?' target':''}"
+      data-d="${ds}" ${dis?'':`onclick="${MOVEFROM&&MOVEKIND==='wiz'?`calMoveTo('${ds}')`:tags?`calSingle('${ds}','wiz')`:`calPick('${ds}')`}"`}
+      ${tags&&!dis?`ondblclick="calDblTap('${ds}','wiz')"`:''}>
       <b>${d}</b>${tags?`<i>${tags.join(',')}</i>`:''}</div>`;
   }
   document.getElementById('cal-grid').innerHTML=html;
@@ -2064,7 +2066,7 @@ function closeWizard(){
   if(document.getElementById('wizmodal').classList.contains('show')&&history.state&&history.state.t==='ov'){history.back();return}
   document.getElementById('opedit').classList.remove('show');OEDIT=null;
   document.getElementById('dcalmodal').classList.remove('show');DCAL=null;
-  document.getElementById('wizmodal').classList.remove('show');WIZ=null;
+  document.getElementById('wizmodal').classList.remove('show');WIZ=null;MOVEFROM=null;MOVEKIND=null;
 }
 
 /* ---------- 계획 완료일 달력 (선행 공정 표시) ---------- */
@@ -2111,9 +2113,10 @@ function dcalDraw(){
     const mk=marks[ds];
     const isMe=ds===cur;
     const tag=mk?mk.map(x=>x.n).join(','):'';
-    html+=`<div class="cday${dis?' dis':''}${ds===today?' today':''}${isMe?' me':mk?' has':''}${dow===0?' sun':dow===6?' sat':''}${mk?' drag':''}"
-      data-d="${ds}" ${dis?'':`onclick="dcalPick('${ds}')"`}
-      ${mk?`onpointerdown="calDragStart(event,'${ds}','dcal')"`:''}>
+    const moving=(MOVEKIND==='dcal'&&MOVEFROM===ds);
+    html+=`<div class="cday${dis?' dis':''}${ds===today?' today':''}${isMe?' me':mk?' has':''}${dow===0?' sun':dow===6?' sat':''}${moving?' moving':''}${MOVEFROM&&MOVEKIND==='dcal'&&!dis&&!moving?' target':''}"
+      data-d="${ds}" ${dis?'':`onclick="${MOVEFROM&&MOVEKIND==='dcal'?`calMoveTo('${ds}')`:mk?`calSingle('${ds}','dcal')`:`dcalPick('${ds}')`}"`}
+      ${mk&&!dis?`ondblclick="calDblTap('${ds}','dcal')"`:''}>
       <b>${d}</b>${tag?`<i>${tag}</i>`:''}</div>`;
   }
   document.getElementById('dc-grid').innerHTML=html;
@@ -2124,45 +2127,35 @@ async function dcalPick(ds){
   closeDCal();
   await setPlanShift(procId,ds,shift);
 }
-/* ---------- 달력 날짜 드래그 이동 ---------- */
-let DRAG=null;
-function calDragStart(e,ds,kind){
-  const cell=e.currentTarget;
-  DRAG={ds,kind,x:e.clientX,y:e.clientY,active:false,cell};
-  cell.setPointerCapture&&cell.setPointerCapture(e.pointerId);
-  cell.onpointermove=calDragMove;
-  cell.onpointerup=calDragEnd;
-  cell.onpointercancel=calDragCancel;
+/* ---------- 달력 날짜 이동 (더블클릭 → 대상 날짜 클릭) ---------- */
+let MOVEFROM=null, MOVEKIND=null;
+function calMoveStart(ds,kind){
+  MOVEFROM=ds;MOVEKIND=kind;
+  if(kind==='wiz')wizDraw(); else dcalDraw();
+  toast('이동할 날짜를 선택하세요 (다시 더블클릭하면 취소)');
 }
-function calDragMove(e){
-  if(!DRAG)return;
-  if(!DRAG.active){
-    if(Math.abs(e.clientX-DRAG.x)<7&&Math.abs(e.clientY-DRAG.y)<7)return;
-    DRAG.active=true;DRAG.cell.classList.add('dragging');
-    document.body.style.userSelect='none';
-  }
-  e.preventDefault();
-  const el=document.elementFromPoint(e.clientX,e.clientY);
-  const day=el&&el.closest?el.closest('.cday'):null;
-  document.querySelectorAll('.cday.dropok').forEach(x=>x.classList.remove('dropok'));
-  if(day&&!day.classList.contains('dis'))day.classList.add('dropok');
+function calMoveCancel(){
+  clearTimeout(CLKT);
+  const k=MOVEKIND;MOVEFROM=null;MOVEKIND=null;
+  if(k==='wiz')wizDraw(); else if(k==='dcal')dcalDraw();
 }
-function calDragCancel(){
-  if(DRAG&&DRAG.cell){DRAG.cell.classList.remove('dragging');DRAG.cell.onpointermove=DRAG.cell.onpointerup=null}
-  document.querySelectorAll('.cday.dropok').forEach(x=>x.classList.remove('dropok'));
-  document.body.style.userSelect='';DRAG=null;
+let CLKT=null;
+function calSingle(ds,kind){           // 계획일이 있는 칸: 더블클릭 대기 후 단일클릭 처리
+  if(MOVEFROM){calMoveTo(ds);return}
+  clearTimeout(CLKT);
+  CLKT=setTimeout(()=>{ kind==='wiz'?calPick(ds):dcalPick(ds); },270);
 }
-async function calDragEnd(e){
-  if(!DRAG)return;
-  const wasActive=DRAG.active, from=DRAG.ds, kind=DRAG.kind;
-  const el=document.elementFromPoint(e.clientX,e.clientY);
-  const day=el&&el.closest?el.closest('.cday'):null;
-  const to=day&&!day.classList.contains('dis')?day.dataset.d:null;
-  calDragCancel();
-  if(!wasActive)return;                       // 단순 클릭은 기존 동작
-  if(!to||to===from)return;
-  if(kind==='wiz')wizMoveDate(from,to);
-  else await dcalMoveDate(from,to);
+function calDblTap(ds,kind){
+  clearTimeout(CLKT);
+  if(MOVEFROM===ds){calMoveCancel();return}
+  calMoveStart(ds,kind);
+}
+async function calMoveTo(ds){
+  const from=MOVEFROM, kind=MOVEKIND;
+  MOVEFROM=null;MOVEKIND=null;
+  if(!from||from===ds){ if(kind==='wiz')wizDraw(); else dcalDraw(); return }
+  if(kind==='wiz')wizMoveDate(from,ds);
+  else await dcalMoveDate(from,ds);
 }
 /* 계획수립(미저장) 달력에서 이동 */
 function wizMoveDate(from,to){
@@ -2219,7 +2212,7 @@ async function dcalClear(){
 function closeDCal(){
   if(document.getElementById('dcalmodal').classList.contains('show')&&history.state&&history.state.t==='ov'){history.back();return}
   document.getElementById('opedit').classList.remove('show');OEDIT=null;
-  document.getElementById('dcalmodal').classList.remove('show');DCAL=null;
+  document.getElementById('dcalmodal').classList.remove('show');DCAL=null;MOVEFROM=null;MOVEKIND=null;
 }
 
 async function setPlan(id,field,val){
