@@ -381,6 +381,24 @@ section{animation:fadein .35s}
 .atag.a-s{background:rgba(79,140,255,.16);color:var(--blue)}
 .atag.a-o{background:rgba(240,160,75,.16);color:var(--out)}
 .ocnt{font-size:10.5px;color:var(--gray)}
+.ocnt.clk{cursor:pointer;border:1px solid var(--goldbd);color:var(--gold);padding:1px 8px;border-radius:5px;font-weight:700}
+.ocnt.clk:hover{background:var(--goldbg)}
+.opwrap{margin-bottom:8px}
+.opwrap .opcard{margin-bottom:0}
+.oppanel{background:var(--card2);border:1px solid var(--goldbd);border-top:0;border-radius:0 0 12px 12px;padding:10px 13px 12px;margin:-1px 0 0}
+.oppanel .oph{font-size:11.5px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.orow{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px 9px;margin-bottom:6px}
+.orow .on{flex:1;min-width:0;font-size:13px;font-weight:600;word-break:break-all}
+.orow .oi{width:20px;text-align:center;font-size:10.5px;color:var(--gray);font-family:'IBM Plex Mono',monospace;flex-shrink:0}
+.orow button{border:1px solid var(--line);border-radius:6px;background:var(--card2);color:var(--sub);font-size:10.5px;cursor:pointer;padding:4px 7px;flex-shrink:0;line-height:1.2}
+.orow button:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.orow button:disabled{opacity:.25;cursor:default}
+.orow button.dl:hover{border-color:var(--red);color:var(--red)}
+.oadd{display:flex;gap:6px;margin-top:8px}
+.oadd input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;font-size:13px;font-family:inherit}
+.oadd input:focus{outline:none;border-color:var(--gold)}
+.oadd button{flex-shrink:0;padding:8px 14px;border-radius:8px;border:1px solid var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:12.5px;font-weight:700;cursor:pointer}
+.oempty{font-size:12px;color:var(--gray);padding:6px 2px}
 .opact{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 
 /* 계획 수립 */
@@ -535,7 +553,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 6.5</span>
+    <span class="rev">Rev 6.9</span>
   </div>
 </header>
 
@@ -556,9 +574,9 @@ section{animation:fadein .35s}
       <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
     </div>
   </div>
+  <div class="mi" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
   <div class="mi" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
   <div class="mi" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
-  <div class="mi" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
   <div class="mi" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
   <div class="mi" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
   <div class="mi" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
@@ -773,23 +791,23 @@ section{animation:fadein .35s}
       <h2>사원 등록</h2>
       <div class="row2">
         <div class="fg"><label>이름 *</label><input id="u-nm"></div>
-        <div class="fg"><label>PIN (4자리) *</label><input id="u-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리"></div>
+        <div class="fg"><label>부서</label><input id="u-dept" list="dl-dept" placeholder="예: 가공"></div>
       </div>
+      <div class="fg"><label>PIN (4자리) *</label><input id="u-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리"></div>
       <button class="btn btn-p" onclick="addUser()">사원 추가</button>
     </div>
     <div style="margin-top:14px">
       <div class="tscroll">
         <table class="wide">
-          <thead><tr><th>이름</th><th>PIN</th><th>등록일</th><th style="width:110px">관리</th></tr></thead>
+          <thead><tr><th>이름</th><th>부서</th><th>PIN</th><th>등록일</th><th style="width:110px">관리</th></tr></thead>
           <tbody id="userbody"></tbody>
         </table>
       </div>
     </div>
-    <p class="hnote" style="margin-top:10px">사원 행의 <b>수정</b>을 누르면 이름과 PIN을 바꿀 수 있습니다. 마스터 계정은 목록에 표시되지 않습니다.</p>
+    <p class="hnote" style="margin-top:10px">사원 행의 <b>수정</b>을 누르면 이름 · 부서 · PIN을 바꿀 수 있습니다. 마스터 계정은 목록에 표시되지 않습니다.</p>
     </div>
 
     <div id="setop" class="hide">
-      <div class="hp" style="margin-bottom:12px">금형 제작 공정을 순서대로 설계합니다. <b>▲▼</b>로 순서를 바꾸고, <b>수정</b>에서 공정명 · 담당(사내/외주 중복 선택 가능) · 담당부서 · 업무내용 · 출력물 · NG 되돌림을 설정합니다. 변경 내용은 <b>이후 등록되는 금형</b>부터 적용됩니다.</div>
       <button class="btn btn-p" style="margin-bottom:12px" onclick="editOpMaster(null)">＋ 공정 추가</button>
       <div id="oplist"></div>
     </div>
@@ -1173,8 +1191,12 @@ function setTab(t){
 
 /* ---------- 공정설계 ---------- */
 function actorList(a){return (a||'').split(',').map(x=>x.trim()).filter(Boolean).map(x=>x==='당사'?'사내':x)}
+const OPENOUT=new Set();
 function renderOpList(){
-  document.getElementById('oplist').innerHTML=MASTER.map((m,i)=>`<div class="opcard">
+  document.getElementById('oplist').innerHTML=MASTER.map((m,i)=>{
+    const open=OPENOUT.has(m.op_code);
+    return `<div class="opwrap">
+    <div class="opcard">
     <div class="opord">
       <button ${i===0?'disabled':''} onclick="moveOp(${i},-1)">▲</button>
       <button ${i===MASTER.length-1?'disabled':''} onclick="moveOp(${i},1)">▼</button>
@@ -1184,7 +1206,8 @@ function renderOpList(){
       <div class="opsub">
         <span class="dept">${esc(m.dept)}</span>
         ${actorList(m.actor).map(a=>`<span class="atag a-${a==='고객사'?'c':a==='사내'?'s':'o'}">${a}</span>`).join('')}
-        <span class="ocnt">업무 ${m.tasks.length} · 출력물 ${m.outputs.length}</span>
+        <span class="ocnt">업무 ${m.tasks.length}</span>
+        <span class="ocnt clk" onclick="toggleOut('${m.op_code}')">📑 출력물 ${m.outputs.length} ${open?'▲':'▼'}</span>
         ${m.ng_return_op?`<span class="ngc">NG→${opN(m.ng_return_op)}</span>`:''}
       </div>
     </div>
@@ -1192,7 +1215,67 @@ function renderOpList(){
       <button class="ubtn" onclick="editOpMaster('${m.op_code}')">수정</button>
       <button class="del" onclick="delOpMaster('${m.op_code}','${esc(m.process_name)}')">✕</button>
     </div>
-  </div>`).join('')||'<div class="empty">공정이 없습니다</div>';
+    </div>
+    ${open?outPanel(m):''}
+  </div>`}).join('')||'<div class="empty">공정이 없습니다</div>';
+}
+function outPanel(m){
+  const n=m.outputs.length;
+  return `<div class="oppanel">
+    <div class="oph">${opN(m.op_code)} ${esc(m.process_name)} — 출력물 ${n}건</div>
+    ${n?m.outputs.map((o,j)=>`<div class="orow">
+      <span class="oi">${j+1}</span>
+      <span class="on">${esc(o)}</span>
+      <button ${j===0?'disabled':''} onclick="moveOut('${m.op_code}',${j},-1)">▲</button>
+      <button ${j===n-1?'disabled':''} onclick="moveOut('${m.op_code}',${j},1)">▼</button>
+      <button onclick="renameOut('${m.op_code}',${j})">수정</button>
+      <button class="dl" onclick="delOut('${m.op_code}',${j})">✕</button>
+    </div>`).join(''):'<div class="oempty">등록된 출력물이 없습니다</div>'}
+    <div class="oadd">
+      <input id="onew-${m.op_code}" placeholder="출력물명 입력 (예: 작업일보)" onkeydown="if(event.key==='Enter')addOut('${m.op_code}')">
+      <button onclick="addOut('${m.op_code}')">＋ 추가</button>
+    </div>
+  </div>`;
+}
+function toggleOut(code){
+  OPENOUT.has(code)?OPENOUT.delete(code):OPENOUT.add(code);
+  renderOpList();
+}
+async function saveOuts(code,outs){
+  try{
+    await api(`/mm_master?op_code=eq.${code}`,{method:"PATCH",body:JSON.stringify({outputs:outs})});
+    await loadMaster();renderOpList();return true;
+  }catch(e){toast('저장 실패: '+e.message);return false}
+}
+async function addOut(code){
+  const el=document.getElementById('onew-'+code);const v=(el.value||'').trim();
+  if(!v)return toast('출력물명을 입력하세요');
+  const m=MASTER.find(x=>x.op_code===code);if(!m)return;
+  if(m.outputs.includes(v))return toast('이미 등록된 출력물입니다');
+  OPENOUT.add(code);
+  if(await saveOuts(code,[...m.outputs,v]))toast('출력물 추가 완료');
+}
+async function delOut(code,j){
+  const m=MASTER.find(x=>x.op_code===code);if(!m)return;
+  if(!confirm('출력물 「'+m.outputs[j]+'」을(를) 삭제할까요?\n\n이미 등록된 금형의 점검표 기록은 그대로 남습니다.'))return;
+  const outs=m.outputs.slice();outs.splice(j,1);
+  if(await saveOuts(code,outs))toast('출력물 삭제 완료');
+}
+async function renameOut(code,j){
+  const m=MASTER.find(x=>x.op_code===code);if(!m)return;
+  const v=prompt('출력물명 수정',m.outputs[j]);
+  if(v===null)return;
+  const nv=v.trim();if(!nv)return toast('출력물명을 입력하세요');
+  if(nv===m.outputs[j])return;
+  if(m.outputs.includes(nv))return toast('이미 등록된 출력물입니다');
+  const outs=m.outputs.slice();outs[j]=nv;
+  if(await saveOuts(code,outs))toast('출력물 수정 완료');
+}
+async function moveOut(code,j,d){
+  const m=MASTER.find(x=>x.op_code===code);if(!m)return;
+  const outs=m.outputs.slice();if(!outs[j+d])return;
+  [outs[j],outs[j+d]]=[outs[j+d],outs[j]];
+  if(await saveOuts(code,outs))toast('순서 변경');
 }
 async function moveOp(i,d){
   const a=MASTER[i], b=MASTER[i+d];if(!b)return;
@@ -1265,26 +1348,28 @@ async function loadUsers(){
   document.getElementById('userbody').innerHTML=rows.map(u=>{
     if(EDITU===u.id)return `<tr>
       <td><input class="uin" id="e-nm" value="${esc(u.name)}"></td>
+      <td><input class="uin" id="e-dept" list="dl-dept" value="${esc(u.dept||'')}"></td>
       <td><input class="uin mono" id="e-pin" maxlength="4" inputmode="numeric" value="${esc(u.pin)}"></td>
       <td>${fmt(u.created_at)}</td>
       <td><button class="ubtn save" onclick="saveUser(${u.id})">저장</button>
           <button class="ubtn" onclick="EDITU=null;loadUsers()">취소</button></td></tr>`;
     return `<tr>
-      <td>${esc(u.name)}</td><td class="mono">${esc(u.pin)}</td>
+      <td>${esc(u.name)}</td><td>${u.dept?esc(u.dept):'<span class="oempty" style="padding:0">-</span>'}</td><td class="mono">${esc(u.pin)}</td>
       <td>${fmt(u.created_at)}</td>
       <td><button class="ubtn" onclick="EDITU=${u.id};loadUsers()">수정</button>
           <button class="del" onclick="delUser(${u.id},'${esc(u.name)}')">✕</button></td></tr>`;
-  }).join('')||'<tr><td colspan="4" class="empty">등록된 사원이 없습니다</td></tr>';
+  }).join('')||'<tr><td colspan="5" class="empty">등록된 사원이 없습니다</td></tr>';
 }
 async function saveUser(id){
   const nm=document.getElementById('e-nm').value.trim();
+  const dept=document.getElementById('e-dept').value.trim();
   const pin=document.getElementById('e-pin').value.trim();
   if(!nm)return toast('이름을 입력하세요');
   if(!/^\d{4}$/.test(pin))return toast('PIN은 숫자 4자리입니다');
   if(pin===MASTER_PIN)return toast('마스터 PIN과 동일한 번호는 사용할 수 없습니다');
   const dup=await api("/mm_user?select=id&pin=eq."+pin);
   if(dup.length&&dup[0].id!==id)return toast('이미 사용중인 PIN입니다');
-  await api(`/mm_user?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({name:nm,pin})});
+  await api(`/mm_user?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({name:nm,dept:dept||null,pin})});
   EDITU=null;toast('사원 정보 수정 완료');loadUsers();
 }
 async function changeMaster(){
@@ -1302,14 +1387,14 @@ async function changeMaster(){
   toast('마스터 비밀번호가 변경되었습니다');
 }
 async function addUser(){
-  const nm=g('u-nm'),pin=g('u-pin');
+  const nm=g('u-nm'),pin=g('u-pin'),dept=g('u-dept');
   if(!nm)return toast('이름을 입력하세요');
   if(!/^\d{4}$/.test(pin))return toast('PIN은 숫자 4자리입니다');
   if(pin===MASTER_PIN)return toast('마스터 PIN과 동일한 번호는 사용할 수 없습니다');
   const dup=await api("/mm_user?select=id&pin=eq."+pin);
   if(dup.length)return toast('이미 사용중인 PIN입니다');
-  await api("/mm_user",{method:"POST",body:JSON.stringify({name:nm,pin})});
-  document.getElementById('u-nm').value='';document.getElementById('u-pin').value='';
+  await api("/mm_user",{method:"POST",body:JSON.stringify({name:nm,dept:dept||null,pin})});
+  ['u-nm','u-dept','u-pin'].forEach(x=>document.getElementById(x).value='');
   toast('사원 등록 완료');loadUsers();
 }
 async function delUser(id,nm){
