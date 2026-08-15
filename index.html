@@ -389,6 +389,7 @@ section{animation:fadein .35s}
 .dclegend .lg{display:inline-block;width:12px;height:12px;border-radius:4px}
 .dclegend .cur{background:rgba(79,140,255,.28);border:1px solid var(--blue)}
 .dclegend .oth{background:rgba(79,140,255,.18);border:1px solid rgba(79,140,255,.55)}
+.dchint{margin-top:6px;font-size:11.5px;color:var(--gold);text-align:center}
 .dcshift{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:12px;color:var(--sub);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer}
 .dcshift input{width:16px;height:16px;accent-color:var(--gold);flex-shrink:0}
 .dcshift b{color:var(--gold)}
@@ -527,7 +528,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 6.2</span>
+    <span class="rev">Rev 6.3</span>
   </div>
 </header>
 
@@ -994,7 +995,8 @@ section{animation:fadein .35s}
       </div>
       <div class="caldow"><span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span></div>
       <div class="calgrid" id="dc-grid"></div>
-      <div class="dclegend"><span class="lg cur"></span>이 공정 &nbsp; <span class="lg oth"></span>다른 공정 계획일 &nbsp; <span style="margin-left:auto">날짜 <b style="color:var(--gold)">더블클릭</b> 후 옮길 날짜 선택</span></div>
+      <div class="dclegend"><span class="lg cur"></span>이 공정 &nbsp; <span class="lg oth"></span>다른 공정 계획일</div>
+      <div class="dchint">수정: 더블클릭 후 다른날짜 클릭</div>
       <label class="dcshift"><input type="checkbox" id="dc-shift" checked> 날짜를 옮기면 <b>이후 공정도 같은 일수만큼 함께 이동</b></label>
       <div class="cbtns" style="margin-top:12px">
         <button class="cb back" onclick="dcalClear()">계획 지우기</button>
@@ -1021,7 +1023,8 @@ section{animation:fadein .35s}
       </div>
       <div class="caldow"><span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span></div>
       <div class="calgrid" id="cal-grid"></div>
-      <div class="dclegend"><span class="lg cur"></span>지정 대상 &nbsp; <span class="lg oth"></span>이미 잡힌 계획일 &nbsp; <span style="margin-left:auto">날짜 <b style="color:var(--gold)">더블클릭</b> 후 옮길 날짜 선택</span></div>
+      <div class="dclegend"><span class="lg cur"></span>지정 대상 &nbsp; <span class="lg oth"></span>이미 잡힌 계획일</div>
+      <div class="dchint">수정: 더블클릭 후 다른날짜 클릭</div>
       <label class="dcshift"><input type="checkbox" id="w-shift" checked> 날짜를 옮기면 <b>이후 공정도 같은 일수만큼 함께 이동</b></label>
 
       <div class="wlist" id="w-list"></div>
@@ -2184,6 +2187,21 @@ async function dcalMoveDate(from,to){
   for(const r of rows)if(r.pr.id!==target.pr.id)
     await api(`/mm_process?id=eq.${r.pr.id}`,{method:"PATCH",body:JSON.stringify({plan_end:to})});
   await setPlanShift(target.pr.id,to,shift);
+  refreshDCal();
+}
+/* 이동 후 열려 있는 달력을 최신 계획으로 다시 그림 */
+function refreshDCal(){
+  if(!DCAL)return;
+  const row=PLANROWS.find(x=>x.m.op_code===DCAL.op);
+  if(row){
+    DCAL.procId=row.pr.id;
+    DCAL.cur=row.pr.plan_end||null;
+    DCAL.minD=row.start||null;
+    document.getElementById('dc-info').innerHTML=DCAL.minD
+      ? `선행 공정 완료 <b class="mono">${DCAL.minD}</b> 이후로 선택하세요`
+      : '첫 공정입니다. 완료 예정일을 선택하세요';
+  }
+  dcalDraw();
 }
 
 function dayDiff(a,b){return Math.round((new Date(b)-new Date(a))/864e5)}
@@ -2203,7 +2221,7 @@ async function setPlanShift(procId,ds,shift){
     }
   }
   await rechainPlan();
-  renderPlan();
+  await renderPlan();
   toast(moved?`계획일 저장 — 이후 ${moved}개 공정 ${delta>0?'+':''}${delta}일 이동`:'계획일 저장');
 }
 async function dcalClear(){
