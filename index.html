@@ -389,6 +389,9 @@ section{animation:fadein .35s}
 .dclegend .lg{display:inline-block;width:12px;height:12px;border-radius:4px}
 .dclegend .cur{background:rgba(79,140,255,.28);border:1px solid var(--blue)}
 .dclegend .oth{background:rgba(79,140,255,.18);border:1px solid rgba(79,140,255,.55)}
+.dcshift{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:12px;color:var(--sub);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer}
+.dcshift input{width:16px;height:16px;accent-color:var(--gold);flex-shrink:0}
+.dcshift b{color:var(--gold)}
 .wnow{background:var(--card2);border:1.5px solid var(--goldbd);border-radius:11px;padding:11px 14px;margin-bottom:10px}
 .wnow b{display:block;font-size:15px;font-weight:800;color:var(--ink)}
 .wnow b i{display:inline-block;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);font-size:12px;padding:1px 8px;border-radius:6px;margin-right:6px;font-style:normal}
@@ -518,7 +521,7 @@ section{animation:fadein .35s}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 5.3</span>
+    <span class="rev">Rev 5.4</span>
   </div>
 </header>
 
@@ -591,7 +594,7 @@ section{animation:fadein .35s}
       <button class="btn wizbtn" onclick="startWizard()">📅 연속계획수립</button>
       <button class="btn hxls" style="padding:8px 16px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportPlan()">엑셀 출력</button>
     </div>
-    <div class="hp" style="margin-bottom:12px">각 공정의 <b>완료일</b>을 누르면 달력이 열리며, 이미 잡힌 다른 공정의 계획일이 공정번호로 함께 표시됩니다. 시작일은 이전 공정 완료일로 자동 연결되어 일수로 표시됩니다. <b>연속계획수립</b>은 달력에서 10번 공정부터 차례로 날짜를 클릭하면 순서대로 일정이 잡힙니다. 계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시됩니다.</div>
+    
     <div class="tscroll">
       <table class="wide">
         <thead><tr><th>공정</th><th>계획 완료</th><th>실적 완료</th><th>일수</th><th>상태</th><th>부서</th></tr></thead>
@@ -862,6 +865,7 @@ section{animation:fadein .35s}
         <ul>
           <li>각 공정의 <b>완료일</b> 칸을 눌러 달력에서 선택합니다. 달력에는 <b>다른 공정의 계획일이 공정번호로 표시</b>되고, 해당 공정의 날짜는 진하게 강조됩니다. 선행 공정 완료일 이전은 선택할 수 없습니다.</li>
           <li>시작일은 이전 공정 완료일로 자동 연결되고 소요일수가 계산됩니다.</li>
+          <li>달력의 <b>이후 공정도 함께 이동</b>을 켜둔 상태에서 이미 잡힌 날짜를 옮기면, <b>이후 모든 공정이 같은 일수만큼 자동으로 앞뒤로 이동</b>합니다. 특정 공정만 바꾸려면 체크를 해제하세요.</li>
           <li><b>연속계획수립</b>: 달력이 열리고 상단에 현재 대상 공정이 표시됩니다. 날짜를 클릭하면 그 공정의 완료일로 지정되고 <b>자동으로 다음 공정</b>으로 넘어가, 계속 클릭만 하면 전 공정 일정이 잡힙니다.</li>
           <li>지정된 날짜는 달력에 공정번호로 표시되고, 이전 공정 완료일보다 앞선 날짜는 선택할 수 없습니다. <b>↩취소</b>로 직전 선택을 되돌리고, <b>건너뛰기</b>로 해당 공정을 비워두며, <b>저장</b>을 눌러 한 번에 반영합니다.</li>
           <li>계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시되고 행이 강조됩니다.</li>
@@ -985,6 +989,7 @@ section{animation:fadein .35s}
       <div class="caldow"><span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span></div>
       <div class="calgrid" id="dc-grid"></div>
       <div class="dclegend"><span class="lg cur"></span>이 공정 &nbsp; <span class="lg oth"></span>다른 공정 계획일</div>
+      <label class="dcshift"><input type="checkbox" id="dc-shift" checked> 날짜를 옮기면 <b>이후 공정도 같은 일수만큼 함께 이동</b></label>
       <div class="cbtns" style="margin-top:12px">
         <button class="cb back" onclick="dcalClear()">계획 지우기</button>
         <button class="cb" onclick="closeDCal()">닫기</button>
@@ -2107,13 +2112,34 @@ function dcalDraw(){
 }
 async function dcalPick(ds){
   const {procId}=DCAL;
+  const shift=document.getElementById('dc-shift').checked;
   closeDCal();
-  await setPlan(procId,'plan_end',ds);
+  await setPlanShift(procId,ds,shift);
+}
+function dayDiff(a,b){return Math.round((new Date(b)-new Date(a))/864e5)}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)}
+async function setPlanShift(procId,ds,shift){
+  const idx=PLANROWS.findIndex(r=>r.pr.id===procId);
+  const old=idx>=0?PLANROWS[idx].pr.plan_end:null;
+  await api(`/mm_process?id=eq.${procId}`,{method:"PATCH",body:JSON.stringify({plan_end:ds||null})});
+  let moved=0,delta=0;
+  if(shift&&old&&ds&&old!==ds){
+    delta=dayDiff(old,ds);
+    for(let k=idx+1;k<PLANROWS.length;k++){
+      const r=PLANROWS[k];
+      if(!r.pr.plan_end)continue;
+      await api(`/mm_process?id=eq.${r.pr.id}`,{method:"PATCH",body:JSON.stringify({plan_end:addDays(r.pr.plan_end,delta)})});
+      moved++;
+    }
+  }
+  await rechainPlan();
+  renderPlan();
+  toast(moved?`계획일 저장 — 이후 ${moved}개 공정 ${delta>0?'+':''}${delta}일 이동`:'계획일 저장');
 }
 async function dcalClear(){
   const {procId}=DCAL;
   closeDCal();
-  await setPlan(procId,'plan_end','');
+  await setPlanShift(procId,'',false);
 }
 function closeDCal(){
   if(document.getElementById('dcalmodal').classList.contains('show')&&history.state&&history.state.t==='ov'){history.back();return}
