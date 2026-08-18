@@ -620,32 +620,54 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .cb.ng{color:var(--red);border-color:rgba(255,123,123,.5)}
 .cb.back{color:var(--gray)}
 
-/* PC 와이드 레이아웃 --------------------------------------------------
-   - 헤더는 일반 본문(1020px)의 좌우 축에 맞춤
-   - 진행현황의 '전체 현황판'만 최대 1280px까지 확장
-   - 개별 상세 및 나머지 화면은 1020px 유지 */
-@media(min-width:1021px){
-  header{
-    padding-left:calc((100vw - 1020px) / 2 + 16px);
-    padding-right:calc((100vw - 1020px) / 2 + 16px);
-  }
-}
-
+/* PC 화면별 폭 조절 --------------------------------------------------
+   - 각 메뉴 화면의 폭을 720~1400px 범위에서 실시간 조절
+   - 메뉴별 설정은 브라우저 localStorage에 자동 저장
+   - 모바일(760px 이하)에서는 조절 UI/폭 설정을 적용하지 않음 */
+.pcwbar{display:none}
 @media(min-width:761px){
-  #mxwrap{
-    width:min(1280px,calc(100vw - 32px));
+  header{
+    padding-left:max(16px,calc((100vw - var(--pc-active-width,1020px)) / 2 + 16px));
+    padding-right:max(16px,calc((100vw - var(--pc-active-width,1020px)) / 2 + 16px));
+    transition:padding .18s ease;
+  }
+  main>section{
+    width:min(var(--pc-view-width,1020px),calc(100vw - 32px));
+    max-width:none;
     position:relative;
     left:50%;
     transform:translateX(-50%);
+    transition:width .12s ease;
   }
-
-  /* 재고관리 화면만 PC에서 더 컴팩트하게 */
-  #v-stock{
+  #mxwrap{
     width:100%;
-    max-width:800px;
-    margin-left:auto;
-    margin-right:auto;
+    position:static;
+    left:auto;
+    transform:none;
   }
+  .pcwbar{
+    width:min(var(--pc-active-width,1020px),calc(100vw - 32px));
+    position:relative;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0 0 12px;
+    padding:8px 11px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:linear-gradient(180deg,rgba(34,38,53,.88),rgba(22,25,37,.88));
+    color:var(--sub);
+    box-shadow:0 4px 14px rgba(0,0,0,.12);
+    transition:width .12s ease;
+  }
+  .pcwtitle{font-size:11.5px;font-weight:800;color:var(--sub);white-space:nowrap}
+  .pcwtitle b{color:var(--gold);font-family:'IBM Plex Mono',monospace;margin-left:5px}
+  .pcwrange{flex:1;min-width:120px;height:22px;accent-color:var(--gold);cursor:pointer}
+  .pcwsaved{font-size:10.5px;color:var(--green);white-space:nowrap;min-width:40px;text-align:center}
+  .pcwreset{padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:var(--card2);color:var(--sub);font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .pcwreset:hover{border-color:var(--goldbd);color:var(--gold)}
 }
 
 @media(max-width:760px){
@@ -736,6 +758,15 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 </nav>
 
 <main>
+  <!-- PC 전용 화면 폭 조절 (메뉴별 자동 저장) -->
+  <div id="pcWidthControl" class="pcwbar">
+    <span class="pcwtitle">↔ PC 화면 폭 <b id="pcwValue">1020px</b></span>
+    <input id="pcwRange" class="pcwrange" type="range" min="720" max="1400" step="20" value="1020"
+      aria-label="PC 화면 폭 조절" oninput="previewPCWidth(this.value)" onchange="savePCWidth(this.value)">
+    <span id="pcwSaved" class="pcwsaved">저장됨</span>
+    <button class="pcwreset" type="button" onclick="resetPCWidth()">기본값</button>
+  </div>
+
   <!-- 대시보드 -->
   <section id="v-dash">
     <div class="stats">
@@ -1732,6 +1763,7 @@ function enter(name){
   document.getElementById('login').style.display='none';
   document.getElementById('ubadge').textContent='👤 '+name;
   history.replaceState({t:'view',v:'dash'},'');
+  setPCWidthView('dash');
   loadDash();startApprWatch();
 }
 function toggleDrawer(on){
@@ -2014,6 +2046,57 @@ async function api(path,opt={}){
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+
+/* ---------- PC 화면별 폭 조절 ---------- */
+const PCW_KEY='mm_pc_width_v1';
+const PCW_MIN=720,PCW_MAX=1400,PCW_STEP=20;
+const PCW_DEFAULT={
+  dash:1020,flow:1280,new:1020,plan:1020,doc:1020,hist:1020,board:1020,
+  tryout:1020,help:1020,set:1020,stock:800,insp:1020,ncr:1020,ecn:1020,appr:1020,gauge:1020
+};
+let PCW_VIEW='dash',PCW_DATA={};
+function pcwClamp(v){
+  let n=Number(v)||1020;
+  n=Math.round(n/PCW_STEP)*PCW_STEP;
+  return Math.max(PCW_MIN,Math.min(PCW_MAX,n));
+}
+function loadPCWidths(){
+  try{const x=JSON.parse(localStorage.getItem(PCW_KEY)||'{}');PCW_DATA=x&&typeof x==='object'?x:{}}catch(e){PCW_DATA={}}
+}
+function pcwValue(v){return pcwClamp(PCW_DATA[v]??PCW_DEFAULT[v]??1020)}
+function applyPCWidth(v,w,save){
+  PCW_VIEW=v||PCW_VIEW;
+  const px=pcwClamp(w??pcwValue(PCW_VIEW));
+  const sec=document.getElementById('v-'+PCW_VIEW);
+  if(sec)sec.style.setProperty('--pc-view-width',px+'px');
+  document.documentElement.style.setProperty('--pc-active-width',px+'px');
+  const bar=document.getElementById('pcWidthControl');
+  if(bar)bar.style.setProperty('--pc-active-width',px+'px');
+  const rg=document.getElementById('pcwRange');if(rg)rg.value=px;
+  const val=document.getElementById('pcwValue');if(val)val.textContent=px+'px';
+  if(save){
+    PCW_DATA[PCW_VIEW]=px;
+    try{localStorage.setItem(PCW_KEY,JSON.stringify(PCW_DATA))}catch(e){}
+    pcwSaved('저장됨');
+  }
+  return px;
+}
+function previewPCWidth(v){pcwSaved('조절중');applyPCWidth(PCW_VIEW,v,false)}
+function savePCWidth(v){applyPCWidth(PCW_VIEW,v,true)}
+function resetPCWidth(){
+  delete PCW_DATA[PCW_VIEW];
+  try{localStorage.setItem(PCW_KEY,JSON.stringify(PCW_DATA))}catch(e){}
+  applyPCWidth(PCW_VIEW,PCW_DEFAULT[PCW_VIEW]??1020,false);
+  pcwSaved('기본값');
+}
+function pcwSaved(t){
+  const el=document.getElementById('pcwSaved');if(!el)return;
+  el.textContent=t;
+  clearTimeout(pcwSaved._t);
+  if(t==='기본값')pcwSaved._t=setTimeout(()=>el.textContent='저장됨',900);
+}
+function setPCWidthView(v){PCW_VIEW=v;applyPCWidth(v,pcwValue(v),false)}
+loadPCWidths();
 const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function goNew(t){
@@ -2034,6 +2117,7 @@ function go(v,fromPop){
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','insp','ncr','ecn','appr','gauge'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  setPCWidthView(v);
   if(v==='dash')loadDash();
   if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
   if(v==='plan')loadPlanSel();
@@ -4499,6 +4583,7 @@ async function loadHist(){
     document.getElementById('login').style.display='none';
     document.getElementById('ubadge').textContent='👤 '+USER;
     history.replaceState({t:'view',v:'dash'},'');
+    setPCWidthView('dash');
     loadDash();startApprWatch();
   }
 })();
