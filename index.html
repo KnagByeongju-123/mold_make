@@ -802,7 +802,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
   <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
   <div class="menueditbar" id="menuEditBar">
     <button class="mreset" type="button" onclick="resetMenuOrder(event)">기본 순서</button>
-    <button class="mdone" type="button" onclick="setMenuEdit(false,event)">완료</button>
+    <button class="mdone" type="button" onclick="completeMenuEdit(event)">완료</button>
   </div>
   <div class="foot">금형제작관리 시스템<br>HC_Smart · Smart System Division</div>
 </nav>
@@ -2165,6 +2165,10 @@ function setMenuEdit(on,e){
     toggleDrawer(true);
     setTimeout(()=>document.getElementById('menuEditNote')?.scrollIntoView({block:'nearest'}),30);
   }
+}
+function completeMenuEdit(e){
+  setMenuEdit(false,e);
+  closeMenu();
 }
 function resetMenuOrder(e){
   if(e){e.preventDefault();e.stopPropagation()}
