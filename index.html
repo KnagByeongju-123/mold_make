@@ -620,6 +620,33 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .cb.ng{color:var(--red);border-color:rgba(255,123,123,.5)}
 .cb.back{color:var(--gray)}
 
+
+/* 햄버거 메뉴 순서 편집 -------------------------------------------------- */
+.menuordbtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;font-family:inherit;transition:.15s;padding:0;flex-shrink:0}
+.menuordbtn:hover,.menuordbtn.on{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
+.menueditnote{display:none;margin:0 4px 10px;padding:9px 10px;border:1px solid var(--goldbd);border-radius:9px;background:var(--goldbg);color:var(--gold);font-size:11.5px;line-height:1.45}
+.menueditbar{display:none;gap:7px;margin:10px 4px 2px;padding-top:10px;border-top:1px solid var(--line)}
+.menueditbar button{flex:1;min-height:38px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--sub);font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.menueditbar .mreset{color:var(--red);border-color:rgba(255,123,123,.4)}
+.menueditbar .mdone{color:#241a05;border-color:var(--gold);background:linear-gradient(160deg,var(--gold2),var(--gold))}
+#drawer.menu-editing .menueditnote,#drawer.menu-editing .menueditbar{display:flex}
+#drawer.menu-editing .menueditnote{display:block}
+#drawer [data-menu-id]{position:relative}
+.mordhandle{display:none;margin-left:auto;width:30px;height:30px;align-items:center;justify-content:center;border-radius:7px;border:1px dashed var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:16px;font-weight:900;line-height:1;flex-shrink:0;cursor:grab;touch-action:none}
+#drawer.menu-editing > .mi[data-menu-id] .mordhandle,
+#drawer.menu-editing > .mg[data-menu-id] > .mgh .mordhandle{display:inline-flex}
+#drawer.menu-editing > [data-menu-id]{user-select:none;-webkit-user-select:none;touch-action:none}
+#drawer.menu-editing > .mi[data-menu-id],
+#drawer.menu-editing > .mg[data-menu-id] > .mgh{outline:1px dashed transparent}
+#drawer.menu-editing > .mi[data-menu-id]:active,
+#drawer.menu-editing > .mg[data-menu-id] > .mgh:active{outline-color:var(--goldbd)}
+#drawer > [data-menu-id].menu-dragging{z-index:5;opacity:.94;transform:scale(1.025);filter:drop-shadow(0 8px 14px rgba(0,0,0,.38))}
+#drawer > .mi[data-menu-id].menu-dragging,
+#drawer > .mg[data-menu-id].menu-dragging > .mgh{background:rgba(226,176,74,.18);box-shadow:inset 0 0 0 1px var(--gold);border-radius:11px;color:var(--gold)}
+#drawer > [data-menu-id].menu-drop-before{box-shadow:0 -3px 0 var(--gold)}
+#drawer.menu-editing .msub{pointer-events:none}
+#drawer.menu-editing .mg.open .msub{opacity:.55}
+
 /* PC 화면별 폭 조절 --------------------------------------------------
    - 헤더 우측 📐 버튼을 눌러 팝업으로 조절
    - 각 메뉴 화면의 폭을 720~1400px 범위에서 실시간 조절
@@ -668,6 +695,9 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 }
 
 @media(max-width:760px){
+  header .rev{display:none}
+  header .hright{gap:6px}
+  .ubadge{max-width:86px;overflow:hidden;text-overflow:ellipsis}
   .mxtbl th.stick{min-width:110px}
   .mxtbl tbody th.stick span{max-width:110px}
   .mxtip{display:none}
@@ -712,7 +742,8 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 10.1</span>
+    <span class="rev">Rev 10.2</span>
+    <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="현재 화면 폭 설정" aria-label="현재 화면 폭 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" aria-label="PC 화면 폭 설정" onclick="event.stopPropagation()">
@@ -739,19 +770,20 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     <b>MM</b>
     <div><div class="n">금형제작관리</div><div class="s">Mold Making Management</div></div>
   </div>
-  <div class="mi on" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
-  <div class="mi" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
-  <div class="mi" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규금형등록</div>
-  <div class="mi" data-v="new" onclick="goNew('수리')"><span class="ic">🔧</span>신규수리등록</div>
-  <div class="mi" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
-  <div class="mg" id="mg-out">
+  <div class="menueditnote" id="menuEditNote">메뉴를 길게 누르거나 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
+  <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
+  <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
+  <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규금형등록</div>
+  <div class="mi" data-menu-id="new-repair" data-v="new" onclick="goNew('수리')"><span class="ic">🔧</span>신규수리등록</div>
+  <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
+  <div class="mg" id="mg-out" data-menu-id="grp-out">
     <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
       <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
     </div>
   </div>
-  <div class="mg" id="mg-qa">
+  <div class="mg" id="mg-qa" data-menu-id="grp-qa">
     <div class="mi mgh" onclick="toggleGrp('qa')"><span class="ic">🛡️</span>품질관리 (SQ)<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-v="insp" onclick="go('insp')"><span class="ic">📐</span>검사성적</div>
@@ -761,13 +793,17 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
       <div class="mi" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
     </div>
   </div>
-  <div class="mi" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
-  <div class="mi" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
-  <div class="mi" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
-  <div class="mi" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
-  <div class="mi" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
-  <div class="mi" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
-  <div class="mi" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
+  <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
+  <div class="mi" data-menu-id="work-status" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
+  <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
+  <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
+  <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
+  <div class="mi" data-menu-id="set" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
+  <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
+  <div class="menueditbar" id="menuEditBar">
+    <button class="mreset" type="button" onclick="resetMenuOrder(event)">기본 순서</button>
+    <button class="mdone" type="button" onclick="setMenuEdit(false,event)">완료</button>
+  </div>
   <div class="foot">금형제작관리 시스템<br>HC_Smart · Smart System Division</div>
 </nav>
 
@@ -2052,6 +2088,159 @@ async function api(path,opt={}){
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
 
+
+/* ---------- 햄버거 메뉴 순서 편집 ---------- */
+const MENU_ORDER_KEY='mm_menu_order_v1';
+const MENU_LONGPRESS_MS=500;
+let MENU_DEFAULT_ORDER=[];
+let MENU_EDIT=false;
+let MENU_PRESS=null;
+let MENU_DRAG=null;
+let MENU_BLOCK_CLICK_UNTIL=0;
+
+function menuSortItems(){
+  const d=document.getElementById('drawer');
+  return d?[...d.children].filter(el=>el.matches('[data-menu-id]')):[];
+}
+function menuOrderNow(){return menuSortItems().map(el=>el.dataset.menuId)}
+function applyMenuOrder(order){
+  const d=document.getElementById('drawer'),anchor=document.getElementById('menuEditBar');
+  if(!d||!anchor)return;
+  const items=menuSortItems(),byId=new Map(items.map(el=>[el.dataset.menuId,el]));
+  const used=new Set();
+  (Array.isArray(order)?order:[]).forEach(id=>{
+    const el=byId.get(id);
+    if(el&&!used.has(id)){d.insertBefore(el,anchor);used.add(id)}
+  });
+  items.forEach(el=>{if(!used.has(el.dataset.menuId))d.insertBefore(el,anchor)});
+}
+function saveMenuOrder(){
+  try{localStorage.setItem(MENU_ORDER_KEY,JSON.stringify(menuOrderNow()))}catch(e){}
+}
+function loadMenuOrder(){
+  let saved=[];
+  try{saved=JSON.parse(localStorage.getItem(MENU_ORDER_KEY)||'[]')}catch(e){saved=[]}
+  if(Array.isArray(saved)&&saved.length)applyMenuOrder(saved);
+}
+function addMenuDragHandles(){
+  menuSortItems().forEach(item=>{
+    const row=item.classList.contains('mg')?item.querySelector(':scope > .mgh'):item;
+    if(!row||row.querySelector(':scope > .mordhandle'))return;
+    const h=document.createElement('span');
+    h.className='mordhandle';h.textContent='☰';h.setAttribute('aria-hidden','true');
+    row.appendChild(h);
+  });
+}
+function initMenuOrder(){
+  MENU_DEFAULT_ORDER=menuOrderNow();
+  loadMenuOrder();
+  addMenuDragHandles();
+  const drawer=document.getElementById('drawer');
+  if(!drawer)return;
+  drawer.addEventListener('pointerdown',menuPointerDown,{passive:true});
+  drawer.addEventListener('click',e=>{
+    const item=e.target.closest('[data-menu-id]');
+    if(!item)return;
+    if(MENU_EDIT||Date.now()<MENU_BLOCK_CLICK_UNTIL){
+      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    }
+  },true);
+  document.addEventListener('pointermove',menuPointerMove,{passive:false});
+  document.addEventListener('pointerup',menuPointerUp,{passive:false});
+  document.addEventListener('pointercancel',menuPointerUp,{passive:false});
+}
+function toggleMenuEdit(e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  setMenuEdit(!MENU_EDIT,e);
+}
+function setMenuEdit(on,e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  MENU_EDIT=!!on;
+  const d=document.getElementById('drawer'),b=document.getElementById('menuOrderBtn');
+  if(d)d.classList.toggle('menu-editing',MENU_EDIT);
+  if(b){b.classList.toggle('on',MENU_EDIT);b.setAttribute('aria-pressed',MENU_EDIT?'true':'false');b.title=MENU_EDIT?'메뉴 순서 편집 완료':'햄버거 메뉴 순서 편집'}
+  cancelMenuPress();
+  if(!MENU_EDIT)finishMenuDrag(false);
+  if(MENU_EDIT){
+    toggleDrawer(true);
+    setTimeout(()=>document.getElementById('menuEditNote')?.scrollIntoView({block:'nearest'}),30);
+  }
+}
+function resetMenuOrder(e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  if(!confirm('메뉴 순서를 기본값으로 되돌릴까요?'))return;
+  try{localStorage.removeItem(MENU_ORDER_KEY)}catch(err){}
+  applyMenuOrder(MENU_DEFAULT_ORDER);
+  toast('메뉴 순서를 기본값으로 복원했습니다');
+}
+function cancelMenuPress(){
+  if(MENU_PRESS?.timer)clearTimeout(MENU_PRESS.timer);
+  MENU_PRESS=null;
+}
+function menuPointerDown(e){
+  if(e.button!==undefined&&e.button!==0)return;
+  if(e.target.closest('#menuEditBar,button,input,select,textarea,a'))return;
+  const item=e.target.closest('[data-menu-id]');
+  if(!item||item.parentElement?.id!=='drawer')return;
+  const isHandle=!!e.target.closest('.mordhandle');
+  MENU_PRESS={item,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,timer:null};
+  if(MENU_EDIT&&isHandle){beginMenuDrag(item,e.pointerId);return}
+  const wait=MENU_EDIT?220:MENU_LONGPRESS_MS;
+  MENU_PRESS.timer=setTimeout(()=>{
+    if(!MENU_PRESS||MENU_PRESS.pointerId!==e.pointerId)return;
+    if(!MENU_EDIT)setMenuEdit(true);
+    MENU_BLOCK_CLICK_UNTIL=Date.now()+700;
+    try{navigator.vibrate?.(24)}catch(err){}
+    beginMenuDrag(item,e.pointerId);
+  },wait);
+}
+function beginMenuDrag(item,pointerId){
+  if(!item)return;
+  if(MENU_PRESS?.timer){clearTimeout(MENU_PRESS.timer);MENU_PRESS.timer=null}
+  MENU_DRAG={item,pointerId};
+  item.classList.add('menu-dragging');
+  try{item.setPointerCapture?.(pointerId)}catch(e){}
+}
+function menuPointerMove(e){
+  if(MENU_PRESS&&MENU_PRESS.pointerId===e.pointerId&&!MENU_DRAG){
+    MENU_PRESS.lastX=e.clientX;MENU_PRESS.lastY=e.clientY;
+    const dx=e.clientX-MENU_PRESS.startX,dy=e.clientY-MENU_PRESS.startY;
+    if(Math.hypot(dx,dy)>10)cancelMenuPress();
+    return;
+  }
+  if(!MENU_DRAG||MENU_DRAG.pointerId!==e.pointerId)return;
+  e.preventDefault();
+  MENU_BLOCK_CLICK_UNTIL=Date.now()+500;
+  const item=MENU_DRAG.item,d=document.getElementById('drawer'),anchor=document.getElementById('menuEditBar');
+  const others=menuSortItems().filter(el=>el!==item);
+  others.forEach(el=>el.classList.remove('menu-drop-before'));
+  let before=null;
+  for(const el of others){
+    const r=el.getBoundingClientRect();
+    if(e.clientY<r.top+r.height/2){before=el;break}
+  }
+  if(before){before.classList.add('menu-drop-before');d.insertBefore(item,before)}
+  else d.insertBefore(item,anchor);
+  const dr=d.getBoundingClientRect();
+  if(e.clientY<dr.top+64)d.scrollBy({top:-14,behavior:'auto'});
+  else if(e.clientY>dr.bottom-64)d.scrollBy({top:14,behavior:'auto'});
+}
+function finishMenuDrag(save=true){
+  if(!MENU_DRAG)return;
+  const item=MENU_DRAG.item;
+  try{item.releasePointerCapture?.(MENU_DRAG.pointerId)}catch(e){}
+  item.classList.remove('menu-dragging');
+  menuSortItems().forEach(el=>el.classList.remove('menu-drop-before'));
+  MENU_DRAG=null;
+  if(save){saveMenuOrder();toast('메뉴 순서가 저장되었습니다')}
+}
+function menuPointerUp(e){
+  if(MENU_DRAG&&MENU_DRAG.pointerId===e.pointerId){
+    e.preventDefault();MENU_BLOCK_CLICK_UNTIL=Date.now()+650;finishMenuDrag(true);MENU_PRESS=null;return;
+  }
+  if(MENU_PRESS&&MENU_PRESS.pointerId===e.pointerId)cancelMenuPress();
+}
+
 /* ---------- PC 화면별 폭 조절 ---------- */
 const PCW_KEY='mm_pc_width_v1';
 const PCW_MIN=720,PCW_MAX=1400,PCW_STEP=20;
@@ -2129,6 +2318,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()});
 loadPCWidths();
+initMenuOrder();
 const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function goNew(t){
