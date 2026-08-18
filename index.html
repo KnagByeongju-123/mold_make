@@ -621,16 +621,18 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .cb.back{color:var(--gray)}
 
 /* PC 화면별 폭 조절 --------------------------------------------------
+   - 헤더 우측 📐 버튼을 눌러 팝업으로 조절
    - 각 메뉴 화면의 폭을 720~1400px 범위에서 실시간 조절
    - 메뉴별 설정은 브라우저 localStorage에 자동 저장
-   - 모바일(760px 이하)에서는 조절 UI/폭 설정을 적용하지 않음 */
-.pcwbar{display:none}
+   - 모바일(760px 이하)에서는 버튼/폭 설정을 적용하지 않음 */
+.pcwmenu{display:none}
 @media(min-width:761px){
   header{
     padding-left:max(16px,calc((100vw - var(--pc-active-width,1020px)) / 2 + 16px));
     padding-right:max(16px,calc((100vw - var(--pc-active-width,1020px)) / 2 + 16px));
     transition:padding .18s ease;
   }
+  header .hright{position:relative}
   main>section{
     width:min(var(--pc-view-width,1020px),calc(100vw - 32px));
     max-width:none;
@@ -645,28 +647,23 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     left:auto;
     transform:none;
   }
-  .pcwbar{
-    width:min(var(--pc-active-width,1020px),calc(100vw - 32px));
-    position:relative;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:0 0 12px;
-    padding:8px 11px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    background:linear-gradient(180deg,rgba(34,38,53,.88),rgba(22,25,37,.88));
-    color:var(--sub);
-    box-shadow:0 4px 14px rgba(0,0,0,.12);
-    transition:width .12s ease;
-  }
-  .pcwtitle{font-size:11.5px;font-weight:800;color:var(--sub);white-space:nowrap}
-  .pcwtitle b{color:var(--gold);font-family:'IBM Plex Mono',monospace;margin-left:5px}
-  .pcwrange{flex:1;min-width:120px;height:22px;accent-color:var(--gold);cursor:pointer}
-  .pcwsaved{font-size:10.5px;color:var(--green);white-space:nowrap;min-width:40px;text-align:center}
-  .pcwreset{padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:var(--card2);color:var(--sub);font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .pcwmenu{display:block;position:relative;flex-shrink:0}
+  .pcwbtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;font-family:inherit;transition:.15s;padding:0}
+  .pcwbtn:hover,.pcwbtn.on{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
+  .pcwpopup{position:absolute;right:0;top:calc(100% + 10px);width:300px;padding:13px 14px 12px;border:1px solid #4a5268;border-radius:13px;background:#171a24;box-shadow:0 14px 38px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;transition:opacity .14s ease,transform .14s ease,visibility .14s;z-index:150;color:var(--ink)}
+  .pcwpopup.show{opacity:1;visibility:visible;transform:none}
+  .pcwpopup:before{content:'';position:absolute;right:9px;top:-6px;width:10px;height:10px;background:#171a24;border-left:1px solid #4a5268;border-top:1px solid #4a5268;transform:rotate(45deg)}
+  .pcwpophead{display:flex;align-items:center;gap:8px;padding-bottom:9px;margin-bottom:10px;border-bottom:1px solid var(--line2)}
+  .pcwpophead b{font-size:12.5px;color:var(--gold);font-weight:800}
+  .pcwclose{margin-left:auto;width:24px;height:24px;border:none;background:transparent;color:var(--gray);font-size:17px;line-height:1;cursor:pointer;border-radius:6px}
+  .pcwclose:hover{background:rgba(255,255,255,.06);color:var(--ink)}
+  .pcwrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:11.5px;color:var(--sub)}
+  .pcwrow b{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:13px}
+  .pcwrange{width:100%;height:24px;accent-color:var(--gold);cursor:pointer;display:block}
+  .pcwscale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--gray);font-family:'IBM Plex Mono',monospace;margin-top:-2px}
+  .pcwfoot{display:flex;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid var(--line2)}
+  .pcwsaved{font-size:10.5px;color:var(--green);white-space:nowrap}
+  .pcwreset{margin-left:auto;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--card2);color:var(--sub);font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
   .pcwreset:hover{border-color:var(--goldbd);color:var(--gold)}
 }
 
@@ -716,6 +713,23 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
     <span class="rev">Rev 10.1</span>
+    <div class="pcwmenu" id="pcWidthMenu">
+      <button id="pcWidthBtn" class="pcwbtn" type="button" title="현재 화면 폭 설정" aria-label="현재 화면 폭 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
+      <div id="pcWidthPopup" class="pcwpopup" role="dialog" aria-label="PC 화면 폭 설정" onclick="event.stopPropagation()">
+        <div class="pcwpophead">
+          <b id="pcwViewName">홈 화면 설정</b>
+          <button class="pcwclose" type="button" aria-label="닫기" onclick="closePCWidthPopup()">×</button>
+        </div>
+        <div class="pcwrow"><span>화면 폭</span><b id="pcwValue">1020px</b></div>
+        <input id="pcwRange" class="pcwrange" type="range" min="720" max="1400" step="20" value="1020"
+          aria-label="PC 화면 폭 조절" oninput="previewPCWidth(this.value)" onchange="savePCWidth(this.value)">
+        <div class="pcwscale"><span>720px</span><span>1400px</span></div>
+        <div class="pcwfoot">
+          <span id="pcwSaved" class="pcwsaved">저장됨</span>
+          <button class="pcwreset" type="button" onclick="resetPCWidth()">기본값으로</button>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -758,15 +772,6 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 </nav>
 
 <main>
-  <!-- PC 전용 화면 폭 조절 (메뉴별 자동 저장) -->
-  <div id="pcWidthControl" class="pcwbar">
-    <span class="pcwtitle">↔ PC 화면 폭 <b id="pcwValue">1020px</b></span>
-    <input id="pcwRange" class="pcwrange" type="range" min="720" max="1400" step="20" value="1020"
-      aria-label="PC 화면 폭 조절" oninput="previewPCWidth(this.value)" onchange="savePCWidth(this.value)">
-    <span id="pcwSaved" class="pcwsaved">저장됨</span>
-    <button class="pcwreset" type="button" onclick="resetPCWidth()">기본값</button>
-  </div>
-
   <!-- 대시보드 -->
   <section id="v-dash">
     <div class="stats">
@@ -2070,10 +2075,9 @@ function applyPCWidth(v,w,save){
   const sec=document.getElementById('v-'+PCW_VIEW);
   if(sec)sec.style.setProperty('--pc-view-width',px+'px');
   document.documentElement.style.setProperty('--pc-active-width',px+'px');
-  const bar=document.getElementById('pcWidthControl');
-  if(bar)bar.style.setProperty('--pc-active-width',px+'px');
   const rg=document.getElementById('pcwRange');if(rg)rg.value=px;
   const val=document.getElementById('pcwValue');if(val)val.textContent=px+'px';
+  const vn=document.getElementById('pcwViewName');if(vn)vn.textContent=(VIEWTITLE[PCW_VIEW]||'현재')+' 화면 설정';
   if(save){
     PCW_DATA[PCW_VIEW]=px;
     try{localStorage.setItem(PCW_KEY,JSON.stringify(PCW_DATA))}catch(e){}
@@ -2095,7 +2099,35 @@ function pcwSaved(t){
   clearTimeout(pcwSaved._t);
   if(t==='기본값')pcwSaved._t=setTimeout(()=>el.textContent='저장됨',900);
 }
-function setPCWidthView(v){PCW_VIEW=v;applyPCWidth(v,pcwValue(v),false)}
+function setPCWidthView(v){
+  PCW_VIEW=v;
+  applyPCWidth(v,pcwValue(v),false);
+  closePCWidthPopup();
+}
+function togglePCWidthPopup(e){
+  if(e)e.stopPropagation();
+  if(window.matchMedia('(max-width:760px)').matches)return;
+  const pop=document.getElementById('pcWidthPopup'),btn=document.getElementById('pcWidthBtn');
+  if(!pop||!btn)return;
+  const open=!pop.classList.contains('show');
+  pop.classList.toggle('show',open);
+  btn.classList.toggle('on',open);
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  if(open){
+    const vn=document.getElementById('pcwViewName');if(vn)vn.textContent=(VIEWTITLE[PCW_VIEW]||'현재')+' 화면 설정';
+    const rg=document.getElementById('pcwRange');if(rg)rg.focus({preventScroll:true});
+  }
+}
+function closePCWidthPopup(){
+  const pop=document.getElementById('pcWidthPopup'),btn=document.getElementById('pcWidthBtn');
+  if(pop)pop.classList.remove('show');
+  if(btn){btn.classList.remove('on');btn.setAttribute('aria-expanded','false')}
+}
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('pcWidthMenu');
+  if(menu&&!menu.contains(e.target))closePCWidthPopup();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()});
 loadPCWidths();
 const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa'};
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
