@@ -165,30 +165,6 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
   opacity:0;transition:all .2s;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ===== 상단 도구 메뉴 위치(순서) 편집 ===== */
-.menuordbtn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);
-  color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
-  font-family:inherit;transition:.15s;padding:0;flex-shrink:0}
-.menuordbtn:hover,.menuordbtn.on{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
-.menuordbtn:active{transform:scale(.94)}
-.menueditnote{display:none;margin:8px 0 0;padding:9px 10px;border:1px solid var(--goldbd);border-radius:9px;
-  background:var(--goldbg);color:var(--gold);font-size:11.5px;line-height:1.45}
-.menueditbar{display:none;gap:7px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line2)}
-.menueditbar button{flex:1;min-height:36px;border-radius:8px;border:1px solid var(--line);
-  background:var(--card2);color:var(--sub);font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit}
-.menueditbar .mreset{color:var(--red);border-color:rgba(255,123,123,.4)}
-.menueditbar .mdone{color:#241a05;border-color:var(--gold);background:linear-gradient(160deg,var(--gold2),var(--gold))}
-body.menu-editing .menueditnote{display:block}
-body.menu-editing .menueditbar{display:flex}
-#toolChips .chip{position:relative}
-#toolChips .chip .mordhandle{display:none;margin-left:6px;font-size:12px;font-weight:900;color:var(--gold);line-height:1}
-body.menu-editing #toolChips .chip{border-style:dashed;border-color:var(--goldbd);color:var(--gold);
-  cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
-body.menu-editing #toolChips .chip .mordhandle{display:inline}
-#toolChips .chip.menu-dragging{opacity:.94;transform:scale(1.05);background:rgba(226,176,74,.18);
-  box-shadow:inset 0 0 0 1px var(--gold);filter:drop-shadow(0 6px 12px rgba(0,0,0,.4))}
-#toolChips .chip.menu-drop-before{box-shadow:-3px 0 0 var(--gold)}
-
 /* ===== PC 화면 폭 조절 (📐) — 모바일(760px 이하)에서는 비활성 ===== */
 .pcwmenu{display:none}
 @media(min-width:761px){
@@ -227,8 +203,7 @@ body.menu-editing #toolChips .chip .mordhandle{display:inline}
   .pcwreset:hover{border-color:var(--goldbd);color:var(--gold)}
 }
 @media(max-width:760px){
-  .ubadge{max-width:96px;overflow:hidden;text-overflow:ellipsis}
-  h1{font-size:15.5px}
+  .ubadge{max-width:110px;overflow:hidden;text-overflow:ellipsis}
 }
 </style>
 </head>
@@ -239,8 +214,6 @@ body.menu-editing #toolChips .chip .mordhandle{display:inline}
     <button class="back" id="btnBack">←</button>
     <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.0</span></h1>
     <span class="ubadge" id="meLabel"></span>
-    <button id="menuOrderBtn" class="menuordbtn" type="button" title="상단 도구 메뉴 위치 편집"
-      aria-label="상단 도구 메뉴 위치 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="PC 화면 폭 설정"
         aria-label="PC 화면 폭 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -279,17 +252,12 @@ body.menu-editing #toolChips .chip .mordhandle{display:inline}
     <summary>🔍 필터 · 도구</summary>
     <div class="panel-body">
       <input class="srch" id="srch" type="search" placeholder="이름 검색">
-      <div class="menueditnote" id="menuEditNote">☷ 편집 중 — 도구 버튼을 잡아 원하는 위치로 끌어 옮기세요. 순서는 이 브라우저에 자동 저장됩니다.</div>
-      <div class="chips" id="toolChips" style="margin-top:8px">
-        <button class="chip" id="btnOnlyFilled" data-menu-id="filled">✍ 입력된 인원만<span class="mordhandle">☰</span></button>
-        <button class="chip" id="btnOrder" data-menu-id="order">↕ 순서편집<span class="mordhandle">☰</span></button>
-        <button class="chip" id="btnOrderReset" data-menu-id="orderreset">↺ 순서초기화<span class="mordhandle">☰</span></button>
-        <button class="chip" id="btnReloadUsers" data-menu-id="reload">👥 인원 새로고침<span class="mordhandle">☰</span></button>
-        <button class="chip" id="btnCsv" data-menu-id="csv">⬇ CSV<span class="mordhandle">☰</span></button>
-      </div>
-      <div class="menueditbar" id="menuEditBar">
-        <button class="mreset" type="button" onclick="resetMenuOrder(event)">기본 순서</button>
-        <button class="mdone" type="button" onclick="completeMenuEdit(event)">완료</button>
+      <div class="chips" style="margin-top:8px">
+        <button class="chip" id="btnOnlyFilled">✍ 입력된 인원만</button>
+        <button class="chip" id="btnOrder">↕ 순서편집</button>
+        <button class="chip" id="btnOrderReset">↺ 순서초기화</button>
+        <button class="chip" id="btnReloadUsers">👥 인원 새로고침</button>
+        <button class="chip" id="btnCsv">⬇ CSV</button>
       </div>
     </div>
   </details>
@@ -893,7 +861,6 @@ function shiftDate(n){
 /* ================= PC 화면 폭 조절 (📐) ================= */
 const PCW_KEY='hcws_pc_width_v1';
 const PCW_MIN=720, PCW_MAX=1400, PCW_STEP=20, PCW_DEF=1020;
-let PCW = PCW_DEF;
 
 function pcwClamp(v){
   let n = Number(v) || PCW_DEF;
@@ -907,7 +874,6 @@ function loadPCWidth(){
 }
 function applyPCWidth(w, save){
   const px = pcwClamp(w);
-  PCW = px;
   document.documentElement.style.setProperty('--pcw', px+'px');
   const rg = document.getElementById('pcwRange'); if(rg) rg.value = px;
   const val = document.getElementById('pcwValue'); if(val) val.textContent = px+'px';
@@ -950,142 +916,8 @@ document.addEventListener('click', e=>{
   const menu = document.getElementById('pcWidthMenu');
   if(menu && !menu.contains(e.target)) closePCWidthPopup();
 });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closePCWidthPopup(); if(MENU_EDIT) setMenuEdit(false); } });
-
-/* ================= 상단 도구 메뉴 위치(순서) 편집 (☷) ================= */
-const MENUORD_KEY = 'hcws_menu_order_v1';
-const MENU_LONGPRESS_MS = 500;
-let MENU_DEFAULT_ORDER = [];
-let MENU_EDIT = false, MENU_PRESS = null, MENU_DRAG = null, MENU_BLOCK_CLICK_UNTIL = 0;
-
-function menuBox(){ return document.getElementById('toolChips'); }
-function menuItems(){
-  const b = menuBox();
-  return b ? [...b.children].filter(el=>el.matches('[data-menu-id]')) : [];
-}
-function menuOrderNow(){ return menuItems().map(el=>el.dataset.menuId); }
-function applyMenuOrder(order){
-  const b = menuBox(); if(!b) return;
-  const items = menuItems(), byId = new Map(items.map(el=>[el.dataset.menuId, el]));
-  const used = new Set();
-  (Array.isArray(order)?order:[]).forEach(id=>{
-    const el = byId.get(id);
-    if(el && !used.has(id)){ b.appendChild(el); used.add(id); }
-  });
-  items.forEach(el=>{ if(!used.has(el.dataset.menuId)) b.appendChild(el); });
-}
-function saveMenuOrder(){
-  try{ localStorage.setItem(MENUORD_KEY, JSON.stringify(menuOrderNow())); }catch(e){}
-}
-function loadMenuOrder(){
-  let saved = [];
-  try{ saved = JSON.parse(localStorage.getItem(MENUORD_KEY)||'[]'); }catch(e){ saved = []; }
-  if(Array.isArray(saved) && saved.length) applyMenuOrder(saved);
-}
-function initMenuOrder(){
-  const b = menuBox(); if(!b) return;
-  MENU_DEFAULT_ORDER = menuOrderNow();
-  loadMenuOrder();
-  b.addEventListener('pointerdown', menuPointerDown, {passive:true});
-  b.addEventListener('click', e=>{
-    if(!e.target.closest('[data-menu-id]')) return;
-    if(MENU_EDIT || Date.now() < MENU_BLOCK_CLICK_UNTIL){
-      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-    }
-  }, true);
-  document.addEventListener('pointermove', menuPointerMove, {passive:false});
-  document.addEventListener('pointerup', menuPointerUp, {passive:false});
-  document.addEventListener('pointercancel', menuPointerUp, {passive:false});
-}
-function toggleMenuEdit(e){ if(e){ e.preventDefault(); e.stopPropagation(); } setMenuEdit(!MENU_EDIT); }
-function setMenuEdit(on){
-  MENU_EDIT = !!on;
-  document.body.classList.toggle('menu-editing', MENU_EDIT);
-  const btn = document.getElementById('menuOrderBtn');
-  if(btn){
-    btn.classList.toggle('on', MENU_EDIT);
-    btn.setAttribute('aria-pressed', MENU_EDIT?'true':'false');
-    btn.title = MENU_EDIT ? '메뉴 위치 편집 완료' : '상단 도구 메뉴 위치 편집';
-  }
-  cancelMenuPress();
-  if(!MENU_EDIT) finishMenuDrag(false);
-  if(MENU_EDIT){
-    const p = document.getElementById('fpanel');
-    if(p){ p.open = true; setTimeout(()=>document.getElementById('menuEditNote')?.scrollIntoView({block:'nearest'}), 30); }
-  }
-}
-function completeMenuEdit(e){ if(e){ e.preventDefault(); e.stopPropagation(); } setMenuEdit(false); }
-function resetMenuOrder(e){
-  if(e){ e.preventDefault(); e.stopPropagation(); }
-  if(!confirm('상단 도구 메뉴 위치를 기본값으로 되돌릴까요?')) return;
-  try{ localStorage.removeItem(MENUORD_KEY); }catch(err){}
-  applyMenuOrder(MENU_DEFAULT_ORDER);
-  toast('메뉴 위치를 기본값으로 복원했습니다');
-}
-function cancelMenuPress(){
-  if(MENU_PRESS?.timer) clearTimeout(MENU_PRESS.timer);
-  MENU_PRESS = null;
-}
-function menuPointerDown(e){
-  if(e.button !== undefined && e.button !== 0) return;
-  const item = e.target.closest('[data-menu-id]');
-  if(!item || item.parentElement !== menuBox()) return;
-  MENU_PRESS = {item, pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, timer:null};
-  if(MENU_EDIT){ beginMenuDrag(item, e.pointerId); return; }
-  MENU_PRESS.timer = setTimeout(()=>{
-    if(!MENU_PRESS || MENU_PRESS.pointerId !== e.pointerId) return;
-    setMenuEdit(true);
-    MENU_BLOCK_CLICK_UNTIL = Date.now() + 700;
-    try{ navigator.vibrate?.(24); }catch(err){}
-    beginMenuDrag(item, e.pointerId);
-  }, MENU_LONGPRESS_MS);
-}
-function beginMenuDrag(item, pointerId){
-  if(!item) return;
-  if(MENU_PRESS?.timer){ clearTimeout(MENU_PRESS.timer); MENU_PRESS.timer = null; }
-  MENU_DRAG = {item, pointerId};
-  item.classList.add('menu-dragging');
-  try{ item.setPointerCapture?.(pointerId); }catch(e){}
-}
-function reorderMenuDragAt(x, y){
-  if(!MENU_DRAG) return;
-  const item = MENU_DRAG.item, b = menuBox(); if(!b) return;
-  const others = menuItems().filter(el=>el !== item);
-  others.forEach(el=>el.classList.remove('menu-drop-before'));
-  let before = null;
-  for(const el of others){
-    const r = el.getBoundingClientRect();
-    if(y < r.bottom && (y < r.top || x < r.left + r.width/2)){ before = el; break; }
-  }
-  if(before){ before.classList.add('menu-drop-before'); b.insertBefore(item, before); }
-  else b.appendChild(item);
-}
-function menuPointerMove(e){
-  if(MENU_PRESS && MENU_PRESS.pointerId === e.pointerId && !MENU_DRAG){
-    if(Math.hypot(e.clientX-MENU_PRESS.startX, e.clientY-MENU_PRESS.startY) > 10) cancelMenuPress();
-    return;
-  }
-  if(!MENU_DRAG || MENU_DRAG.pointerId !== e.pointerId) return;
-  e.preventDefault();
-  MENU_BLOCK_CLICK_UNTIL = Date.now() + 500;
-  reorderMenuDragAt(e.clientX, e.clientY);
-}
-function finishMenuDrag(save=true){
-  if(!MENU_DRAG) return;
-  const item = MENU_DRAG.item;
-  try{ item.releasePointerCapture?.(MENU_DRAG.pointerId); }catch(e){}
-  item.classList.remove('menu-dragging');
-  menuItems().forEach(el=>el.classList.remove('menu-drop-before'));
-  MENU_DRAG = null;
-  if(save){ saveMenuOrder(); toast('메뉴 위치가 저장되었습니다'); }
-}
-function menuPointerUp(e){
-  if(MENU_DRAG && MENU_DRAG.pointerId === e.pointerId){
-    e.preventDefault(); MENU_BLOCK_CLICK_UNTIL = Date.now() + 650;
-    finishMenuDrag(true); MENU_PRESS = null; return;
-  }
-  if(MENU_PRESS && MENU_PRESS.pointerId === e.pointerId) cancelMenuPress();
-}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePCWidthPopup(); });
+loadPCWidth();
 
 /* ================= 초기화 ================= */
 async function init(){
@@ -1095,9 +927,6 @@ async function init(){
     return;
   }
   document.getElementById('meLabel').textContent = USER;
-
-  loadPCWidth();
-  initMenuOrder();
 
   document.getElementById('btnBack').addEventListener('click', ()=>{ location.href='index.html'; });
   document.getElementById('btnPrev').addEventListener('click', ()=>shiftDate(-1));
@@ -1125,7 +954,7 @@ async function init(){
     fQry = e.target.value.trim().toLowerCase(); render();
   });
   document.getElementById('btnOnlyFilled').addEventListener('click', e=>{
-    fFilled = !fFilled; e.currentTarget.classList.toggle('on', fFilled); render();
+    fFilled = !fFilled; e.target.classList.toggle('on', fFilled); render();
   });
   document.getElementById('btnOrder').addEventListener('click', ()=>setOrderMode(!orderMode));
   document.getElementById('btnOrderDone').addEventListener('click', ()=>setOrderMode(false));
