@@ -635,7 +635,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .mordhandle{display:none;margin-left:auto;width:30px;height:30px;align-items:center;justify-content:center;border-radius:7px;border:1px dashed var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:16px;font-weight:900;line-height:1;flex-shrink:0;cursor:grab;touch-action:none}
 #drawer.menu-editing > .mi[data-menu-id] .mordhandle,
 #drawer.menu-editing > .mg[data-menu-id] > .mgh .mordhandle{display:inline-flex}
-#drawer.menu-editing > [data-menu-id]{user-select:none;-webkit-user-select:none;touch-action:none}
+#drawer.menu-editing > [data-menu-id]{user-select:none;-webkit-user-select:none;touch-action:pan-y}
 #drawer.menu-editing > .mi[data-menu-id],
 #drawer.menu-editing > .mg[data-menu-id] > .mgh{outline:1px dashed transparent}
 #drawer.menu-editing > .mi[data-menu-id]:active,
@@ -770,7 +770,7 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
     <b>MM</b>
     <div><div class="n">금형제작관리</div><div class="s">Mold Making Management</div></div>
   </div>
-  <div class="menueditnote" id="menuEditNote">메뉴를 길게 누르거나 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
+  <div class="menueditnote" id="menuEditNote">편집 중에는 메뉴 영역을 위·아래로 밀어 스크롤하고, 오른쪽 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 화면 가장자리에서는 자동으로 스크롤됩니다. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
   <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
   <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
   <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규금형등록</div>
@@ -2097,6 +2097,7 @@ let MENU_EDIT=false;
 let MENU_PRESS=null;
 let MENU_DRAG=null;
 let MENU_BLOCK_CLICK_UNTIL=0;
+let MENU_AUTO_SCROLL_RAF=0;
 
 function menuSortItems(){
   const d=document.getElementById('drawer');
@@ -2187,23 +2188,72 @@ function menuPointerDown(e){
   const item=e.target.closest('[data-menu-id]');
   if(!item||item.parentElement?.id!=='drawer')return;
   const isHandle=!!e.target.closest('.mordhandle');
+
+  // 편집 중에는 메뉴 본문을 세로 스크롤용으로 남기고, ☰ 핸들만 드래그에 사용한다.
+  if(MENU_EDIT&&!isHandle)return;
+
   MENU_PRESS={item,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,timer:null};
-  if(MENU_EDIT&&isHandle){beginMenuDrag(item,e.pointerId);return}
-  const wait=MENU_EDIT?220:MENU_LONGPRESS_MS;
+  if(MENU_EDIT&&isHandle){beginMenuDrag(item,e.pointerId,e.clientY);return}
+
+  // 편집모드가 아닐 때는 기존처럼 길게 눌러 편집모드 진입 가능.
   MENU_PRESS.timer=setTimeout(()=>{
     if(!MENU_PRESS||MENU_PRESS.pointerId!==e.pointerId)return;
     if(!MENU_EDIT)setMenuEdit(true);
     MENU_BLOCK_CLICK_UNTIL=Date.now()+700;
     try{navigator.vibrate?.(24)}catch(err){}
-    beginMenuDrag(item,e.pointerId);
-  },wait);
+    beginMenuDrag(item,e.pointerId,MENU_PRESS.lastY);
+  },MENU_LONGPRESS_MS);
 }
-function beginMenuDrag(item,pointerId){
+function beginMenuDrag(item,pointerId,startY){
   if(!item)return;
   if(MENU_PRESS?.timer){clearTimeout(MENU_PRESS.timer);MENU_PRESS.timer=null}
-  MENU_DRAG={item,pointerId};
+  MENU_DRAG={item,pointerId,lastY:Number.isFinite(startY)?startY:0};
   item.classList.add('menu-dragging');
   try{item.setPointerCapture?.(pointerId)}catch(e){}
+  startMenuAutoScroll();
+}
+function reorderMenuDragAt(clientY){
+  if(!MENU_DRAG)return;
+  const item=MENU_DRAG.item,d=document.getElementById('drawer'),anchor=document.getElementById('menuEditBar');
+  if(!d||!anchor)return;
+  const others=menuSortItems().filter(el=>el!==item);
+  others.forEach(el=>el.classList.remove('menu-drop-before'));
+  let before=null;
+  for(const el of others){
+    const r=el.getBoundingClientRect();
+    if(clientY<r.top+r.height/2){before=el;break}
+  }
+  if(before){before.classList.add('menu-drop-before');d.insertBefore(item,before)}
+  else d.insertBefore(item,anchor);
+}
+function startMenuAutoScroll(){
+  if(MENU_AUTO_SCROLL_RAF)return;
+  const tick=()=>{
+    if(!MENU_DRAG){MENU_AUTO_SCROLL_RAF=0;return}
+    const d=document.getElementById('drawer');
+    if(!d){MENU_AUTO_SCROLL_RAF=0;return}
+    const dr=d.getBoundingClientRect(),y=MENU_DRAG.lastY;
+    // 모바일에서 브라우저 하단 UI와 손가락 크기를 감안해 가장자리 감지 영역을 넓게 잡는다.
+    const edge=Math.min(130,Math.max(90,dr.height*.18));
+    let delta=0;
+    if(y<dr.top+edge){
+      const p=Math.min(1,Math.max(0,(dr.top+edge-y)/edge));
+      delta=-(4+Math.round(22*p));
+    }else if(y>dr.bottom-edge){
+      const p=Math.min(1,Math.max(0,(y-(dr.bottom-edge))/edge));
+      delta=4+Math.round(22*p);
+    }
+    if(delta){
+      const before=d.scrollTop;
+      d.scrollTop+=delta;
+      if(d.scrollTop!==before)reorderMenuDragAt(y);
+    }
+    MENU_AUTO_SCROLL_RAF=requestAnimationFrame(tick);
+  };
+  MENU_AUTO_SCROLL_RAF=requestAnimationFrame(tick);
+}
+function stopMenuAutoScroll(){
+  if(MENU_AUTO_SCROLL_RAF){cancelAnimationFrame(MENU_AUTO_SCROLL_RAF);MENU_AUTO_SCROLL_RAF=0}
 }
 function menuPointerMove(e){
   if(MENU_PRESS&&MENU_PRESS.pointerId===e.pointerId&&!MENU_DRAG){
@@ -2215,27 +2265,17 @@ function menuPointerMove(e){
   if(!MENU_DRAG||MENU_DRAG.pointerId!==e.pointerId)return;
   e.preventDefault();
   MENU_BLOCK_CLICK_UNTIL=Date.now()+500;
-  const item=MENU_DRAG.item,d=document.getElementById('drawer'),anchor=document.getElementById('menuEditBar');
-  const others=menuSortItems().filter(el=>el!==item);
-  others.forEach(el=>el.classList.remove('menu-drop-before'));
-  let before=null;
-  for(const el of others){
-    const r=el.getBoundingClientRect();
-    if(e.clientY<r.top+r.height/2){before=el;break}
-  }
-  if(before){before.classList.add('menu-drop-before');d.insertBefore(item,before)}
-  else d.insertBefore(item,anchor);
-  const dr=d.getBoundingClientRect();
-  if(e.clientY<dr.top+64)d.scrollBy({top:-14,behavior:'auto'});
-  else if(e.clientY>dr.bottom-64)d.scrollBy({top:14,behavior:'auto'});
+  MENU_DRAG.lastY=e.clientY;
+  reorderMenuDragAt(e.clientY);
 }
 function finishMenuDrag(save=true){
-  if(!MENU_DRAG)return;
+  if(!MENU_DRAG){stopMenuAutoScroll();return}
   const item=MENU_DRAG.item;
   try{item.releasePointerCapture?.(MENU_DRAG.pointerId)}catch(e){}
   item.classList.remove('menu-dragging');
   menuSortItems().forEach(el=>el.classList.remove('menu-drop-before'));
   MENU_DRAG=null;
+  stopMenuAutoScroll();
   if(save){saveMenuOrder();toast('메뉴 순서가 저장되었습니다')}
 }
 function menuPointerUp(e){
