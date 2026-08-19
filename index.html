@@ -946,7 +946,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.2</span>
+    <span class="rev">Rev 13.3</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1204,6 +1204,20 @@ header .hright{position:relative}
       <span id="t-count" style="font-size:12px;color:var(--gray)"></span>
       <button class="btn hxls" onclick="exportTryoutCSV()">엑셀</button>
       <button class="btn hpdf" onclick="exportTryoutPDF()">PDF</button>
+    </div>
+    <button class="wrbtn cfgtg" style="margin-bottom:10px" onclick="toggleWrite('cfg-tryout',this)">⚙️ 출력설정</button>
+    <div class="panel hide" id="cfg-tryout" style="margin-bottom:14px">
+      <h2>⚙️ T/O보고서 바닥글 (문서번호 · 회사명 · 용지)</h2>
+      <div class="row3">
+        <div class="fg"><label>좌측 — 문서번호</label><input id="cf-tryout-l" placeholder="예: IPQP-1234" oninput="prevFoot('tryout')"></div>
+        <div class="fg"><label>중앙 — 회사명</label><input id="cf-tryout-c" placeholder="예: 일평기연" oninput="prevFoot('tryout')"></div>
+        <div class="fg"><label>우측 — 용지 / 비고</label><input id="cf-tryout-r" placeholder="예: A4(210×297)" oninput="prevFoot('tryout')"></div>
+      </div>
+      <div class="ftprev" id="cf-tryout-p"></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="saveFoot('tryout')">💾 설정 저장</button>
+        <button class="btn" onclick="resetFoot('tryout')">기본값</button>
+      </div>
     </div>
     <div id="tlist"></div>
   </section>
@@ -2641,7 +2655,7 @@ function go(v,fromPop){
   if(v==='doc')loadDocSel();
   if(v==='hist')loadHist();
   if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
-  if(v==='tryout'){initTryout();loadTryout();}
+  if(v==='tryout'){initTryout();loadTryout();drawFoot('tryout');}
   if(v==='stock')loadStock();
   if(v==='ncr'){loadNcr();drawFoot('ncr');}
   if(v==='ecn'){loadEcn();drawFoot('ecn');}
@@ -4918,13 +4932,15 @@ function exportTryoutPDF(){
     td{border:1px solid #ddd;padding:4px 8px;line-height:1.55}
     .rimgs{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
     .rimgs img{width:150px;height:110px;object-fit:cover;border:1px solid #ddd;border-radius:4px}
-    .ft{margin-top:14px;text-align:right;font-size:10px;color:#999}
+    .ft{margin-top:14px;font-size:10px;color:#444;display:flex;justify-content:space-between;border-top:1px solid #999;padding-top:4px}
+    .ft span:nth-child(2){flex:1;text-align:center}
+    .ft span:nth-child(3){text-align:right}
     @media print{.noprint{display:none}}
   </style></head><body>
   <h1>T/O보고서 (Tryout 작업일지)</h1>
   <div class="sub">기간: ${period} &nbsp;|&nbsp; 총 ${TROWS.length}건 &nbsp;|&nbsp; 출력: ${new Date().toLocaleString('ko-KR')} (${USER||''})</div>
   ${body}
-  <div class="ft">금형제작관리 시스템</div>
+  <div class="ft"><span>${esc(footOf('tryout').l)}</span><span>${esc(footOf('tryout').c)}</span><span>${esc(footOf('tryout').r)}</span></div>
   <script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script>
   </body></html>`;
   const w=window.open('','_blank');
