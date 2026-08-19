@@ -468,6 +468,49 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .wrbtn{padding:9px 16px;border-radius:10px;border:1px solid var(--goldbd);background:var(--goldbg);color:var(--gold);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit}
 .wrbtn.open{background:var(--gold);color:#1a1d27}
 
+/* 검사성적: 탭 + 공정 기준 성적서 양식 */
+.itabs{display:flex;gap:6px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px}
+.itab{flex:1;padding:11px 10px;border-radius:9px;border:none;background:transparent;color:var(--sub);
+  font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.itab.on{background:var(--goldbg);color:var(--gold);box-shadow:inset 0 0 0 1px var(--goldbd)}
+.itab:not(.on):hover{color:var(--ink);background:rgba(255,255,255,.04)}
+.ifm-sum{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:11.5px;color:var(--gray);margin:0 2px 10px}
+.ifm-sum b{color:var(--gold)}
+.ifm-op{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 12px;overflow:hidden}
+.ifm-oph{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line2);background:rgba(226,176,74,.05)}
+.ifm-oph .no{font-size:13px;font-weight:900;color:var(--gold);font-family:ui-monospace,monospace}
+.ifm-oph .nm{font-size:13px;font-weight:800;color:var(--ink)}
+.ifm-oph .cnt{font-size:10.5px;color:var(--gray)}
+.ifm-oph .acts{margin-left:auto;display:flex;gap:5px}
+.ifm-oph .acts button{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--sub);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit}
+.ifm-oph .acts button:hover{border-color:var(--goldbd);color:var(--gold)}
+.ifm-rows{padding:8px 10px 12px}
+.ifm-row{display:grid;grid-template-columns:26px minmax(120px,1.5fr) 118px 108px 96px minmax(100px,1fr) 30px;
+  gap:7px;align-items:end;padding:8px 4px;border-bottom:1px dashed var(--line2)}
+.ifm-row:last-child{border-bottom:none}
+.ifm-row.ng{background:rgba(255,123,123,.07);border-radius:9px}
+.ifm-row.ok{background:rgba(126,224,160,.05);border-radius:9px}
+.ifm-row .idx{font-size:11px;color:var(--gray);font-family:ui-monospace,monospace;padding-bottom:9px;text-align:center}
+.ifm-row .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ifm-row .f label{font-size:9.5px;font-weight:800;color:var(--gray);letter-spacing:.02em}
+.ifm-row input,.ifm-row select{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:8px;
+  color:var(--ink);padding:8px 9px;font-size:12.5px;font-family:inherit;min-width:0}
+.ifm-row input:focus,.ifm-row select:focus{outline:none;border-color:var(--goldbd)}
+.ifm-row .f.item input{font-weight:700}
+.ifm-row .rm{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer;padding:8px 2px}
+.ifm-row .rm:hover{color:var(--red)}
+.ifm-tag{display:inline-block;font-size:9px;font-weight:800;padding:1px 5px;border-radius:5px;margin-right:4px}
+.ifm-tag.m{background:var(--goldbg);color:var(--gold)}
+.ifm-tag.h{background:rgba(79,140,255,.16);color:var(--blue)}
+.ifm-tag.s{background:rgba(126,224,160,.16);color:var(--green)}
+.ifm-empty{padding:22px 14px;text-align:center;color:var(--gray);font-size:12px;line-height:1.7}
+@media(max-width:780px){
+  .ifm-row{grid-template-columns:1fr 1fr;gap:7px 8px;padding:10px 4px}
+  .ifm-row .idx{grid-column:1/3;text-align:left;padding:0 0 2px}
+  .ifm-row .f.item,.ifm-row .f.memo{grid-column:1/3}
+  .ifm-row .rm{grid-column:1/3;justify-self:end;padding:2px 6px}
+  .itab{font-size:13px;padding:10px 6px}
+}
 /* 검사성적: 공정 저장항목 + 측정값을 합친 성적서 배치 */
 .inspplan{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 14px;overflow:hidden}
 .inspplan-hd{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-bottom:1px solid var(--line2);background:rgba(226,176,74,.04)}
@@ -801,7 +844,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 10.7</span>
+    <span class="rev">Rev 10.8</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1161,72 +1204,59 @@ header .hright{position:relative}
 
   <!-- 검사성적 -->
   <section id="v-insp" class="hide">
-    <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
-    <div class="psel">
-      <select id="inspsel" onchange="renderInsp()"></select>
+    <div class="psel" style="margin-bottom:10px">
+      <select id="inspsel" onchange="onInspProj()"></select>
       <span id="insprate" style="font-weight:700;color:var(--blue)"></span>
     </div>
-    <div class="stkbar">
-      <input type="date" id="if-from" onchange="renderInsp()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
-      <input type="date" id="if-to" onchange="renderInsp()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
-      <select id="if-op" onchange="renderInsp()"><option value="">전체 공정</option></select>
-      <select id="if-kind" onchange="renderInsp()"><option value="">전체 검사구분</option><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
-      <select id="if-judge" onchange="renderInsp()"><option value="">전체 판정</option><option>OK</option><option>NG</option><option>조건부 OK</option></select>
-      <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspCSV()">엑셀</button>
-      <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportInspPDF()">PDF</button>
-      <button class="btn" style="padding:8px 14px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)" onclick="submitInsp()">✍️ 결재 상신</button>
-    </div>
-    </div>
-    <button class="wrbtn" style="margin-bottom:12px" onclick="toggleWrite('inspwrite',this)">✏️ 신규 작성</button>
-    <div class="panel hide" id="inspwrite" style="margin-bottom:14px">
-      <h2>✏️ 검사성적 입력</h2>
-      <div id="in-quick" style="display:none;margin-bottom:12px">
-        <label style="font-size:12px;font-weight:700;color:var(--gold)">📌 등록된 검사항목 — 누르면 항목·규격이 채워집니다. 실측값만 입력하세요</label>
-        <div class="symrow" id="in-quickchips" style="margin-top:6px"></div>
-      </div>
-      <div class="row2">
-        <div class="fg"><label>공정</label><select id="in-op" onchange="renderInspQuick()"></select></div>
-        <div class="fg"><label>검사 구분</label>
-          <select id="in-kind" onchange="renderInspQuick()"><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select></div>
-      </div>
-      <div class="fg"><label>검사 항목 *</label><input id="in-item" placeholder="예: 코어 폭, 습합 확인, 경도 HRC" onfocus="SYMTGT=this"></div>
-      <div class="symrow">
-        <button type="button" onclick="insSym('Φ')">Φ</button><button type="button" onclick="insSym('°')">°</button>
-        <button type="button" onclick="insSym('±')">±</button><button type="button" onclick="insSym('×')">×</button>
-        <button type="button" onclick="insSym('㎜')">㎜</button><button type="button" onclick="insSym('R')">R</button>
-      </div>
-      <div class="row2">
-        <div class="fg"><label>규격 / 기준</label><input id="in-spec" placeholder="예: 50.00 ±0.02" onfocus="SYMTGT=this"></div>
-        <div class="fg"><label>실측값</label><input id="in-actual" placeholder="예: 50.01" onfocus="SYMTGT=this"></div>
-      </div>
-      <div class="row2">
-        <div class="fg"><label>판정 *</label><select id="in-judge"><option>OK</option><option>NG</option><option>조건부 OK</option></select></div>
-        <div class="fg"><label>검사자</label><input id="in-worker"></div>
-      </div>
-      <div class="fg"><label>비고</label><input id="in-memo" placeholder="계측기, 조건 등"></div>
-      <button class="btn btn-p" onclick="saveInsp()">검사성적 저장</button>
+
+    <div class="itabs">
+      <button class="itab on" id="itab-make" onclick="inspTab('make')">📝 성적서 만들기</button>
+      <button class="itab" id="itab-log" onclick="inspTab('log')">📚 성적서 작성기록</button>
     </div>
 
-    <div class="inspplan" id="inspplan">
-      <div class="inspplan-hd">
-        <div>
-          <div class="t">📋 성적서 항목 배치 <span id="inspplan-count" style="color:var(--sub);font-size:10.5px"></span></div>
-          <div class="s" id="inspplan-help">공정설계에 저장한 업무 항목을 기본 순서로 불러오고, 같은 항목의 최근 측정값을 자동 결합합니다. ☰ 드래그(PC) 또는 ▲▼로 순서를 바꾸면 이 브라우저에 저장되며 PDF·결재 성적서에도 같은 순서가 적용됩니다.</div>
+    <!-- ===== 탭1: 성적서 만들기 ===== -->
+    <div id="insp-make">
+      <div class="qfbox"><span class="qflb">📝 성적서 기준</span>
+        <div class="stkbar">
+          <select id="im-op" onchange="buildInspForm()"><option value="">전 공정</option></select>
+          <select id="im-kind" onchange="buildInspForm()"><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
+          <input type="date" id="im-date" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
+          <input id="im-worker" placeholder="검사자" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit;width:100px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);font-weight:700">
+            <input type="checkbox" id="im-onlytask" checked onchange="buildInspForm()" style="width:15px;height:15px"> 항목 있는 공정만
+          </label>
         </div>
-        <div class="acts"><button type="button" onclick="resetInspPlanLayout()">기본 순서</button></div>
+        <div class="stkbar">
+          <button class="btn btn-p" style="padding:9px 16px" onclick="saveInspForm()">💾 성적서 저장</button>
+          <button class="btn" style="padding:8px 12px" onclick="allOkInspForm()">전체 OK</button>
+          <button class="btn" style="padding:8px 12px" onclick="clearInspForm()">입력 초기화</button>
+          <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspCSV()">엑셀</button>
+          <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportInspPDF()">PDF</button>
+          <button class="btn" style="padding:8px 14px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)" onclick="submitInsp()">✍️ 결재 상신</button>
+        </div>
       </div>
-      <div class="inspplan-scroll">
-        <table class="inspplan-tbl">
-          <thead><tr><th style="width:92px">배치</th><th style="width:100px">공정</th><th style="width:86px">구분</th><th>항목</th><th style="width:110px">규격</th><th style="width:86px">실측</th><th style="width:60px">판정</th><th style="width:68px">검사자</th><th style="width:55px">상태</th><th style="width:50px"></th></tr></thead>
-          <tbody id="inspplanbody"></tbody>
-        </table>
-      </div>
+      <div class="ifm-sum" id="ifm-sum"></div>
+      <div id="inspform"></div>
     </div>
 
-    <div style="font-size:11px;font-weight:800;color:var(--gray);margin:0 0 6px 2px">측정 이력</div>
-    <div class="tscroll"><table class="wide">
-      <thead><tr><th>일시</th><th>공정</th><th>구분</th><th>항목</th><th>규격</th><th>실측</th><th>판정</th><th>검사자</th><th></th></tr></thead>
-      <tbody id="inspbody"></tbody></table></div>
+    <!-- ===== 탭2: 성적서 작성기록 ===== -->
+    <div id="insp-log" class="hide">
+      <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
+        <div class="stkbar">
+          <input type="date" id="if-from" onchange="renderInspLog()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
+          <input type="date" id="if-to" onchange="renderInspLog()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
+          <select id="if-op" onchange="renderInspLog()"><option value="">전체 공정</option></select>
+          <select id="if-kind" onchange="renderInspLog()"><option value="">전체 검사구분</option><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
+          <select id="if-judge" onchange="renderInspLog()"><option value="">전체 판정</option><option>OK</option><option>NG</option><option>조건부 OK</option></select>
+          <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspLogCSV()">엑셀</button>
+          <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportInspPDF()">PDF</button>
+          <button class="btn" style="padding:8px 14px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)" onclick="submitInsp()">✍️ 결재 상신</button>
+        </div>
+      </div>
+      <div class="tscroll"><table class="wide">
+        <thead><tr><th>일시</th><th>공정</th><th>구분</th><th>항목</th><th>규격</th><th>실측</th><th>판정</th><th>검사자</th><th></th></tr></thead>
+        <tbody id="inspbody"></tbody></table></div>
+    </div>
   </section>
 
   <!-- 부적합·시정조치 -->
@@ -3694,36 +3724,221 @@ function qaOpt(x){return `<option value="${x.id}">${x.mold_type==='수리'?'[수
 function qaMold(id){const p=QAPJ.find(x=>x.id===id);return p?p.mold_no+' '+p.mold_name:''}
 function today(){return new Date().toISOString().slice(0,10)}
 
-/* ===== 검사성적 ===== */
+/* ===== 검사성적: 성적서 만들기 / 작성기록 ===== */
+let INSPTAB='make', INSPFORM=[];
+const INSP_JUDGE=['','OK','NG','조건부 OK'];
+
 async function loadInsp(){
   await loadQaProjects();
   const sel=document.getElementById('inspsel');const cur=sel.value;
   sel.innerHTML=QAPJ.map(qaOpt).join('')||'<option value="">등록된 금형 없음</option>';
-  if(cur)sel.value=cur;
-  document.getElementById('in-worker').value=USER||'';
-  renderInsp();
+  if(cur&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
+  if(!g('im-date'))document.getElementById('im-date').value=today();
+  if(!g('im-worker'))document.getElementById('im-worker').value=USER||'';
+  await renderInsp();
 }
-function inspOps(){
-  const pid=document.getElementById('inspsel').value;
-  const pj=QAPJ.find(x=>x.id===pid);
-  document.getElementById('in-op').innerHTML='<option value="">공정 선택 안함</option>'+
-    FM(pflow(pj)).map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
+function inspTab(t){
+  INSPTAB=t;
+  document.getElementById('itab-make').classList.toggle('on',t==='make');
+  document.getElementById('itab-log').classList.toggle('on',t==='log');
+  document.getElementById('insp-make').classList.toggle('hide',t!=='make');
+  document.getElementById('insp-log').classList.toggle('hide',t!=='log');
+  if(t==='make')buildInspForm();else renderInspLog();
+}
+async function onInspProj(){await renderInsp()}
+function inspProj(){return QAPJ.find(x=>String(x.id)===String(document.getElementById('inspsel').value))}
+function inspFlow(){return FM(pflow(inspProj()))}
+function inspOpOptions(selId,allLabel){
+  const el=document.getElementById(selId);if(!el)return;
+  const cur=el.value;
+  el.innerHTML=`<option value="">${allLabel}</option>`+
+    inspFlow().map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
+  if([...el.options].some(o=>o.value===cur))el.value=cur;
 }
 async function renderInsp(){
   const pid=document.getElementById('inspsel').value;
-  const tb=document.getElementById('inspbody');
-  if(!pid){tb.innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';return}
-  inspOps();
-  // 조회용 공정 필터: 이 금형의 플로우(신작 OP / 수리 RP) 공정만
-  const pj=QAPJ.find(x=>x.id===pid);
-  const fo=document.getElementById('if-op');const foCur=fo.value;
-  fo.innerHTML='<option value="">전체 공정</option>'+
-    FM(pflow(pj)).map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
-  if([...fo.options].some(o=>o.value===foCur))fo.value=foCur;
+  if(!pid){
+    document.getElementById('inspform').innerHTML='<div class="ifm-empty">먼저 금형을 등록하세요</div>';
+    document.getElementById('inspbody').innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';
+    return;
+  }
+  inspOpOptions('im-op','전 공정');
+  inspOpOptions('if-op','전체 공정');
   try{INSP=await api("/mm_inspect?select=*&project_id=eq."+pid+"&order=created_at.desc");}
-  catch(e){tb.innerHTML='<tr><td colspan="9" class="empty">patch_rev90.sql을 Supabase에서 실행하세요</td></tr>';return}
-  renderInspQuick();
-  const f1=g('if-from'),f2=g('if-to'),fk=document.getElementById('if-kind').value,fj=document.getElementById('if-judge').value,fop=document.getElementById('if-op').value;
+  catch(e){
+    INSP=[];
+    document.getElementById('inspbody').innerHTML='<tr><td colspan="9" class="empty">patch_rev90.sql을 Supabase에서 실행하세요</td></tr>';
+  }
+  renderInspLog();
+  buildInspForm();
+}
+
+/* ----- 탭1: 금형 공정 기준 성적서 양식 ----- */
+function buildInspForm(){
+  const pid=document.getElementById('inspsel').value;
+  const box=document.getElementById('inspform');
+  if(!pid){box.innerHTML='<div class="ifm-empty">먼저 금형을 선택하세요</div>';return}
+  const kind=document.getElementById('im-kind').value;
+  const fop=document.getElementById('im-op').value;
+  const onlyTask=document.getElementById('im-onlytask').checked;
+  const flow=inspFlow().filter(m=>!fop||m.op_code===fop);
+  const keep=new Map(INSPFORM.map(r=>[r._k,r]));  // 화면 입력값 유지
+  const rows=[];
+  flow.forEach(m=>{
+    const seen=new Set();
+    (m.tasks||[]).forEach(item=>{
+      if(!item||seen.has(item))return;seen.add(item);
+      rows.push(mkInspRow(m.op_code,kind,item,'master',keep));
+    });
+    // 공정설계에 없지만 실제 저장된 항목 이어붙임
+    INSP.filter(r=>r.op_code===m.op_code&&r.kind===kind).forEach(r=>{
+      if(seen.has(r.item))return;seen.add(r.item);
+      rows.push(mkInspRow(m.op_code,kind,r.item,'hist',keep));
+    });
+  });
+  // 공정 미지정으로 저장된 기록
+  if(!fop){
+    const seen=new Set();
+    INSP.filter(r=>!r.op_code&&r.kind===kind).forEach(r=>{
+      if(seen.has(r.item))return;seen.add(r.item);
+      rows.push(mkInspRow('',kind,r.item,'hist',keep));
+    });
+  }
+  // 사용자가 이 화면에서 추가한 신규 행 유지
+  INSPFORM.filter(r=>r._src==='new'&&r.kind===kind&&(!fop||r.op_code===fop)).forEach(r=>{
+    if(!rows.some(x=>x._k===r._k))rows.push(r);
+  });
+  INSPFORM=rows;
+  drawInspForm(onlyTask,fop,kind);
+}
+function mkInspRow(op,kind,item,src,keep){
+  const k=(op||'')+'|'+kind+'|'+item;
+  const prev=keep&&keep.get(k);
+  const saved=INSP.find(r=>(r.op_code||'')===(op||'')&&r.kind===kind&&r.item===item);
+  if(prev)return Object.assign(prev,{_saved:!!saved,id:saved?saved.id:prev.id||null});
+  return {_k:k,_src:src,_saved:!!saved,id:saved?saved.id:null,
+    op_code:op||'',kind:kind,item:item,
+    spec:saved?(saved.spec||''):'',actual:saved?(saved.actual||''):'',
+    judge:saved?(saved.judge||''):'',memo:saved?(saved.memo||''):'',
+    worker:saved?(saved.worker||''):'',created_at:saved?saved.created_at:''};
+}
+function drawInspForm(onlyTask,fop,kind){
+  const box=document.getElementById('inspform');
+  const flow=inspFlow().filter(m=>!fop||m.op_code===fop);
+  const byOp=new Map();
+  INSPFORM.forEach((r,i)=>{const k=r.op_code||'';if(!byOp.has(k))byOp.set(k,[]);byOp.get(k).push(i)});
+  const ops=flow.map(m=>m.op_code).filter(c=>!onlyTask||(byOp.get(c)||[]).length);
+  if(byOp.has('')&&(byOp.get('')||[]).length)ops.push('');
+  if(!ops.length){
+    box.innerHTML='<div class="ifm-empty">이 금형 공정에 등록된 검사 항목이 없습니다.<br>설정 → 공정설계에서 공정별 업무내용을 저장하면 성적서 양식이 자동 생성됩니다.<br>또는 아래 공정 카드의 <b>+ 항목</b>으로 직접 추가하세요.<br><br>'+
+      flow.map(m=>`<button class="btn" style="margin:3px;padding:7px 11px;font-size:11.5px" onclick="addInspRow('${m.op_code}')">+ ${opN(m.op_code)} ${esc(m.process_name)}</button>`).join('')+'</div>';
+    drawInspSum();return;
+  }
+  box.innerHTML=ops.map(op=>{
+    const idxs=byOp.get(op)||[];
+    const done=idxs.filter(i=>INSPFORM[i].actual||INSPFORM[i].judge).length;
+    return `<div class="ifm-op">
+      <div class="ifm-oph">
+        ${op?`<span class="no">${opN(op)}</span><span class="nm">${esc(mName(op))}</span>`:'<span class="nm">공정 미지정</span>'}
+        <span class="cnt">${idxs.length}항목 · 입력 ${done}</span>
+        <div class="acts">
+          <button type="button" onclick="opAllOk('${op}')">전체 OK</button>
+          <button type="button" onclick="addInspRow('${op}')">+ 항목</button>
+        </div>
+      </div>
+      <div class="ifm-rows">${idxs.map((i,n)=>inspRowHtml(INSPFORM[i],i,n+1)).join('')||'<div class="ifm-empty" style="padding:12px">항목 없음 — + 항목으로 추가</div>'}</div>
+    </div>`;
+  }).join('');
+  drawInspSum();
+}
+function inspRowHtml(r,i,n){
+  const cls=r.judge==='NG'?'ng':(r.judge==='OK'?'ok':'');
+  const tag=r._src==='master'?'<span class="ifm-tag m">공정</span>':(r._src==='new'?'<span class="ifm-tag h">추가</span>':'<span class="ifm-tag h">이력</span>');
+  return `<div class="ifm-row ${cls}">
+    <div class="idx">${n}</div>
+    <div class="f item"><label>${tag}${r._saved?'<span class="ifm-tag s">저장됨</span>':''}검사 항목</label>
+      <input value="${esc(r.item||'')}" oninput="setInspRow(${i},'item',this.value)" placeholder="예: 코어 폭"></div>
+    <div class="f"><label>규격 / 기준</label><input value="${esc(r.spec||'')}" oninput="setInspRow(${i},'spec',this.value)" placeholder="50.00 ±0.02"></div>
+    <div class="f"><label>실측값</label><input value="${esc(r.actual||'')}" oninput="setInspRow(${i},'actual',this.value)" placeholder="50.01"></div>
+    <div class="f"><label>판정</label><select onchange="setInspRow(${i},'judge',this.value,1)">${INSP_JUDGE.map(j=>`<option value="${j}"${r.judge===j?' selected':''}>${j||'미측정'}</option>`).join('')}</select></div>
+    <div class="f memo"><label>비고 (계측기·조건)</label><input value="${esc(r.memo||'')}" oninput="setInspRow(${i},'memo',this.value)"></div>
+    <button class="rm" title="행 삭제" onclick="rmInspRow(${i})">✕</button>
+  </div>`;
+}
+function drawInspSum(){
+  const el=document.getElementById('ifm-sum');if(!el)return;
+  const tot=INSPFORM.length;
+  const inp=INSPFORM.filter(r=>r.actual||r.judge).length;
+  const ng=INSPFORM.filter(r=>r.judge==='NG').length;
+  const sv=INSPFORM.filter(r=>r._saved).length;
+  const pj=inspProj();
+  el.innerHTML=tot?`<span>📋 <b>${tot}</b>항목</span><span>· 입력 <b>${inp}</b></span><span>· 저장됨 <b>${sv}</b></span>`+
+    (ng?`<span style="color:var(--red);font-weight:800">· NG ${ng}</span>`:'')+
+    `<span style="margin-left:auto">${pj?esc(pj.mold_no)+' '+esc(pj.mold_name):''} · ${esc(g('im-date')||today())}</span>`:'';
+}
+function setInspRow(i,f,v,redraw){
+  if(!INSPFORM[i])return;
+  INSPFORM[i][f]=v;
+  if(redraw){drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value)}
+  else drawInspSum();
+}
+function addInspRow(op){
+  const kind=document.getElementById('im-kind').value;
+  const k=(op||'')+'|'+kind+'|__new'+Date.now();
+  INSPFORM.push({_k:k,_src:'new',_saved:false,id:null,op_code:op||'',kind:kind,item:'',spec:'',actual:'',judge:'',memo:'',worker:'',created_at:''});
+  drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,kind);
+}
+function rmInspRow(i){
+  const r=INSPFORM[i];if(!r)return;
+  if(r.id){if(!confirm('저장된 검사 기록입니다. 삭제할까요?'))return;delInsp(r.id);return}
+  INSPFORM.splice(i,1);
+  drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
+}
+function opAllOk(op){
+  INSPFORM.forEach(r=>{if((r.op_code||'')===(op||'')&&r.item&&!r.judge)r.judge='OK'});
+  drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
+}
+function allOkInspForm(){
+  INSPFORM.forEach(r=>{if(r.item&&!r.judge)r.judge='OK'});
+  drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
+  toast('판정 미입력 항목을 OK로 채웠습니다');
+}
+function clearInspForm(){
+  if(!confirm('화면에 입력한 실측·판정 값을 지울까요? (저장된 기록은 유지)'))return;
+  INSPFORM.forEach(r=>{if(!r._saved){r.actual='';r.judge='';r.memo=''}});
+  drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
+}
+async function saveInspForm(){
+  const pid=document.getElementById('inspsel').value;
+  if(!pid)return toast('금형을 선택하세요');
+  const worker=g('im-worker')||USER||null;
+  const tg=INSPFORM.filter(r=>r.item&&(r.actual||r.judge));
+  if(!tg.length)return toast('실측값 또는 판정을 입력한 항목이 없습니다');
+  let ins=0,upd=0,ng=0;
+  try{
+    for(const r of tg){
+      const body={project_id:pid,op_code:r.op_code||null,kind:r.kind,item:r.item,
+        spec:r.spec||null,actual:r.actual||null,judge:r.judge||'OK',worker:worker,memo:r.memo||null};
+      if(r.judge==='NG')ng++;
+      if(r.id){await api(`/mm_inspect?id=eq.${r.id}`,{method:"PATCH",body:JSON.stringify(body)});upd++}
+      else{await api("/mm_inspect",{method:"POST",body:JSON.stringify(body)});ins++}
+    }
+    const kind=document.getElementById('im-kind').value;
+    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,
+      op_code:document.getElementById('im-op').value||null,action:'검사',
+      detail:`검사성적서 작성 [${kind}] ${tg.length}항목 (신규 ${ins} / 수정 ${upd}${ng?' · NG '+ng:''})`,worker})});
+    toast(`성적서 저장 완료 — 신규 ${ins} · 수정 ${upd}`+(ng?` · NG ${ng}건, NCR 등록 권장`:''));
+    await renderInsp();
+  }catch(e){toast('저장 실패: '+e.message)}
+}
+
+/* ----- 탭2: 성적서 작성기록 ----- */
+function renderInspLog(){
+  const tb=document.getElementById('inspbody');if(!tb)return;
+  const pid=document.getElementById('inspsel').value;
+  if(!pid){tb.innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';return}
+  const f1=g('if-from'),f2=g('if-to'),fk=document.getElementById('if-kind').value,
+        fj=document.getElementById('if-judge').value,fop=document.getElementById('if-op').value;
   INSPV=INSP.filter(r=>{
     const d=String(r.created_at).slice(0,10);
     return (!f1||d>=f1)&&(!f2||d<=f2)&&(!fk||r.kind===fk)&&(!fj||r.judge===fj)&&(!fop||r.op_code===fop);
@@ -3740,184 +3955,30 @@ async function renderInsp(){
     <td class="${r.judge==='NG'?'jd-ng':r.judge==='OK'?'jd-ok':'jd-cond'}">${esc(r.judge)}</td>
     <td>${esc(r.worker||'-')}</td>
     <td><button class="del" onclick="delInsp(${r.id})">✕</button></td>
-  </tr>`).join('')||'<tr><td colspan="9" class="empty">검사 기록이 없습니다</td></tr>';
-  renderInspPlan();
-}
-function renderInspQuick(){
-  const box=document.getElementById('in-quick');
-  const kind=document.getElementById('in-kind').value;
-  const op=document.getElementById('in-op').value;
-  const seen=new Set(),tpl=[];
-
-  // 선택한 공정에 설정 > 공정설계에서 저장한 업무항목을 먼저 표시
-  if(op){
-    const m=MASTER.find(x=>x.op_code===op);
-    if(m)(m.tasks||[]).forEach(item=>{
-      const latest=INSP.find(r=>r.op_code===op&&r.kind===kind&&r.item===item);
-      const r={op_code:op,kind:kind,item:item,spec:latest?.spec||'',_src:'master'};
-      const key=op+'|'+item;if(seen.has(key))return;seen.add(key);tpl.push(r);
-    });
-  }
-
-  // 기존 측정에서 직접 추가했던 검사 항목은 뒤에 이어 붙임
-  INSP.filter(r=>r.kind===kind&&(!op||r.op_code===op)).forEach(r=>{
-    const key=(r.op_code||'')+'|'+r.item;
-    if(seen.has(key))return;seen.add(key);
-    tpl.push({...r,_src:'hist'});
-  });
-  const lb=box.querySelector('label');
-  if(lb)lb.innerHTML='📌 <b>'+(op?opN(op)+' '+esc(mName(op))+' · ':'')+esc(kind)+'</b> 공정 저장항목 + 기존 검사항목 — 누르면 채워집니다. 실측값만 입력하세요';
-  if(!tpl.length){box.style.display='none';return}
-  box.style.display='';
-  const showOp=!op;
-  document.getElementById('in-quickchips').innerHTML=tpl.slice(0,30).map(r=>
-    `<button type="button" style="font-family:inherit;font-size:12px" onclick='fillInsp(${JSON.stringify({op:r.op_code||"",kind:r.kind||"",item:r.item,spec:r.spec||""}).replace(/'/g,"&#39;")})'>${r._src==='master'?'<span style="color:var(--gold);font-weight:900">●</span> ':''}${showOp&&r.op_code?'<span style="opacity:.55">'+opN(r.op_code)+'</span> ':''}${esc(r.item)}${r.spec?' <span style="opacity:.6">'+esc(r.spec)+'</span>':''}</button>`).join('');
-}
-function fillInsp(t){
-  document.getElementById('in-op').value=t.op;
-  document.getElementById('in-kind').value=t.kind||'부품 치수';
-  document.getElementById('in-item').value=t.item;
-  document.getElementById('in-spec').value=t.spec;
-  document.getElementById('in-actual').value='';
-  document.getElementById('in-judge').value='OK';
-  const a=document.getElementById('in-actual');a.focus();
-}
-
-/* ----- 검사성적 항목 배치: 공정설계 업무항목 + 검사이력 결합 ----- */
-const INSP_LAYOUT_KEY='mm_insp_layout_v1';
-let INSPPLAN=[];
-let INSP_DRAG_FROM=null;
-function inspLayoutRead(){
-  try{const x=JSON.parse(localStorage.getItem(INSP_LAYOUT_KEY)||'{}');return x&&typeof x==='object'?x:{}}catch(e){return {}}
-}
-function inspLayoutScope(){
-  const pid=document.getElementById('inspsel')?.value||'';
-  const op=document.getElementById('if-op')?.value||'';
-  const kind=document.getElementById('if-kind')?.value||'';
-  return pid+'|'+(op||'ALL')+'|'+(kind||'ALL');
-}
-function inspPlanKey(r){
-  return [r.op_code||'',r.kind||'',r.item||''].join('|');
-}
-function inspPlanBase(){
-  const pid=document.getElementById('inspsel')?.value||'';
-  if(!pid)return [];
-  const fop=document.getElementById('if-op')?.value||'';
-  const fk=document.getElementById('if-kind')?.value||'';
-  const pj=QAPJ.find(x=>String(x.id)===String(pid));
-  const flow=FM(pflow(pj));
-  const ops=fop?flow.filter(m=>m.op_code===fop):flow;
-  const out=[],seen=new Set();
-
-  // 1) 설정 > 공정설계의 업무내용을 기본 성적서 항목으로 사용 (저장 순서 유지)
-  ops.forEach(m=>{
-    (m.tasks||[]).forEach((item,idx)=>{
-      const latest=INSPV.find(r=>r.op_code===m.op_code&&r.item===item&&(!fk||r.kind===fk));
-      const row={
-        _source:'master',_taskIndex:idx,
-        op_code:m.op_code,kind:(latest&&latest.kind)||(fk||'공정 항목'),item:item,
-        spec:(latest&&latest.spec)||'',actual:(latest&&latest.actual)||'',judge:(latest&&latest.judge)||'',
-        worker:(latest&&latest.worker)||'',memo:(latest&&latest.memo)||'',created_at:(latest&&latest.created_at)||'',
-        id:(latest&&latest.id)||null,_measured:!!latest
-      };
-      const k=inspPlanKey(row);if(seen.has(k))return;seen.add(k);out.push(row);
-    });
-  });
-
-  // 2) 공정설계에는 없지만 실제 검사에서 추가했던 항목은 뒤에 붙여 누락 방지
-  INSPV.forEach(r=>{
-    if(fop&&r.op_code!==fop)return;
-    if(fk&&r.kind!==fk)return;
-    const row={...r,_source:'hist',_measured:true};
-    const k=inspPlanKey(row);if(seen.has(k))return;seen.add(k);out.push(row);
-  });
-  return out;
-}
-function inspPlanOrdered(){
-  const base=inspPlanBase();
-  const data=inspLayoutRead(),order=data[inspLayoutScope()]||[];
-  if(!order.length)return base;
-  const mp=new Map(base.map(r=>[inspPlanKey(r),r])),out=[];
-  order.forEach(k=>{const r=mp.get(k);if(r){out.push(r);mp.delete(k)}});
-  base.forEach(r=>{const k=inspPlanKey(r);if(mp.has(k)){out.push(r);mp.delete(k)}});
-  return out;
-}
-function saveInspPlanLayout(){
-  const data=inspLayoutRead();
-  data[inspLayoutScope()]=INSPPLAN.map(inspPlanKey);
-  try{localStorage.setItem(INSP_LAYOUT_KEY,JSON.stringify(data))}catch(e){}
-}
-function resetInspPlanLayout(){
-  const data=inspLayoutRead();delete data[inspLayoutScope()];
-  try{localStorage.setItem(INSP_LAYOUT_KEY,JSON.stringify(data))}catch(e){}
-  renderInspPlan();toast('성적서 항목 순서를 기본값으로 복원했습니다');
-}
-function moveInspPlan(i,d){
-  const j=i+d;if(j<0||j>=INSPPLAN.length)return;
-  [INSPPLAN[i],INSPPLAN[j]]=[INSPPLAN[j],INSPPLAN[i]];
-  saveInspPlanLayout();drawInspPlan();
-}
-function useInspPlan(i){
-  const r=INSPPLAN[i];if(!r)return;
-  const btn=document.querySelector('#v-insp .wrbtn');
-  const w=document.getElementById('inspwrite');
-  if(w.classList.contains('hide'))toggleWrite('inspwrite',btn);
-  document.getElementById('in-op').value=r.op_code||'';
-  document.getElementById('in-kind').value=(r.kind&&r.kind!=='공정 항목')?r.kind:'부품 치수';
-  document.getElementById('in-item').value=r.item||'';
-  document.getElementById('in-spec').value=r.spec||'';
-  document.getElementById('in-actual').value='';
-  document.getElementById('in-judge').value='OK';
-  renderInspQuick();
-  setTimeout(()=>document.getElementById('in-actual')?.focus(),30);
-}
-function renderInspPlan(){
-  INSPPLAN=inspPlanOrdered();drawInspPlan();
-}
-function drawInspPlan(){
-  const tb=document.getElementById('inspplanbody');if(!tb)return;
-  const cnt=document.getElementById('inspplan-count');
-  if(cnt){const done=INSPPLAN.filter(r=>r._measured).length;cnt.textContent=INSPPLAN.length?' · '+INSPPLAN.length+'항목 / 측정 '+done:' · 0항목'}
-  if(!INSPPLAN.length){
-    tb.innerHTML='<tr><td colspan="10"><div class="inspplan-empty">공정설계의 업무내용 또는 현재 조회조건에 해당하는 검사 항목이 없습니다.<br>설정 → 공정설계에서 공정별 업무내용을 저장하면 여기에 기본 항목으로 표시됩니다.</div></td></tr>';return;
-  }
-  tb.innerHTML=INSPPLAN.map((r,i)=>`<tr class="${r._measured?'measured':'unmeasured'}" draggable="true" data-i="${i}" ondragstart="inspPlanDragStart(event,${i})" ondragover="inspPlanDragOver(event,${i})" ondragleave="this.classList.remove('ipdrop')" ondrop="inspPlanDrop(event,${i})" ondragend="inspPlanDragEnd()">
-    <td><div class="ipord"><span class="drag" title="드래그하여 순서 변경">☰</span><button ${i===0?'disabled':''} onclick="moveInspPlan(${i},-1)">▲</button><button ${i===INSPPLAN.length-1?'disabled':''} onclick="moveInspPlan(${i},1)">▼</button></div></td>
-    <td>${r.op_code?'<b class="mono" style="color:var(--gold)">'+opN(r.op_code)+'</b> '+esc(mName(r.op_code)):'-'}</td>
-    <td>${esc(r.kind||'')}</td>
-    <td><span class="ipsrc ${r._source==='master'?'master':'hist'}">${r._source==='master'?'공정저장':'검사추가'}</span> <b>${esc(r.item||'')}</b>${r.memo?'<br><span style="font-size:9.5px;color:var(--gray)">'+esc(r.memo)+'</span>':''}</td>
-    <td class="mono">${esc(r.spec||'-')}</td>
-    <td class="mono">${esc(r.actual||'-')}</td>
-    <td class="${r.judge==='NG'?'jd-ng':r.judge==='OK'?'jd-ok':'jd-cond'}">${esc(r.judge||'-')}</td>
-    <td>${esc(r.worker||'-')}</td>
-    <td><span class="ipstate ${r._measured?'done':'wait'}">${r._measured?'측정됨':'미측정'}</span></td>
-    <td><button class="ipuse" onclick="useInspPlan(${i})">입력</button></td>
-  </tr>`).join('');
-}
-function inspPlanDragStart(e,i){INSP_DRAG_FROM=i;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(i))}catch(err){};e.currentTarget.classList.add('ipdrag')}
-function inspPlanDragOver(e,i){e.preventDefault();document.querySelectorAll('#inspplanbody tr.ipdrop').forEach(x=>x.classList.remove('ipdrop'));e.currentTarget.classList.add('ipdrop');e.dataTransfer.dropEffect='move'}
-function inspPlanDrop(e,i){e.preventDefault();const from=INSP_DRAG_FROM;if(from==null||from===i){inspPlanDragEnd();return}const [r]=INSPPLAN.splice(from,1);INSPPLAN.splice(i,0,r);saveInspPlanLayout();drawInspPlan();INSP_DRAG_FROM=null}
-function inspPlanDragEnd(){document.querySelectorAll('#inspplanbody tr').forEach(x=>x.classList.remove('ipdrag','ipdrop'));INSP_DRAG_FROM=null}
-function getInspReportRows(){return INSPPLAN.length?INSPPLAN:inspPlanOrdered()}
-async function saveInsp(){
-  const pid=document.getElementById('inspsel').value;
-  if(!pid)return toast('금형을 선택하세요');
-  const item=g('in-item');if(!item)return toast('검사 항목을 입력하세요');
-  const judge=document.getElementById('in-judge').value;
-  const body={project_id:pid,op_code:document.getElementById('in-op').value||null,
-    kind:document.getElementById('in-kind').value,item,spec:g('in-spec')||null,actual:g('in-actual')||null,
-    judge,worker:g('in-worker')||null,memo:g('in-memo')||null};
-  try{
-    await api("/mm_inspect",{method:"POST",body:JSON.stringify(body)});
-    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,op_code:body.op_code,action:'검사',
-      detail:'검사 ['+judge+'] '+body.kind+' — '+item+(body.actual?' 실측 '+body.actual:''),worker:body.worker})});
-    ['in-item','in-spec','in-actual','in-memo'].forEach(x=>document.getElementById(x).value='');
-    toast('검사성적 저장 완료'+(judge==='NG'?' — NCR 등록을 권장합니다':''));renderInsp();
-  }catch(e){toast('저장 실패: '+e.message)}
+  </tr>`).join('')||'<tr><td colspan="9" class="empty">작성된 성적서 기록이 없습니다</td></tr>';
 }
 async function delInsp(id){
   if(!confirm('검사 기록을 삭제할까요?'))return;
-  await api(`/mm_inspect?id=eq.${id}`,{method:"DELETE"});renderInsp();
+  await api(`/mm_inspect?id=eq.${id}`,{method:"DELETE"});
+  await renderInsp();
+}
+
+/* ----- 출력 공통 ----- */
+function getInspReportRows(){
+  if(INSPTAB==='make'){
+    return INSPFORM.filter(r=>r.item).map(r=>Object.assign({},r,{
+      worker:r.worker||g('im-worker')||USER||'',
+      _measured:!!(r.actual||r.judge),_source:r._src==='master'?'master':'hist'}));
+  }
+  return INSPV.map(r=>Object.assign({},r,{_measured:true,_source:'hist'}));
+}
+function inspFilterLabel(){
+  if(INSPTAB==='make'){
+    const op=document.getElementById('im-op').value;
+    return qaFilterLabel(g('im-date'),g('im-date'),[['공정',op?opN(op)+' '+mName(op):'전 공정'],['구분',document.getElementById('im-kind').value]]);
+  }
+  const fop=document.getElementById('if-op').value;
+  return qaFilterLabel(g('if-from'),g('if-to'),[['공정',fop?opN(fop)+' '+mName(fop):''],['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
 }
 function exportInspCSV(){
   const src=getInspReportRows();
@@ -3925,7 +3986,14 @@ function exportInspCSV(){
   const pid=document.getElementById('inspsel').value;
   const head=['순번','공정','구분','항목','규격','실측','판정','검사자','상태','일시','비고'];
   const rows=src.map((r,i)=>[i+1,r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.kind||'',r.item||'',r.spec||'',r.actual||'',r.judge||'',r.worker||'',r._measured?'측정됨':'미측정',r.created_at?fmt(r.created_at):'',r.memo||'']);
-  dlCSV('검사성적 - '+qaMold(pid),head,rows,'검사성적');
+  dlCSV('검사성적서 - '+qaMold(pid),head,rows,'검사성적서');
+}
+function exportInspLogCSV(){
+  if(!INSPV.length)return toast('출력할 기록이 없습니다');
+  const pid=document.getElementById('inspsel').value;
+  const head=['일시','공정','구분','항목','규격','실측','판정','검사자','비고'];
+  const rows=INSPV.map(r=>[fmt(r.created_at),r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.kind||'',r.item||'',r.spec||'',r.actual||'',r.judge||'',r.worker||'',r.memo||'']);
+  dlCSV('성적서 작성기록 - '+qaMold(pid),head,rows,'성적서작성기록');
 }
 
 /* ===== NCR ===== */
@@ -4503,8 +4571,7 @@ function submitInsp(){
   const reportRows=getInspReportRows();
   if(!reportRows.length)return toast('상신할 성적서 항목이 없습니다');
   if(!reportRows.some(r=>r._measured||r.actual||r.judge))return toast('측정된 검사 기록이 없습니다');
-  const fop=document.getElementById('if-op').value;
-  const fl=qaFilterLabel(g('if-from'),g('if-to'),[['공정',fop?opN(fop)+' '+mName(fop):''],['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
+  const fl=inspFilterLabel();
   const snapRows=reportRows.map(r=>({op_code:r.op_code||null,kind:r.kind||'',item:r.item||'',spec:r.spec||'',actual:r.actual||'',judge:r.judge||'',worker:r.worker||'',memo:r.memo||'',created_at:r.created_at||'',_measured:!!r._measured,_source:r._source||''}));
   openSubmit('insp',null,'검사성적서 '+qaMold(pid)+' ('+fl+' · '+reportRows.length+'항목)',pid,{version:2,rows:snapRows,ids:INSPV.map(r=>r.id)});
 }
@@ -4528,8 +4595,7 @@ async function exportInspPDF(){
   const reportRows=getInspReportRows();
   if(!reportRows.length)return toast('출력할 성적서 항목이 없습니다');
   const pid=document.getElementById('inspsel').value;
-  const fop=document.getElementById('if-op').value;
-  const fl=qaFilterLabel(g('if-from'),g('if-to'),[['공정',fop?opN(fop)+' '+mName(fop):''],['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
+  const fl=inspFilterLabel();
   const appr=await findAppr('insp',null,pid);
   const body=inspTableHtml(reportRows)+apprHistHtml(appr);
   qaPdf('QC-'+today().replace(/-/g,''),'검 사 성 적 서',qaMold(pid),fl,body,apprSigns(appr));
