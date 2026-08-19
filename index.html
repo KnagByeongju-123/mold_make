@@ -669,10 +669,29 @@ tr.ipdrop td{box-shadow:inset 0 2px 0 var(--gold)}
 /* 계획 수립 */
 .wizbtn{padding:8px 16px;background:rgba(79,140,255,.16);border:1px solid rgba(79,140,255,.45);color:var(--blue)}
 .dpick{display:inline-block;padding:6px 9px;border:1.5px dashed var(--line3);border-radius:8px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;color:var(--gray);cursor:pointer;white-space:nowrap;background:transparent}
-#v-plan table.wide th,#v-plan table.wide td{padding-left:8px;padding-right:8px}
+#v-plan table.wide{min-width:0;width:100%;table-layout:fixed}
+#v-plan table.wide th,#v-plan table.wide td{padding-left:7px;padding-right:7px;
+  white-space:normal;word-break:keep-all;overflow:hidden;text-overflow:ellipsis}
+#v-plan table.wide th{font-size:13px}
+#v-plan table.wide td{font-size:14px;padding-top:11px;padding-bottom:11px}
+#v-plan table.wide td b.mono{font-size:14.5px}
+#v-plan .dpick{font-size:14px;padding:7px 9px}
+#v-plan .st{font-size:12.5px;padding:4px 10px}
 #v-plan th.pl-d,#v-plan td.pl-d{width:66px;text-align:center}
 #v-plan th.pl-n,#v-plan td.pl-n{width:48px;text-align:center}
 #v-plan th.pl-op{width:auto}
+@media(max-width:760px){
+  /* 모바일: 공정 + 계획완료 + 상태만 표시해 여백 제거 */
+  #v-plan table.wide th:nth-child(3),#v-plan table.wide td:nth-child(3),
+  #v-plan table.wide th:nth-child(4),#v-plan table.wide td:nth-child(4),
+  #v-plan table.wide th:nth-child(6),#v-plan table.wide td:nth-child(6){display:none}
+  #v-plan table.wide th:nth-child(5),#v-plan table.wide td:nth-child(5){width:64px;text-align:center}
+  #v-plan th.pl-d,#v-plan td.pl-d{width:62px}
+  #v-plan table.wide th{font-size:12.5px}
+  #v-plan table.wide td{font-size:14px}
+  #v-plan .dpick{padding:7px 7px;font-size:14px}
+  #v-plan th.pl-d,#v-plan td.pl-d{width:70px}
+}
 #v-plan td:first-child{padding-right:2px}
 .dpick:hover{border-color:var(--gold);color:var(--gold)}
 .dpick.set{border-style:solid;border-color:rgba(79,140,255,.45);background:rgba(79,140,255,.1);color:var(--blue);font-weight:600}
@@ -920,7 +939,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 12.5</span>
+    <span class="rev">Rev 12.7</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
