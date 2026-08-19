@@ -511,6 +511,21 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
   .ifm-row .rm{grid-column:1/3;justify-self:end;padding:2px 6px}
   .itab{font-size:13px;padding:10px 6px}
 }
+/* 검사성적 v3: 성적서 헤더 + X1~X5 다시료 */
+.ihdr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 10px;margin-bottom:10px}
+.ihdr .fg{margin:0}
+.ihdr .fg.sk{grid-column:1/-1}
+.ifm-row.v2{grid-template-columns:24px minmax(115px,1.15fr) 120px 104px minmax(235px,310px) 94px minmax(95px,.9fr) 26px}
+.ifm-row .f.xs .xw{display:flex;gap:4px}
+.ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
+tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
+@media(max-width:960px){
+  .ihdr{grid-template-columns:1fr 1fr}
+  .ifm-row.v2{grid-template-columns:1fr 1fr;gap:7px 8px;padding:10px 4px}
+  .ifm-row.v2 .idx{grid-column:1/3;text-align:left;padding:0 0 2px}
+  .ifm-row.v2 .f.item,.ifm-row.v2 .f.xs,.ifm-row.v2 .f.memo{grid-column:1/3}
+  .ifm-row.v2 .rm{grid-column:1/3;justify-self:end;padding:2px 6px}
+}
 /* 검사성적: 공정 저장항목 + 측정값을 합친 성적서 배치 */
 .inspplan{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 14px;overflow:hidden}
 .inspplan-hd{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-bottom:1px solid var(--line2);background:rgba(226,176,74,.04)}
@@ -844,7 +859,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 10.8</span>
+    <span class="rev">Rev 10.9</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1220,11 +1235,24 @@ header .hright{position:relative}
         <div class="stkbar">
           <select id="im-op" onchange="buildInspForm()"><option value="">전 공정</option></select>
           <select id="im-kind" onchange="buildInspForm()"><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
+          <select id="im-purpose"><option>양산품 검사</option><option>개발품 검사</option><option>초도품 검사</option><option>비교 검사</option><option>측정 의뢰</option><option>기타</option></select>
+          <select id="im-unit"><option value="㎜">단위 ㎜</option><option value="㎛">단위 ㎛</option></select>
           <input type="date" id="im-date" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
           <input id="im-worker" placeholder="검사자" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit;width:100px">
           <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);font-weight:700">
             <input type="checkbox" id="im-onlytask" checked onchange="buildInspForm()" style="width:15px;height:15px"> 항목 있는 공정만
           </label>
+        </div>
+        <div class="ihdr">
+          <div class="fg"><label>부품명</label><input id="ih-part" placeholder="예: CORE INSERT"></div>
+          <div class="fg"><label>부품번호</label><input id="ih-partno" placeholder="예: 1888-0005-01"></div>
+          <div class="fg"><label>재질·부품중량</label><input id="ih-mat" placeholder="예: SUS304 t0.5"></div>
+          <div class="fg"><label>수신처</label><input id="ih-recv" placeholder="예: 한국 SKF씰(주)"></div>
+          <div class="fg sk"><label>SKETCH (도면 이미지)</label>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <input type="file" id="ih-sketch" accept="image/*" onchange="pickSketch(this)">
+              <span id="ih-skpv"></span>
+            </div></div>
         </div>
         <div class="stkbar">
           <button class="btn btn-p" style="padding:9px 16px" onclick="saveInspForm()">💾 성적서 저장</button>
@@ -1247,14 +1275,12 @@ header .hright{position:relative}
           <input type="date" id="if-to" onchange="renderInspLog()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
           <select id="if-op" onchange="renderInspLog()"><option value="">전체 공정</option></select>
           <select id="if-kind" onchange="renderInspLog()"><option value="">전체 검사구분</option><option>부품 치수</option><option>조립 검사</option><option>T/O 검증</option><option>출하 검사</option><option>재질 (Mill-Sheet)</option><option>열처리</option><option>기타</option></select>
-          <select id="if-judge" onchange="renderInspLog()"><option value="">전체 판정</option><option>OK</option><option>NG</option><option>조건부 OK</option></select>
+          <select id="if-purpose" onchange="renderInspLog()"><option value="">전체 목적</option><option>양산품 검사</option><option>개발품 검사</option><option>초도품 검사</option><option>비교 검사</option><option>측정 의뢰</option><option>기타</option></select>
           <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspLogCSV()">엑셀</button>
-          <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportInspPDF()">PDF</button>
-          <button class="btn" style="padding:8px 14px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)" onclick="submitInsp()">✍️ 결재 상신</button>
         </div>
       </div>
       <div class="tscroll"><table class="wide">
-        <thead><tr><th>일시</th><th>공정</th><th>구분</th><th>항목</th><th>규격</th><th>실측</th><th>판정</th><th>검사자</th><th></th></tr></thead>
+        <thead><tr><th>검사일</th><th>목적</th><th>구분</th><th>부품명 / 번호</th><th>항목 · NG</th><th>검사자</th><th style="width:170px"></th></tr></thead>
         <tbody id="inspbody"></tbody></table></div>
     </div>
   </section>
@@ -3724,9 +3750,11 @@ function qaOpt(x){return `<option value="${x.id}">${x.mold_type==='수리'?'[수
 function qaMold(id){const p=QAPJ.find(x=>x.id===id);return p?p.mold_no+' '+p.mold_name:''}
 function today(){return new Date().toISOString().slice(0,10)}
 
-/* ===== 검사성적: 성적서 만들기 / 작성기록 ===== */
-let INSPTAB='make', INSPFORM=[];
+/* ===== 검사성적: 공정 기준 성적서 (X1~X5 다시료 측정) ===== */
+let INSPTAB='make', INSPFORM=[], RPTS=[], SKFILE=null, SKDATA=null;
 const INSP_JUDGE=['','OK','NG','조건부 OK'];
+const INSP_X=['x1','x2','x3','x4','x5'];
+function anyX(r){return INSP_X.some(k=>r[k])}
 
 async function loadInsp(){
   await loadQaProjects();
@@ -3759,15 +3787,16 @@ async function renderInsp(){
   const pid=document.getElementById('inspsel').value;
   if(!pid){
     document.getElementById('inspform').innerHTML='<div class="ifm-empty">먼저 금형을 등록하세요</div>';
-    document.getElementById('inspbody').innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';
+    document.getElementById('inspbody').innerHTML='<tr><td colspan="7" class="empty">금형을 먼저 등록하세요</td></tr>';
     return;
   }
   inspOpOptions('im-op','전 공정');
   inspOpOptions('if-op','전체 공정');
-  try{INSP=await api("/mm_inspect?select=*&project_id=eq."+pid+"&order=created_at.desc");}
+  try{INSP=await api("/mm_inspect?select=*&project_id=eq."+pid+"&order=created_at.desc");}catch(e){INSP=[]}
+  try{RPTS=await api("/mm_inspect_rpt?select=*&project_id=eq."+pid+"&order=created_at.desc");}
   catch(e){
-    INSP=[];
-    document.getElementById('inspbody').innerHTML='<tr><td colspan="9" class="empty">patch_rev90.sql을 Supabase에서 실행하세요</td></tr>';
+    RPTS=[];
+    document.getElementById('inspbody').innerHTML='<tr><td colspan="7" class="empty">patch_insp_v3.sql을 Supabase에서 실행하세요</td></tr>';
   }
   renderInspLog();
   buildInspForm();
@@ -3790,13 +3819,12 @@ function buildInspForm(){
       if(!item||seen.has(item))return;seen.add(item);
       rows.push(mkInspRow(m.op_code,kind,item,'master',keep));
     });
-    // 공정설계에 없지만 실제 저장된 항목 이어붙임
+    // 공정설계에 없지만 과거 성적서에 쓰인 항목 이어붙임
     INSP.filter(r=>r.op_code===m.op_code&&r.kind===kind).forEach(r=>{
       if(seen.has(r.item))return;seen.add(r.item);
       rows.push(mkInspRow(m.op_code,kind,r.item,'hist',keep));
     });
   });
-  // 공정 미지정으로 저장된 기록
   if(!fop){
     const seen=new Set();
     INSP.filter(r=>!r.op_code&&r.kind===kind).forEach(r=>{
@@ -3804,7 +3832,6 @@ function buildInspForm(){
       rows.push(mkInspRow('',kind,r.item,'hist',keep));
     });
   }
-  // 사용자가 이 화면에서 추가한 신규 행 유지
   INSPFORM.filter(r=>r._src==='new'&&r.kind===kind&&(!fop||r.op_code===fop)).forEach(r=>{
     if(!rows.some(x=>x._k===r._k))rows.push(r);
   });
@@ -3814,13 +3841,11 @@ function buildInspForm(){
 function mkInspRow(op,kind,item,src,keep){
   const k=(op||'')+'|'+kind+'|'+item;
   const prev=keep&&keep.get(k);
-  const saved=INSP.find(r=>(r.op_code||'')===(op||'')&&r.kind===kind&&r.item===item);
-  if(prev)return Object.assign(prev,{_saved:!!saved,id:saved?saved.id:prev.id||null});
-  return {_k:k,_src:src,_saved:!!saved,id:saved?saved.id:null,
-    op_code:op||'',kind:kind,item:item,
-    spec:saved?(saved.spec||''):'',actual:saved?(saved.actual||''):'',
-    judge:saved?(saved.judge||''):'',memo:saved?(saved.memo||''):'',
-    worker:saved?(saved.worker||''):'',created_at:saved?saved.created_at:''};
+  if(prev)return prev;
+  const last=INSP.find(r=>(r.op_code||'')===(op||'')&&r.kind===kind&&r.item===item); // 최근 규격·측정기 자동 채움
+  return {_k:k,_src:src,op_code:op||'',kind:kind,item:item,
+    method:last?(last.method||''):'',spec:last?(last.spec||''):'',
+    x1:'',x2:'',x3:'',x4:'',x5:'',judge:'',memo:'',_auto:true};
 }
 function drawInspForm(onlyTask,fop,kind){
   const box=document.getElementById('inspform');
@@ -3836,7 +3861,7 @@ function drawInspForm(onlyTask,fop,kind){
   }
   box.innerHTML=ops.map(op=>{
     const idxs=byOp.get(op)||[];
-    const done=idxs.filter(i=>INSPFORM[i].actual||INSPFORM[i].judge).length;
+    const done=idxs.filter(i=>anyX(INSPFORM[i])||INSPFORM[i].judge).length;
     return `<div class="ifm-op">
       <div class="ifm-oph">
         ${op?`<span class="no">${opN(op)}</span><span class="nm">${esc(mName(op))}</span>`:'<span class="nm">공정 미지정</span>'}
@@ -3854,146 +3879,255 @@ function drawInspForm(onlyTask,fop,kind){
 function inspRowHtml(r,i,n){
   const cls=r.judge==='NG'?'ng':(r.judge==='OK'?'ok':'');
   const tag=r._src==='master'?'<span class="ifm-tag m">공정</span>':(r._src==='new'?'<span class="ifm-tag h">추가</span>':'<span class="ifm-tag h">이력</span>');
-  return `<div class="ifm-row ${cls}">
+  return `<div class="ifm-row v2 ${cls}" id="ifr-${i}">
     <div class="idx">${n}</div>
-    <div class="f item"><label>${tag}${r._saved?'<span class="ifm-tag s">저장됨</span>':''}검사 항목</label>
-      <input value="${esc(r.item||'')}" oninput="setInspRow(${i},'item',this.value)" placeholder="예: 코어 폭"></div>
-    <div class="f"><label>규격 / 기준</label><input value="${esc(r.spec||'')}" oninput="setInspRow(${i},'spec',this.value)" placeholder="50.00 ±0.02"></div>
-    <div class="f"><label>실측값</label><input value="${esc(r.actual||'')}" oninput="setInspRow(${i},'actual',this.value)" placeholder="50.01"></div>
-    <div class="f"><label>판정</label><select onchange="setInspRow(${i},'judge',this.value,1)">${INSP_JUDGE.map(j=>`<option value="${j}"${r.judge===j?' selected':''}>${j||'미측정'}</option>`).join('')}</select></div>
-    <div class="f memo"><label>비고 (계측기·조건)</label><input value="${esc(r.memo||'')}" oninput="setInspRow(${i},'memo',this.value)"></div>
+    <div class="f item"><label>${tag}검사 항목</label>
+      <input value="${esc(r.item||'')}" oninput="setInspRow(${i},'item',this.value)" placeholder="예: 외경 (G/A내)"></div>
+    <div class="f"><label>검사방법 (측정기 No)</label><input value="${esc(r.method||'')}" oninput="setInspRow(${i},'method',this.value)" placeholder="3차원측정기 #01"></div>
+    <div class="f"><label>규격 / 기준</label><input value="${esc(r.spec||'')}" oninput="setInspRow(${i},'spec',this.value)" placeholder="88.14 ±0.03"></div>
+    <div class="f xs"><label>측 정 결 과 X1~X5 (규격 입력 시 자동판정)</label>
+      <div class="xw">${INSP_X.map((k,x)=>`<input value="${esc(r[k]||'')}" placeholder="X${x+1}" oninput="setInspX(${i},'${k}',this.value)">`).join('')}</div></div>
+    <div class="f jd"><label>판정</label><select id="ifj-${i}" onchange="setInspJudge(${i},this.value)">${INSP_JUDGE.map(j=>`<option value="${j}"${r.judge===j?' selected':''}>${j||'미판정'}</option>`).join('')}</select></div>
+    <div class="f memo"><label>비고</label><input value="${esc(r.memo||'')}" oninput="setInspRow(${i},'memo',this.value)"></div>
     <button class="rm" title="행 삭제" onclick="rmInspRow(${i})">✕</button>
   </div>`;
 }
 function drawInspSum(){
   const el=document.getElementById('ifm-sum');if(!el)return;
   const tot=INSPFORM.length;
-  const inp=INSPFORM.filter(r=>r.actual||r.judge).length;
+  const inp=INSPFORM.filter(r=>anyX(r)||r.judge).length;
   const ng=INSPFORM.filter(r=>r.judge==='NG').length;
-  const sv=INSPFORM.filter(r=>r._saved).length;
   const pj=inspProj();
-  el.innerHTML=tot?`<span>📋 <b>${tot}</b>항목</span><span>· 입력 <b>${inp}</b></span><span>· 저장됨 <b>${sv}</b></span>`+
+  el.innerHTML=tot?`<span>📋 <b>${tot}</b>항목</span><span>· 입력 <b>${inp}</b></span>`+
     (ng?`<span style="color:var(--red);font-weight:800">· NG ${ng}</span>`:'')+
     `<span style="margin-left:auto">${pj?esc(pj.mold_no)+' '+esc(pj.mold_name):''} · ${esc(g('im-date')||today())}</span>`:'';
 }
-function setInspRow(i,f,v,redraw){
+/* 규격 파싱: "88.14 ±0.03" / "50 +0.05/-0.02" / "10~12" */
+function parseSpec(sp){
+  if(!sp)return null;
+  const s=String(sp).replace(/[㎜㎛]|mm|um/gi,'').trim();
+  let m=s.match(/(-?\d+\.?\d*)\s*±\s*(\d+\.?\d*)/);
+  if(m){const a=+m[1],b=+m[2];return{lo:a-b,hi:a+b}}
+  m=s.match(/(-?\d+\.?\d*)\s*\+\s*(\d+\.?\d*)\s*[\/,]?\s*-\s*(\d+\.?\d*)/);
+  if(m){const a=+m[1];return{lo:a-+m[3],hi:a+ +m[2]}}
+  m=s.match(/(-?\d+\.?\d*)\s*~\s*(-?\d+\.?\d*)/);
+  if(m){const a=+m[1],b=+m[2];return{lo:Math.min(a,b),hi:Math.max(a,b)}}
+  return null;
+}
+function autoJudge(r,i){
+  if(r._auto===false)return;
+  const xs=INSP_X.map(k=>r[k]).filter(v=>v!=='');
+  if(!xs.length){r.judge='';syncJudge(i,r);return}
+  const rng=parseSpec(r.spec);if(!rng)return;
+  const nums=xs.map(Number);
+  if(nums.some(isNaN))return;
+  r.judge=nums.every(v=>v>=rng.lo-1e-9&&v<=rng.hi+1e-9)?'OK':'NG';
+  syncJudge(i,r);
+}
+function syncJudge(i,r){
+  const sel=document.getElementById('ifj-'+i);if(sel)sel.value=r.judge;
+  const row=document.getElementById('ifr-'+i);
+  if(row){row.classList.toggle('ng',r.judge==='NG');row.classList.toggle('ok',r.judge==='OK')}
+}
+function setInspRow(i,f,v){
   if(!INSPFORM[i])return;
   INSPFORM[i][f]=v;
-  if(redraw){drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value)}
-  else drawInspSum();
+  if(f==='spec')autoJudge(INSPFORM[i],i);
+  drawInspSum();
+}
+function setInspX(i,k,v){
+  if(!INSPFORM[i])return;
+  INSPFORM[i][k]=v.trim();
+  autoJudge(INSPFORM[i],i);
+  drawInspSum();
+}
+function setInspJudge(i,v){
+  if(!INSPFORM[i])return;
+  INSPFORM[i].judge=v;INSPFORM[i]._auto=false;
+  syncJudge(i,INSPFORM[i]);drawInspSum();
 }
 function addInspRow(op){
   const kind=document.getElementById('im-kind').value;
   const k=(op||'')+'|'+kind+'|__new'+Date.now();
-  INSPFORM.push({_k:k,_src:'new',_saved:false,id:null,op_code:op||'',kind:kind,item:'',spec:'',actual:'',judge:'',memo:'',worker:'',created_at:''});
+  INSPFORM.push({_k:k,_src:'new',op_code:op||'',kind:kind,item:'',method:'',spec:'',x1:'',x2:'',x3:'',x4:'',x5:'',judge:'',memo:'',_auto:true});
   drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,kind);
 }
 function rmInspRow(i){
-  const r=INSPFORM[i];if(!r)return;
-  if(r.id){if(!confirm('저장된 검사 기록입니다. 삭제할까요?'))return;delInsp(r.id);return}
   INSPFORM.splice(i,1);
   drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
 }
 function opAllOk(op){
-  INSPFORM.forEach(r=>{if((r.op_code||'')===(op||'')&&r.item&&!r.judge)r.judge='OK'});
+  INSPFORM.forEach(r=>{if((r.op_code||'')===(op||'')&&r.item&&!r.judge){r.judge='OK';r._auto=false}});
   drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
 }
 function allOkInspForm(){
-  INSPFORM.forEach(r=>{if(r.item&&!r.judge)r.judge='OK'});
+  INSPFORM.forEach(r=>{if(r.item&&!r.judge){r.judge='OK';r._auto=false}});
   drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
   toast('판정 미입력 항목을 OK로 채웠습니다');
 }
 function clearInspForm(){
-  if(!confirm('화면에 입력한 실측·판정 값을 지울까요? (저장된 기록은 유지)'))return;
-  INSPFORM.forEach(r=>{if(!r._saved){r.actual='';r.judge='';r.memo=''}});
+  if(!confirm('화면에 입력한 측정값·판정을 지울까요? (저장된 성적서는 유지)'))return;
+  INSPFORM.forEach(r=>{INSP_X.forEach(k=>r[k]='');r.judge='';r.memo='';r._auto=true});
   drawInspForm(document.getElementById('im-onlytask').checked,document.getElementById('im-op').value,document.getElementById('im-kind').value);
 }
+/* 스케치 첨부 */
+function pickSketch(inp){
+  SKFILE=inp.files[0]||null;SKDATA=null;
+  const pv=document.getElementById('ih-skpv');pv.innerHTML='';
+  if(!SKFILE)return;
+  const rd=new FileReader();
+  rd.onload=e=>{SKDATA=e.target.result;
+    pv.innerHTML=`<img src="${SKDATA}" onclick="openBig(SKDATA)" style="height:44px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;vertical-align:middle"> <button class="btn" style="padding:3px 8px;font-size:10.5px" onclick="rmSketch()">✕</button>`};
+  rd.readAsDataURL(SKFILE);
+}
+function rmSketch(){SKFILE=null;SKDATA=null;document.getElementById('ih-sketch').value='';document.getElementById('ih-skpv').innerHTML=''}
+/* 헤더 현재값 */
+function inspHdrNow(pid){
+  return {project_id:pid,op_code:document.getElementById('im-op').value||null,
+    kind:document.getElementById('im-kind').value,purpose:document.getElementById('im-purpose').value,
+    unit:document.getElementById('im-unit').value,
+    part_name:g('ih-part')||null,part_no:g('ih-partno')||null,
+    material:g('ih-mat')||null,receiver:g('ih-recv')||null,
+    inspector:g('im-worker')||USER||null,insp_date:g('im-date')||today(),sketch:null};
+}
+/* 저장 = 성적서 발행 (헤더 1건 + 측정행 N건) */
 async function saveInspForm(){
   const pid=document.getElementById('inspsel').value;
   if(!pid)return toast('금형을 선택하세요');
+  const tg=INSPFORM.filter(r=>r.item&&(anyX(r)||r.judge));
+  if(!tg.length)return toast('측정값(X) 또는 판정을 입력한 항목이 없습니다');
   const worker=g('im-worker')||USER||null;
-  const tg=INSPFORM.filter(r=>r.item&&(r.actual||r.judge));
-  if(!tg.length)return toast('실측값 또는 판정을 입력한 항목이 없습니다');
-  let ins=0,upd=0,ng=0;
+  const ng=tg.filter(r=>r.judge==='NG').length;
+  let sketch=null;
+  if(SKFILE){try{toast('스케치 업로드 중...');sketch=await uploadImg(SKFILE,'insp')}catch(e){return toast(e.message)}}
   try{
-    for(const r of tg){
-      const body={project_id:pid,op_code:r.op_code||null,kind:r.kind,item:r.item,
-        spec:r.spec||null,actual:r.actual||null,judge:r.judge||'OK',worker:worker,memo:r.memo||null};
-      if(r.judge==='NG')ng++;
-      if(r.id){await api(`/mm_inspect?id=eq.${r.id}`,{method:"PATCH",body:JSON.stringify(body)});upd++}
-      else{await api("/mm_inspect",{method:"POST",body:JSON.stringify(body)});ins++}
-    }
-    const kind=document.getElementById('im-kind').value;
+    const hdr=Object.assign(inspHdrNow(pid),{sketch:sketch,item_cnt:tg.length,ng_cnt:ng});
+    const [rpt]=await api("/mm_inspect_rpt",{method:"POST",body:JSON.stringify(hdr)});
+    const rows=tg.map(r=>({project_id:pid,rpt_id:rpt.id,op_code:r.op_code||null,kind:r.kind,item:r.item,
+      method:r.method||null,spec:r.spec||null,
+      x1:r.x1||null,x2:r.x2||null,x3:r.x3||null,x4:r.x4||null,x5:r.x5||null,
+      actual:INSP_X.map(k=>r[k]).filter(Boolean).join(' / ')||null,
+      judge:r.judge||'OK',worker:worker,memo:r.memo||null}));
+    await api("/mm_inspect",{method:"POST",body:JSON.stringify(rows)});
     await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,
-      op_code:document.getElementById('im-op').value||null,action:'검사',
-      detail:`검사성적서 작성 [${kind}] ${tg.length}항목 (신규 ${ins} / 수정 ${upd}${ng?' · NG '+ng:''})`,worker})});
-    toast(`성적서 저장 완료 — 신규 ${ins} · 수정 ${upd}`+(ng?` · NG ${ng}건, NCR 등록 권장`:''));
+      op_code:hdr.op_code,action:'검사',
+      detail:`검사성적서 발행 [${hdr.purpose} · ${hdr.kind}] ${tg.length}항목${ng?' · NG '+ng:''}`,worker:worker})});
+    toast(`성적서 발행 완료 — ${tg.length}항목`+(ng?` · NG ${ng}건, NCR 등록 권장`:''));
+    rmSketch();
+    INSPFORM.forEach(r=>{INSP_X.forEach(k=>r[k]='');r.judge='';r._auto=true});
     await renderInsp();
   }catch(e){toast('저장 실패: '+e.message)}
 }
 
-/* ----- 탭2: 성적서 작성기록 ----- */
+/* ----- 탭2: 성적서(발행) 단위 기록 ----- */
+function rptOf(id){return RPTS.find(x=>x.id===Number(id))}
+function inspLogList(){
+  const f1=g('if-from'),f2=g('if-to'),
+        fk=document.getElementById('if-kind').value,
+        fp=document.getElementById('if-purpose').value,
+        fop=document.getElementById('if-op').value;
+  const list=RPTS.filter(r=>{
+    const d=r.insp_date||String(r.created_at).slice(0,10);
+    return (!f1||d>=f1)&&(!f2||d<=f2)&&(!fk||r.kind===fk)&&(!fp||r.purpose===fp)&&(!fop||!r.op_code||r.op_code===fop);
+  });
+  // 구버전(성적서 미연결) 개별 기록 → 날짜·구분 묶음으로 표시
+  const legacy={};
+  INSP.filter(r=>!r.rpt_id).forEach(r=>{
+    const d=String(r.created_at).slice(0,10);
+    if((f1&&d<f1)||(f2&&d>f2)||(fk&&r.kind!==fk)||fp)return;
+    if(fop&&(r.op_code||'')!==fop)return;
+    const k=d+'_'+(r.kind||'');
+    (legacy[k]=legacy[k]||{_legacy:true,id:'L'+k,insp_date:d,kind:r.kind||'',purpose:'(구버전 기록)',inspector:r.worker||'',rows:[]}).rows.push(r);
+  });
+  return list.concat(Object.values(legacy))
+    .sort((a,b)=>String(b.insp_date||'').localeCompare(String(a.insp_date||'')));
+}
 function renderInspLog(){
   const tb=document.getElementById('inspbody');if(!tb)return;
   const pid=document.getElementById('inspsel').value;
-  if(!pid){tb.innerHTML='<tr><td colspan="9" class="empty">금형을 먼저 등록하세요</td></tr>';return}
-  const f1=g('if-from'),f2=g('if-to'),fk=document.getElementById('if-kind').value,
-        fj=document.getElementById('if-judge').value,fop=document.getElementById('if-op').value;
-  INSPV=INSP.filter(r=>{
-    const d=String(r.created_at).slice(0,10);
-    return (!f1||d>=f1)&&(!f2||d<=f2)&&(!fk||r.kind===fk)&&(!fj||r.judge===fj)&&(!fop||r.op_code===fop);
-  });
-  const ng=INSPV.filter(r=>r.judge==='NG').length;
-  document.getElementById('insprate').textContent=INSPV.length?`${INSPV.length}건 · NG ${ng}건`:'';
-  tb.innerHTML=INSPV.map(r=>`<tr class="${r.judge==='NG'?'insp-ng':''}">
-    <td class="mono">${fmt(r.created_at)}</td>
-    <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
-    <td>${esc(r.kind||'')}</td>
-    <td><b>${esc(r.item)}</b>${r.memo?'<br><span style="font-size:10.5px;color:var(--gray)">'+esc(r.memo)+'</span>':''}</td>
-    <td class="mono">${esc(r.spec||'-')}</td>
-    <td class="mono">${esc(r.actual||'-')}</td>
-    <td class="${r.judge==='NG'?'jd-ng':r.judge==='OK'?'jd-ok':'jd-cond'}">${esc(r.judge)}</td>
-    <td>${esc(r.worker||'-')}</td>
-    <td><button class="del" onclick="delInsp(${r.id})">✕</button></td>
-  </tr>`).join('')||'<tr><td colspan="9" class="empty">작성된 성적서 기록이 없습니다</td></tr>';
+  if(!pid){tb.innerHTML='<tr><td colspan="7" class="empty">금형을 먼저 등록하세요</td></tr>';return}
+  const L=inspLogList();
+  const ngT=L.reduce((sm,r)=>sm+(r._legacy?r.rows.filter(x=>x.judge==='NG').length:(r.ng_cnt||0)),0);
+  document.getElementById('insprate').textContent=L.length?`성적서 ${L.length}건 · NG ${ngT}건`:'';
+  tb.innerHTML=L.map(r=>{
+    const cnt=r._legacy?r.rows.length:(r.item_cnt||0);
+    const ng=r._legacy?r.rows.filter(x=>x.judge==='NG').length:(r.ng_cnt||0);
+    return `<tr class="${ng?'insp-ng':''}">
+      <td class="mono">${esc(r.insp_date||'')}</td>
+      <td>${esc(r.purpose||'')}</td>
+      <td>${esc(r.kind||'')}</td>
+      <td>${esc(r.part_name||'-')}${r.part_no?'<br><span class="mono" style="font-size:10px;color:var(--gray)">'+esc(r.part_no)+'</span>':''}</td>
+      <td>${cnt}항목${ng?' · <b style="color:var(--red)">NG '+ng+'</b>':''}</td>
+      <td>${esc(r.inspector||'-')}</td>
+      <td style="white-space:nowrap;text-align:right">
+        ${r.sketch?`<button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="openBig('${r.sketch}')">🖼</button> `:''}
+        <button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="toggleRpt('${r.id}')">▾ 보기</button>
+        ${r._legacy?'':` <button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="inspRptPDF(${r.id})">📄</button>
+        <button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="submitInspRpt(${r.id})">✍️</button>`}
+        <button class="del" onclick="delInspRpt('${r.id}')">✕</button></td>
+    </tr><tr class="irpt-sub hide" id="irs-${r.id}"><td colspan="7" id="irsb-${r.id}"></td></tr>`;
+  }).join('')||'<tr><td colspan="7" class="empty">작성된 성적서가 없습니다</td></tr>';
 }
-async function delInsp(id){
-  if(!confirm('검사 기록을 삭제할까요?'))return;
-  await api(`/mm_inspect?id=eq.${id}`,{method:"DELETE"});
-  await renderInsp();
+function rptRowsOf(id){
+  if(String(id).startsWith('L')){const l=inspLogList().find(x=>x.id===id);return l?l.rows:[]}
+  return INSP.filter(r=>r.rpt_id===Number(id)).slice().reverse();
+}
+function toggleRpt(id){
+  const tr=document.getElementById('irs-'+id);if(!tr)return;
+  const hid=tr.classList.toggle('hide');
+  if(!hid)document.getElementById('irsb-'+id).innerHTML=inspSubTable(rptRowsOf(id));
+}
+function inspSubTable(rows){
+  return `<table class="wide" style="margin:4px 0"><thead><tr><th>No</th><th>공정</th><th>검사항목</th><th>검사방법</th><th>규격</th>${INSP_X.map((k,i)=>`<th>X${i+1}</th>`).join('')}<th>판정</th><th>비고</th></tr></thead><tbody>`+
+    rows.map((r,i)=>`<tr class="${r.judge==='NG'?'insp-ng':''}">
+      <td class="mono">${i+1}</td>
+      <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
+      <td><b>${esc(r.item)}</b></td>
+      <td>${esc(r.method||'-')}</td>
+      <td class="mono">${esc(r.spec||'-')}</td>
+      ${INSP_X.map((k,x)=>`<td class="mono">${esc(r[k]||(x===0&&!anyX(r)?(r.actual||''):''))}</td>`).join('')}
+      <td class="${r.judge==='NG'?'jd-ng':r.judge==='OK'?'jd-ok':'jd-cond'}">${esc(r.judge||'')}</td>
+      <td style="font-size:10.5px;color:var(--gray)">${esc(r.memo||'')}</td></tr>`).join('')+
+    '</tbody></table>';
+}
+async function delInspRpt(id){
+  if(!confirm('성적서와 포함된 측정 기록을 모두 삭제할까요?'))return;
+  try{
+    if(String(id).startsWith('L')){
+      const ids=rptRowsOf(id).map(r=>r.id);
+      if(ids.length)await api("/mm_inspect?id=in.("+ids.join(',')+")",{method:"DELETE"});
+    }else{
+      const r=rptOf(id);
+      await api("/mm_inspect?rpt_id=eq."+id,{method:"DELETE"});
+      await api("/mm_inspect_rpt?id=eq."+id,{method:"DELETE"});
+      if(r&&r.sketch)deleteImg(r.sketch);
+    }
+    await renderInsp();
+  }catch(e){toast('삭제 실패: '+e.message)}
 }
 
 /* ----- 출력 공통 ----- */
-function getInspReportRows(){
-  if(INSPTAB==='make'){
-    return INSPFORM.filter(r=>r.item).map(r=>Object.assign({},r,{
-      worker:r.worker||g('im-worker')||USER||'',
-      _measured:!!(r.actual||r.judge),_source:r._src==='master'?'master':'hist'}));
-  }
-  return INSPV.map(r=>Object.assign({},r,{_measured:true,_source:'hist'}));
-}
 function inspFilterLabel(){
-  if(INSPTAB==='make'){
-    const op=document.getElementById('im-op').value;
-    return qaFilterLabel(g('im-date'),g('im-date'),[['공정',op?opN(op)+' '+mName(op):'전 공정'],['구분',document.getElementById('im-kind').value]]);
-  }
-  const fop=document.getElementById('if-op').value;
-  return qaFilterLabel(g('if-from'),g('if-to'),[['공정',fop?opN(fop)+' '+mName(fop):''],['구분',document.getElementById('if-kind').value],['판정',document.getElementById('if-judge').value]]);
+  const op=document.getElementById('im-op').value;
+  return qaFilterLabel(g('im-date'),g('im-date'),[['공정',op?opN(op)+' '+mName(op):'전 공정'],['구분',document.getElementById('im-kind').value],['목적',document.getElementById('im-purpose').value]]);
 }
 function exportInspCSV(){
-  const src=getInspReportRows();
+  if(INSPTAB==='log')return exportInspLogCSV();
+  const src=INSPFORM.filter(r=>r.item);
   if(!src.length)return toast('출력할 성적서 항목이 없습니다');
   const pid=document.getElementById('inspsel').value;
-  const head=['순번','공정','구분','항목','규격','실측','판정','검사자','상태','일시','비고'];
-  const rows=src.map((r,i)=>[i+1,r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.kind||'',r.item||'',r.spec||'',r.actual||'',r.judge||'',r.worker||'',r._measured?'측정됨':'미측정',r.created_at?fmt(r.created_at):'',r.memo||'']);
+  const head=['순번','공정','구분','검사항목','검사방법(측정기No)','규격','X1','X2','X3','X4','X5','판정','비고'];
+  const rows=src.map((r,i)=>[i+1,r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.kind||'',r.item||'',r.method||'',r.spec||'',r.x1||'',r.x2||'',r.x3||'',r.x4||'',r.x5||'',r.judge||'',r.memo||'']);
   dlCSV('검사성적서 - '+qaMold(pid),head,rows,'검사성적서');
 }
 function exportInspLogCSV(){
-  if(!INSPV.length)return toast('출력할 기록이 없습니다');
+  const L=inspLogList();
+  if(!L.length)return toast('출력할 성적서가 없습니다');
   const pid=document.getElementById('inspsel').value;
-  const head=['일시','공정','구분','항목','규격','실측','판정','검사자','비고'];
-  const rows=INSPV.map(r=>[fmt(r.created_at),r.op_code?opN(r.op_code)+' '+mName(r.op_code):'',r.kind||'',r.item||'',r.spec||'',r.actual||'',r.judge||'',r.worker||'',r.memo||'']);
-  dlCSV('성적서 작성기록 - '+qaMold(pid),head,rows,'성적서작성기록');
+  const head=['검사일','목적','검사구분','부품명','부품번호','재질·중량','수신처','항목수','NG','검사자'];
+  const rows=L.map(r=>[r.insp_date||'',r.purpose||'',r.kind||'',r.part_name||'',r.part_no||'',r.material||'',r.receiver||'',
+    r._legacy?r.rows.length:(r.item_cnt||0),r._legacy?r.rows.filter(x=>x.judge==='NG').length:(r.ng_cnt||0),r.inspector||'']);
+  dlCSV('성적서 발행기록 - '+qaMold(pid),head,rows,'성적서발행기록');
 }
 
 /* ===== NCR ===== */
@@ -4461,7 +4595,7 @@ async function apprPDF(id){
         const rows=await api("/mm_inspect?select=*&id=in.("+a.snapshot.join(',')+")&order=created_at");
         body=inspTableHtml(rows);
       }else if(a.snapshot&&Array.isArray(a.snapshot.rows)){
-        body=inspTableHtml(a.snapshot.rows);
+        body=a.snapshot.hdr?inspPdfBody(a.snapshot.hdr,a.snapshot.rows):inspTableHtml(a.snapshot.rows);
       }
     }else{
       body='<div class="sect">'+esc(a.title)+'</div><div class="qbx">본 문서는 결재용 표지입니다. 상세 내역은 해당 화면의 PDF를 참조하세요.</div>';
@@ -4565,16 +4699,29 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   w.document.write(html);w.document.close();
   setTimeout(()=>{try{w.focus();w.print()}catch(e){}},400);
 }
+function inspSnapRows(rows){
+  return rows.map(r=>({op_code:r.op_code||null,kind:r.kind||'',item:r.item||'',method:r.method||'',spec:r.spec||'',
+    x1:r.x1||'',x2:r.x2||'',x3:r.x3||'',x4:r.x4||'',x5:r.x5||'',actual:r.actual||'',
+    judge:r.judge||'',worker:r.worker||'',memo:r.memo||''}));
+}
 function submitInsp(){
+  if(INSPTAB==='log')return toast('작성기록 탭에서는 각 성적서 행의 ✍️ 버튼으로 상신하세요');
   const pid=document.getElementById('inspsel').value;
   if(!pid)return toast('금형을 선택하세요');
-  const reportRows=getInspReportRows();
-  if(!reportRows.length)return toast('상신할 성적서 항목이 없습니다');
-  if(!reportRows.some(r=>r._measured||r.actual||r.judge))return toast('측정된 검사 기록이 없습니다');
-  const fl=inspFilterLabel();
-  const snapRows=reportRows.map(r=>({op_code:r.op_code||null,kind:r.kind||'',item:r.item||'',spec:r.spec||'',actual:r.actual||'',judge:r.judge||'',worker:r.worker||'',memo:r.memo||'',created_at:r.created_at||'',_measured:!!r._measured,_source:r._source||''}));
-  openSubmit('insp',null,'검사성적서 '+qaMold(pid)+' ('+fl+' · '+reportRows.length+'항목)',pid,{version:2,rows:snapRows,ids:INSPV.map(r=>r.id)});
+  const rows=INSPFORM.filter(r=>r.item&&(anyX(r)||r.judge));
+  if(!rows.length)return toast('측정된 검사 항목이 없습니다');
+  const hdr=inspHdrNow(pid); // 스케치는 저장 후 발행분 상신 시 포함됨
+  openSubmit('insp',null,'검사성적서 '+qaMold(pid)+' ('+inspFilterLabel()+' · '+rows.length+'항목)',pid,
+    {version:3,hdr:hdr,rows:inspSnapRows(rows)});
 }
+function submitInspRpt(id){
+  const r=rptOf(id);if(!r)return;
+  const rows=rptRowsOf(id);
+  if(!rows.length)return toast('상신할 측정 기록이 없습니다');
+  openSubmit('insp',id,'검사성적서 '+qaMold(r.project_id)+' ('+(r.insp_date||'')+' · '+(r.purpose||'')+' · '+rows.length+'항목)',r.project_id,
+    {version:3,hdr:r,rows:inspSnapRows(rows)});
+}
+/* 구버전 스냅샷(단일 실측값) 호환 */
 function inspTableHtml(rows){
   rows=rows||[];
   const measured=rows.filter(r=>r._measured||r.actual||r.judge).length;
@@ -4591,14 +4738,49 @@ function inspTableHtml(rows){
     <td class="${r.judge==='NG'?'ng':r.judge?'ok':''}">${esc(r.judge||'')}</td>
     <td>${esc(r.worker||'')}</td></tr>`).join('')}</tbody></table>`;
 }
+/* 성적서 양식 PDF 본문 (헤더 + 측정목적 체크 + SKETCH + X1~X5 측정표) */
+function inspPdfBody(hdr,rows){
+  const pp=['개발품 검사','초도품 검사','양산품 검사','비교 검사','측정 의뢰','기타'];
+  const purpose=pp.map(p=>`<span style="margin-right:9px;white-space:nowrap">${p===hdr.purpose?'■':'□'} ${p}</span>`).join('');
+  let b=`<table class="meta">
+    <tr><th>금형</th><td>${esc(qaMold(hdr.project_id))}</td><th>검사일</th><td class="mono">${esc(hdr.insp_date||'')}</td></tr>
+    <tr><th>부 품 명</th><td>${esc(hdr.part_name||'-')}</td><th>부품번호</th><td class="mono">${esc(hdr.part_no||'-')}</td></tr>
+    <tr><th>재질·중량</th><td>${esc(hdr.material||'-')}</td><th>검 사 자</th><td>${esc(hdr.inspector||'-')}</td></tr>
+    <tr><th>수 신 처</th><td>${esc(hdr.receiver||'-')}</td><th>검사구분</th><td>${esc(hdr.kind||'')}</td></tr>
+    <tr><th>측정목적</th><td colspan="3">${purpose}</td></tr></table>`;
+  if(hdr.sketch)b+=`<div class="sect">SKETCH</div><div style="border:1px solid #888;padding:6px;text-align:center;background:#fff"><img src="${hdr.sketch}" style="max-width:100%;max-height:92mm"></div>`;
+  const ng=rows.filter(r=>r.judge==='NG').length;
+  b+=`<div class="sect">측 정 결 과 <span style="font-weight:400;font-size:10px">(측정단위 ${esc(hdr.unit||'㎜')} · ${rows.length}항목 · NG ${ng})</span></div>
+  <table class="dt"><thead><tr><th style="width:24px">No</th><th style="width:74px">공정</th><th>검사항목</th><th style="width:90px">검사방법<br>(측정기No)</th><th style="width:76px">규격</th>${['X1','X2','X3','X4','X5'].map(x=>`<th style="width:44px">${x}</th>`).join('')}<th style="width:38px">판정</th></tr></thead>
+  <tbody>${rows.map((r,i)=>`<tr>
+    <td class="mono" style="text-align:center">${i+1}</td>
+    <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
+    <td>${esc(r.item||'')}${r.memo?'<br><span style="font-size:8.5px;color:#666">'+esc(r.memo)+'</span>':''}</td>
+    <td>${esc(r.method||'')}</td>
+    <td class="mono">${esc(r.spec||'')}</td>
+    ${INSP_X.map((k,x)=>`<td class="mono" style="text-align:center">${esc(r[k]||(x===0&&!(r.x1||r.x2||r.x3||r.x4||r.x5)?(r.actual||''):''))}</td>`).join('')}
+    <td class="${r.judge==='NG'?'ng':r.judge?'ok':''}" style="text-align:center">${esc(r.judge||'')}</td></tr>`).join('')}</tbody></table>`;
+  return b;
+}
+function inspPdfTitle(hdr){return hdr&&hdr.kind==='출하 검사'?'출 하 검 사 성 적 서':'검 사 성 적 서'}
 async function exportInspPDF(){
-  const reportRows=getInspReportRows();
-  if(!reportRows.length)return toast('출력할 성적서 항목이 없습니다');
+  if(INSPTAB==='log')return toast('작성기록 탭에서는 각 성적서 행의 📄 버튼으로 출력하세요');
   const pid=document.getElementById('inspsel').value;
-  const fl=inspFilterLabel();
+  if(!pid)return toast('금형을 선택하세요');
+  const rows=INSPFORM.filter(r=>r.item&&(anyX(r)||r.judge));
+  if(!rows.length)return toast('출력할 측정 항목이 없습니다');
+  const hdr=inspHdrNow(pid);hdr.sketch=SKDATA||null;
   const appr=await findAppr('insp',null,pid);
-  const body=inspTableHtml(reportRows)+apprHistHtml(appr);
-  qaPdf('QC-'+today().replace(/-/g,''),'검 사 성 적 서',qaMold(pid),fl,body,apprSigns(appr));
+  qaPdf('QC-'+today().replace(/-/g,''),inspPdfTitle(hdr),qaMold(pid),inspFilterLabel(),
+    inspPdfBody(hdr,rows)+apprHistHtml(appr),apprSigns(appr));
+}
+async function inspRptPDF(id){
+  const hdr=rptOf(id);if(!hdr)return;
+  const rows=rptRowsOf(id);
+  const appr=await findAppr('insp',id,hdr.project_id);
+  qaPdf('QC-'+String(id).padStart(4,'0'),inspPdfTitle(hdr),qaMold(hdr.project_id),
+    (hdr.insp_date||'')+' · '+(hdr.purpose||''),
+    inspPdfBody(hdr,rows)+apprHistHtml(appr),apprSigns(appr));
 }
 function exportNcrPDF(){
   if(!NCRS.length)return toast('출력할 기록이 없습니다');
