@@ -520,6 +520,16 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .ifm-row .f.xs .xw{display:flex;gap:4px}
 .ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
 tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
+/* 엑셀 붙여넣기 */
+.pstbox{max-width:min(720px,96vw);width:min(720px,96vw);padding:0 14px 14px;max-height:92vh;overflow:auto}
+.pstbox .mhead{padding:13px 0;margin:0}
+.psthint{font-size:11.5px;color:var(--gray);margin:10px 0}
+.psttxt{width:100%;min-height:150px;background:var(--card2);border:1px solid var(--line);border-radius:9px;
+  color:var(--ink);padding:10px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;line-height:1.6;resize:vertical}
+.psttxt:focus{outline:none;border-color:var(--gold)}
+.pstprev{margin:10px 0;max-height:230px;overflow:auto}
+.pst-cnt{font-size:11.5px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.pst-empty{font-size:11.5px;color:var(--gray);padding:8px 2px}
 /* 출력설정 */
 .ihdr.cfg3{grid-template-columns:repeat(3,1fr)}
 .ftprev{display:flex;justify-content:space-between;gap:8px;margin:10px 0 12px;padding:9px 12px;
@@ -975,7 +985,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.7</span>
+    <span class="rev">v1.9</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1122,6 +1132,40 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
       <span class="sk-tip">도면을 누르면 번호가 순서대로 찍힙니다 · 번호를 누르면 삭제</span>
     </div>
     <div class="skcanvas" id="skcanvas"></div>
+  </div>
+</div>
+<div class="modal" id="pastemodal" onclick="if(event.target===this)closePaste()">
+  <div class="mbox pstbox">
+    <div class="mhead"><b>엑셀 붙여넣기</b>
+      <button class="mx" onclick="closePaste()">✕</button></div>
+    <div class="psthint">템플릿을 내려받아 엑셀에서 채운 뒤, 그대로 <b>복사해 붙여넣기</b> 하거나 <b>파일 열기</b>로 불러오세요</div>
+    <div class="stkbar" style="margin-bottom:9px">
+      <button class="btn hxls" style="padding:9px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="dlTemplate()">📥 템플릿 받기 (CSV)</button>
+      <label class="btn" style="padding:9px 14px;cursor:pointer">📂 파일 열기
+        <input type="file" accept=".csv,.txt" onchange="pasteFile(this)" style="display:none"></label>
+    </div>
+    <div class="stkbar" style="margin-bottom:8px">
+      <select id="pst-order">
+        <option value="item,spec,method">항목 · 규격 · 측정기</option>
+        <option value="item,method,spec">항목 · 측정기 · 규격</option>
+        <option value="no,item,spec,method">No · 항목 · 규격 · 측정기</option>
+        <option value="no,item,method,spec">No · 항목 · 측정기 · 규격</option>
+        <option value="item,spec">항목 · 규격</option>
+        <option value="item">항목만</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);font-weight:700">
+        <input type="checkbox" id="pst-head" style="width:15px;height:15px"> 첫 줄은 제목행
+      </label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);font-weight:700">
+        <input type="checkbox" id="pst-rep" checked style="width:15px;height:15px"> 기존 항목 대체
+      </label>
+    </div>
+    <textarea id="pst-txt" class="psttxt" placeholder="외경&#9;88.14 ±0.03&#9;3차원측정기&#10;내경&#9;50 +0.05/-0.02&#9;공구현미경&#10;평면도&#9;0.02 Max.&#9;형상측정기" oninput="prevPaste()"></textarea>
+    <div id="pst-prev" class="pstprev"></div>
+    <div class="stkbar" style="padding:2px 0 4px">
+      <button class="btn btn-p" style="padding:11px 20px" onclick="applyPaste()">양식에 넣기</button>
+      <button class="btn" style="padding:10px 14px" onclick="closePaste()">취소</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -1431,7 +1475,7 @@ function drawFormItems(){
   box.innerHTML=`<div class="ifm-op"><div class="ifm-oph">
       <span class="nm">검사항목 ${filled}개</span>
       <span class="cnt">칸을 누르면 오른쪽 <b>선택</b>에 칩이 나타납니다 · 규격 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 → 자동 판정</span>
-      <div class="acts"><button type="button" onclick="addFItem(5)">+ 5줄</button><button type="button" onclick="addFItem(15)">+ 15줄</button></div>
+      <div class="acts"><button type="button" onclick="openPaste()">📋 엑셀 붙여넣기</button><button type="button" onclick="addFItem(5)">+ 5줄</button><button type="button" onclick="addFItem(15)">+ 15줄</button></div>
     </div>
     <div class="fedit">
       <div class="fgrid">
@@ -1452,6 +1496,75 @@ function drawFormItems(){
     </div></div>`;
   cpRestore();
 }
+/* ----- 엑셀 붙여넣기 ----- */
+function openPaste(){
+  document.getElementById('pastemodal').classList.add('show');
+  document.getElementById('pst-txt').value='';
+  document.getElementById('pst-prev').innerHTML='';
+  setTimeout(()=>document.getElementById('pst-txt').focus(),80);
+}
+function closePaste(){document.getElementById('pastemodal').classList.remove('show')}
+function parsePaste(){
+  const txt=document.getElementById('pst-txt').value;
+  const cols=document.getElementById('pst-order').value.split(',');
+  const head=document.getElementById('pst-head').checked;
+  let lines=txt.split(/\r?\n/).map(l=>l.replace(/\s+$/,'')).filter(l=>l.trim());
+  if(head)lines=lines.slice(1);
+  return lines.map(l=>{
+    const cell=l.split(/\t|,|\s{2,}/).map(c=>c.trim().replace(/^"(.*)"$/,'$1').replace(/""/g,'"'));
+    const o={item:'',spec:'',method:'',memo:''};
+    cols.forEach((c,i)=>{if(c!=='no'&&cell[i]!==undefined)o[c]=cell[i]});
+    return o;
+  }).filter(o=>o.item);
+}
+function dlTemplate(){
+  dlCSV('검사항목 템플릿 — 항목 / 규격 / 측정기',
+    ['항목','규격','측정기'],
+    [['외경','88.14 ±0.03','3차원측정기'],
+     ['내경','50 +0.05/-0.02','공구현미경'],
+     ['높이','12 ±0.05','하이트게이지'],
+     ['평면도','0.02 Max.','형상측정기'],
+     ['외관','결함없을것','육안'],
+     ['','',''],['','',''],['','',''],['','',''],['','','']],
+    '검사항목_템플릿');
+  toast('템플릿을 내려받았습니다 — 엑셀에서 채운 뒤 붙여넣기 하세요');
+}
+function pasteFile(inp){
+  const f=inp.files&&inp.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=e=>{
+    let t=String(e.target.result||'').replace(/^\uFEFF/,'');
+    const ln=t.split(/\r?\n/).filter(x=>x.trim());
+    // 템플릿 1행(제목) 자동 감지
+    if(ln.length&&/항\s*목/.test(ln[0])){t=ln.join('\n');document.getElementById('pst-head').checked=true}
+    else if(ln.length>1&&/항\s*목/.test(ln[1])){t=ln.slice(1).join('\n');document.getElementById('pst-head').checked=true}
+    document.getElementById('pst-txt').value=t;
+    prevPaste();
+  };
+  rd.readAsText(f,'utf-8');
+  inp.value='';
+}
+function prevPaste(){
+  const rows=parsePaste();
+  const p=document.getElementById('pst-prev');
+  if(!rows.length){p.innerHTML='<div class="pst-empty">붙여넣은 내용이 없습니다</div>';return}
+  p.innerHTML=`<div class="pst-cnt">${rows.length}개 항목 인식</div>
+    <table class="wide"><thead><tr><th>No</th><th>항목</th><th>규격</th><th>측정기</th></tr></thead><tbody>`+
+    rows.slice(0,12).map((r,i)=>`<tr><td class="mono">${i+1}</td><td>${esc(r.item)}</td><td class="mono">${esc(r.spec)}</td><td>${esc(r.method)}</td></tr>`).join('')+
+    (rows.length>12?`<tr><td colspan="4" style="color:var(--gray)">… 외 ${rows.length-12}건</td></tr>`:'')+
+    '</tbody></table>';
+}
+function applyPaste(){
+  const rows=parsePaste();
+  if(!rows.length)return toast('인식된 항목이 없습니다');
+  if(document.getElementById('pst-rep').checked)FITEMS=[];
+  else FITEMS=FITEMS.filter(r=>r.item&&r.item.trim());
+  rows.forEach(r=>FITEMS.push({item:r.item,spec:r.spec||'',method:r.method||'',memo:''}));
+  for(let i=0;i<3;i++)FITEMS.push(blankFItem());
+  closePaste();drawFormItems();
+  toast(rows.length+'개 항목을 불러왔습니다');
+}
+
 /* ----- 우측 선택 칩 패널 ----- */
 let CPT=null, CPKIND='', CPIDX=-1;
 const CP_ITEM=['외경','내경','높이','두께','폭','길이','거리','각도',
