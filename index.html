@@ -520,6 +520,13 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
 tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 /* 검사항목 연속 입력표 */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ftprev{display:flex;justify-content:space-between;gap:8px;margin:10px 0 12px;padding:9px 12px;
+  background:#fff;color:#333;border:1px solid var(--line);border-radius:8px;font-size:11.5px;font-weight:700}
+.ftprev span:nth-child(2){flex:1;text-align:center}
+.ftprev span:nth-child(3){text-align:right}
+.wrbtn.cfgtg{background:rgba(79,140,255,.1);border-color:rgba(79,140,255,.35);color:var(--blue)}
+@media(max-width:760px){.row3{grid-template-columns:1fr}}
 .ffm-head{display:grid;grid-template-columns:30px minmax(110px,1.5fr) minmax(100px,1.1fr) minmax(100px,1.1fr) 26px;
   gap:6px;padding:7px 10px 3px;font-size:10px;font-weight:800;color:var(--gray)}
 .ffm-row{display:grid!important;grid-template-columns:30px minmax(110px,1.5fr) minmax(100px,1.1fr) minmax(100px,1.1fr) 26px;
@@ -939,7 +946,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.0</span>
+    <span class="rev">Rev 13.1</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1292,6 +1299,20 @@ header .hright{position:relative}
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportNcrPDF()">PDF</button>
     </div>
     </div>
+    <button class="wrbtn cfgtg" style="margin-bottom:10px" onclick="toggleWrite('cfg-ncr',this)">⚙️ 출력설정</button>
+    <div class="panel hide" id="cfg-ncr" style="margin-bottom:14px">
+      <h2>⚙️ 부적합·시정조치 바닥글 (문서번호 · 회사명 · 용지)</h2>
+      <div class="row3">
+        <div class="fg"><label>좌측 — 문서번호</label><input id="cf-ncr-l" placeholder="예: IPQP-1234" oninput="prevFoot('ncr')"></div>
+        <div class="fg"><label>중앙 — 회사명</label><input id="cf-ncr-c" placeholder="예: 일평기연" oninput="prevFoot('ncr')"></div>
+        <div class="fg"><label>우측 — 용지 / 비고</label><input id="cf-ncr-r" placeholder="예: A4(210×297)" oninput="prevFoot('ncr')"></div>
+      </div>
+      <div class="ftprev" id="cf-ncr-p"></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="saveFoot('ncr')">💾 설정 저장</button>
+        <button class="btn" onclick="resetFoot('ncr')">기본값</button>
+      </div>
+    </div>
     <button class="wrbtn" style="margin-bottom:12px" onclick="toggleWrite('ncrwrite',this)">✏️ 신규 작성</button>
     <div class="panel hide" id="ncrwrite" style="margin-bottom:14px">
       <h2>✏️ 부적합 보고 (NCR) 작성</h2>
@@ -1333,6 +1354,20 @@ header .hright{position:relative}
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportEcnPDF()">PDF</button>
     </div>
     </div>
+    <button class="wrbtn cfgtg" style="margin-bottom:10px" onclick="toggleWrite('cfg-ecn',this)">⚙️ 출력설정</button>
+    <div class="panel hide" id="cfg-ecn" style="margin-bottom:14px">
+      <h2>⚙️ 설계변경(4M) 바닥글 (문서번호 · 회사명 · 용지)</h2>
+      <div class="row3">
+        <div class="fg"><label>좌측 — 문서번호</label><input id="cf-ecn-l" placeholder="예: IPQP-1234" oninput="prevFoot('ecn')"></div>
+        <div class="fg"><label>중앙 — 회사명</label><input id="cf-ecn-c" placeholder="예: 일평기연" oninput="prevFoot('ecn')"></div>
+        <div class="fg"><label>우측 — 용지 / 비고</label><input id="cf-ecn-r" placeholder="예: A4(210×297)" oninput="prevFoot('ecn')"></div>
+      </div>
+      <div class="ftprev" id="cf-ecn-p"></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="saveFoot('ecn')">💾 설정 저장</button>
+        <button class="btn" onclick="resetFoot('ecn')">기본값</button>
+      </div>
+    </div>
     <button class="wrbtn" style="margin-bottom:12px" onclick="toggleWrite('ecnwrite',this)">✏️ 신규 작성</button>
     <div class="panel hide" id="ecnwrite" style="margin-bottom:14px">
       <h2>✏️ 설계·4M 변경 작성</h2>
@@ -1371,6 +1406,20 @@ header .hright{position:relative}
       <button class="btn btn-p" onclick="editGauge(null)">＋ 계측기 등록</button>
       <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportGaugeCSV()">엑셀</button>
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="exportGaugePDF()">PDF 대장</button>
+    </div>
+    <button class="wrbtn cfgtg" style="margin-bottom:10px" onclick="toggleWrite('cfg-gauge',this)">⚙️ 출력설정</button>
+    <div class="panel hide" id="cfg-gauge" style="margin-bottom:14px">
+      <h2>⚙️ 계측기 관리대장 바닥글 (문서번호 · 회사명 · 용지)</h2>
+      <div class="row3">
+        <div class="fg"><label>좌측 — 문서번호</label><input id="cf-gauge-l" placeholder="예: IPQP-1234" oninput="prevFoot('gauge')"></div>
+        <div class="fg"><label>중앙 — 회사명</label><input id="cf-gauge-c" placeholder="예: 일평기연" oninput="prevFoot('gauge')"></div>
+        <div class="fg"><label>우측 — 용지 / 비고</label><input id="cf-gauge-r" placeholder="예: A4(210×297)" oninput="prevFoot('gauge')"></div>
+      </div>
+      <div class="ftprev" id="cf-gauge-p"></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="saveFoot('gauge')">💾 설정 저장</button>
+        <button class="btn" onclick="resetFoot('gauge')">기본값</button>
+      </div>
     </div>
     <div id="gaugelist"></div>
   </section>
@@ -1947,7 +1996,7 @@ function enter(name){
   document.getElementById('ubadge').textContent='👤 '+name;
   history.replaceState({t:'view',v:'dash'},'');
   setPCWidthView('dash');
-  loadDash();startApprWatch();
+  loadDash();startApprWatch();loadFoots();
 }
 function toggleDrawer(on){
   const wasOn=document.getElementById('drawer').classList.contains('on');
@@ -2594,10 +2643,10 @@ function go(v,fromPop){
   if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
   if(v==='tryout'){initTryout();loadTryout();}
   if(v==='stock')loadStock();
-  if(v==='ncr')loadNcr();
-  if(v==='ecn')loadEcn();
+  if(v==='ncr'){loadNcr();drawFoot('ncr');}
+  if(v==='ecn'){loadEcn();drawFoot('ecn');}
   if(v==='appr')loadAppr();
-  if(v==='gauge')loadGauge();
+  if(v==='gauge'){loadGauge();drawFoot('gauge');}
 }
 
 /* ---------- 로드 ---------- */
@@ -4212,6 +4261,7 @@ async function apprPDF(id){
     <td class="${x.status==='반려'?'ng':x.status==='승인'?'ok':''}">${esc(x.status)}</td>
     <td class="mono" style="font-size:9.5px">${x.signed_at?fmt(x.signed_at):'-'}</td>
     <td style="font-size:9px">${x.memo?esc(x.memo)+'<br>':''}${x.hash?'<span class="mono" style="color:#666">'+x.hash.slice(0,24)+'...</span>':''}</td></tr>`).join('')}</tbody></table>`;
+  FOOTKIND=a.doc_type||'etc';
   qaPdf(a.doc_type.toUpperCase()+'-'+String(a.ref_id||a.id).padStart(4,'0'),
     a.status==='완료'?'전자결재 문서 (승인 완료)':'전자결재 문서 ['+a.status+']',
     a.title,'전자결재 · SHA-256 무결성 해시 적용',body,signs);
@@ -4221,6 +4271,7 @@ async function exportNcrOnePDF(id){
   if(!r)return;
   const appr=await findAppr('ncr',id,null);
   const body=ncrPdfBody(r)+apprHistHtml(appr);
+  FOOTKIND='ncr';
   qaPdf('NCR-'+String(id).padStart(4,'0'),'부적합 · 시정조치 보고서 (NCR)',qaMold(r.project_id),
     (r.occur_date||'')+' · '+(r.kind||''),body,apprSigns(appr));
 }
@@ -4229,6 +4280,7 @@ async function exportEcnOnePDF(id){
   if(!r)return;
   const appr=await findAppr('ecn',id,null);
   const body=ecnPdfBody(r)+apprHistHtml(appr);
+  FOOTKIND='ecn';
   qaPdf('ECN-'+String(id).padStart(4,'0'),'설계 · 4M 변경 통지서 (ECN)',qaMold(r.project_id),
     (r.change_date||'')+' · '+(r.kind||''),body,apprSigns(appr));
 }
@@ -4259,6 +4311,44 @@ function qaFilterLabel(f1,f2,extra){
   return p.length?p.join(' · '):'전체';
 }
 /* signs: [{role:'작성',name,img,date}...] — 추후 전자결재 연동 시 서명 PNG(dataURL/Storage URL)를 img에 넣으면 표시됨 */
+/* ---------- 출력 바닥글 설정 (문서 종류별) ---------- */
+const FOOT_KEY='mm_doc_foot_v1';
+const FOOT_DEF={l:'',c:'',r:'A4(210×297)'};
+let FOOTS={};        // {ncr:{l,c,r}, ecn:{...}, gauge:{...}}
+let FOOTKIND='etc';  // qaPdf 호출 직전 지정
+function footOf(k){return Object.assign({},FOOT_DEF,FOOTS[k]||{})}
+async function loadFoots(){
+  try{const o=JSON.parse(localStorage.getItem(FOOT_KEY)||'null');if(o)FOOTS=o}catch(e){}
+  try{
+    const r=await api("/mm_doc_cfg?select=*");
+    (r||[]).forEach(x=>{FOOTS[x.doc_type]={l:x.foot_l||'',c:x.foot_c||'',r:x.foot_r||FOOT_DEF.r}});
+    try{localStorage.setItem(FOOT_KEY,JSON.stringify(FOOTS))}catch(e){}
+  }catch(e){}
+}
+function drawFoot(k){
+  const el=document.getElementById('cf-'+k+'-l');if(!el)return;
+  const f=footOf(k);
+  el.value=f.l;document.getElementById('cf-'+k+'-c').value=f.c;document.getElementById('cf-'+k+'-r').value=f.r;
+  prevFoot(k);
+}
+function prevFoot(k){
+  const p=document.getElementById('cf-'+k+'-p');if(!p)return;
+  p.innerHTML=`<span>${esc(g('cf-'+k+'-l')||'-')}</span><span>${esc(g('cf-'+k+'-c')||'-')}</span><span>${esc(g('cf-'+k+'-r')||'-')}</span>`;
+}
+async function saveFoot(k){
+  FOOTS[k]={l:g('cf-'+k+'-l'),c:g('cf-'+k+'-c'),r:g('cf-'+k+'-r')};
+  try{localStorage.setItem(FOOT_KEY,JSON.stringify(FOOTS))}catch(e){}
+  try{
+    const body={doc_type:k,foot_l:FOOTS[k].l||null,foot_c:FOOTS[k].c||null,foot_r:FOOTS[k].r||null};
+    const ex=await api("/mm_doc_cfg?select=doc_type&doc_type=eq."+k);
+    if(ex&&ex.length)await api("/mm_doc_cfg?doc_type=eq."+k,{method:"PATCH",body:JSON.stringify(body)});
+    else await api("/mm_doc_cfg",{method:"POST",body:JSON.stringify(body)});
+    toast('출력설정 저장 완료 (전 사용자 공통)');
+  }catch(e){toast('이 기기에만 저장됨 — patch_doc_cfg.sql 실행 필요')}
+  prevFoot(k);
+}
+function resetFoot(k){FOOTS[k]=Object.assign({},FOOT_DEF);drawFoot(k)}
+
 function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   const sg=signs||[{role:'작성',name:USER||''},{role:'검토',name:''},{role:'확인',name:''},{role:'승인',name:''}];
   const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
@@ -4282,7 +4372,9 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   .meta{width:100%;border-collapse:collapse;margin-top:4px}
   .meta th,.meta td{border:1px solid #888;padding:4px 6px;font-size:10.5px}
   .meta th{background:#eee;width:82px;white-space:nowrap}
-  .ft{margin-top:14px;font-size:9.5px;color:#666;display:flex;justify-content:space-between}
+  .ft{margin-top:14px;font-size:9.5px;color:#444;display:flex;justify-content:space-between;border-top:1px solid #999;padding-top:4px}
+  .ft span:nth-child(2){flex:1;text-align:center}
+  .ft span:nth-child(3){text-align:right}
   .qbx{border:1px solid #888;padding:6px 8px;min-height:34px;margin-top:2px}
   </style></head><body>
   <div class="hd">
@@ -4297,7 +4389,7 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
     </table>
   </div>
   ${bodyHtml}
-  <div class="ft"><span>본 양식은 전자결재 연동 시 결재란에 전자서명이 자동 삽입됩니다.</span><span>금형제작관리 시스템 · MM</span></div>
+  <div class="ft"><span>${esc(footOf(FOOTKIND).l)}</span><span>${esc(footOf(FOOTKIND).c)}</span><span>${esc(footOf(FOOTKIND).r)}</span></div>
   </body></html>`;
   const w=window.open('','_blank');
   if(!w)return toast('팝업이 차단되었습니다. 허용 후 재시도하세요');
@@ -4336,6 +4428,7 @@ function exportNcrPDF(){
     <div class="sect" style="font-size:10.5px">원인 분석</div><div class="qbx">${esc(r.cause||'')}</div>
     <div class="sect" style="font-size:10.5px">시정 조치</div><div class="qbx">${esc(r.action||'')}</div>
     <div class="sect" style="font-size:10.5px">재발 방지 대책</div><div class="qbx">${esc(r.prevention||'')}</div>`).join('');
+  FOOTKIND='ncr';
   qaPdf('NCR-'+today().replace(/-/g,''),'부적합 · 시정조치 보고서',pid?qaMold(pid):'전체 금형',fl,body);
 }
 function exportEcnPDF(){
@@ -4353,6 +4446,7 @@ function exportEcnPDF(){
     <td>${esc(r.worker||'-')}</td>
     <td>${esc(r.approver||'-')}</td>
     <td class="${r.status==='승인'?'ok':r.status==='반려'?'ng':''}">${esc(r.status)}</td></tr>`).join('')}</tbody></table>`;
+  FOOTKIND='ecn';
   qaPdf('ECN-'+today().replace(/-/g,''),'설계 · 4M 변경 관리대장',pid?qaMold(pid):'전체 금형',fl,body);
 }
 
@@ -4528,6 +4622,7 @@ async function exportGaugePDF(){
     <td style="font-size:9px">${esc(x.agency||'-')}${x.cert_no?'<br>'+esc(x.cert_no):''}</td>
     <td style="font-size:9px">${esc(x.location||'-')}</td>
     <td class="${x.status==='폐기'?'ng':x.status==='사용'?'ok':''}" style="text-align:center">${esc(x.status)}</td></tr>`}).join('')}</tbody></table>`;
+  FOOTKIND='gauge';
   qaPdf('MG-'+today().replace(/-/g,''),'계측기 관리대장','전체 계측기','교정주기 기준 차기 교정일 자동계산 · 출력일 '+today(),body);
 }
 
@@ -4931,7 +5026,7 @@ async function loadHist(){
     document.getElementById('ubadge').textContent='👤 '+USER;
     history.replaceState({t:'view',v:'dash'},'');
     setPCWidthView('dash');
-    loadDash();startApprWatch();
+    loadDash();startApprWatch();loadFoots();
   }
 })();
 </script>

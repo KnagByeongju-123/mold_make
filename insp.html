@@ -975,7 +975,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.4</span>
+    <span class="rev">v1.5</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1235,7 +1235,7 @@ const FOOT_DEF={l:'',c:'',r:'A4(210×297)'};
 let FOOT=Object.assign({},FOOT_DEF);
 async function loadFoot(){
   try{
-    const r=await api("/mm_insp_cfg?select=*&id=eq.1");
+    const r=await api("/mm_doc_cfg?select=*&doc_type=eq.insp");
     if(r&&r.length){FOOT={l:r[0].foot_l||'',c:r[0].foot_c||'',r:r[0].foot_r||FOOT_DEF.r};
       try{localStorage.setItem(FOOT_KEY,JSON.stringify(FOOT))}catch(e){}
       return}
@@ -1258,12 +1258,12 @@ async function saveFoot(){
   FOOT={l:g('cf-l'),c:g('cf-c'),r:g('cf-r')};
   try{localStorage.setItem(FOOT_KEY,JSON.stringify(FOOT))}catch(e){}
   try{
-    const body={id:1,foot_l:FOOT.l||null,foot_c:FOOT.c||null,foot_r:FOOT.r||null};
-    const ex=await api("/mm_insp_cfg?select=id&id=eq.1");
-    if(ex&&ex.length)await api("/mm_insp_cfg?id=eq.1",{method:"PATCH",body:JSON.stringify(body)});
-    else await api("/mm_insp_cfg",{method:"POST",body:JSON.stringify(body)});
+    const body={doc_type:'insp',foot_l:FOOT.l||null,foot_c:FOOT.c||null,foot_r:FOOT.r||null};
+    const ex=await api("/mm_doc_cfg?select=doc_type&doc_type=eq.insp");
+    if(ex&&ex.length)await api("/mm_doc_cfg?doc_type=eq.insp",{method:"PATCH",body:JSON.stringify(body)});
+    else await api("/mm_doc_cfg",{method:"POST",body:JSON.stringify(body)});
     toast('출력설정 저장 완료 (전 사용자 공통)');
-  }catch(e){toast('이 기기에만 저장됨 — patch_insp_cfg.sql 실행 시 공통 적용')}
+  }catch(e){toast('이 기기에만 저장됨 — patch_doc_cfg.sql 실행 시 공통 적용')}
   prevFoot();
 }
 function resetFoot(){
