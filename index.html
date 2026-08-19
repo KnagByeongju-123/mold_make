@@ -534,20 +534,17 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .ifm-row .f.xs .xw{overflow-x:auto;padding-bottom:2px}
 .ifm-row .f.xs .xw input{min-width:52px}
 /* 입력 보조 키패드 */
-.kpad{position:fixed;left:0;right:0;bottom:0;z-index:1200;background:var(--card);border-top:1px solid var(--goldbd);
-  box-shadow:0 -8px 26px rgba(0,0,0,.55);padding:8px 10px 16px;max-height:54vh;overflow:auto}
+.kpad{position:fixed;left:0;right:0;top:62px;z-index:1200;background:var(--card);border-bottom:1px solid var(--goldbd);
+  box-shadow:0 10px 26px rgba(0,0,0,.55);padding:8px 10px 12px;max-height:46vh;overflow:auto}
 .kpad.hide{display:none}
 .kpad .kp-h{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;color:var(--gold);padding:2px 2px 7px}
 .kpad .kp-h button{background:var(--card2);border:1px solid var(--line);border-radius:7px;color:var(--sub);font-size:11px;font-weight:800;padding:5px 10px;cursor:pointer;font-family:inherit}
-.kpad .kp-sym{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:7px}
-.kpad .kp-num{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.kpad .kp-sym button,.kpad .kp-num button{padding:11px 2px;border-radius:9px;border:1px solid var(--line);
-  background:var(--card2);color:var(--ink);font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit}
-.kpad .kp-sym button{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold);font-size:13px}
-.kpad .kp-num button.fn{background:rgba(79,140,255,.14);border-color:rgba(79,140,255,.35);color:var(--blue);font-size:12.5px}
-.kpad .kp-num button.ok{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold);font-size:12.5px}
-body.kpad-on{padding-bottom:320px}
+.kpad .kp-sym{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.kpad .kp-sym button{padding:12px 2px;border-radius:9px;border:1px solid var(--goldbd);
+  background:var(--goldbg);color:var(--gold);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+.kpad .kp-sym button:active{background:var(--gold);color:#1b1d26}
 @media(max-width:520px){
+  .kpad{top:60px}
   .kpad .kp-sym{grid-template-columns:repeat(4,1fr)}
   .ffm-head{grid-template-columns:26px 1.4fr 1fr 1fr 24px;font-size:9.5px}
   .ffm-row{grid-template-columns:26px 1.4fr 1fr 1fr 24px;gap:4px;padding:4px 6px}
@@ -910,7 +907,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 11.5</span>
+    <span class="rev">Rev 11.6</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1963,28 +1960,6 @@ header .hright{position:relative}
     <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('C')">C</button>
     <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('t')">t</button>
     <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('HRC')">HRC</button>
-  </div>
-  <div class="kp-num">
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('7')">7</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('8')">8</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('9')">9</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('+')">+</button>
-    <button type="button" class="fn" onmousedown="event.preventDefault()" onclick="kpBack()">⌫</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('4')">4</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('5')">5</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('6')">6</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('-')">-</button>
-    <button type="button" class="fn" onmousedown="event.preventDefault()" onclick="kpClear()">지움</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('1')">1</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('2')">2</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('3')">3</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('/')">/</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns(' ')">␣</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('0')">0</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('.')">.</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('00')">00</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('×')">×</button>
-    <button type="button" class="fn ok" onmousedown="event.preventDefault()" onclick="kpClose()">완료</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
