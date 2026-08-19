@@ -554,17 +554,8 @@ body.kpad-on{padding-bottom:320px}
   .ffm-row>input{padding:9px 6px;font-size:12px}
 }
 .fsect{font-size:12.5px;font-weight:900;color:var(--gold);margin:16px 2px 9px;letter-spacing:.5px}
-.ffm-row{display:grid;grid-template-columns:24px minmax(130px,1.4fr) minmax(120px,1fr) 120px minmax(110px,1fr) 46px 26px;
-  gap:7px;align-items:end;padding:8px 4px;border-bottom:1px dashed var(--line2)}
 .ffm-row:last-child{border-bottom:none}
-.ffm-row .idx{font-size:11px;color:var(--gray);font-family:ui-monospace,monospace;padding-bottom:9px;text-align:center}
-.ffm-row .f{display:flex;flex-direction:column;gap:3px;min-width:0}
-.ffm-row .f label{font-size:9.5px;font-weight:800;color:var(--gray)}
-.ffm-row input{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 9px;font-size:12.5px;font-family:inherit;min-width:0}
-.ffm-row input:focus{outline:none;border-color:var(--goldbd)}
-.ffm-row .fmv{display:flex;flex-direction:column;gap:2px}
-.ffm-row .fmv button{width:100%;padding:2px 0;border:1px solid var(--line);border-radius:5px;background:var(--card2);color:var(--sub);font-size:9px;cursor:pointer}
-.ffm-row .rm{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer;padding:8px 2px}
+.ffm-row .rm{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer}
 .ffm-row .rm:hover{color:var(--red)}
 .ifm-row .f .ro{padding:8px 9px;font-size:12.5px;font-weight:700;color:var(--ink);background:var(--card2);
   border:1px solid var(--line2);border-radius:8px;min-height:35px;line-height:1.35;word-break:break-all}
@@ -579,12 +570,6 @@ body.kpad-on{padding-bottom:320px}
 .wmeta{display:flex;gap:14px;flex-wrap:wrap;padding:9px 13px;border-bottom:1px solid var(--line2);font-size:11.5px;color:var(--gray)}
 .wmeta b{color:var(--ink)}
 .wbar{display:flex;gap:7px;flex-wrap:wrap;padding:10px 12px 12px;border-top:1px solid var(--line2)}
-@media(max-width:960px){
-  .ffm-row{grid-template-columns:1fr 1fr;gap:7px 8px}
-  .ffm-row .idx{grid-column:1/3;text-align:left;padding:0 0 2px}
-  .ffm-row .fmv{flex-direction:row}
-  .ffm-row .rm{grid-column:1/3;justify-self:end;padding:2px 6px}
-}
 @media(max-width:960px){
   .ihdr{grid-template-columns:1fr 1fr}
   .ifm-row.v2{grid-template-columns:1fr 1fr;gap:7px 8px;padding:10px 4px}
@@ -925,7 +910,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 11.3</span>
+    <span class="rev">Rev 11.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1965,7 +1950,7 @@ header .hright{position:relative}
 <datalist id="dl-pv"></datalist>
 
 <div id="kpad" class="kpad hide">
-  <div class="kp-h"><span>입력 도우미</span><button type="button" onclick="kpClose()">✕ 닫기</button></div>
+  <div class="kp-h"><span>규격 / 기준 입력 도우미</span><button type="button" onclick="kpClose()">✕ 닫기</button></div>
   <div class="kp-sym">
     <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('ø')">ø</button>
     <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('±')">±</button>
@@ -3928,7 +3913,7 @@ function addFItem(n){
   const c=Number(n)||1;
   for(let i=0;i<c;i++)FITEMS.push(blankFItem());
   drawFormItems();
-  setTimeout(()=>{const el=document.querySelector('#formitems .ffm-row:last-child input');if(el){el.focus();kpOpen(el)}},30)}
+  setTimeout(()=>{const el=document.querySelector('#formitems .ffm-row:last-child input');if(el)el.focus()},30)}
 function setFItem(i,f,v){if(FITEMS[i])FITEMS[i][f]=v}
 function rmFItem(i){FITEMS.splice(i,1);drawFormItems()}
 function mvFItem(i,d){
@@ -3941,16 +3926,16 @@ function drawFormItems(){
   const filled=FITEMS.filter(r=>r.item&&r.item.trim()).length;
   box.innerHTML=`<div class="ifm-op"><div class="ifm-oph">
       <span class="nm">검사항목 ${filled}개</span>
-      <span class="cnt">규격 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 형식 → 자동 판정 · 측정값 X1~X10</span>
+      <span class="cnt">규격 칸을 누르면 입력 도우미(기호·숫자판)가 열립니다 · 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 형식 → 자동 판정</span>
       <div class="acts"><button type="button" onclick="addFItem(5)">+ 5줄</button><button type="button" onclick="addFItem(15)">+ 15줄</button></div>
     </div>
     <div class="ffm-head"><div>No</div><div>검사 항목</div><div>규격 / 기준</div><div>측정기 (검사방법)</div><div></div></div>
     <div class="ifm-rows">`+
     FITEMS.map((r,i)=>`<div class="ffm-row">
       <div class="idx">${i+1}</div>
-      <input value="${esc(r.item||'')}" placeholder="검사 항목" onfocus="kpOpen(this)" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
+      <input value="${esc(r.item||'')}" placeholder="검사 항목" onfocus="kpClose()" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
       <input value="${esc(r.spec||'')}" class="mono" placeholder="88.14 ±0.03" onfocus="kpOpen(this)" oninput="setFItem(${i},'spec',this.value)" onkeydown="fKey(event,${i},1)">
-      <input value="${esc(r.method||'')}" placeholder="3차원측정기 #01" onfocus="kpOpen(this)" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
+      <input value="${esc(r.method||'')}" placeholder="3차원측정기 #01" onfocus="kpClose()" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
       <button class="rm" title="행 삭제" onclick="rmFItem(${i})">✕</button>
     </div>`).join('')+'</div></div>';
 }
@@ -3962,7 +3947,7 @@ function fKey(e,i,col){
   setTimeout(()=>{
     const rows=document.querySelectorAll('#formitems .ffm-row');
     const nx=rows[i+1]&&rows[i+1].querySelectorAll('input')[col];
-    if(nx){nx.focus();kpOpen(nx);nx.scrollIntoView({block:'center',behavior:'smooth'})}
+    if(nx){nx.focus();if(col===1)kpOpen(nx);else kpClose();nx.scrollIntoView({block:'center',behavior:'smooth'})}
   },10);
 }
 /* ----- 입력 보조 키패드 ----- */
@@ -4140,7 +4125,7 @@ function wRowHtml(r,i){
     <div class="f"><label>검사방법 (측정기 No)</label><div class="ro">${esc(r.method||'-')}</div></div>
     <div class="f"><label>규격 / 기준</label><div class="ro mono">${esc(r.spec||'-')}</div></div>
     <div class="f xs"><label>측 정 결 과 X1~X5</label>
-      <div class="xw">${INSP_X.map((k,x)=>`<input value="${esc(r[k]||'')}" placeholder="X${x+1}" inputmode="decimal" onfocus="kpOpen(this)" oninput="setWX(${i},'${k}',this.value)">`).join('')}</div></div>
+      <div class="xw">${INSP_X.map((k,x)=>`<input value="${esc(r[k]||'')}" placeholder="X${x+1}" inputmode="decimal" oninput="setWX(${i},'${k}',this.value)">`).join('')}</div></div>
     <div class="f jd"><label>판정</label><select id="ifj-${i}" onchange="setWJudge(${i},this.value)">${INSP_JUDGE.map(j=>`<option value="${j}"${r.judge===j?' selected':''}>${j||'미판정'}</option>`).join('')}</select></div>
     <div class="f memo"><label>비고</label><input value="${esc(r.memo||'')}" oninput="setWRow(${i},'memo',this.value)"></div>
   </div>`;
