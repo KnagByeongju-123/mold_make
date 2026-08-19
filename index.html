@@ -910,7 +910,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 11.4</span>
+    <span class="rev">Rev 11.5</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1286,7 +1286,6 @@ header .hright{position:relative}
       <div class="qfbox"><span class="qflb">📝 성적서 양식</span>
         <div class="stkbar">
           <select id="im-op"><option value="">공정 선택</option></select>
-          <select id="im-purpose"><option>양산품 검사</option><option>개발품 검사</option><option>초도품 검사</option><option>비교 검사</option><option>측정 의뢰</option><option>기타</option></select>
         </div>
         <div class="ihdr">
           <div class="fg sk"><label>SKETCH (도면 이미지)</label>
@@ -4006,9 +4005,14 @@ async function saveForm(){
   const items=FITEMS.filter(r=>r.item&&r.item.trim());
   if(!items.length)return toast('검사항목을 1개 이상 입력하세요');
   let sketch=SKURL;
-  if(SKFILE){try{toast('도면 업로드 중...');sketch=await uploadImg(SKFILE,'insp')}catch(e){return toast(e.message)}}
+  if(SKFILE){
+    try{toast('도면 업로드 중...');sketch=await uploadImg(SKFILE,'insp')}
+    catch(e){
+      if(!confirm('도면 이미지 업로드에 실패했습니다.\n('+(String(e.message).includes('Bucket')?'Storage 버킷 mm-photos 없음 — patch_storage.sql 실행 필요':e.message)+')\n\n도면 없이 양식만 저장할까요?'))return;
+      sketch=SKURL;
+    }
+  }
   const body={project_id:pid,op_code:op,title:title,
-    purpose:document.getElementById('im-purpose').value,
     sketch:sketch||null,items:items,author:USER||null};
   try{
     if(FEDIT)await api(`/mm_inspect_form?id=eq.${FEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
@@ -4021,7 +4025,6 @@ async function saveForm(){
 function formOf(id){return FORMS.find(x=>String(x.id)===String(id))}
 function fillForm(f,copy){
   document.getElementById('im-op').value=f.op_code||'';
-  document.getElementById('im-purpose').value=f.purpose||'양산품 검사';
   SKFILE=null;SKDATA=null;SKURL=f.sketch||null;rmSketch();
   FITEMS=(f.items||[]).map(r=>({item:r.item||'',method:r.method||'',spec:r.spec||'',memo:r.memo||''}));
   for(let i=0;i<3;i++)FITEMS.push(blankFItem());
@@ -4049,10 +4052,10 @@ function formCard(f,writeMode){
     <div class="fc-h">
       <span class="no">${f.op_code?opN(f.op_code):'-'}</span>
       <span class="nm">${f.op_code?esc(mName(f.op_code)):esc(f.title||'')}</span>
-      <span class="tag">${esc(f.purpose||'')}</span>
+<span class="tag">${cnt}항목</span>
       ${f.sketch?`<button class="btn" style="padding:3px 8px;font-size:10.5px" onclick="openBig('${f.sketch}')">🖼 도면</button>`:''}
     </div>
-    <div class="fc-s">검사항목 ${cnt}개${used?' · 작성 '+used+'건':''}</div>
+    <div class="fc-s">${f.op_code?opN(f.op_code)+' '+esc(mName(f.op_code)):''}${used?' · 작성 '+used+'건':''}</div>
     <div class="fc-a">${writeMode?
       `<button class="btn btn-p" style="padding:7px 14px" onclick="startWrite(${f.id})">✍️ 이 양식으로 작성</button>`:
       `<button class="btn" style="padding:6px 11px;font-size:11.5px" onclick="editForm(${f.id})">✏️ 수정</button>
@@ -4103,7 +4106,7 @@ function drawWrite(){
   box.innerHTML=`<div class="ifm-op">
     <div class="ifm-oph">
       <span class="no">${f.op_code?opN(f.op_code):''}</span><span class="nm">${esc(f.title||'')}</span>
-      <span class="cnt">${esc(f.purpose||'')} · 입력 ${done}/${WROWS.length}${ng?' · NG '+ng:''}</span>
+      <span class="cnt">입력 ${done}/${WROWS.length}${ng?' · NG '+ng:''}</span>
       <div class="acts">
         ${f.sketch?`<button type="button" onclick="openBig('${f.sketch}')">🖼 도면</button>`:''}
         <button type="button" onclick="wAllOk()">전체 OK</button>
