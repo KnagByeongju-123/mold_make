@@ -574,7 +574,7 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .fcard .fc-a{display:flex;gap:6px;flex-wrap:wrap}
 .wmeta{display:flex;gap:14px;flex-wrap:wrap;padding:9px 13px;border-bottom:1px solid var(--line2);font-size:11.5px;color:var(--gray)}
 .wmeta b{color:var(--ink)}
-.wbar{display:flex;gap:7px;flex-wrap:wrap;padding:10px 12px 12px;border-top:1px solid var(--line2)}
+.wsave{display:flex;gap:7px;flex-wrap:wrap;padding:12px;border-top:1px solid var(--line2);background:var(--card)}
 @media(max-width:960px){
   .ihdr{grid-template-columns:1fr 1fr}
   .ifm-row.v2{grid-template-columns:1fr 1fr;gap:7px 8px;padding:10px 4px}
@@ -915,7 +915,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 11.8</span>
+    <span class="rev">Rev 12.0</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1019,29 +1019,7 @@ header .hright{position:relative}
 
   <!-- 진행현황 -->
   <section id="v-flow" class="hide">
-    <div class="modetab">
-      <button id="mode-mx" class="on" onclick="setMode('mx')">전체 현황판</button>
-      <button id="mode-dt" onclick="setMode('dt')">개별 상세</button>
-    </div>
-
-    <div id="mxwrap">
-      <div class="pfilter" id="mxflow">
-        <button class="on" onclick="setMxFlow('신작')">🆕 신작</button>
-        <button onclick="setMxFlow('수리')">🔧 수리</button>
-      </div>
-      <div class="mxlegend">
-        <span><i class="cd c-w"></i>대기</span>
-        <span><i class="cd c-r">●</i>진행</span>
-        <span><i class="cd c-ok">✓</i>완료</span>
-        <span><i class="cd c-ng">✕</i>NG</span>
-        <span class="mxtip">칸을 누르면 계획일·진행내용 확인 및 상태 전환</span>
-      </div>
-      <div class="tscroll mxscroll">
-        <table class="mxtbl" id="mxtbl"></table>
-      </div>
-    </div>
-
-    <div id="dtwrap" class="hide">
+    <div id="dtwrap">
       <div class="psel">
         <select id="flowsel" onchange="renderFlow()"></select>
         <span id="flowprog" style="font-weight:700;color:var(--blue)"></span>
@@ -1525,11 +1503,11 @@ header .hright{position:relative}
       <div class="hn mono">04</div>
       <div class="hb">
         <h3>진행현황 — 공정 상태 처리</h3>
-        <p><b>전체 현황판</b>과 <b>개별 상세</b> 두 가지 방식이 있습니다. 현황판 상단의 <b>🆕신작 / 🔧수리</b> 탭으로 유형을 전환합니다.</p>
+        <p>금형을 선택해 <b>공정별 세부 진행상태</b>를 처리하는 화면입니다. 여러 금형의 전체 현황은 <b>홈(대시보드)</b>에서 확인합니다.</p>
         <ul>
-          <li><b>전체 현황판</b>: 세로 = 금형, 가로 = 공정의 표. <i class="cd c-w"></i>대기 · <i class="cd c-r">●</i>진행 · <i class="cd c-ok">✓</i>완료 · <i class="cd c-ng">✕</i>NG로 구분되며, 계획완료일이 지난 칸은 붉게 표시됩니다.</li>
-          <li>칸을 누르면 팝업에서 계획 시작·완료일 입력, 실적 일시, 업무 내용, 진행 메모 확인 및 <b>진행 / 완료 / NG</b> 전환이 가능합니다.</li>
-          <li>왼쪽 금형명을 누르면 <b>개별 상세</b>로 이동합니다. 출력물 체크리스트와 부품 관리는 개별 상세에서 다룹니다.</li>
+          <li>상단 선택창에서 금형을 고르면 공정 카드가 순서대로 표시되고, 우측에 진행률이 나타납니다.</li>
+          <li>각 카드에서 <b>시작 / OK / NG</b> 처리와 담당 부서·업무 내용 확인이 가능합니다.</li>
+          <li>카드 하단에서 <b>출력물 점검표</b>와 <b>외주 부품</b>을 함께 관리합니다.</li>
         </ul>
         <table class="htbl">
           <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 시작 시각과 로그인 사용자가 기록됩니다.</td></tr>
@@ -2677,7 +2655,7 @@ function go(v,fromPop){
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','insp','ncr','ecn','appr','gauge'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   setPCWidthView(v);
   if(v==='dash')loadDash();
-  if(v==='flow'&&FLOWMODE==='mx')renderMatrix();
+  if(v==='flow')loadFlowSel();
   if(v==='plan')loadPlanSel();
   if(v==='doc')loadDocSel();
   if(v==='hist')loadHist();
@@ -2836,20 +2814,14 @@ async function delProject(id,no){
 /* ---------- 공정 보드 ---------- */
 let CURPROJ=null;
 /* ---------- 전체 현황판 (매트릭스) ---------- */
-let MXPJ=[],MXPS=[],CELL=null,FLOWMODE='mx';
-function setMode(m){
-  FLOWMODE=m;
-  document.getElementById('mode-mx').classList.toggle('on',m==='mx');
-  document.getElementById('mode-dt').classList.toggle('on',m==='dt');
-  document.getElementById('mxwrap').classList.toggle('hide',m!=='mx');
-  document.getElementById('dtwrap').classList.toggle('hide',m!=='dt');
-  if(m==='mx')renderMatrix(); else loadFlowSel();
-}
+let MXPJ=[],MXPS=[],CELL=null,FLOWMODE='dt';
+function setMode(m){FLOWMODE='dt';loadFlowSel();}
 let MXFLOW='신작';
 function setMxFlow(f){MXFLOW=f;
   document.querySelectorAll('#mxflow button').forEach((b,k)=>b.classList.toggle('on',['신작','수리'][k]===f));
   renderMatrix();}
 async function renderMatrix(){
+  if(!document.getElementById('mxtbl'))return;
   const [pjAll,ps]=await Promise.all([
     api("/mm_project?select=id,mold_no,mold_name,status,due_date,mold_type&order=created_at.desc"),
     api("/mm_process?select=id,project_id,op_code,status,plan_start,plan_end,started_at,finished_at,worker,note,ng_count")
@@ -2956,7 +2928,7 @@ async function loadFlowSel(sel){
   if(sel)s.value=sel;
   renderFlow();
 }
-function openFlow(id){go('flow');setMode('dt');loadFlowSel(id)}
+function openFlow(id){go('flow');loadFlowSel(id)}
 async function renderFlow(){
   const pid=document.getElementById('flowsel').value;
   CURPROJ=pid;
@@ -4151,8 +4123,8 @@ function drawWrite(){
       </div>
     </div>
     <div class="ifm-rows">${WROWS.map((r,i)=>wRowHtml(r,i)).join('')}</div>
-    <div class="wbar">
-      <button class="btn btn-p" style="padding:9px 16px" onclick="saveWrite()">💾 성적서 저장</button>
+    <div class="wsave">
+      <button class="btn btn-p" style="padding:11px 20px;font-size:13.5px" onclick="saveWrite()">💾 성적서 저장</button>
       <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="writePDF()">PDF 미리보기</button>
     </div></div>`;
 }
