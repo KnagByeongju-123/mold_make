@@ -520,6 +520,17 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
 tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 /* 검사항목 연속 입력표 */
+.monbig{display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:12px;padding:15px 17px;
+  border-radius:14px;border:1.5px solid var(--goldbd);
+  background:linear-gradient(135deg,rgba(226,176,74,.20),rgba(246,211,101,.07));
+  box-shadow:0 4px 18px rgba(226,176,74,.12);transition:.15s}
+.monbig:hover{border-color:var(--gold);background:linear-gradient(135deg,rgba(226,176,74,.28),rgba(246,211,101,.10))}
+.monbig:active{transform:scale(.995)}
+.monbig .ic{font-size:26px;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(226,176,74,.5))}
+.monbig .tx{display:flex;flex-direction:column;flex:1;min-width:0;font-size:17px;font-weight:900;color:var(--gold2);letter-spacing:-.2px}
+.monbig .tx em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--gold);opacity:.8;margin-top:2px}
+.monbig .go{font-size:12.5px;font-weight:800;color:var(--gold);white-space:nowrap;flex-shrink:0}
+@media(max-width:520px){.monbig{padding:13px 14px;gap:10px}.monbig .tx{font-size:15.5px}.monbig .go{font-size:11.5px}}
 .moncard{background:var(--card);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;overflow:hidden}
 .moncard .mch{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--line2)}
 .moncard .mch .ic{font-size:15px}
@@ -962,7 +973,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.7</span>
+    <span class="rev">Rev 13.9</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1139,12 +1150,15 @@ header .hright{position:relative}
 
   <!-- 모니터링 -->
   <section id="v-mon" class="hide">
+    <div class="monbig" onclick="location.href='mon.html'">
+      <span class="ic">🌡</span>
+      <span class="tx">온습도 모니터링<em>온도 · 습도 · 체감 · 결로 실시간 감시</em></span>
+      <span class="go">바로가기 ›</span>
+    </div>
     <div class="stkbar" style="margin-bottom:12px">
       <button class="btn btn-p" onclick="loadMon()">↻ 새로고침</button>
-      <button class="btn" style="background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.4);color:var(--blue)" onclick="location.href='mon.html'">🌡 온습도 모니터링</button>
       <span id="mon-tm" style="font-size:11.5px;color:var(--gray)"></span>
     </div>
-    <div class="stats" id="mon-stat"></div>
     <div id="monbody"></div>
   </section>
 
@@ -3458,11 +3472,6 @@ async function loadMon(){
   const my=apr.filter(a=>a.steps&&a.steps[a.cur]&&a.steps[a.cur].name===USER)
     .map(a=>({t:(a.doc_type||'').toUpperCase(),d:String(a.title||'').slice(0,26),g:'대기'}));
 
-  document.getElementById('mon-stat').innerHTML=
-    `<div class="stat s1"><div class="v">${live.filter(p=>p.status==='진행').length}</div><div class="k">진행 금형</div></div>
-     <div class="stat s3"><div class="v">${late.length}</div><div class="k">지연 공정</div></div>
-     <div class="stat s2"><div class="v">${due.length}</div><div class="k">납기 임박</div></div>
-     <div class="stat s4"><div class="v">${nc.length+gu.length+lo.length+my.length}</div><div class="k">조치 필요</div></div>`;
   document.getElementById('mon-tm').textContent='기준 '+new Date().toLocaleString('ko-KR');
 
   box.innerHTML=
