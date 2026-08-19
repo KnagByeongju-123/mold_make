@@ -962,7 +962,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.5</span>
+    <span class="rev">Rev 13.6</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1500,7 +1500,7 @@ header .hright{position:relative}
 
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
-    <h1 class="pt">사용안내 <em>— Rev 8.6 기준</em></h1>
+    <h1 class="pt">사용안내 <em>— Rev 13.5 기준</em></h1>
     <div class="hp">화면 이동은 <b>☰ 메뉴</b>를 사용합니다. 금형은 <b>🗜️ 신작</b>과 <b>🔧 수리</b> 두 가지 유형으로 관리되며, 각각 <b>별도의 공정 플로우</b>를 따릅니다. 공정 번호와 단계 수는 <b>설정 → 공정설계</b>에서 회사에 맞게 직접 설계합니다.</div>
 
     <div class="hstep">
@@ -1622,6 +1622,39 @@ header .hright{position:relative}
 
     <div class="hstep">
       <div class="hn mono">09</div>
+      <div class="hb">
+        <h3>🛡️ 품질관리 (SQ)</h3>
+        <p>SQ 심사 대응 문서를 작성·보관하는 그룹입니다. 모든 문서는 PDF에 <b>결재란</b>이 포함되며, 각 화면의 <b>⚙️ 출력설정</b>에서 바닥글(좌: 문서번호 · 중앙: 회사명 · 우: 용지)을 지정합니다.</p>
+        <ul>
+          <li><b>📐 검사성적서</b>(별도 화면): <b>양식작성 → 치수측정 → 결과출력 → 출력설정</b> 4단계입니다.
+            <br>· <b>양식작성</b>: 금형·공정을 고르고 검사항목 / 규격 / 측정기를 등록합니다. 칸을 누르면 오른쪽 <b>선택</b> 패널에 항목·측정기 프리셋과 규격 기호·숫자·공차(±0.03 등) 칩이 나타나 키보드 없이 입력합니다. <b>📋 엑셀 붙여넣기</b>로 기존 엑셀 성적서를 그대로 옮기거나 템플릿(CSV)을 내려받아 채울 수 있습니다.
+            <br>· <b>SKETCH</b>: 도면 이미지를 등록하고 <b>🔍 번호 편집</b>에서 확대해 위치를 누르면 ①②③ 풍선번호가 찍힙니다. 검사항목 순번과 자동 대응됩니다.
+            <br>· <b>치수측정</b>: 해당 공정 작업자가 양식을 불러와 <b>X1~X10</b> 측정값만 입력합니다. 규격을 <span class="mono">88.14 ±0.03</span> · <span class="mono">50 +0.05/-0.02</span> · <span class="mono">10~12</span> 형식으로 등록해 두면 <b>OK/NG가 자동 판정</b>됩니다.
+            <br>· <b>결과출력</b>: 발행된 성적서 목록에서 상세보기 · <b>📄 PDF</b>(도면+번호 → 측정결과표) · 엑셀 · 삭제.</li>
+          <li><b>🚨 부적합·시정조치(NCR)</b>: 부적합 접수 → 원인분석 → 시정조치 → 재발방지를 단계로 기록하고 조치중/완료로 관리합니다. 기간·상태·구분 조회, 보고서 PDF·관리대장 엑셀.</li>
+          <li><b>📝 설계변경(4M)</b>: 설계/자재/공법/설비/작업자 구분으로 변경 전→후·사유·요청/승인자를 기록하고 검토중 → 승인/반려로 진행합니다.</li>
+          <li><b>📏 계측기관리</b>: 관리번호·측정범위·교정주기를 등록하면 <b>차기 교정일이 자동 계산</b>되고 임박·초과가 D-day로 표시됩니다. 교정 이력과 관리대장 PDF를 지원합니다.</li>
+          <li><b>✍️ 결재함</b>: 상신한 문서를 <b>작성 → 검토 → 확인 → 승인</b> 순으로 전자결재합니다. 서명패드로 서명하면 무결성 해시가 함께 저장되고, 서명이 삽입된 PDF가 출력됩니다. 결재 대기 건은 상단 🔔 배지로 알립니다. 결재선은 <b>설정 → 결재선</b>에서 만듭니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">10</div>
+      <div class="hb">
+        <h3>📡 모니터링 — 이상 징후 한눈에</h3>
+        <p>조치가 필요한 항목만 모아 보여주는 화면입니다. 상단에 <b>진행 금형 · 지연 공정 · 납기 임박 · 조치 필요</b> 건수가 집계되고, 아래 카드에서 상세를 확인해 <b>바로가기 ›</b>로 해당 화면으로 이동합니다.</p>
+        <ul>
+          <li>⏰ 지연 공정 · 📅 납기 임박(D-7) · 🚫 NG 발생 공정</li>
+          <li>🚨 미조치 NCR · 📝 검토중 설계변경 · 📏 계측기 교정 임박·초과(D-14)</li>
+          <li>📦 안전재고 미달 · ✍️ 내 결재 대기</li>
+        </ul>
+        <p class="hnote"><b>확장 예정</b> — 작업장 <b>온도 · 습도 · 체감온도 · 결로</b> 모니터링과 <b>ntfy 알림 발송</b>, <b>안돈(Andon) 시스템</b> 적용이 가능합니다. 센서 연동 시 임계치 초과를 실시간 감지해 담당자 휴대폰으로 즉시 알림을 보내고, 현장 표시등·대시보드로 이상 상태를 표시할 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">11</div>
       <div class="hb">
         <h3>부품 관리 · 업무현황 · 이력 · 게시판</h3>
         <ul>
