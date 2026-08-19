@@ -171,7 +171,7 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
 <header>
   <div class="hrow">
     <button class="back" id="btnBack">←</button>
-    <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.2</span></h1>
+    <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.3</span></h1>
     <span class="ubadge" id="meLabel"></span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" aria-expanded="false">📐</button>
@@ -257,10 +257,10 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
 const BASE = "https://pllwltojbofjaftcemvn.supabase.co";
 const KEY  = "sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
 const TBL_USER = 'mm_user';
-const TBL_WS   = 'hc_work_status';
+const TBL_WS   = 'mm_work_status';      // 일평기연 전용 테이블
 const MASTER_KEY = '__MASTER__';
-const CK_USERS = 'hcws_users_cache';
-const CK_ORDER = 'hcws_user_order';     // 배치순서 (이 기기 전용)
+const CK_USERS = 'mmws_users_cache';
+const CK_ORDER = 'mmws_user_order';     // 배치순서 (이 기기 전용)
 const CK_USERS_TTL = 12*60*60*1000;
 const POLL_MS = 1800000;                // 30분 증분 폴링
 
@@ -276,7 +276,20 @@ const PROGS = [0,25,50,75,100];
 const scolor = k => (STATUS.find(s=>s.k===k)||{c:'#3a4152'}).c;
 
 /* ================= 상태 ================= */
-let USER = sessionStorage.getItem('mm_user') || null;
+const SESS_KEY='mm_session', SESS_DAYS=7;
+function readSession(){
+  try{
+    const o=JSON.parse(localStorage.getItem(SESS_KEY)||'null');
+    if(o&&o.exp>Date.now()){
+      localStorage.setItem(SESS_KEY,JSON.stringify({name:o.name,exp:Date.now()+SESS_DAYS*864e5}));
+      sessionStorage.setItem('mm_user',o.name);
+      return o.name;
+    }
+    if(o)localStorage.removeItem(SESS_KEY);
+  }catch(e){}
+  return sessionStorage.getItem('mm_user')||null;
+}
+let USER = readSession();
 let users = [];
 let rows = {};
 let els  = {};
