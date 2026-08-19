@@ -130,6 +130,19 @@ body.ordmode .card .mv{display:flex}
 body.ordmode .card .hd{display:flex}
 
 .empty-msg{text-align:center;color:var(--gray);font-size:13px;padding:40px 10px}
+.card .cmtb{margin-left:6px;border:1px solid var(--line2);background:var(--card2);color:var(--gray);
+  border-radius:9px;padding:3px 8px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+.card .cmtb.has{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
+.cmtlist{display:flex;flex-direction:column;gap:7px;max-height:210px;overflow-y:auto}
+.cmt{background:var(--card2);border:1px solid var(--line2);border-radius:10px;padding:8px 10px}
+.cmt .ch{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--sub);margin-bottom:3px}
+.cmt .ch b{color:var(--gold);font-weight:800}
+.cmt .ch .cx{margin-left:auto;background:transparent;border:none;color:var(--gray);font-size:12px;cursor:pointer;padding:0 2px}
+.cmt .cb{font-size:13.5px;color:var(--ink);line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.cmt-empty{font-size:12px;color:var(--gray);padding:8px 2px}
+.cmtadd{display:flex;gap:7px;margin-top:8px}
+.cmtadd .ip{flex:1}
+.btn.cmtbtn{flex:0 0 74px;padding:10px 4px;font-size:13.5px;background:var(--card2);border-color:var(--line);color:var(--gold)}
 
 .mask{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:50;display:none}
 .mask.on{display:block}
@@ -171,7 +184,7 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
 <header>
   <div class="hrow">
     <button class="back" id="btnBack">←</button>
-    <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.3</span></h1>
+    <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.4</span></h1>
     <span class="ubadge" id="meLabel"></span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" aria-expanded="false">📐</button>
@@ -248,6 +261,12 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
     <button class="btn cancel" id="shCancel">닫기</button>
     <button class="btn save" id="shSave">저장</button>
   </div>
+  <div class="lbl" id="shCmtLbl">💬 코멘트</div>
+  <div id="shCmts" class="cmtlist"></div>
+  <div class="cmtadd">
+    <input class="ip" id="shCmtIn" placeholder="코멘트를 입력하세요">
+    <button class="btn cmtbtn" id="shCmtBtn">등록</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -258,6 +277,7 @@ const BASE = "https://pllwltojbofjaftcemvn.supabase.co";
 const KEY  = "sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
 const TBL_USER = 'mm_user';
 const TBL_WS   = 'mm_work_status';      // 일평기연 전용 테이블
+const TBL_CMT  = 'mm_ws_comment';       // 업무현황 코멘트
 const MASTER_KEY = '__MASTER__';
 const CK_USERS = 'mmws_users_cache';
 const CK_ORDER = 'mmws_user_order';     // 배치순서 (이 기기 전용)
@@ -300,6 +320,7 @@ let timer = null;
 let fQry = '', fFilled = false;
 let orderMode = false, dragId = null;
 let editUser = null, edStatus = '근무', edProg = 0;
+let cmts = {};   // {user_id:[{...}]}
 
 /* ================= 유틸 ================= */
 function todayStr(){
@@ -406,6 +427,32 @@ async function loadAll(){
   });
 }
 
+async function loadCmts(){
+  cmts = {};
+  try{
+    const r = await fetch(BASE+'/rest/v1/'+TBL_CMT
+      +'?select=id,work_date,user_id,writer,body,created_at&work_date=eq.'+curDate+'&order=created_at.asc',{headers:HDR});
+    if(!r.ok) return;
+    (await r.json()).forEach(c=>{ (cmts[c.user_id]=cmts[c.user_id]||[]).push(c); });
+  }catch(e){}
+}
+async function addCmt(uid, body){
+  const r = await fetch(BASE+'/rest/v1/'+TBL_CMT, {
+    method:'POST',
+    headers:Object.assign({'Prefer':'return=representation'},HDRJ),
+    body:JSON.stringify({work_date:curDate,user_id:uid,writer:USER||'',body:body})
+  });
+  if(!r.ok) throw new Error('코멘트 등록 실패');
+  const [c] = await r.json();
+  (cmts[uid]=cmts[uid]||[]).push(c);
+  return c;
+}
+async function delCmt(id, uid){
+  const r = await fetch(BASE+'/rest/v1/'+TBL_CMT+'?id=eq.'+id,{method:'DELETE',headers:HDR});
+  if(!r.ok) throw new Error('삭제 실패');
+  cmts[uid] = (cmts[uid]||[]).filter(c=>String(c.id)!==String(id));
+}
+
 /* 증분 폴링: 변경분만 조회 (변경 없으면 빈 배열 = 최소 부하) */
 async function poll(){
   if(!liveOn || document.hidden) return;
@@ -423,6 +470,8 @@ async function poll(){
       const u = users.find(y=>y.id===x.user_id);
       if(u && els[u.id]) paintCard(els[u.id], u);
     });
+    await loadCmts();
+    Object.keys(els).forEach(id=>{ const u=users.find(y=>y.id===id); if(u) paintCard(els[id],u); });
     if(list.length){ renderStat(); }
     setLive(true, list.length);
   }catch(e){ setLive(false); }
@@ -480,6 +529,10 @@ function paintCard(el, u){
     r && r.updated_at ? (hhmm(r.updated_at) + (r.updated_by ? ' · '+r.updated_by : '')) : '';
   const nt = el.querySelector('.note');
   nt.textContent = r && r.note ? '📌 '+r.note : '';
+  const cb = el.querySelector('.cmtb');
+  const n = (cmts[u.id]||[]).length;
+  cb.textContent = n ? '💬 '+n : '💬';
+  cb.classList.toggle('has', !!n);
 }
 
 function makeCard(u){
@@ -495,6 +548,10 @@ function makeCard(u){
   top.appendChild(nm); top.appendChild(st);
 
   const ct = document.createElement('div'); ct.className = 'ct';
+
+  const cmtb = document.createElement('button'); cmtb.className = 'cmtb'; cmtb.textContent = '💬';
+  cmtb.addEventListener('click', e=>{ e.stopPropagation(); openEditor(u, true); });
+  top.appendChild(cmtb);
 
   const ft = document.createElement('div'); ft.className = 'ft';
   const pg = document.createElement('div'); pg.className = 'pg';
@@ -576,10 +633,10 @@ function renderStat(){
 }
 
 /* ================= 편집 ================= */
-function openEditor(u){
+function openEditor(u, cmtOnly){
   if(!USER) return;
   const isSelf = USER === u.name;
-  if(!isSelf && USER !== '관리자'){
+  if(!cmtOnly && !isSelf && USER !== '관리자'){
     if(!confirm(u.name+' 님의 업무현황을 대신 입력/수정합니다.\n계속할까요?')) return;
   }
   editUser = u;
@@ -590,9 +647,10 @@ function openEditor(u){
   document.getElementById('shNote').value = r.note || '';
   edStatus = r.status || '근무';
   edProg = r.progress || 0;
-  buildStatusChips(); buildProgChips();
+  buildStatusChips(); buildProgChips(); renderCmts();
   document.getElementById('mask').classList.add('on');
   document.getElementById('sheet').classList.add('on');
+  if(cmtOnly) setTimeout(()=>{ document.getElementById('shCmtLbl').scrollIntoView({block:'center',behavior:'smooth'}); },260);
 }
 function closeEditor(){
   document.getElementById('mask').classList.remove('on');
@@ -619,6 +677,50 @@ function buildProgChips(){
     b.addEventListener('click', ()=>{ edProg = p; buildProgChips(); });
     box.appendChild(b);
   });
+}
+
+function renderCmts(){
+  const box = document.getElementById('shCmts');
+  box.textContent = '';
+  const list = editUser ? (cmts[editUser.id]||[]) : [];
+  if(!list.length){
+    const e = document.createElement('div'); e.className='cmt-empty'; e.textContent='등록된 코멘트가 없습니다';
+    box.appendChild(e); return;
+  }
+  list.forEach(c=>{
+    const w = document.createElement('div'); w.className='cmt';
+    const h = document.createElement('div'); h.className='ch';
+    const nm= document.createElement('b'); nm.textContent = c.writer||'-';
+    const tm= document.createElement('span'); tm.textContent = hhmm(c.created_at);
+    h.appendChild(nm); h.appendChild(tm);
+    if(USER===c.writer || USER==='관리자'){
+      const x = document.createElement('button'); x.className='cx'; x.textContent='✕';
+      x.addEventListener('click', async ()=>{
+        if(!confirm('코멘트를 삭제할까요?')) return;
+        try{ await delCmt(c.id, editUser.id); renderCmts(); paintCard(els[editUser.id], editUser); }
+        catch(e){ toast(e.message); }
+      });
+      h.appendChild(x);
+    }
+    const b = document.createElement('div'); b.className='cb'; b.textContent = c.body||'';
+    w.appendChild(h); w.appendChild(b); box.appendChild(w);
+  });
+}
+async function submitCmt(){
+  if(!editUser) return;
+  const ip = document.getElementById('shCmtIn');
+  const v = ip.value.trim();
+  if(!v) return;
+  const btn = document.getElementById('shCmtBtn');
+  btn.disabled = true;
+  try{
+    await addCmt(editUser.id, v);
+    ip.value='';
+    renderCmts();
+    if(els[editUser.id]) paintCard(els[editUser.id], editUser);
+    toast('코멘트 등록');
+  }catch(e){ toast(e.message); }
+  btn.disabled = false;
 }
 
 async function saveEditor(){
@@ -685,6 +787,7 @@ async function setDate(d){
   document.getElementById('btnLive').textContent = liveOn ? '🔄 자동 30분' : '⏸ 자동 OFF';
   try{
     await loadAll();
+    await loadCmts();
     render();
     setLive(true);
   }catch(e){
@@ -776,6 +879,8 @@ async function init(){
 
   document.getElementById('shClose').addEventListener('click', closeEditor);
   document.getElementById('shCancel').addEventListener('click', closeEditor);
+  document.getElementById('shCmtBtn').addEventListener('click', submitCmt);
+  document.getElementById('shCmtIn').addEventListener('keydown', e=>{ if(e.key==='Enter') submitCmt(); });
   document.getElementById('mask').addEventListener('click', closeEditor);
   document.getElementById('shSave').addEventListener('click', saveEditor);
 
