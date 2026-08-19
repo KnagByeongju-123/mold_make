@@ -520,11 +520,29 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .ifm-row .f.xs .xw{display:flex;gap:4px}
 .ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
 tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
+/* 성적서 만들기: 좌 양식 + 우 선택칩 */
+.fedit{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:start}
+.fgrid{min-width:0}
+.chippane{position:sticky;top:76px;background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:7px;max-height:74vh;overflow:auto}
+.chippane .cp-h{display:flex;align-items:center;gap:5px;padding:0 2px 7px;border-bottom:1px solid var(--line2);margin-bottom:7px}
+.chippane .cp-h b{font-size:11px;font-weight:800;color:var(--gold);flex:1}
+.chippane .cp-h button{background:var(--card);border:1px solid var(--line);border-radius:6px;color:var(--sub);font-size:11px;padding:3px 6px;cursor:pointer;font-family:inherit}
+.cp-body{display:flex;flex-direction:column;gap:5px}
+.cp-body.num{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.cp-body>button{width:100%;padding:8px 4px;border:1px solid var(--goldbd);border-radius:8px;background:var(--goldbg);
+  color:var(--gold);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-body>button:active{background:var(--gold);color:#1b1d26}
+.cp-empty{font-size:11px;color:var(--gray);padding:8px 2px;text-align:center}
+.cp-fn{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line2)}
+.cp-body.num .cp-fn{grid-column:1/4}
+.cp-fn button{padding:7px 2px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--sub);
+  font-size:10.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.ffm-row input.cpon{border-color:var(--gold)!important;background:rgba(226,176,74,.1)!important}
 /* 검사항목 연속 입력표 */
-.ffm-head{display:grid;grid-template-columns:30px minmax(110px,1.5fr) minmax(100px,1.1fr) minmax(100px,1.1fr) 26px;
-  gap:6px;padding:7px 10px 3px;font-size:10px;font-weight:800;color:var(--gray)}
-.ffm-row{display:grid!important;grid-template-columns:30px minmax(110px,1.5fr) minmax(100px,1.1fr) minmax(100px,1.1fr) 26px;
-  gap:6px;align-items:center;padding:4px 10px;border-bottom:1px dashed var(--line2)}
+.ffm-head{display:grid;grid-template-columns:24px 1.25fr 1fr 1fr 22px;
+  gap:4px;padding:4px 4px 3px;font-size:10px;font-weight:800;color:var(--gray)}
+.ffm-row{display:grid!important;grid-template-columns:24px 1.25fr 1fr 1fr 22px;
+  gap:4px;align-items:center;padding:3px 4px;border-bottom:1px dashed var(--line2)}
 .ffm-row .idx{padding:0;text-align:center;font-size:11px}
 .ffm-row>input{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);
   padding:9px 8px;font-size:12.5px;font-family:inherit;min-width:0}
@@ -555,9 +573,11 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 @media(max-width:520px){
   .kpad{top:60px}
   .kpad .kp-sym{grid-template-columns:repeat(4,1fr)}
-  .ffm-head{grid-template-columns:26px 1.4fr 1fr 1fr 24px;font-size:9.5px}
-  .ffm-row{grid-template-columns:26px 1.4fr 1fr 1fr 24px;gap:4px;padding:4px 6px}
-  .ffm-row>input{padding:9px 6px;font-size:12px}
+  .fedit{grid-template-columns:1fr 104px;gap:6px}
+  .chippane{padding:5px}
+  .cp-body>button{font-size:11px;padding:7px 2px}
+  .ffm-head{font-size:9px}
+  .ffm-row>input{padding:8px 5px;font-size:11.5px}
 }
 .fsect{font-size:12.5px;font-weight:900;color:var(--gold);margin:16px 2px 9px;letter-spacing:.5px}
 .ffm-row:last-child{border-bottom:none}
@@ -924,7 +944,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.0</span>
+    <span class="rev">v1.1</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1278,7 +1298,7 @@ function addFItem(n){
   const c=Number(n)||1;
   for(let i=0;i<c;i++)FITEMS.push(blankFItem());
   drawFormItems();
-  setTimeout(()=>{const el=document.querySelector('#formitems .ffm-row:last-child input');if(el)el.focus()},30)}
+  setTimeout(()=>{const el=document.querySelector('#formitems .ffm-row:last-child input');if(el){el.focus();cpOpen(el,'item',FITEMS.length-1)}},30)}
 function setFItem(i,f,v){if(FITEMS[i])FITEMS[i][f]=v}
 function rmFItem(i){FITEMS.splice(i,1);drawFormItems()}
 function mvFItem(i,d){
@@ -1291,18 +1311,91 @@ function drawFormItems(){
   const filled=FITEMS.filter(r=>r.item&&r.item.trim()).length;
   box.innerHTML=`<div class="ifm-op"><div class="ifm-oph">
       <span class="nm">검사항목 ${filled}개</span>
-      <span class="cnt">각 칸을 누르면 상단에 입력 도우미가 열립니다 · 규격 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 형식 → 자동 판정</span>
+      <span class="cnt">칸을 누르면 오른쪽 <b>선택</b>에 칩이 나타납니다 · 규격 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 → 자동 판정</span>
       <div class="acts"><button type="button" onclick="addFItem(5)">+ 5줄</button><button type="button" onclick="addFItem(15)">+ 15줄</button></div>
     </div>
-    <div class="ffm-head"><div>No</div><div>검사 항목</div><div>규격 / 기준</div><div>측정기 (검사방법)</div><div></div></div>
-    <div class="ifm-rows">`+
-    FITEMS.map((r,i)=>`<div class="ffm-row">
-      <div class="idx">${i+1}</div>
-      <input value="${esc(r.item||'')}" placeholder="검사 항목" inputmode="none" onfocus="kpOpen(this,'item')" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
-      <input value="${esc(r.spec||'')}" class="mono" placeholder="88.14 ±0.03" inputmode="none" onfocus="kpOpen(this,'spec')" oninput="setFItem(${i},'spec',this.value)" onkeydown="fKey(event,${i},1)">
-      <input value="${esc(r.method||'')}" placeholder="3차원측정기" inputmode="none" onfocus="kpOpen(this,'gauge')" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
-      <button class="rm" title="행 삭제" onclick="rmFItem(${i})">✕</button>
-    </div>`).join('')+'</div></div>';
+    <div class="fedit">
+      <div class="fgrid">
+        <div class="ffm-head"><div>No</div><div>항목</div><div>규격</div><div>측정기</div><div></div></div>
+        <div class="ifm-rows">`+
+        FITEMS.map((r,i)=>`<div class="ffm-row">
+          <div class="idx">${i+1}</div>
+          <input value="${esc(r.item||'')}" placeholder="항목" inputmode="none" onfocus="cpOpen(this,'item',${i})" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
+          <input value="${esc(r.spec||'')}" class="mono" placeholder="규격" inputmode="none" onfocus="cpOpen(this,'spec',${i})" oninput="setFItem(${i},'spec',this.value)" onkeydown="fKey(event,${i},1)">
+          <input value="${esc(r.method||'')}" placeholder="측정기" inputmode="none" onfocus="cpOpen(this,'gauge',${i})" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
+          <button class="rm" title="행 삭제" onclick="rmFItem(${i})">✕</button>
+        </div>`).join('')+`</div>
+      </div>
+      <aside class="chippane">
+        <div class="cp-h"><b id="cp-title">선택</b><button type="button" onclick="cpKeyboard()" title="직접 입력">⌨</button></div>
+        <div class="cp-body" id="cp-body"><div class="cp-empty">왼쪽 칸을 누르세요</div></div>
+      </aside>
+    </div></div>`;
+  cpRestore();
+}
+/* ----- 우측 선택 칩 패널 ----- */
+let CPT=null, CPKIND='', CPIDX=-1;
+const CP_ITEM=['외경','내경','높이','두께','폭','길이','거리','각도',
+  '평면도','진원도','원통도','직각도','평행도','동심도','윤곽도','위치도','진직도','조도(Ra)','경도','외관'];
+const CP_GAUGE=['3차원측정기','형상측정기','진원도측정기','공구현미경','투영기','현미경','확대경',
+  '버니어캘리퍼스','마이크로미터','하이트게이지','다이얼게이지','실린더게이지','핀게이지','블록게이지',
+  '표면조도계','경도계','각도기','줄자','육안'];
+const CP_SPEC=['1','2','3','4','5','6','7','8','9','0','.','±','ø','°','~','+','-','/','mm','㎛','Min.','Max.','R','C','t','HRC'];
+const CP_TITLE={item:'검사 항목',spec:'규격 · 기호',gauge:'측정기'};
+function cpOpen(el,kind,idx){
+  CPT=el;CPKIND=kind;CPIDX=idx;
+  document.querySelectorAll('.ffm-row input.cpon').forEach(x=>x.classList.remove('cpon'));
+  el.classList.add('cpon');
+  const t=document.getElementById('cp-title');if(t)t.textContent=CP_TITLE[kind]||'선택';
+  const body=document.getElementById('cp-body');if(!body)return;
+  const list=kind==='item'?CP_ITEM:kind==='gauge'?CP_GAUGE:CP_SPEC;
+  const mode=kind==='spec'?'ins':'set';
+  body.className='cp-body'+(kind==='spec'?' num':'');
+  body.innerHTML=list.map(v=>
+    `<button type="button" onmousedown="event.preventDefault()" onclick="${mode==='ins'?'cpIns':'cpSet'}('${v.replace(/'/g,"\\'")}')">${esc(v)}</button>`).join('')+
+    `<div class="cp-fn">
+      <button type="button" onmousedown="event.preventDefault()" onclick="cpBack()">⌫</button>
+      <button type="button" onmousedown="event.preventDefault()" onclick="cpClear()">지움</button>
+      <button type="button" onmousedown="event.preventDefault()" onclick="cpNext()">다음 ▼</button>
+    </div>`;
+}
+function cpRestore(){
+  if(CPIDX<0||!CPKIND)return;
+  const rows=document.querySelectorAll('#formitems .ffm-row');
+  const col={item:0,spec:1,gauge:2}[CPKIND];
+  const el=rows[CPIDX]&&rows[CPIDX].querySelectorAll('input')[col];
+  if(el)cpOpen(el,CPKIND,CPIDX);
+}
+function cpFire(){CPT.dispatchEvent(new Event('input',{bubbles:true}));CPT.focus()}
+function cpSet(v){if(!CPT)return;CPT.value=v;cpFire();try{CPT.setSelectionRange(v.length,v.length)}catch(e){}}
+function cpIns(v){
+  if(!CPT)return;
+  const st=CPT.selectionStart==null?CPT.value.length:CPT.selectionStart;
+  const en=CPT.selectionEnd==null?st:CPT.selectionEnd;
+  CPT.value=CPT.value.slice(0,st)+v+CPT.value.slice(en);
+  const p=st+v.length;try{CPT.setSelectionRange(p,p)}catch(e){}
+  cpFire();
+}
+function cpBack(){
+  if(!CPT)return;
+  const st=CPT.selectionStart==null?CPT.value.length:CPT.selectionStart;
+  const en=CPT.selectionEnd==null?st:CPT.selectionEnd;
+  if(st===en){if(!st)return;CPT.value=CPT.value.slice(0,st-1)+CPT.value.slice(st);try{CPT.setSelectionRange(st-1,st-1)}catch(e){}}
+  else{CPT.value=CPT.value.slice(0,st)+CPT.value.slice(en);try{CPT.setSelectionRange(st,st)}catch(e){}}
+  cpFire();
+}
+function cpClear(){if(!CPT)return;CPT.value='';cpFire()}
+function cpKeyboard(){
+  if(!CPT)return;
+  const el=CPT;el.setAttribute('inputmode','text');el.blur();setTimeout(()=>el.focus(),40);
+}
+function cpNext(){
+  if(CPIDX<0)return;
+  if(CPIDX+1>=FITEMS.length){FITEMS.push(blankFItem());drawFormItems()}
+  const rows=document.querySelectorAll('#formitems .ffm-row');
+  const col={item:0,spec:1,gauge:2}[CPKIND];
+  const nx=rows[CPIDX+1]&&rows[CPIDX+1].querySelectorAll('input')[col];
+  if(nx){nx.focus();cpOpen(nx,CPKIND,CPIDX+1);nx.scrollIntoView({block:'center',behavior:'smooth'})}
 }
 /* Enter → 다음 줄 같은 칸 (연속 입력) */
 function fKey(e,i,col){
@@ -1312,7 +1405,7 @@ function fKey(e,i,col){
   setTimeout(()=>{
     const rows=document.querySelectorAll('#formitems .ffm-row');
     const nx=rows[i+1]&&rows[i+1].querySelectorAll('input')[col];
-    if(nx){nx.focus();kpOpen(nx,['item','spec','gauge'][col]);nx.scrollIntoView({block:'center',behavior:'smooth'})}
+    if(nx){nx.focus();cpOpen(nx,['item','spec','gauge'][col],i+1);nx.scrollIntoView({block:'center',behavior:'smooth'})}
   },10);
 }
 /* ----- 입력 보조 팝업 (규격 기호 / 검사항목 / 측정기) ----- */
