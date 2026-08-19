@@ -36,6 +36,30 @@ h1 .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding:1px
   font-family:'IBM Plex Mono',monospace;white-space:nowrap;opacity:.7;margin-left:6px;vertical-align:middle}
 .ubadge{font-size:11px;font-weight:800;color:var(--gold);border:1px solid var(--goldbd);
   background:var(--goldbg);padding:3px 12px;border-radius:14px;white-space:nowrap}
+.container{zoom:var(--mm-fs,1)}
+.sheet{zoom:var(--mm-fs,1)}
+.pcwmenu{position:relative;flex-shrink:0}
+.pcwbtn{width:34px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--sub);
+  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;font-family:inherit;padding:0;transition:.15s}
+.pcwbtn:active,.pcwbtn.on{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
+.pcwpopup{position:absolute;right:0;top:calc(100% + 10px);width:min(290px,calc(100vw - 26px));padding:13px 14px 12px;
+  border:1px solid var(--line);border-radius:13px;background:#171a24;box-shadow:0 14px 38px rgba(0,0,0,.55);
+  opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;
+  transition:opacity .14s ease,transform .14s ease,visibility .14s;z-index:150;color:var(--ink)}
+.pcwpopup.show{opacity:1;visibility:visible;transform:none}
+.pcwpopup:before{content:'';position:absolute;right:9px;top:-6px;width:10px;height:10px;background:#171a24;
+  border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.pcwpophead{display:flex;align-items:center;gap:8px;padding-bottom:9px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.pcwpophead b{font-size:12.5px;color:var(--gold);font-weight:800}
+.pcwclose{margin-left:auto;width:24px;height:24px;border:none;background:transparent;color:var(--gray);font-size:17px;line-height:1;cursor:pointer;border-radius:6px}
+.pcwrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:11.5px;color:var(--sub)}
+.pcwrow b{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:13px}
+.pcwrange{width:100%;height:24px;accent-color:var(--gold);cursor:pointer;display:block}
+.pcwscale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--gray);font-family:'IBM Plex Mono',monospace;margin-top:-2px}
+.pfsquick{display:flex;gap:6px;margin-top:8px}
+.pfsquick button{flex:1;padding:8px 4px;border:1px solid var(--line);border-radius:7px;background:var(--card2);
+  color:var(--sub);font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.pfsquick button:active{border-color:var(--goldbd);color:var(--gold)}
 
 .datebar{display:flex;align-items:center;gap:6px;margin-top:10px}
 .dbtn{background:var(--card);border:1px solid var(--line);color:var(--ink);
@@ -84,33 +108,6 @@ body.ordmode .ordbar{display:flex}
 .card.filled{border-color:rgba(126,224,160,.35)}
 .card .bar{width:4px;border-radius:3px;background:var(--line);flex:0 0 4px}
 .card .body{flex:1;min-width:0}
-.cmbtn{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;gap:3px;align-items:center;min-width:44px}
-.cmbtn button{border:1px solid var(--line2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--sub);font-size:12px;cursor:pointer;padding:6px 8px;line-height:1;font-family:inherit}
-.cmbtn button:active{transform:scale(.94)}
-.cmbtn .rx{font-size:9.5px;color:var(--gray);display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
-.cmbtn .rx b{font-weight:700}
-/* 코멘트 시트 */
-#cmask{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:.25s;z-index:120}
-#cmask.on{opacity:1;visibility:visible}
-#csheet{position:fixed;left:0;right:0;bottom:0;z-index:121;background:#171b26;border-radius:18px 18px 0 0;border-top:1px solid var(--line);
-  padding:16px 16px 22px;max-height:78vh;overflow-y:auto;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.3,1)}
-#csheet.on{transform:none}
-#csheet h3{margin:0 0 2px;font-size:15px}
-#csheet .sub2{font-size:11px;color:var(--gray);margin-bottom:10px}
-.rxrow{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.rxrow button{flex:1;min-width:80px;padding:10px 0;border-radius:11px;border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
-.rxrow button.on{border-color:#7ee0a0;color:#7ee0a0;background:rgba(126,224,160,.1)}
-.rxrow button .cnt2{font-size:10px;opacity:.75;font-weight:600}
-.cmt{background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:11px;padding:9px 11px;margin-bottom:7px}
-.cmt .ch{display:flex;gap:7px;align-items:center;font-size:11px;color:var(--gray)}
-.cmt .ch b{color:var(--ink);font-size:12px}
-.cmt .cb2{font-size:13px;margin-top:4px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-.cmt .cdel{margin-left:auto;background:none;border:none;color:var(--gray);cursor:pointer;font-size:12px}
-.cmt .cdel:hover{color:#ff7b7b}
-.cin{display:flex;gap:7px;margin-top:10px}
-.cin input{flex:1;min-width:0;background:#10141d;border:1px solid var(--line2);border-radius:11px;color:var(--ink);padding:11px 12px;font-size:13px;font-family:inherit}
-.cin input:focus{outline:none;border-color:#7ee0a0}
-.cin button{flex:0 0 auto;padding:0 16px;border-radius:11px;border:1px solid rgba(126,224,160,.45);background:rgba(126,224,160,.14);color:#7ee0a0;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
 .card .top{display:flex;align-items:center;gap:6px}
 .card .nm{font-size:14px;font-weight:800;color:var(--ink)}
 .card .st{font-size:10px;font-weight:900;padding:2px 8px;border-radius:8px;margin-left:auto}
@@ -143,10 +140,13 @@ body.ordmode .card .hd{display:flex}
   transform:translateY(105%);transition:transform .22s ease;
   max-height:88vh;overflow-y:auto;max-width:820px;margin:0 auto}
 .sheet.on{transform:translateY(0)}
-.sh-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sh-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;position:sticky;top:-14px;z-index:2;
+  background:linear-gradient(180deg,#1c2030,#1c2030f2);padding:10px 0 8px;border-bottom:1px solid var(--line)}
 .sh-h .n{font-size:16px;font-weight:900;color:var(--ink)}
 .sh-h .m{font-size:11px;color:var(--sub)}
-.sh-h .x{margin-left:auto;background:transparent;border:none;color:var(--sub);font-size:22px;cursor:pointer}
+.sh-h .x{margin-left:auto;background:var(--card);border:1px solid var(--line);border-radius:9px;
+  color:var(--sub);font-size:13px;font-weight:800;padding:8px 13px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.sh-h .x:active{transform:scale(.95)}
 .lbl{font-size:11px;font-weight:800;color:var(--sub);margin:12px 0 6px;letter-spacing:.3px}
 textarea,.ip{width:100%;background:var(--card2);border:1px solid var(--line);
   color:var(--ink);border-radius:10px;padding:10px;font-size:14px;font-family:inherit}
@@ -164,47 +164,6 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
   padding:10px 18px;border-radius:12px;font-size:13px;font-weight:800;z-index:99;
   opacity:0;transition:all .2s;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ===== PC 화면 폭 조절 (📐) — 모바일(760px 이하)에서는 비활성 ===== */
-.pcwmenu{display:none}
-@media(min-width:761px){
-  header{padding-left:max(14px,calc((100vw - var(--pcw,1020px)) / 2 + 14px));
-         padding-right:max(14px,calc((100vw - var(--pcw,1020px)) / 2 + 14px));
-         transition:padding .18s ease}
-  .container{max-width:min(var(--pcw,1020px),calc(100vw - 28px));transition:max-width .12s ease}
-  .sheet{max-width:min(var(--pcw,1020px),calc(100vw - 28px))}
-  #csheet{max-width:min(var(--pcw,1020px),calc(100vw - 28px));margin:0 auto}
-  .pcwmenu{display:block;position:relative;flex-shrink:0}
-  .pcwbtn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);
-    color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;
-    font-family:inherit;transition:.15s;padding:0}
-  .pcwbtn:hover,.pcwbtn.on{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
-  .pcwpopup{position:absolute;right:0;top:calc(100% + 10px);width:300px;padding:13px 14px 12px;
-    border:1px solid #4a5268;border-radius:13px;background:#171a24;box-shadow:0 14px 38px rgba(0,0,0,.55);
-    opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;
-    transition:opacity .14s ease,transform .14s ease,visibility .14s;z-index:150;color:var(--ink)}
-  .pcwpopup.show{opacity:1;visibility:visible;transform:none}
-  .pcwpopup:before{content:'';position:absolute;right:9px;top:-6px;width:10px;height:10px;background:#171a24;
-    border-left:1px solid #4a5268;border-top:1px solid #4a5268;transform:rotate(45deg)}
-  .pcwpophead{display:flex;align-items:center;gap:8px;padding-bottom:9px;margin-bottom:10px;border-bottom:1px solid var(--line2)}
-  .pcwpophead b{font-size:12.5px;color:var(--gold);font-weight:800}
-  .pcwclose{margin-left:auto;width:24px;height:24px;border:none;background:transparent;color:var(--gray);
-    font-size:17px;line-height:1;cursor:pointer;border-radius:6px}
-  .pcwclose:hover{background:rgba(255,255,255,.06);color:var(--ink)}
-  .pcwrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:11.5px;color:var(--sub)}
-  .pcwrow b{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:13px}
-  .pcwrange{width:100%;height:24px;accent-color:var(--gold);cursor:pointer;display:block}
-  .pcwscale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--gray);
-    font-family:'IBM Plex Mono',monospace;margin-top:-2px}
-  .pcwfoot{display:flex;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid var(--line2)}
-  .pcwsaved{font-size:10.5px;color:var(--green);white-space:nowrap}
-  .pcwreset{margin-left:auto;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--card2);
-    color:var(--sub);font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
-  .pcwreset:hover{border-color:var(--goldbd);color:var(--gold)}
-}
-@media(max-width:760px){
-  .ubadge{max-width:110px;overflow:hidden;text-overflow:ellipsis}
-}
 </style>
 </head>
 <body>
@@ -212,23 +171,20 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
 <header>
   <div class="hrow">
     <button class="back" id="btnBack">←</button>
-    <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.0</span></h1>
+    <h1><span class="gold-txt">업무현황</span> <span class="rev">v1.2</span></h1>
     <span class="ubadge" id="meLabel"></span>
     <div class="pcwmenu" id="pcWidthMenu">
-      <button id="pcWidthBtn" class="pcwbtn" type="button" title="PC 화면 폭 설정"
-        aria-label="PC 화면 폭 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
-      <div id="pcWidthPopup" class="pcwpopup" role="dialog" aria-label="PC 화면 폭 설정" onclick="event.stopPropagation()">
-        <div class="pcwpophead">
-          <b>업무현황 화면 설정</b>
-          <button class="pcwclose" type="button" aria-label="닫기" onclick="closePCWidthPopup()">×</button>
-        </div>
-        <div class="pcwrow"><span>화면 폭</span><b id="pcwValue">1020px</b></div>
-        <input id="pcwRange" class="pcwrange" type="range" min="720" max="1400" step="20" value="1020"
-          aria-label="PC 화면 폭 조절" oninput="previewPCWidth(this.value)" onchange="savePCWidth(this.value)">
-        <div class="pcwscale"><span>720px</span><span>1400px</span></div>
-        <div class="pcwfoot">
-          <span id="pcwSaved" class="pcwsaved">저장됨</span>
-          <button class="pcwreset" type="button" onclick="resetPCWidth()">기본값으로</button>
+      <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" aria-expanded="false">📐</button>
+      <div id="pcWidthPopup" class="pcwpopup" role="dialog" aria-label="글자 크기 설정">
+        <div class="pcwpophead"><b>업무현황 화면 설정</b>
+          <button class="pcwclose" type="button" aria-label="닫기" id="pcwCloseBtn">×</button></div>
+        <div class="pcwrow"><span>글자 크기</span><b id="pfsValue">100%</b></div>
+        <input id="pfsRange" class="pcwrange" type="range" min="80" max="150" step="5" value="100" aria-label="글자 크기 조절">
+        <div class="pcwscale"><span>80%</span><span>150%</span></div>
+        <div class="pfsquick">
+          <button type="button" id="fsMinus">A−</button>
+          <button type="button" id="fsReset">100%</button>
+          <button type="button" id="fsPlus">A+</button>
         </div>
       </div>
     </div>
@@ -243,7 +199,7 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
     <span class="dot" id="liveDot"></span>
     <span id="liveTxt">동기화 준비중</span>
     <button class="sw" id="btnSync">⟳ 새로고침</button>
-    <button class="sw" id="btnLive">🔄 자동 ON</button>
+    <button class="sw" id="btnLive">🔄 자동 30분</button>
   </div>
 </header>
 
@@ -278,7 +234,7 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
       <div class="n" id="shName">-</div>
       <div class="m" id="shMeta">-</div>
     </div>
-    <button class="x" id="shClose">✕</button>
+    <button class="x" id="shClose">✕ 닫기</button>
   </div>
   <div class="lbl">근무 상태</div>
   <div class="chips" id="shStatus"></div>
@@ -294,18 +250,6 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
   </div>
 </div>
 
-<div id="cmask" onclick="closeCmt()"></div>
-<div id="csheet">
-  <h3 id="cm-name"></h3>
-  <div class="sub2" id="cm-meta"></div>
-  <div class="rxrow" id="cm-rx"></div>
-  <div id="cm-list"></div>
-  <div class="cin">
-    <input id="cm-input" placeholder="코멘트 입력 (Enter 전송)" onkeydown="if(event.key==='Enter')sendCmt()">
-    <button onclick="sendCmt()">전송</button>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -318,7 +262,7 @@ const MASTER_KEY = '__MASTER__';
 const CK_USERS = 'hcws_users_cache';
 const CK_ORDER = 'hcws_user_order';     // 배치순서 (이 기기 전용)
 const CK_USERS_TTL = 12*60*60*1000;
-const POLL_MS = 600000;                 // 10분 증분 폴링
+const POLL_MS = 1800000;                // 30분 증분 폴링
 
 const HDR  = {'apikey':KEY,'Authorization':'Bearer '+KEY};
 const HDRJ = Object.assign({'Content-Type':'application/json'}, HDR);
@@ -332,18 +276,7 @@ const PROGS = [0,25,50,75,100];
 const scolor = k => (STATUS.find(s=>s.k===k)||{c:'#3a4152'}).c;
 
 /* ================= 상태 ================= */
-let USER = (function(){
-  try{
-    const o=JSON.parse(localStorage.getItem('mm_session')||'null');
-    if(o&&o.exp>Date.now()){
-      localStorage.setItem('mm_session',JSON.stringify({name:o.name,exp:Date.now()+7*864e5}));
-      sessionStorage.setItem('mm_user',o.name);
-      return o.name;
-    }
-    if(o)localStorage.removeItem('mm_session');
-  }catch(e){}
-  return sessionStorage.getItem('mm_user') || null;
-})();
+let USER = sessionStorage.getItem('mm_user') || null;
 let users = [];
 let rows = {};
 let els  = {};
@@ -445,105 +378,6 @@ function setOrderMode(on){
   render();
 }
 
-/* ================= 코멘트 · 확인/검토 ================= */
-const TBL_CM='hc_work_comment';
-const RX=[{k:'확인',ic:'👁'},{k:'검토',ic:'🔍'},{k:'수고',ic:'👍'}];
-let cmts={};      // target_user_id -> [rows]
-let cmUser=null;  // 열려있는 대상
-
-async function loadCmts(){
-  try{
-    const r=await fetch(BASE+'/rest/v1/'+TBL_CM+'?select=*&work_date=eq.'+curDate+'&order=created_at',{headers:HDR});
-    if(!r.ok){cmts={};return}
-    const list=await r.json();
-    cmts={};
-    list.forEach(x=>{(cmts[x.target_user_id]=cmts[x.target_user_id]||[]).push(x)});
-  }catch(e){cmts={}}
-}
-function cmOf(uid){return cmts[uid]||[]}
-function rxCount(uid,k){return cmOf(uid).filter(x=>x.reaction===k).length}
-function myRx(uid,k){return cmOf(uid).find(x=>x.reaction===k&&x.author===USER)}
-function cmCount(uid){return cmOf(uid).filter(x=>x.comment&&x.comment.trim()).length}
-
-function paintCmBadge(u){
-  const el=els[u.id];if(!el)return;
-  const bx=el.querySelector('.cmbtn');if(!bx)return;
-  const cm=cmCount(u.id);
-  bx.querySelector('button').textContent='💬'+(cm?cm:'');
-  const rxTxt=RX.map(r=>{const n=rxCount(u.id,r.k);return n?r.ic+'<b>'+n+'</b>':''}).filter(Boolean).join(' ');
-  bx.querySelector('.rx').innerHTML=rxTxt;
-}
-function paintAllCm(){users.forEach(u=>paintCmBadge(u))}
-
-function openCmt(u){
-  cmUser=u;
-  document.getElementById('cm-name').textContent='💬 '+u.name+' 님 업무 코멘트';
-  document.getElementById('cm-meta').textContent=curDate+' · 확인·검토 체크와 코멘트는 모두에게 공유됩니다';
-  document.getElementById('cm-input').value='';
-  drawCmt();
-  document.getElementById('cmask').classList.add('on');
-  document.getElementById('csheet').classList.add('on');
-}
-function closeCmt(){
-  document.getElementById('cmask').classList.remove('on');
-  document.getElementById('csheet').classList.remove('on');
-  cmUser=null;
-}
-function drawCmt(){
-  if(!cmUser)return;
-  const uid=cmUser.id;
-  // 반응 버튼
-  document.getElementById('cm-rx').innerHTML=RX.map(r=>{
-    const n=rxCount(uid,r.k),mine=!!myRx(uid,r.k);
-    const who=cmOf(uid).filter(x=>x.reaction===r.k).map(x=>x.author).join(', ');
-    return `<button class="${mine?'on':''}" onclick="toggleRx('${r.k}')" title="${who}">${r.ic} ${r.k} <span class="cnt2">${n||''}</span></button>`;
-  }).join('');
-  // 코멘트 목록
-  const list=cmOf(uid).filter(x=>x.comment&&x.comment.trim());
-  document.getElementById('cm-list').innerHTML=list.map(x=>`<div class="cmt">
-    <div class="ch"><b>${escHtml(x.author)}</b><span>${hhmm(x.created_at)}</span>
-      ${(x.author===USER||USER==='관리자')?`<button class="cdel" onclick="delCmt(${x.id})">✕</button>`:''}</div>
-    <div class="cb2">${escHtml(x.comment)}</div>
-  </div>`).join('')||'<div style="font-size:12px;color:var(--gray);padding:8px 2px">아직 코멘트가 없습니다</div>';
-}
-function escHtml(t){return (t??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-
-async function toggleRx(kind){
-  if(!cmUser||!USER)return;
-  const mine=myRx(cmUser.id,kind);
-  try{
-    if(mine){
-      await fetch(BASE+'/rest/v1/'+TBL_CM+'?id=eq.'+mine.id,{method:'DELETE',headers:HDR});
-    }else{
-      const r=await fetch(BASE+'/rest/v1/'+TBL_CM,{method:'POST',
-        headers:Object.assign({'Prefer':'return=representation'},HDRJ),
-        body:JSON.stringify({work_date:curDate,target_user_id:cmUser.id,target_user_name:cmUser.name,
-          author:USER,reaction:kind,comment:null})});
-      if(!r.ok)throw new Error(await r.text());
-    }
-    await loadCmts();drawCmt();paintCmBadge(cmUser);
-  }catch(e){alert('처리 실패\n'+(e.message||e))}
-}
-async function sendCmt(){
-  if(!cmUser||!USER)return;
-  const v=document.getElementById('cm-input').value.trim();
-  if(!v)return;
-  try{
-    const r=await fetch(BASE+'/rest/v1/'+TBL_CM,{method:'POST',
-      headers:Object.assign({'Prefer':'return=representation'},HDRJ),
-      body:JSON.stringify({work_date:curDate,target_user_id:cmUser.id,target_user_name:cmUser.name,
-        author:USER,reaction:null,comment:v})});
-    if(!r.ok)throw new Error(await r.text());
-    document.getElementById('cm-input').value='';
-    await loadCmts();drawCmt();paintCmBadge(cmUser);
-  }catch(e){alert('전송 실패\n'+(e.message||e))}
-}
-async function delCmt(id){
-  if(!confirm('코멘트를 삭제할까요?'))return;
-  await fetch(BASE+'/rest/v1/'+TBL_CM+'?id=eq.'+id,{method:'DELETE',headers:HDR});
-  await loadCmts();drawCmt();if(cmUser)paintCmBadge(cmUser);
-}
-
 /* ================= 업무현황 조회 ================= */
 async function loadAll(){
   const r = await fetch(BASE+'/rest/v1/'+TBL_WS
@@ -557,7 +391,6 @@ async function loadAll(){
     rows[x.user_id] = x;
     if(!lastSync || x.updated_at > lastSync) lastSync = x.updated_at;
   });
-  await loadCmts();
 }
 
 /* 증분 폴링: 변경분만 조회 (변경 없으면 빈 배열 = 최소 부하) */
@@ -569,7 +402,7 @@ async function poll(){
       +'&work_date=eq.'+curDate;
     if(lastSync) q += '&updated_at=gt.'+encodeURIComponent(lastSync);
     const r = await fetch(q, {headers:HDR});
-    if(!r.ok) return;
+    if(!r.ok){ setLive(false); return; }
     const list = await r.json();
     list.forEach(x=>{
       rows[x.user_id] = x;
@@ -578,8 +411,6 @@ async function poll(){
       if(u && els[u.id]) paintCard(els[u.id], u);
     });
     if(list.length){ renderStat(); }
-    await loadCmts(); paintAllCm();
-    if(cmUser) drawCmt();
     setLive(true, list.length);
   }catch(e){ setLive(false); }
 }
@@ -599,6 +430,9 @@ function startTimer(){
   clearInterval(timer);
   if(liveOn) timer = setInterval(poll, POLL_MS);
 }
+/* 화면 복귀 시 즉시 1회 동기화 */
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && liveOn) poll(); });
+window.addEventListener('focus', ()=>{ if(liveOn) poll(); });
 
 /* ================= 렌더 ================= */
 function visibleUsers(){
@@ -667,13 +501,7 @@ function makeCard(u){
   dn.addEventListener('click', e=>{ e.stopPropagation(); moveUser(u, 1); });
   mv.appendChild(up); mv.appendChild(dn);
 
-  const cmb=document.createElement('div');cmb.className='cmbtn';
-  const cb=document.createElement('button');cb.textContent='💬';
-  cb.addEventListener('click',e=>{e.stopPropagation();openCmt(u)});
-  const rx=document.createElement('span');rx.className='rx';
-  cmb.appendChild(cb);cmb.appendChild(rx);
-
-  el.appendChild(hd); el.appendChild(bar); el.appendChild(body); el.appendChild(cmb); el.appendChild(mv);
+  el.appendChild(hd); el.appendChild(bar); el.appendChild(body); el.appendChild(mv);
 
   if(orderMode){
     el.classList.add('ord');
@@ -704,7 +532,6 @@ function render(){
     const el = makeCard(u);
     els[u.id] = el;
     list.appendChild(el);
-    paintCmBadge(u);
   });
   renderStat();
 }
@@ -842,7 +669,7 @@ async function setDate(d){
   curDate = d;
   document.getElementById('dt').value = d;
   liveOn = (d === todayStr()) && liveOn;
-  document.getElementById('btnLive').textContent = liveOn ? '🔄 자동 ON' : '⏸ 자동 OFF';
+  document.getElementById('btnLive').textContent = liveOn ? '🔄 자동 30분' : '⏸ 자동 OFF';
   try{
     await loadAll();
     render();
@@ -858,67 +685,6 @@ function shiftDate(n){
   setDate(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
 }
 
-/* ================= PC 화면 폭 조절 (📐) ================= */
-const PCW_KEY='hcws_pc_width_v1';
-const PCW_MIN=720, PCW_MAX=1400, PCW_STEP=20, PCW_DEF=1020;
-
-function pcwClamp(v){
-  let n = Number(v) || PCW_DEF;
-  n = Math.round(n/PCW_STEP)*PCW_STEP;
-  return Math.max(PCW_MIN, Math.min(PCW_MAX, n));
-}
-function loadPCWidth(){
-  let v = PCW_DEF;
-  try{ const x = localStorage.getItem(PCW_KEY); if(x) v = Number(x)||PCW_DEF; }catch(e){}
-  applyPCWidth(v, false);
-}
-function applyPCWidth(w, save){
-  const px = pcwClamp(w);
-  document.documentElement.style.setProperty('--pcw', px+'px');
-  const rg = document.getElementById('pcwRange'); if(rg) rg.value = px;
-  const val = document.getElementById('pcwValue'); if(val) val.textContent = px+'px';
-  if(save){
-    try{ localStorage.setItem(PCW_KEY, String(px)); }catch(e){}
-    pcwSaved('저장됨');
-  }
-  return px;
-}
-function previewPCWidth(v){ pcwSaved('조절중'); applyPCWidth(v, false); }
-function savePCWidth(v){ applyPCWidth(v, true); }
-function resetPCWidth(){
-  try{ localStorage.removeItem(PCW_KEY); }catch(e){}
-  applyPCWidth(PCW_DEF, false);
-  pcwSaved('기본값');
-}
-function pcwSaved(t){
-  const el = document.getElementById('pcwSaved'); if(!el) return;
-  el.textContent = t;
-  clearTimeout(pcwSaved._t);
-  if(t==='기본값') pcwSaved._t = setTimeout(()=>el.textContent='저장됨', 900);
-}
-function togglePCWidthPopup(e){
-  if(e) e.stopPropagation();
-  if(window.matchMedia('(max-width:760px)').matches) return;
-  const pop = document.getElementById('pcWidthPopup'), btn = document.getElementById('pcWidthBtn');
-  if(!pop || !btn) return;
-  const open = !pop.classList.contains('show');
-  pop.classList.toggle('show', open);
-  btn.classList.toggle('on', open);
-  btn.setAttribute('aria-expanded', open?'true':'false');
-  if(open){ const rg=document.getElementById('pcwRange'); if(rg) rg.focus({preventScroll:true}); }
-}
-function closePCWidthPopup(){
-  const pop = document.getElementById('pcWidthPopup'), btn = document.getElementById('pcWidthBtn');
-  if(pop) pop.classList.remove('show');
-  if(btn){ btn.classList.remove('on'); btn.setAttribute('aria-expanded','false'); }
-}
-document.addEventListener('click', e=>{
-  const menu = document.getElementById('pcWidthMenu');
-  if(menu && !menu.contains(e.target)) closePCWidthPopup();
-});
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePCWidthPopup(); });
-loadPCWidth();
-
 /* ================= 초기화 ================= */
 async function init(){
   if(!USER){
@@ -927,6 +693,36 @@ async function init(){
     return;
   }
   document.getElementById('meLabel').textContent = USER;
+
+  /* 글자 크기 (index.html의 📐 설정과 동일 키 공유) */
+  const FS_KEY='mm_font_scale_v1';
+  function fsClamp(v){ let n=Number(v)||100; n=Math.round(n/5)*5; return Math.max(80,Math.min(150,n)); }
+  let MM_FS = 100;
+  try{ MM_FS = fsClamp(localStorage.getItem(FS_KEY)||100); }catch(e){ MM_FS = 100; }
+  function applyFs(n,save){
+    MM_FS = fsClamp(n);
+    document.documentElement.style.setProperty('--mm-fs',(MM_FS/100).toString());
+    const rg=document.getElementById('pfsRange'); if(rg) rg.value = MM_FS;
+    const vl=document.getElementById('pfsValue'); if(vl) vl.textContent = MM_FS+'%';
+    if(save){ try{ localStorage.setItem(FS_KEY,String(MM_FS)); }catch(e){} }
+  }
+  applyFs(MM_FS,false);
+  function togglePop(on){
+    const p=document.getElementById('pcWidthPopup'), b=document.getElementById('pcWidthBtn');
+    const show = on===undefined ? !p.classList.contains('show') : on;
+    p.classList.toggle('show',show); b.classList.toggle('on',show);
+    b.setAttribute('aria-expanded',show?'true':'false');
+  }
+  document.getElementById('pcWidthBtn').addEventListener('click', e=>{ e.stopPropagation(); togglePop(); });
+  document.getElementById('pcwCloseBtn').addEventListener('click', ()=>togglePop(false));
+  document.getElementById('pcWidthPopup').addEventListener('click', e=>e.stopPropagation());
+  document.addEventListener('click', ()=>togglePop(false));
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') togglePop(false); });
+  document.getElementById('pfsRange').addEventListener('input', e=>applyFs(e.target.value,false));
+  document.getElementById('pfsRange').addEventListener('change', e=>applyFs(e.target.value,true));
+  document.getElementById('fsMinus').addEventListener('click', ()=>applyFs(MM_FS-5,true));
+  document.getElementById('fsPlus').addEventListener('click', ()=>applyFs(MM_FS+5,true));
+  document.getElementById('fsReset').addEventListener('click', ()=>applyFs(100,true));
 
   document.getElementById('btnBack').addEventListener('click', ()=>{ location.href='index.html'; });
   document.getElementById('btnPrev').addEventListener('click', ()=>shiftDate(-1));
@@ -946,7 +742,7 @@ async function init(){
 
   document.getElementById('btnLive').addEventListener('click', ()=>{
     liveOn = !liveOn;
-    document.getElementById('btnLive').textContent = liveOn ? '🔄 자동 ON' : '⏸ 자동 OFF';
+    document.getElementById('btnLive').textContent = liveOn ? '🔄 자동 30분' : '⏸ 자동 OFF';
     setLive(true); startTimer(); if(liveOn) poll();
   });
 
