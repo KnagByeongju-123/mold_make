@@ -520,6 +520,22 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
 tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 /* 검사항목 연속 입력표 */
+.moncard{background:var(--card);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;overflow:hidden}
+.moncard .mch{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--line2)}
+.moncard .mch .ic{font-size:15px}
+.moncard .mch b{font-size:13.5px;color:var(--ink)}
+.moncard .mch .cnt{font-size:11.5px;font-weight:900;padding:2px 9px;border-radius:11px;background:var(--card2);color:var(--sub)}
+.moncard .mch button{margin-left:auto;background:none;border:none;color:var(--gold);font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.moncard.red .mch .cnt{background:rgba(255,123,123,.16);color:var(--red)}
+.moncard.gold .mch .cnt{background:var(--goldbg);color:var(--gold)}
+.moncard.blue .mch .cnt{background:rgba(79,140,255,.14);color:var(--blue)}
+.moncard .mcb{max-height:230px;overflow:auto}
+.mcr{display:flex;align-items:center;gap:9px;padding:8px 13px;border-bottom:1px dashed var(--line2);font-size:12.5px}
+.mcr:last-child{border-bottom:none}
+.mcr .t{font-weight:700;color:var(--ink);flex:0 0 auto;max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcr .d{color:var(--sub);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcr .g{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:800;color:var(--gold);flex-shrink:0}
+.mc-none{padding:12px 13px;font-size:12px;color:var(--gray)}
 .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .ftprev{display:flex;justify-content:space-between;gap:8px;margin:10px 0 12px;padding:9px 12px;
   background:#fff;color:#333;border:1px solid var(--line);border-radius:8px;font-size:11.5px;font-weight:700}
@@ -946,7 +962,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.4</span>
+    <span class="rev">Rev 13.5</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1016,6 +1032,7 @@ header .hright{position:relative}
   </div>
   <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
   <div class="mi" data-menu-id="work-status" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
+  <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
   <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
   <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
   <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
@@ -1118,6 +1135,16 @@ header .hright{position:relative}
       <div class="fg"><label>비고</label><textarea id="f-nt" rows="2"></textarea></div>
       <button class="btn btn-p" onclick="createProject()">등록 (10 ~ 180 공정 자동 생성)</button>
     </div>
+  </section>
+
+  <!-- 모니터링 -->
+  <section id="v-mon" class="hide">
+    <div class="stkbar" style="margin-bottom:12px">
+      <button class="btn btn-p" onclick="loadMon()">↻ 새로고침</button>
+      <span id="mon-tm" style="font-size:11.5px;color:var(--gray)"></span>
+    </div>
+    <div class="stats" id="mon-stat"></div>
+    <div id="monbody"></div>
   </section>
 
   <!-- 이력 -->
@@ -2291,7 +2318,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획관리',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+const VIEWTITLE={mon:'모니터링',dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획관리',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
@@ -2647,9 +2674,10 @@ function go(v,fromPop){
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   setPCWidthView(v);
   if(v==='dash')loadDash();
+  if(v==='mon')loadMon();
   if(v==='flow')loadFlowSel();
   if(v==='plan')loadPlanSel();
   if(v==='doc')loadDocSel();
@@ -3340,6 +3368,78 @@ function exportDocPDF(){
   const w=window.open('','_blank');
   if(!w)return toast('팝업이 차단되었습니다. 허용 후 다시 시도하세요');
   w.document.write(html);w.document.close();
+}
+
+/* ---------- 모니터링 ---------- */
+function monCard(title,icon,cls,rows,link,empty){
+  return `<div class="moncard ${cls}">
+    <div class="mch"><span class="ic">${icon}</span><b>${title}</b>
+      <span class="cnt">${rows.length}</span>
+      ${link?`<button onclick="go('${link}')">바로가기 ›</button>`:''}</div>
+    <div class="mcb">${rows.length?rows.map(r=>`<div class="mcr"><span class="t">${r.t}</span><span class="d">${r.d}</span>${r.g?`<span class="g">${r.g}</span>`:''}</div>`).join(''):`<div class="mc-none">${empty||'이상 없음'}</div>`}</div>
+  </div>`;
+}
+async function loadMon(){
+  const box=document.getElementById('monbody');
+  box.innerHTML='<div class="empty">불러오는 중...</div>';
+  const today=new Date().toISOString().slice(0,10);
+  const gv=async(p,f)=>{try{return await api(p)}catch(e){return f||[]}};
+  const [pj,ps,ncr,ecn,gau,stk,apr]=await Promise.all([
+    gv("/mm_project?select=id,mold_no,mold_name,status,due_date,archived,mold_type"),
+    gv("/mm_process?select=project_id,op_code,status,plan_end,ng_count"),
+    gv("/mm_ncr?select=id,project_id,occur_date,kind,content,status&order=occur_date.desc&limit=100"),
+    gv("/mm_ecn?select=id,project_id,change_date,kind,status&order=change_date.desc&limit=100"),
+    gv("/mm_gauge?select=*"),
+    gv("/mm_stock_item?select=name,stock,min_stock,unit"),
+    gv("/mm_approval?select=id,doc_type,title,steps,cur,status&status=eq.진행&limit=200")
+  ]);
+  const live=pj.filter(p=>!p.archived);
+  const pname=id=>{const p=pj.find(x=>String(x.id)===String(id));return p?p.mold_no+' '+p.mold_name:'-'};
+
+  // 지연 공정
+  const late=ps.filter(x=>x.plan_end&&x.status!=='OK'&&x.plan_end<today&&live.some(p=>String(p.id)===String(x.project_id)))
+    .sort((a,b)=>a.plan_end.localeCompare(b.plan_end))
+    .map(x=>({t:pname(x.project_id),d:opN(x.op_code)+' '+mName(x.op_code),g:'D'+dday(x.plan_end)}));
+  // 납기 임박 (D-7 이내)
+  const due=live.filter(p=>p.due_date&&p.status!=='완료'&&dday(p.due_date)<=7)
+    .sort((a,b)=>String(a.due_date).localeCompare(String(b.due_date)))
+    .map(p=>({t:p.mold_no+' '+p.mold_name,d:'납기 '+String(p.due_date).slice(5).replace('-','/'),g:'D'+dday(p.due_date)}));
+  // NG 공정
+  const ng=ps.filter(x=>Number(x.ng_count)>0&&live.some(p=>String(p.id)===String(x.project_id)))
+    .map(x=>({t:pname(x.project_id),d:opN(x.op_code)+' '+mName(x.op_code),g:'NG '+x.ng_count}));
+  // 미조치 NCR
+  const nc=ncr.filter(r=>r.status!=='완료')
+    .map(r=>({t:pname(r.project_id),d:(r.kind||'')+' · '+String(r.content||'').slice(0,18),g:r.occur_date||''}));
+  // 검토중 ECN
+  const ec=ecn.filter(r=>r.status==='검토중')
+    .map(r=>({t:pname(r.project_id),d:r.kind||'',g:r.change_date||''}));
+  // 교정 임박·초과
+  const gu=gau.filter(x=>{const d=guDday(x);return d!==null&&d<=14&&x.status!=='폐기'})
+    .sort((a,b)=>guDday(a)-guDday(b))
+    .map(x=>({t:(x.mgmt_no||'')+' '+(x.name||''),d:'차기교정 '+(guNext(x)||''),g:'D'+guDday(x)}));
+  // 안전재고 미달
+  const lo=stk.filter(i=>Number(i.min_stock)>0&&Number(i.stock)<=Number(i.min_stock))
+    .map(i=>({t:i.name,d:'재고 '+Number(i.stock)+(i.unit||''),g:'기준 '+Number(i.min_stock)}));
+  // 내 결재 대기
+  const my=apr.filter(a=>a.steps&&a.steps[a.cur]&&a.steps[a.cur].name===USER)
+    .map(a=>({t:(a.doc_type||'').toUpperCase(),d:String(a.title||'').slice(0,26),g:'대기'}));
+
+  document.getElementById('mon-stat').innerHTML=
+    `<div class="stat s1"><div class="v">${live.filter(p=>p.status==='진행').length}</div><div class="k">진행 금형</div></div>
+     <div class="stat s3"><div class="v">${late.length}</div><div class="k">지연 공정</div></div>
+     <div class="stat s2"><div class="v">${due.length}</div><div class="k">납기 임박</div></div>
+     <div class="stat s4"><div class="v">${nc.length+gu.length+lo.length+my.length}</div><div class="k">조치 필요</div></div>`;
+  document.getElementById('mon-tm').textContent='기준 '+new Date().toLocaleString('ko-KR');
+
+  box.innerHTML=
+    monCard('지연 공정','⏰','red',late,'flow','지연된 공정이 없습니다')+
+    monCard('납기 임박 (D-7)','📅','gold',due,'dash','임박 납기가 없습니다')+
+    monCard('NG 발생 공정','🚫','red',ng,'flow','NG 이력이 없습니다')+
+    monCard('미조치 부적합 (NCR)','🚨','red',nc,'ncr','미조치 건이 없습니다')+
+    monCard('검토중 설계변경 (4M)','📝','blue',ec,'ecn','검토중 건이 없습니다')+
+    monCard('계측기 교정 임박·초과','📏','gold',gu,'gauge','임박 계측기가 없습니다')+
+    monCard('안전재고 미달','📦','gold',lo,'stock','부족 품목이 없습니다')+
+    monCard('내 결재 대기','✍️','blue',my,'appr','대기 문서가 없습니다');
 }
 
 /* ---------- 진행계획 ---------- */
