@@ -527,16 +527,20 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .chippane .cp-h{display:flex;align-items:center;gap:5px;padding:0 2px 7px;border-bottom:1px solid var(--line2);margin-bottom:7px}
 .chippane .cp-h b{font-size:11px;font-weight:800;color:var(--gold);flex:1}
 .chippane .cp-h button{background:var(--card);border:1px solid var(--line);border-radius:6px;color:var(--sub);font-size:11px;padding:3px 6px;cursor:pointer;font-family:inherit}
-.cp-body{display:flex;flex-direction:column;gap:5px}
-.cp-body.num{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.cp-body>button{width:100%;padding:8px 4px;border:1px solid var(--goldbd);border-radius:8px;background:var(--goldbg);
+.cp-body{display:block}
+.cp-plain{display:flex;flex-direction:column;gap:5px}
+.cp-num3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.cp-tol{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.cp-sub{font-size:9.5px;font-weight:800;color:var(--gray);margin:2px 2px 5px}
+.cp-body button{width:100%;padding:8px 4px;border:1px solid var(--goldbd);border-radius:8px;background:var(--goldbg);
   color:var(--gold);font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cp-body>button:active{background:var(--gold);color:#1b1d26}
+.cp-body button:active{background:var(--gold);color:#1b1d26}
+.cp-tol button{background:rgba(79,140,255,.14);border-color:rgba(79,140,255,.4);color:var(--blue);
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px}
 .cp-empty{font-size:11px;color:var(--gray);padding:8px 2px;text-align:center}
 .cp-fn{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line2)}
-.cp-body.num .cp-fn{grid-column:1/4}
-.cp-fn button{padding:7px 2px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--sub);
-  font-size:10.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.cp-fn button{padding:7px 2px;border:1px solid var(--line);border-radius:7px;background:var(--card)!important;
+  border-color:var(--line)!important;color:var(--sub)!important;font-size:10.5px;font-weight:800;cursor:pointer;font-family:inherit}
 .ffm-row input.cpon{border-color:var(--gold)!important;background:rgba(226,176,74,.1)!important}
 /* 검사항목 연속 입력표 */
 .ffm-head{display:grid;grid-template-columns:24px 1.25fr 1fr 1fr 22px;
@@ -944,7 +948,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.1</span>
+    <span class="rev">v1.2</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1341,6 +1345,9 @@ const CP_GAUGE=['3차원측정기','형상측정기','진원도측정기','공�
   '버니어캘리퍼스','마이크로미터','하이트게이지','다이얼게이지','실린더게이지','핀게이지','블록게이지',
   '표면조도계','경도계','각도기','줄자','육안'];
 const CP_SPEC=['1','2','3','4','5','6','7','8','9','0','.','±','ø','°','~','+','-','/','mm','㎛','Min.','Max.','R','C','t','HRC'];
+/* 자주 쓰는 공차 프리셋 (커서 위치에 통째로 삽입) */
+const CP_TOL=['±0.01','±0.02','±0.03','±0.05','±0.1','±0.2','±0.5',
+  '+0.05/-0.02','+0.1/-0','+0/-0.1','Min.','Max.','결함없을것'];
 const CP_TITLE={item:'검사 항목',spec:'규격 · 기호',gauge:'측정기'};
 function cpOpen(el,kind,idx){
   CPT=el;CPKIND=kind;CPIDX=idx;
@@ -1350,10 +1357,15 @@ function cpOpen(el,kind,idx){
   const body=document.getElementById('cp-body');if(!body)return;
   const list=kind==='item'?CP_ITEM:kind==='gauge'?CP_GAUGE:CP_SPEC;
   const mode=kind==='spec'?'ins':'set';
-  body.className='cp-body'+(kind==='spec'?' num':'');
-  body.innerHTML=list.map(v=>
-    `<button type="button" onmousedown="event.preventDefault()" onclick="${mode==='ins'?'cpIns':'cpSet'}('${v.replace(/'/g,"\\'")}')">${esc(v)}</button>`).join('')+
-    `<div class="cp-fn">
+  body.className='cp-body';
+  body.innerHTML=(kind==='spec'?
+      `<div class="cp-sub">공차 프리셋</div><div class="cp-tol">`+
+      CP_TOL.map(v=>`<button type="button" onmousedown="event.preventDefault()" onclick="cpIns('${v.replace(/'/g,"\\'")}')">${esc(v)}</button>`).join('')+
+      `</div><div class="cp-sub">숫자 · 기호</div>`:'')+
+    `<div class="${kind==='spec'?'cp-num3':'cp-plain'}">`+
+    list.map(v=>
+      `<button type="button" onmousedown="event.preventDefault()" onclick="${mode==='ins'?'cpIns':'cpSet'}('${v.replace(/'/g,"\\'")}')">${esc(v)}</button>`).join('')+
+    `</div><div class="cp-fn">
       <button type="button" onmousedown="event.preventDefault()" onclick="cpBack()">⌫</button>
       <button type="button" onmousedown="event.preventDefault()" onclick="cpClear()">지움</button>
       <button type="button" onmousedown="event.preventDefault()" onclick="cpNext()">다음 ▼</button>
