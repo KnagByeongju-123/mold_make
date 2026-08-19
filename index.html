@@ -910,12 +910,12 @@ header .hright{position:relative}
 <header>
   <div class="hleft">
     <div class="hmb" onclick="toggleDrawer(true)"><i></i><i></i><i></i></div>
-    <span class="htitle gold-txt" id="htitle">홈</span>
+    <span class="htitle gold-txt" id="htitle">진행현황(전체)</span>
   </div>
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 12.0</span>
+    <span class="rev">Rev 12.1</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -962,8 +962,8 @@ header .hright{position:relative}
     <div><div class="n">금형제작관리</div><div class="s">Mold Making Management</div></div>
   </div>
   <div class="menueditnote" id="menuEditNote">편집 중에는 메뉴 영역을 위·아래로 밀어 스크롤하고, 오른쪽 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 화면 가장자리에서는 자동으로 스크롤됩니다. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
-  <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>홈</div>
-  <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황</div>
+  <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>진행현황(전체)</div>
+  <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황(세부)</div>
   <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규금형등록</div>
   <div class="mi" data-menu-id="new-repair" data-v="new" onclick="goNew('수리')"><span class="ic">🔧</span>신규수리등록</div>
   <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>제작계획</div>
@@ -1007,7 +1007,7 @@ header .hright{position:relative}
       <div class="stat s3"><div class="v" id="st-ng">0</div><div class="k">NG</div></div>
       <div class="stat s4"><div class="v" id="st-all">0</div><div class="k">전체</div></div>
     </div>
-    <h1 class="pt">전체진행현황</h1>
+    <h1 class="pt">진행현황(전체)</h1>
     <div class="pfilter" id="pfilter">
       <button class="on" onclick="setPF('run')">진행중</button>
       <button onclick="setPF('done')">완료</button>
@@ -1494,7 +1494,7 @@ header .hright{position:relative}
         <ul>
           <li>금형번호 · 금형명은 필수, 고객사 · 제품명 · 담당자 · 납기일 · 비고는 선택입니다.</li>
           <li>등록하면 선택한 구분의 <b>공정이 자동 생성</b>되고, 첫 공정이 <span class="st st-r">진행</span>, 나머지는 <span class="st st-w">대기</span>가 됩니다.</li>
-          <li>등록 직후 해당 금형의 진행현황으로 이동합니다.</li>
+          <li>등록 직후 해당 금형의 진행현황(세부)으로 이동합니다.</li>
         </ul>
       </div>
     </div>
@@ -1502,8 +1502,8 @@ header .hright{position:relative}
     <div class="hstep">
       <div class="hn mono">04</div>
       <div class="hb">
-        <h3>진행현황 — 공정 상태 처리</h3>
-        <p>금형을 선택해 <b>공정별 세부 진행상태</b>를 처리하는 화면입니다. 여러 금형의 전체 현황은 <b>홈(대시보드)</b>에서 확인합니다.</p>
+        <h3>진행현황(세부) — 공정 상태 처리</h3>
+        <p>금형을 선택해 <b>공정별 세부 진행상태</b>를 처리하는 화면입니다. 여러 금형의 전체 현황은 <b>진행현황(전체)</b> 화면에서 확인합니다.</p>
         <ul>
           <li>상단 선택창에서 금형을 고르면 공정 카드가 순서대로 표시되고, 우측에 진행률이 나타납니다.</li>
           <li>각 카드에서 <b>시작 / OK / NG</b> 처리와 담당 부서·업무 내용 확인이 가능합니다.</li>
@@ -2296,7 +2296,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'홈',new:'신규금형등록',flow:'진행현황',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'진행현황(전체)',new:'신규금형등록',flow:'진행현황(세부)',plan:'제작계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
