@@ -32,7 +32,29 @@ h1{font-size:17px;font-weight:900;letter-spacing:-.3px;margin:0;flex:1}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(126,224,160,.7);animation:bl 2s infinite}
 @keyframes bl{50%{opacity:.35}}
 
-main{max-width:1180px;margin:0 auto;padding:14px}
+main{max-width:1180px;margin:0 auto;padding:14px;zoom:var(--mm-fs,1)}
+.pcwmenu{position:relative;flex-shrink:0}
+.pcwbtn{width:34px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--sub);
+  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;font-family:inherit;padding:0;transition:.15s}
+.pcwbtn:active,.pcwbtn.on{border-color:var(--goldbd);background:var(--goldbg);color:var(--gold)}
+.pcwpopup{position:absolute;right:0;top:calc(100% + 10px);width:min(290px,calc(100vw - 26px));padding:13px 14px 12px;
+  border:1px solid var(--line);border-radius:13px;background:#171a24;box-shadow:0 14px 38px rgba(0,0,0,.55);
+  opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;
+  transition:opacity .14s ease,transform .14s ease,visibility .14s;z-index:150;color:var(--ink)}
+.pcwpopup.show{opacity:1;visibility:visible;transform:none}
+.pcwpopup:before{content:'';position:absolute;right:9px;top:-6px;width:10px;height:10px;background:#171a24;
+  border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.pcwpophead{display:flex;align-items:center;gap:8px;padding-bottom:9px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.pcwpophead b{font-size:12.5px;color:var(--gold);font-weight:800}
+.pcwclose{margin-left:auto;width:24px;height:24px;border:none;background:transparent;color:var(--gray);font-size:17px;line-height:1;cursor:pointer;border-radius:6px}
+.pcwrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:11.5px;color:var(--sub)}
+.pcwrow b{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:13px}
+.pcwrange{width:100%;height:24px;accent-color:var(--gold);cursor:pointer;display:block}
+.pcwscale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--gray);font-family:'IBM Plex Mono',monospace;margin-top:-2px}
+.pfsquick{display:flex;gap:6px;margin-top:8px}
+.pfsquick button{flex:1;padding:8px 4px;border:1px solid var(--line);border-radius:7px;background:var(--card2);
+  color:var(--sub);font-size:11.5px;font-weight:800;cursor:pointer;font-family:inherit}
+.pfsquick button:active{border-color:var(--goldbd);color:var(--gold)}
 .sumbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
 .sum{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 8px;text-align:center}
 .sum .v{font-size:22px;font-weight:900;font-family:'IBM Plex Mono',monospace}
@@ -89,6 +111,22 @@ main{max-width:1180px;margin:0 auto;padding:14px}
   <h1 class="gold-txt">온습도 모니터링</h1>
   <span class="rev">DEMO</span>
   <span class="live"><i class="dot"></i><span id="lv">실시간</span></span>
+  <div class="pcwmenu">
+    <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePop(event)">📐</button>
+    <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
+      <div class="pcwpophead"><b>화면 설정</b>
+        <button class="pcwclose" type="button" onclick="closePop()">×</button></div>
+      <div class="pcwrow"><span>글자 크기</span><b id="pfsValue">100%</b></div>
+      <input id="pfsRange" class="pcwrange" type="range" min="80" max="150" step="5" value="100"
+        oninput="applyFs(this.value,false)" onchange="applyFs(this.value,true)">
+      <div class="pcwscale"><span>80%</span><span>150%</span></div>
+      <div class="pfsquick">
+        <button type="button" onclick="applyFs(MM_FS-5,true)">A−</button>
+        <button type="button" onclick="applyFs(100,true)">100%</button>
+        <button type="button" onclick="applyFs(MM_FS+5,true)">A+</button>
+      </div>
+    </div>
+  </div>
 </header>
 
 <main>
@@ -108,6 +146,31 @@ main{max-width:1180px;margin:0 auto;padding:14px}
 </main>
 
 <script>
+/* ===== 글자 크기 (index.html과 동일 키 공유) ===== */
+const FS_KEY='mm_font_scale_v1';
+let MM_FS=100;
+function fsClamp(v){let n=Number(v)||100;n=Math.round(n/5)*5;return Math.max(80,Math.min(150,n))}
+function applyFs(v,save){
+  MM_FS=fsClamp(v);
+  document.documentElement.style.setProperty('--mm-fs',(MM_FS/100).toString());
+  const rg=document.getElementById('pfsRange');if(rg)rg.value=MM_FS;
+  const vl=document.getElementById('pfsValue');if(vl)vl.textContent=MM_FS+'%';
+  if(save){try{localStorage.setItem(FS_KEY,String(MM_FS))}catch(e){}}
+}
+function togglePop(e){
+  if(e)e.stopPropagation();
+  const p=document.getElementById('pcWidthPopup'),b=document.getElementById('pcWidthBtn');
+  const on=!p.classList.contains('show');
+  p.classList.toggle('show',on);b.classList.toggle('on',on);
+}
+function closePop(){
+  document.getElementById('pcWidthPopup').classList.remove('show');
+  document.getElementById('pcWidthBtn').classList.remove('on');
+}
+document.addEventListener('click',closePop);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop()});
+try{applyFs(localStorage.getItem(FS_KEY)||100,false)}catch(e){applyFs(100,false)}
+
 /* ===== 구역 정의 (데모 기준값) ===== */
 const ZONES=[
   {id:'SHT41_1', name:'A동',   t:24.5, h:52, mode:'auto'},
