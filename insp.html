@@ -975,7 +975,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.6</span>
+    <span class="rev">v1.7</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1301,7 +1301,7 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   <div class="hd">
     <div class="tt">
       <h1>${esc(title)}</h1>
-      <div class="sub">문서번호 <b class="mono">${esc(docNo)}</b> · ${esc(moldLabel)}<br>조회조건: ${esc(filterLabel)} · 출력일 ${today()}</div>
+      <div class="sub">${esc(moldLabel)}<br>조회조건: ${esc(filterLabel)} · 출력일 ${today()}</div>
     </div>
     <table class="apv">
       <tr>${sg.map(x=>`<th>${esc(x.role)}</th>`).join('')}</tr>

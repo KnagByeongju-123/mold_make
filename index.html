@@ -946,7 +946,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.1</span>
+    <span class="rev">Rev 13.2</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -4380,7 +4380,7 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   <div class="hd">
     <div class="tt">
       <h1>${esc(title)}</h1>
-      <div class="sub">문서번호 <b class="mono">${esc(docNo)}</b> · ${esc(moldLabel)}<br>조회조건: ${esc(filterLabel)} · 출력일 ${today()}</div>
+      <div class="sub">${esc(moldLabel)}<br>조회조건: ${esc(filterLabel)} · 출력일 ${today()}</div>
     </div>
     <table class="apv">
       <tr>${sg.map(x=>`<th>${esc(x.role)}</th>`).join('')}</tr>
