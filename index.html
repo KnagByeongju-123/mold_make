@@ -701,7 +701,11 @@ tr.ipdrop td{box-shadow:inset 0 2px 0 var(--gold)}
 .opact{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 
 /* 계획 수립 */
-.wizbtn{padding:8px 16px;background:rgba(79,140,255,.16);border:1px solid rgba(79,140,255,.45);color:var(--blue)}
+.wizbtn{padding:9px 18px;font-size:14px;font-weight:900;color:var(--gold2);
+  background:linear-gradient(135deg,rgba(226,176,74,.26),rgba(246,211,101,.10));
+  border:1.5px solid var(--gold);border-radius:10px;
+  box-shadow:0 3px 14px rgba(226,176,74,.18)}
+.wizbtn:hover{background:linear-gradient(135deg,rgba(226,176,74,.34),rgba(246,211,101,.14))}
 .dpick{display:inline-block;padding:6px 9px;border:1.5px dashed var(--line3);border-radius:8px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;color:var(--gray);cursor:pointer;white-space:nowrap;background:transparent}
 /* 진행계획관리 표 — 좁은 화면에서는 좌우 스크롤 */
 #v-plan table.wide{min-width:590px;width:100%}
@@ -967,7 +971,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 14.0</span>
+    <span class="rev">Rev 14.2</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1014,10 +1018,10 @@ header .hright{position:relative}
     <div><div class="n">금형제작관리</div><div class="s">Mold Making Management</div></div>
   </div>
   <div class="menueditnote" id="menuEditNote">편집 중에는 메뉴 영역을 위·아래로 밀어 스크롤하고, 오른쪽 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 화면 가장자리에서는 자동으로 스크롤됩니다. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
+  <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규진행등록</div>
+  <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>신규진행계획수립</div>
   <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>진행현황(전체)</div>
   <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황(세부)</div>
-  <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규진행등록</div>
-  <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>진행계획관리</div>
   <div class="mg" id="mg-out" data-menu-id="grp-out">
     <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
     <div class="msub">
@@ -1590,8 +1594,8 @@ header .hright{position:relative}
     <div class="hstep">
       <div class="hn mono">06</div>
       <div class="hb">
-        <h3>진행계획관리 — 계획 대비 실적</h3>
-        <p>메뉴 → <b>진행계획관리</b>에서 공정별 계획일을 수립합니다. 금형 선택 목록과 상단 배지에 <b>[신작] / [수리]</b>가 표시되고, 해당 유형의 공정만 나타납니다.</p>
+        <h3>신규진행계획수립 — 계획 대비 실적</h3>
+        <p>메뉴 → <b>신규진행계획수립</b>에서 공정별 계획일을 수립합니다. 금형 선택 목록과 상단 배지에 <b>[신작] / [수리]</b>가 표시되고, 해당 유형의 공정만 나타납니다.</p>
         <ul>
           <li>각 공정의 <b>완료일</b> 칸을 눌러 달력에서 선택합니다. 시작일은 이전 공정 완료일로 자동 연결되고 소요일수가 계산됩니다.</li>
           <li><b>📅 계획수립</b>: 달력을 열어 날짜를 연속 클릭하면 공정 순서대로 일정이 잡힙니다. <b>이미 저장된 계획은 그대로 불러와 달력에 표시</b>되며, 미입력 공정부터 이어서 진행됩니다.</li>
@@ -2360,7 +2364,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={mon:'모니터링',dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획관리',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+const VIEWTITLE={mon:'모니터링',dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'신규진행계획수립',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
