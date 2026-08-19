@@ -939,7 +939,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 12.7</span>
+    <span class="rev">Rev 13.0</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1000,7 +1000,7 @@ header .hright{position:relative}
   <div class="mg" id="mg-qa" data-menu-id="grp-qa">
     <div class="mi mgh" onclick="toggleGrp('qa')"><span class="ic">🛡️</span>품질관리 (SQ)<span class="arw">▾</span></div>
     <div class="msub">
-      <div class="mi" data-v="insp" onclick="go('insp')"><span class="ic">📐</span>검사성적</div>
+      <div class="mi" data-menu-id="insp-file" onclick="location.href='insp.html'"><span class="ic">📐</span>검사성적서</div>
       <div class="mi" data-v="ncr" onclick="go('ncr')"><span class="ic">🚨</span>부적합·시정조치</div>
       <div class="mi" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
       <div class="mi" data-v="gauge" onclick="go('gauge')"><span class="ic">📏</span>계측기관리</div>
@@ -1274,75 +1274,7 @@ header .hright{position:relative}
     </div>
   </section>
 
-  <!-- 검사성적 -->
-  <section id="v-insp" class="hide">
-    <div class="psel" style="margin-bottom:10px">
-      <select id="inspsel" onchange="onInspProj()"></select>
-      <span id="insprate" style="font-weight:700;color:var(--blue)"></span>
-    </div>
 
-    <div class="itabs">
-      <button class="itab on" id="itab-make" onclick="inspTab('make')">📝 성적서 만들기</button>
-      <button class="itab" id="itab-write" onclick="inspTab('write')">✍️ 성적서 작성</button>
-      <button class="itab" id="itab-log" onclick="inspTab('log')">📚 성적서 작성이력</button>
-    </div>
-
-    <!-- ===== 탭1: 성적서 만들기 (양식 등록) ===== -->
-    <div id="insp-make">
-      <div class="qfbox"><span class="qflb">📝 성적서 양식</span>
-        <div class="stkbar">
-          <select id="im-op"><option value="">공정 선택</option></select>
-        </div>
-        <div class="ihdr">
-          <div class="fg sk"><label>SKETCH (도면 이미지)</label>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <input type="file" id="ih-sketch" accept="image/*" onchange="pickSketch(this)">
-              <span id="ih-skpv"></span>
-            </div></div>
-        </div>
-        <div class="stkbar">
-          <button class="btn" style="padding:8px 12px" onclick="addFItem()">+ 검사항목</button>
-          <button class="btn" style="padding:8px 12px" onclick="newForm()">새 양식</button>
-          <span id="fedit-tag" style="font-size:11.5px;font-weight:800;color:var(--gold)"></span>
-        </div>
-      </div>
-      <div id="formitems"></div>
-      <div class="stkbar" style="margin:12px 0 4px">
-        <button class="btn btn-p" style="padding:11px 20px;font-size:13.5px" onclick="saveForm()">💾 양식 저장</button>
-      </div>
-      <div class="fsect">등록된 성적서 양식</div>
-      <div id="formlist"></div>
-    </div>
-
-    <!-- ===== 탭2: 성적서 작성 (작업자 측정 입력) ===== -->
-    <div id="insp-write" class="hide">
-      <div class="qfbox"><span class="qflb">✍️ 양식 선택 · 측정 입력</span>
-        <div class="stkbar">
-          <select id="iw-op" onchange="renderWFormList()"><option value="">전체 공정</option></select>
-          <input type="date" id="iw-date" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
-          <input id="iw-worker" placeholder="검사자" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit;width:110px">
-        </div>
-      </div>
-      <div id="wformlist"></div>
-      <div id="writebox"></div>
-    </div>
-
-    <!-- ===== 탭3: 성적서 작성이력 ===== -->
-    <div id="insp-log" class="hide">
-      <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
-        <div class="stkbar">
-          <input type="date" id="if-from" onchange="renderInspLog()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
-          <input type="date" id="if-to" onchange="renderInspLog()" style="background:var(--card);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit">
-          <select id="if-op" onchange="renderInspLog()"><option value="">전체 공정</option></select>
-          <select id="if-purpose" onchange="renderInspLog()"><option value="">전체 목적</option><option>양산품 검사</option><option>개발품 검사</option><option>초도품 검사</option><option>비교 검사</option><option>측정 의뢰</option><option>기타</option></select>
-          <button class="btn hxls" style="padding:8px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportInspLogCSV()">엑셀</button>
-        </div>
-      </div>
-      <div class="tscroll"><table class="wide">
-        <thead><tr><th>검사일</th><th>공정</th><th>측정목적</th><th>항목 · NG</th><th>검사자</th><th style="width:170px"></th></tr></thead>
-        <tbody id="inspbody"></tbody></table></div>
-    </div>
-  </section>
 
   <!-- 부적합·시정조치 -->
   <section id="v-ncr" class="hide">
@@ -1954,29 +1886,6 @@ header .hright{position:relative}
 <datalist id="dl-pw"></datalist>
 <datalist id="dl-pv"></datalist>
 
-<div id="kpad" class="kpad hide">
-  <div class="kp-h"><span id="kp-title">입력 도우미</span>
-    <span><button type="button" onmousedown="event.preventDefault()" onclick="kpKeyboard()">⌨ 키보드</button>
-    <button type="button" onclick="kpClose()">✕ 닫기</button></span></div>
-  <div class="kp-sym" id="kp-body"></div>
-  <div class="kp-num" id="kp-num">
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('7')">7</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('8')">8</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('9')">9</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('.')">.</button>
-    <button type="button" class="fn" onmousedown="event.preventDefault()" onclick="kpBack()">⌫</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('4')">4</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('5')">5</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('6')">6</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('-')">-</button>
-    <button type="button" class="fn" onmousedown="event.preventDefault()" onclick="kpClear()">지움</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('1')">1</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('2')">2</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('3')">3</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('0')">0</button>
-    <button type="button" class="fn ok" onmousedown="event.preventDefault()" onclick="kpNext()">다음 ▼</button>
-  </div>
-</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2319,7 +2228,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획관리',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획관리',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
@@ -2675,7 +2584,7 @@ function go(v,fromPop){
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','insp','ncr','ecn','appr','gauge'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
+  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
   setPCWidthView(v);
   if(v==='dash')loadDash();
   if(v==='flow')loadFlowSel();
@@ -2685,7 +2594,6 @@ function go(v,fromPop){
   if(v==='board'){const w=document.getElementById('b-wr');if(!w.value&&USER)w.value=USER;loadBoard();}
   if(v==='tryout'){initTryout();loadTryout();}
   if(v==='stock')loadStock();
-  if(v==='insp')loadInsp();
   if(v==='ncr')loadNcr();
   if(v==='ecn')loadEcn();
   if(v==='appr')loadAppr();
@@ -3827,520 +3735,6 @@ function qaOpt(x){return `<option value="${x.id}">${x.mold_type==='수리'?'[수
 function qaMold(id){const p=QAPJ.find(x=>x.id===id);return p?p.mold_no+' '+p.mold_name:''}
 function today(){return new Date().toISOString().slice(0,10)}
 
-/* ===== 검사성적: 양식 만들기 → 작업자 작성 → 작성이력 ===== */
-let INSPTAB='make', FORMS=[], FEDIT=null, FITEMS=[], WFORM=null, WROWS=[], RPTS=[], SKFILE=null, SKDATA=null, SKURL=null;
-const INSP_JUDGE=['','OK','NG','조건부 OK'];
-const INSP_X=['x1','x2','x3','x4','x5','x6','x7','x8','x9','x10'];
-const FROWS_DEF=15;
-function anyX(r){return INSP_X.some(k=>r[k])}
-
-async function loadInsp(){
-  await loadQaProjects();
-  const sel=document.getElementById('inspsel');const cur=sel.value;
-  sel.innerHTML=QAPJ.map(qaOpt).join('')||'<option value="">등록된 금형 없음</option>';
-  if(cur&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
-  if(!g('iw-date'))document.getElementById('iw-date').value=today();
-  if(!g('iw-worker'))document.getElementById('iw-worker').value=USER||'';
-  await renderInsp();
-}
-function inspTab(t){
-  INSPTAB=t;
-  ['make','write','log'].forEach(x=>{
-    document.getElementById('itab-'+x).classList.toggle('on',t===x);
-    document.getElementById('insp-'+x).classList.toggle('hide',t!==x);
-  });
-  if(t==='make'){drawFormItems();renderFormList()}
-  else if(t==='write')renderWFormList();
-  else renderInspLog();
-}
-async function onInspProj(){
-  newForm();cancelWrite();
-  await renderInsp();
-}
-function inspProj(){return QAPJ.find(x=>String(x.id)===String(document.getElementById('inspsel').value))}
-function inspFlow(){return FM(pflow(inspProj()))}
-function inspOpOptions(selId,allLabel){
-  const el=document.getElementById(selId);if(!el)return;
-  const cur=el.value;
-  el.innerHTML=`<option value="">${allLabel}</option>`+
-    inspFlow().map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('');
-  if([...el.options].some(o=>o.value===cur))el.value=cur;
-}
-async function renderInsp(){
-  const pid=document.getElementById('inspsel').value;
-  if(!pid){
-    document.getElementById('formlist').innerHTML='<div class="ifm-empty">먼저 금형을 등록하세요</div>';
-    document.getElementById('wformlist').innerHTML='<div class="ifm-empty">먼저 금형을 등록하세요</div>';
-    document.getElementById('inspbody').innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';
-    return;
-  }
-  inspOpOptions('im-op','공정 선택');
-  inspOpOptions('iw-op','전체 공정');
-  inspOpOptions('if-op','전체 공정');
-  let err='';
-  try{FORMS=await api("/mm_inspect_form?select=*&project_id=eq."+pid+"&order=op_code");}catch(e){FORMS=[];err='patch_insp_v4.sql을 Supabase에서 실행하세요'}
-  try{INSP=await api("/mm_inspect?select=*&project_id=eq."+pid+"&order=created_at.desc");}catch(e){INSP=[]}
-  try{RPTS=await api("/mm_inspect_rpt?select=*&project_id=eq."+pid+"&order=created_at.desc");}catch(e){RPTS=[];err='patch_insp_v4.sql을 Supabase에서 실행하세요'}
-  if(err)document.getElementById('inspbody').innerHTML=`<tr><td colspan="6" class="empty">${err}</td></tr>`;
-  drawFormItems();renderFormList();renderWFormList();renderInspLog();
-}
-
-/* ================= 탭1: 성적서 양식 만들기 ================= */
-function blankFItem(){return{item:'',method:'',spec:'',memo:''}}
-function newForm(){
-  FEDIT=null;FITEMS=Array.from({length:FROWS_DEF},blankFItem);
-  SKURL=null;rmSketch();
-  const tg=document.getElementById('fedit-tag');if(tg)tg.textContent='';
-  drawFormItems();renderFormList();
-}
-function addFItem(n){
-  const c=Number(n)||1;
-  for(let i=0;i<c;i++)FITEMS.push(blankFItem());
-  drawFormItems();
-  setTimeout(()=>{const el=document.querySelector('#formitems .ffm-row:last-child input');if(el)el.focus()},30)}
-function setFItem(i,f,v){if(FITEMS[i])FITEMS[i][f]=v}
-function rmFItem(i){FITEMS.splice(i,1);drawFormItems()}
-function mvFItem(i,d){
-  const j=i+d;if(j<0||j>=FITEMS.length)return;
-  const t=FITEMS[i];FITEMS[i]=FITEMS[j];FITEMS[j]=t;drawFormItems();
-}
-function drawFormItems(){
-  const box=document.getElementById('formitems');if(!box)return;
-  if(!FITEMS.length)FITEMS=Array.from({length:FROWS_DEF},blankFItem);
-  const filled=FITEMS.filter(r=>r.item&&r.item.trim()).length;
-  box.innerHTML=`<div class="ifm-op"><div class="ifm-oph">
-      <span class="nm">검사항목 ${filled}개</span>
-      <span class="cnt">각 칸을 누르면 상단에 입력 도우미가 열립니다 · 규격 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 형식 → 자동 판정</span>
-      <div class="acts"><button type="button" onclick="addFItem(5)">+ 5줄</button><button type="button" onclick="addFItem(15)">+ 15줄</button></div>
-    </div>
-    <div class="ffm-head"><div>No</div><div>검사 항목</div><div>규격 / 기준</div><div>측정기 (검사방법)</div><div></div></div>
-    <div class="ifm-rows">`+
-    FITEMS.map((r,i)=>`<div class="ffm-row">
-      <div class="idx">${i+1}</div>
-      <input value="${esc(r.item||'')}" placeholder="검사 항목" inputmode="none" onfocus="kpOpen(this,'item')" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
-      <input value="${esc(r.spec||'')}" class="mono" placeholder="88.14 ±0.03" inputmode="none" onfocus="kpOpen(this,'spec')" oninput="setFItem(${i},'spec',this.value)" onkeydown="fKey(event,${i},1)">
-      <input value="${esc(r.method||'')}" placeholder="3차원측정기" inputmode="none" onfocus="kpOpen(this,'gauge')" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
-      <button class="rm" title="행 삭제" onclick="rmFItem(${i})">✕</button>
-    </div>`).join('')+'</div></div>';
-}
-/* Enter → 다음 줄 같은 칸 (연속 입력) */
-function fKey(e,i,col){
-  if(e.key!=='Enter')return;
-  e.preventDefault();
-  if(i+1>=FITEMS.length){FITEMS.push(blankFItem());drawFormItems()}
-  setTimeout(()=>{
-    const rows=document.querySelectorAll('#formitems .ffm-row');
-    const nx=rows[i+1]&&rows[i+1].querySelectorAll('input')[col];
-    if(nx){nx.focus();kpOpen(nx,['item','spec','gauge'][col]);nx.scrollIntoView({block:'center',behavior:'smooth'})}
-  },10);
-}
-/* ----- 입력 보조 팝업 (규격 기호 / 검사항목 / 측정기) ----- */
-let KPT=null;
-const KP_SPEC=['ø','±','°','~','mm','㎛','Min.','Max.','R','C','t','HRC'];
-const KP_ITEM=['외경','내경','높이','두께','폭','길이','거리','각도',
-  '평면도','진원도','원통도','직각도','평행도','동심도','윤곽도','위치도','진직도',
-  '조도(Ra)','경도','외관'];
-const KP_GAUGE=['3차원측정기','형상측정기','진원도측정기','공구현미경','투영기','현미경','확대경',
-  '버니어캘리퍼스','마이크로미터','하이트게이지','다이얼게이지','실린더게이지',
-  '핀게이지','블록게이지','표면조도계','경도계','각도기','줄자','육안'];
-const KP_SET={
-  spec:{t:'규격 / 기준',list:KP_SPEC,mode:'ins',cols:6},
-  item:{t:'자주 쓰는 검사 항목',list:KP_ITEM,mode:'set',cols:4},
-  gauge:{t:'측정기 (검사방법)',list:KP_GAUGE,mode:'set',cols:3},
-  num:{t:'측정값 입력',list:[],mode:'ins',cols:6}
-};
-function kpOpen(el,kind){
-  KPT=el;
-  const kp=document.getElementById('kpad');if(!kp)return;
-  const cf=KP_SET[kind||'spec'];
-  document.getElementById('kp-title').textContent=cf.t;
-  const body=document.getElementById('kp-body');
-  body.style.gridTemplateColumns=`repeat(${cf.cols},1fr)`;
-  body.className='kp-sym'+(cf.mode==='set'?' wide':'')+(cf.list.length?'':' hide');
-  body.innerHTML=cf.list.map(v=>
-    `<button type="button" onmousedown="event.preventDefault()" onclick="${cf.mode==='ins'?'kpIns':'kpSet'}('${v.replace(/'/g,"\\'")}')">${esc(v)}</button>`).join('');
-  kp.classList.remove('hide');
-  document.body.classList.add('kpad-on');
-}
-function kpClose(){
-  KPT=null;
-  const kp=document.getElementById('kpad');if(kp)kp.classList.add('hide');
-  document.body.classList.remove('kpad-on');
-}
-function kpIns(t){
-  if(!KPT)return;
-  const st=KPT.selectionStart==null?KPT.value.length:KPT.selectionStart;
-  const en=KPT.selectionEnd==null?st:KPT.selectionEnd;
-  KPT.value=KPT.value.slice(0,st)+t+KPT.value.slice(en);
-  const p=st+t.length;
-  try{KPT.setSelectionRange(p,p)}catch(e){}
-  KPT.dispatchEvent(new Event('input',{bubbles:true}));
-  KPT.focus();
-}
-function kpSet(t){
-  if(!KPT)return;
-  KPT.value=t;
-  KPT.dispatchEvent(new Event('input',{bubbles:true}));
-  try{KPT.setSelectionRange(t.length,t.length)}catch(e){}
-  KPT.focus();
-}
-function kpBack(){
-  if(!KPT)return;
-  const st=KPT.selectionStart==null?KPT.value.length:KPT.selectionStart;
-  const en=KPT.selectionEnd==null?st:KPT.selectionEnd;
-  if(st===en){if(!st)return;KPT.value=KPT.value.slice(0,st-1)+KPT.value.slice(st);try{KPT.setSelectionRange(st-1,st-1)}catch(e){}}
-  else{KPT.value=KPT.value.slice(0,st)+KPT.value.slice(en);try{KPT.setSelectionRange(st,st)}catch(e){}}
-  KPT.dispatchEvent(new Event('input',{bubbles:true}));KPT.focus();
-}
-function kpClear(){if(!KPT)return;KPT.value='';KPT.dispatchEvent(new Event('input',{bubbles:true}));KPT.focus()}
-/* 기본 키보드로 전환 (직접 타이핑) */
-function kpKeyboard(){
-  if(!KPT)return;
-  const el=KPT;
-  el.setAttribute('inputmode','text');
-  el.blur();setTimeout(()=>el.focus(),40);
-}
-/* 같은 칸 다음 줄로 이동 */
-function kpNext(){
-  if(!KPT)return;
-  const el=KPT, row=el.closest('.ffm-row')||el.closest('.ifm-row');
-  if(!row)return;
-  const sel=row.classList.contains('ffm-row')?'.ffm-row':'.ifm-row';
-  const list=[...document.querySelectorAll(sel)];
-  const ri=list.indexOf(row);
-  const inputs=[...row.querySelectorAll('input')];
-  const ci=inputs.indexOf(el);
-  const nx=list[ri+1]&&list[ri+1].querySelectorAll('input')[ci];
-  if(nx){nx.focus();nx.scrollIntoView({block:'center',behavior:'smooth'})}
-}
-function pickSketch(inp){
-  SKFILE=inp.files[0]||null;SKDATA=null;
-  const pv=document.getElementById('ih-skpv');pv.innerHTML='';
-  if(!SKFILE)return;
-  const rd=new FileReader();
-  rd.onload=e=>{SKDATA=e.target.result;
-    pv.innerHTML=`<img src="${SKDATA}" onclick="openBig(SKDATA)" style="height:44px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;vertical-align:middle"> <button class="btn" style="padding:3px 8px;font-size:10.5px" onclick="rmSketch()">✕</button>`};
-  rd.readAsDataURL(SKFILE);
-}
-function rmSketch(){
-  SKFILE=null;SKDATA=null;
-  const el=document.getElementById('ih-sketch');if(el)el.value='';
-  const pv=document.getElementById('ih-skpv');
-  if(pv)pv.innerHTML=SKURL?`<img src="${SKURL}" onclick="openBig('${SKURL}')" style="height:44px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;vertical-align:middle"> <span style="font-size:10.5px;color:var(--gray)">기존 도면</span>`:'';
-}
-async function saveForm(){
-  const pid=document.getElementById('inspsel').value;
-  if(!pid)return toast('금형을 선택하세요');
-  const op=document.getElementById('im-op').value;
-  if(!op)return toast('공정을 선택하세요');
-  const title=opN(op)+' '+mName(op);
-  const items=FITEMS.filter(r=>r.item&&r.item.trim());
-  if(!items.length)return toast('검사항목을 1개 이상 입력하세요');
-  let sketch=SKURL;
-  if(SKFILE){
-    try{toast('도면 업로드 중...');sketch=await uploadImg(SKFILE,'insp')}
-    catch(e){
-      if(!confirm('도면 이미지 업로드에 실패했습니다.\n('+(String(e.message).includes('Bucket')?'Storage 버킷 mm-photos 없음 — patch_storage.sql 실행 필요':e.message)+')\n\n도면 없이 양식만 저장할까요?'))return;
-      sketch=SKURL;
-    }
-  }
-  const body={project_id:pid,op_code:op,title:title,
-    sketch:sketch||null,items:items,author:USER||null};
-  try{
-    if(FEDIT)await api(`/mm_inspect_form?id=eq.${FEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
-    else await api("/mm_inspect_form",{method:"POST",body:JSON.stringify(body)});
-    toast(FEDIT?'양식을 수정했습니다':'성적서 양식을 등록했습니다');
-    newForm();
-    await renderInsp();
-  }catch(e){toast('저장 실패: '+e.message)}
-}
-function formOf(id){return FORMS.find(x=>String(x.id)===String(id))}
-function fillForm(f,copy){
-  document.getElementById('im-op').value=f.op_code||'';
-  SKFILE=null;SKDATA=null;SKURL=f.sketch||null;rmSketch();
-  FITEMS=(f.items||[]).map(r=>({item:r.item||'',method:r.method||'',spec:r.spec||'',memo:r.memo||''}));
-  for(let i=0;i<3;i++)FITEMS.push(blankFItem());
-  FEDIT=copy?null:f.id;
-  document.getElementById('fedit-tag').textContent=copy?'복사본 — 공정 변경 후 저장하세요':'수정 중 — 저장 시 덮어쓰기';
-  drawFormItems();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function editForm(id){const f=formOf(id);if(f)fillForm(f,false)}
-function copyForm(id){const f=formOf(id);if(f)fillForm(f,true)}
-async function delForm(id){
-  if(!confirm('이 성적서 양식을 삭제할까요? (작성된 성적서 기록은 유지)'))return;
-  const f=formOf(id);
-  try{
-    await api(`/mm_inspect_form?id=eq.${id}`,{method:"DELETE"});
-    if(f&&f.sketch)deleteImg(f.sketch);
-    if(String(FEDIT)===String(id))newForm();
-    await renderInsp();
-  }catch(e){toast('삭제 실패: '+e.message)}
-}
-function formCard(f,writeMode){
-  const cnt=(f.items||[]).length;
-  const used=RPTS.filter(r=>String(r.form_id)===String(f.id)).length;
-  return `<div class="fcard">
-    <div class="fc-h">
-      <span class="no">${f.op_code?opN(f.op_code):'-'}</span>
-      <span class="nm">${f.op_code?esc(mName(f.op_code)):esc(f.title||'')}</span>
-<span class="tag">${cnt}항목</span>
-      ${f.sketch?`<button class="btn" style="padding:3px 8px;font-size:10.5px" onclick="openBig('${f.sketch}')">🖼 도면</button>`:''}
-    </div>
-    <div class="fc-s">${f.op_code?opN(f.op_code)+' '+esc(mName(f.op_code)):''}${used?' · 작성 '+used+'건':''}</div>
-    <div class="fc-a">${writeMode?
-      `<button class="btn btn-p" style="padding:7px 14px" onclick="startWrite(${f.id})">✍️ 이 양식으로 작성</button>`:
-      `<button class="btn" style="padding:6px 11px;font-size:11.5px" onclick="editForm(${f.id})">✏️ 수정</button>
-       <button class="btn" style="padding:6px 11px;font-size:11.5px" onclick="copyForm(${f.id})">📄 복사</button>
-       <button class="btn" style="padding:6px 11px;font-size:11.5px;color:var(--red);border-color:rgba(255,123,123,.4)" onclick="delForm(${f.id})">✕ 삭제</button>`}
-    </div></div>`;
-}
-function renderFormList(){
-  const box=document.getElementById('formlist');if(!box)return;
-  const pid=document.getElementById('inspsel').value;
-  if(!pid){box.innerHTML='<div class="ifm-empty">먼저 금형을 선택하세요</div>';return}
-  box.innerHTML=FORMS.map(f=>formCard(f,false)).join('')||
-    '<div class="ifm-empty">등록된 양식이 없습니다. 위에서 공정·항목을 입력하고 <b>💾 양식 저장</b>을 누르세요.</div>';
-}
-
-/* ================= 탭2: 성적서 작성 (작업자) ================= */
-function renderWFormList(){
-  const box=document.getElementById('wformlist');if(!box)return;
-  const pid=document.getElementById('inspsel').value;
-  if(!pid){box.innerHTML='<div class="ifm-empty">먼저 금형을 선택하세요</div>';return}
-  if(WFORM){box.innerHTML='';return}
-  const fop=document.getElementById('iw-op').value;
-  const L=FORMS.filter(f=>!fop||f.op_code===fop);
-  box.innerHTML=L.map(f=>formCard(f,true)).join('')||
-    '<div class="ifm-empty">선택한 공정에 등록된 성적서 양식이 없습니다.<br>성적서 만들기 탭에서 먼저 양식을 등록하세요.</div>';
-}
-function startWrite(id){
-  const f=formOf(id);if(!f)return;
-  WFORM=f;
-  WROWS=(f.items||[]).map(r=>({item:r.item||'',method:r.method||'',spec:r.spec||'',memo:r.memo||'',
-    x1:'',x2:'',x3:'',x4:'',x5:'',judge:'',_auto:true}));
-  if(!g('iw-date'))document.getElementById('iw-date').value=today();
-  if(!g('iw-worker'))document.getElementById('iw-worker').value=USER||'';
-  renderWFormList();drawWrite();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function cancelWrite(){
-  WFORM=null;WROWS=[];
-  const b=document.getElementById('writebox');if(b)b.innerHTML='';
-  renderWFormList();
-}
-function drawWrite(){
-  const box=document.getElementById('writebox');if(!box)return;
-  if(!WFORM){box.innerHTML='';return}
-  const f=WFORM;
-  const ng=WROWS.filter(r=>r.judge==='NG').length;
-  const done=WROWS.filter(r=>anyX(r)||r.judge).length;
-  box.innerHTML=`<div class="ifm-op">
-    <div class="ifm-oph">
-      <span class="no">${f.op_code?opN(f.op_code):''}</span><span class="nm">${esc(f.title||'')}</span>
-      <span class="cnt">입력 ${done}/${WROWS.length}${ng?' · NG '+ng:''}</span>
-      <div class="acts">
-        ${f.sketch?`<button type="button" onclick="openBig('${f.sketch}')">🖼 도면</button>`:''}
-        <button type="button" onclick="wAllOk()">전체 OK</button>
-        <button type="button" onclick="wClear()">초기화</button>
-        <button type="button" onclick="cancelWrite()">✕ 닫기</button>
-      </div>
-    </div>
-    <div class="ifm-rows">${WROWS.map((r,i)=>wRowHtml(r,i)).join('')}</div>
-    <div class="wsave">
-      <button class="btn btn-p" style="padding:11px 20px;font-size:13.5px" onclick="saveWrite()">💾 성적서 저장</button>
-      <button class="btn hpdf" style="padding:8px 14px;background:rgba(255,123,123,.14);border:1px solid rgba(255,123,123,.4);color:var(--red)" onclick="writePDF()">PDF 미리보기</button>
-    </div></div>`;
-}
-function wRowHtml(r,i){
-  const cls=r.judge==='NG'?'ng':(r.judge==='OK'?'ok':'');
-  return `<div class="ifm-row v2 ${cls}" id="ifr-${i}">
-    <div class="idx">${i+1}</div>
-    <div class="f item"><label>검사 항목</label><div class="ro">${esc(r.item||'')}</div></div>
-    <div class="f"><label>검사방법 (측정기 No)</label><div class="ro">${esc(r.method||'-')}</div></div>
-    <div class="f"><label>규격 / 기준</label><div class="ro mono">${esc(r.spec||'-')}</div></div>
-    <div class="f xs"><label>측 정 결 과 X1~X5</label>
-      <div class="xw">${INSP_X.map((k,x)=>`<input value="${esc(r[k]||'')}" placeholder="X${x+1}" inputmode="none" onfocus="kpOpen(this,'num')" oninput="setWX(${i},'${k}',this.value)">`).join('')}</div></div>
-    <div class="f jd"><label>판정</label><select id="ifj-${i}" onchange="setWJudge(${i},this.value)">${INSP_JUDGE.map(j=>`<option value="${j}"${r.judge===j?' selected':''}>${j||'미판정'}</option>`).join('')}</select></div>
-    <div class="f memo"><label>비고</label><input value="${esc(r.memo||'')}" oninput="setWRow(${i},'memo',this.value)"></div>
-  </div>`;
-}
-/* 규격 파싱: "88.14 ±0.03" / "50 +0.05/-0.02" / "10~12" */
-function parseSpec(sp){
-  if(!sp)return null;
-  const s=String(sp).replace(/[㎜㎛]|mm|um/gi,'').trim();
-  let m=s.match(/(-?\d+\.?\d*)\s*±\s*(\d+\.?\d*)/);
-  if(m){const a=+m[1],b=+m[2];return{lo:a-b,hi:a+b}}
-  m=s.match(/(-?\d+\.?\d*)\s*\+\s*(\d+\.?\d*)\s*[\/,]?\s*-\s*(\d+\.?\d*)/);
-  if(m){const a=+m[1];return{lo:a-+m[3],hi:a+ +m[2]}}
-  m=s.match(/(-?\d+\.?\d*)\s*~\s*(-?\d+\.?\d*)/);
-  if(m){const a=+m[1],b=+m[2];return{lo:Math.min(a,b),hi:Math.max(a,b)}}
-  return null;
-}
-function autoJudge(r,i){
-  if(r._auto===false)return;
-  const xs=INSP_X.map(k=>r[k]).filter(v=>v!=='');
-  if(!xs.length){r.judge='';syncJudge(i,r);return}
-  const rng=parseSpec(r.spec);if(!rng)return;
-  const nums=xs.map(Number);
-  if(nums.some(isNaN))return;
-  r.judge=nums.every(v=>v>=rng.lo-1e-9&&v<=rng.hi+1e-9)?'OK':'NG';
-  syncJudge(i,r);
-}
-function syncJudge(i,r){
-  const sel=document.getElementById('ifj-'+i);if(sel)sel.value=r.judge;
-  const row=document.getElementById('ifr-'+i);
-  if(row){row.classList.toggle('ng',r.judge==='NG');row.classList.toggle('ok',r.judge==='OK')}
-}
-function setWRow(i,f,v){if(WROWS[i])WROWS[i][f]=v}
-function setWX(i,k,v){
-  if(!WROWS[i])return;
-  WROWS[i][k]=v.trim();
-  autoJudge(WROWS[i],i);
-}
-function setWJudge(i,v){
-  if(!WROWS[i])return;
-  WROWS[i].judge=v;WROWS[i]._auto=false;syncJudge(i,WROWS[i]);
-}
-function wAllOk(){WROWS.forEach(r=>{if(!r.judge){r.judge='OK';r._auto=false}});drawWrite()}
-function wClear(){
-  if(!confirm('입력한 측정값·판정을 지울까요?'))return;
-  WROWS.forEach(r=>{INSP_X.forEach(k=>r[k]='');r.judge='';r._auto=true});drawWrite();
-}
-function writeHdr(){
-  const f=WFORM||{};
-  return {project_id:document.getElementById('inspsel').value,form_id:f.id||null,form_title:f.title||null,
-    op_code:f.op_code||null,purpose:f.purpose||null,
-    sketch:f.sketch||null,inspector:g('iw-worker')||USER||null,insp_date:g('iw-date')||today()};
-}
-async function saveWrite(){
-  if(!WFORM)return;
-  const pid=document.getElementById('inspsel').value;
-  if(!pid)return toast('금형을 선택하세요');
-  const tg=WROWS.filter(r=>anyX(r)||r.judge);
-  if(!tg.length)return toast('측정값(X) 또는 판정을 입력한 항목이 없습니다');
-  const worker=g('iw-worker')||USER||null;
-  const ng=tg.filter(r=>r.judge==='NG').length;
-  try{
-    const hdr=Object.assign(writeHdr(),{item_cnt:tg.length,ng_cnt:ng});
-    const [rpt]=await api("/mm_inspect_rpt",{method:"POST",body:JSON.stringify(hdr)});
-    const rows=tg.map(r=>({project_id:pid,rpt_id:rpt.id,op_code:hdr.op_code,item:r.item,
-      method:r.method||null,spec:r.spec||null,
-      x1:r.x1||null,x2:r.x2||null,x3:r.x3||null,x4:r.x4||null,x5:r.x5||null,
-      actual:INSP_X.map(k=>r[k]).filter(Boolean).join(' / ')||null,
-      judge:r.judge||'OK',worker:worker,memo:r.memo||null}));
-    await api("/mm_inspect",{method:"POST",body:JSON.stringify(rows)});
-    await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:pid,op_code:hdr.op_code,action:'검사',
-      detail:`검사성적서 작성 [${hdr.form_title||''}] ${tg.length}항목${ng?' · NG '+ng:''}`,worker:worker})});
-    toast(`성적서 저장 완료 — ${tg.length}항목`+(ng?` · NG ${ng}건, NCR 등록 권장`:''));
-    cancelWrite();
-    await renderInsp();
-    inspTab('log');
-  }catch(e){toast('저장 실패: '+e.message)}
-}
-async function writePDF(){
-  if(!WFORM)return;
-  const rows=WROWS.filter(r=>anyX(r)||r.judge);
-  if(!rows.length)return toast('출력할 측정 항목이 없습니다');
-  const hdr=writeHdr();
-  const appr=await findAppr('insp',null,hdr.project_id);
-  qaPdf('QC-'+today().replace(/-/g,''),inspPdfTitle(hdr),qaMold(hdr.project_id),
-    (hdr.insp_date||'')+' · '+(hdr.purpose||''),
-    inspPdfBody(hdr,rows)+apprHistHtml(appr),apprSigns(appr));
-}
-
-/* ================= 탭3: 성적서 작성이력 ================= */
-function rptOf(id){return RPTS.find(x=>x.id===Number(id))}
-function inspLogList(){
-  const f1=g('if-from'),f2=g('if-to'),
-        fp=document.getElementById('if-purpose').value,
-        fop=document.getElementById('if-op').value;
-  const list=RPTS.filter(r=>{
-    const d=r.insp_date||String(r.created_at).slice(0,10);
-    return (!f1||d>=f1)&&(!f2||d<=f2)&&(!fp||r.purpose===fp)&&(!fop||!r.op_code||r.op_code===fop);
-  });
-  // 구버전(성적서 미연결) 개별 기록 → 날짜·구분 묶음
-  const legacy={};
-  INSP.filter(r=>!r.rpt_id).forEach(r=>{
-    const d=String(r.created_at).slice(0,10);
-    if((f1&&d<f1)||(f2&&d>f2)||fp)return;
-    if(fop&&(r.op_code||'')!==fop)return;
-    const k=d+'_'+(r.kind||'');
-    (legacy[k]=legacy[k]||{_legacy:true,id:'L'+k,insp_date:d,kind:r.kind||'',purpose:'(구버전 기록)',
-      form_title:'(구버전 기록)',inspector:r.worker||'',op_code:r.op_code||'',rows:[]}).rows.push(r);
-  });
-  return list.concat(Object.values(legacy))
-    .sort((a,b)=>String(b.insp_date||'').localeCompare(String(a.insp_date||'')));
-}
-function renderInspLog(){
-  const tb=document.getElementById('inspbody');if(!tb)return;
-  const pid=document.getElementById('inspsel').value;
-  if(!pid){tb.innerHTML='<tr><td colspan="6" class="empty">금형을 먼저 등록하세요</td></tr>';return}
-  const L=inspLogList();
-  const ngT=L.reduce((sm,r)=>sm+(r._legacy?r.rows.filter(x=>x.judge==='NG').length:(r.ng_cnt||0)),0);
-  document.getElementById('insprate').textContent=L.length?`성적서 ${L.length}건 · NG ${ngT}건`:'';
-  tb.innerHTML=L.map(r=>{
-    const cnt=r._legacy?r.rows.length:(r.item_cnt||0);
-    const ng=r._legacy?r.rows.filter(x=>x.judge==='NG').length:(r.ng_cnt||0);
-    return `<tr class="${ng?'insp-ng':''}">
-      <td class="mono">${esc(r.insp_date||'')}</td>
-      <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):esc(r.form_title||'-')}</td>
-      <td>${esc(r.purpose||'')}</td>
-      <td>${cnt}항목${ng?' · <b style="color:var(--red)">NG '+ng+'</b>':''}</td>
-      <td>${esc(r.inspector||'-')}</td>
-      <td style="white-space:nowrap;text-align:right">
-        ${r.sketch?`<button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="openBig('${r.sketch}')">🖼</button> `:''}
-        <button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="toggleRpt('${r.id}')">▾ 보기</button>
-        ${r._legacy?'':` <button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="inspRptPDF(${r.id})">📄</button>
-        <button class="btn" style="padding:4px 8px;font-size:10.5px" onclick="submitInspRpt(${r.id})">✍️</button>`}
-        <button class="del" onclick="delInspRpt('${r.id}')">✕</button></td>
-    </tr><tr class="irpt-sub hide" id="irs-${r.id}"><td colspan="6" id="irsb-${r.id}"></td></tr>`;
-  }).join('')||'<tr><td colspan="6" class="empty">작성된 성적서가 없습니다</td></tr>';
-}
-function rptRowsOf(id){
-  if(String(id).startsWith('L')){const l=inspLogList().find(x=>x.id===id);return l?l.rows:[]}
-  return INSP.filter(r=>r.rpt_id===Number(id)).slice().reverse();
-}
-function toggleRpt(id){
-  const tr=document.getElementById('irs-'+id);if(!tr)return;
-  const hid=tr.classList.toggle('hide');
-  if(!hid)document.getElementById('irsb-'+id).innerHTML=inspSubTable(rptRowsOf(id));
-}
-function inspSubTable(rows){
-  return `<table class="wide" style="margin:4px 0"><thead><tr><th>No</th><th>검사항목</th><th>검사방법</th><th>규격</th>${INSP_X.map((k,i)=>`<th>X${i+1}</th>`).join('')}<th>판정</th><th>비고</th></tr></thead><tbody>`+
-    rows.map((r,i)=>`<tr class="${r.judge==='NG'?'insp-ng':''}">
-      <td class="mono">${i+1}</td>
-      <td><b>${esc(r.item)}</b></td>
-      <td>${esc(r.method||'-')}</td>
-      <td class="mono">${esc(r.spec||'-')}</td>
-      ${INSP_X.map((k,x)=>`<td class="mono">${esc(r[k]||(x===0&&!anyX(r)?(r.actual||''):''))}</td>`).join('')}
-      <td class="${r.judge==='NG'?'jd-ng':r.judge==='OK'?'jd-ok':'jd-cond'}">${esc(r.judge||'')}</td>
-      <td style="font-size:10.5px;color:var(--gray)">${esc(r.memo||'')}</td></tr>`).join('')+
-    '</tbody></table>';
-}
-async function delInspRpt(id){
-  if(!confirm('성적서와 포함된 측정 기록을 모두 삭제할까요?'))return;
-  try{
-    if(String(id).startsWith('L')){
-      const ids=rptRowsOf(id).map(r=>r.id);
-      if(ids.length)await api("/mm_inspect?id=in.("+ids.join(',')+")",{method:"DELETE"});
-    }else{
-      await api("/mm_inspect?rpt_id=eq."+id,{method:"DELETE"});
-      await api("/mm_inspect_rpt?id=eq."+id,{method:"DELETE"});
-    }
-    await renderInsp();
-  }catch(e){toast('삭제 실패: '+e.message)}
-}
-function exportInspLogCSV(){
-  const L=inspLogList();
-  if(!L.length)return toast('출력할 성적서가 없습니다');
-  const pid=document.getElementById('inspsel').value;
-  const head=['검사일','공정','측정목적','항목수','NG','검사자'];
-  const rows=L.map(r=>[r.insp_date||'',r.op_code?opN(r.op_code)+' '+mName(r.op_code):(r.form_title||''),r.purpose||'',
-    r._legacy?r.rows.length:(r.item_cnt||0),r._legacy?r.rows.filter(x=>x.judge==='NG').length:(r.ng_cnt||0),r.inspector||'']);
-  dlCSV('성적서 작성이력 - '+qaMold(pid),head,rows,'성적서작성이력');
-}
-
 /* ===== NCR ===== */
 async function loadNcr(){
   await loadQaProjects();
@@ -4806,7 +4200,7 @@ async function apprPDF(id){
         const rows=await api("/mm_inspect?select=*&id=in.("+a.snapshot.join(',')+")&order=created_at");
         body=inspTableHtml(rows);
       }else if(a.snapshot&&Array.isArray(a.snapshot.rows)){
-        body=a.snapshot.hdr?inspPdfBody(a.snapshot.hdr,a.snapshot.rows):inspTableHtml(a.snapshot.rows);
+        body=inspTableHtml(a.snapshot.rows);
       }
     }else{
       body='<div class="sect">'+esc(a.title)+'</div><div class="qbx">본 문서는 결재용 표지입니다. 상세 내역은 해당 화면의 PDF를 참조하세요.</div>';
@@ -4910,64 +4304,21 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   w.document.write(html);w.document.close();
   setTimeout(()=>{try{w.focus();w.print()}catch(e){}},400);
 }
-function inspSnapRows(rows){
-  return rows.map(r=>({op_code:r.op_code||null,kind:r.kind||'',item:r.item||'',method:r.method||'',spec:r.spec||'',
-    x1:r.x1||'',x2:r.x2||'',x3:r.x3||'',x4:r.x4||'',x5:r.x5||'',actual:r.actual||'',
-    judge:r.judge||'',worker:r.worker||'',memo:r.memo||''}));
-}
-function submitInspRpt(id){
-  const r=rptOf(id);if(!r)return;
-  const rows=rptRowsOf(id);
-  if(!rows.length)return toast('상신할 측정 기록이 없습니다');
-  openSubmit('insp',id,'검사성적서 '+qaMold(r.project_id)+' ('+(r.insp_date||'')+' · '+(r.form_title||r.purpose||'')+' · '+rows.length+'항목)',r.project_id,
-    {version:3,hdr:r,rows:inspSnapRows(rows)});
-}
-/* 구버전 스냅샷(단일 실측값) 호환 */
+/* 검사성적서 결재문서(스냅샷) 표 — 검사성적서는 insp.html에서 작성 */
 function inspTableHtml(rows){
   rows=rows||[];
-  const measured=rows.filter(r=>r._measured||r.actual||r.judge).length;
+  const X=['x1','x2','x3','x4','x5','x6','x7','x8','x9','x10'];
   const ng=rows.filter(r=>r.judge==='NG').length;
-  return `<div class="sect">검사 결과 (${rows.length}항목 · 측정 ${measured} · NG ${ng})</div>
-  <table class="dt"><thead><tr><th style="width:32px">No</th><th style="width:88px">공정</th><th style="width:64px">구분</th><th>검사 항목</th><th style="width:80px">규격/기준</th><th style="width:64px">실측값</th><th style="width:52px">판정</th><th style="width:52px">검사자</th></tr></thead>
+  return `<div class="sect">검사 결과 (${rows.length}항목 · NG ${ng})</div>
+  <table class="dt"><thead><tr><th style="width:30px">No</th><th>검사 항목</th><th style="width:90px">검사방법</th><th style="width:80px">규격</th><th style="width:120px">측정값</th><th style="width:48px">판정</th><th style="width:56px">검사자</th></tr></thead>
   <tbody>${rows.map((r,i)=>`<tr>
     <td class="mono" style="text-align:center">${i+1}</td>
-    <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
-    <td>${esc(r.kind||'')}</td>
     <td>${esc(r.item||'')}${r.memo?'<br><span style="font-size:9px;color:#666">'+esc(r.memo)+'</span>':''}</td>
-    <td class="mono">${esc(r.spec||'')}</td>
-    <td class="mono">${esc(r.actual||'')}</td>
-    <td class="${r.judge==='NG'?'ng':r.judge?'ok':''}">${esc(r.judge||'')}</td>
-    <td>${esc(r.worker||'')}</td></tr>`).join('')}</tbody></table>`;
-}
-/* 성적서 양식 PDF 본문 (헤더 + 측정목적 체크 + SKETCH + X1~X5 측정표) */
-function inspPdfBody(hdr,rows){
-  const pp=['개발품 검사','초도품 검사','양산품 검사','비교 검사','측정 의뢰','기타'];
-  const purpose=pp.map(p=>`<span style="margin-right:9px;white-space:nowrap">${p===hdr.purpose?'■':'□'} ${p}</span>`).join('');
-  let b=`<table class="meta">
-    <tr><th>금형</th><td>${esc(qaMold(hdr.project_id))}</td><th>검사일</th><td class="mono">${esc(hdr.insp_date||'')}</td></tr>
-    <tr><th>공 정</th><td>${hdr.op_code?opN(hdr.op_code)+' '+esc(mName(hdr.op_code)):esc(hdr.form_title||'-')}</td><th>검 사 자</th><td>${esc(hdr.inspector||'-')}</td></tr>
-    <tr><th>측정목적</th><td colspan="3">${purpose}</td></tr></table>`;
-  if(hdr.sketch)b+=`<div class="sect">SKETCH</div><div style="border:1px solid #888;padding:6px;text-align:center;background:#fff"><img src="${hdr.sketch}" style="max-width:100%;max-height:92mm"></div>`;
-  const ng=rows.filter(r=>r.judge==='NG').length;
-  b+=`<div class="sect">측 정 결 과 <span style="font-weight:400;font-size:10px">(${rows.length}항목 · NG ${ng})</span></div>
-  <table class="dt"><thead><tr><th style="width:24px">No</th><th>검사항목</th><th style="width:96px">검사방법<br>(측정기No)</th><th style="width:82px">규격</th>${INSP_X.map((k,x)=>`<th style="width:26px">X${x+1}</th>`).join('')}<th style="width:40px">판정</th></tr></thead>
-  <tbody>${rows.map((r,i)=>`<tr>
-    <td class="mono" style="text-align:center">${i+1}</td>
-    <td>${esc(r.item||'')}${r.memo?'<br><span style="font-size:8.5px;color:#666">'+esc(r.memo)+'</span>':''}</td>
     <td>${esc(r.method||'')}</td>
     <td class="mono">${esc(r.spec||'')}</td>
-    ${INSP_X.map((k,x)=>`<td class="mono" style="text-align:center">${esc(r[k]||(x===0&&!(r.x1||r.x2||r.x3||r.x4||r.x5)?(r.actual||''):''))}</td>`).join('')}
-    <td class="${r.judge==='NG'?'ng':r.judge?'ok':''}" style="text-align:center">${esc(r.judge||'')}</td></tr>`).join('')}</tbody></table>`;
-  return b;
-}
-function inspPdfTitle(hdr){return hdr&&hdr.kind==='출하 검사'?'출 하 검 사 성 적 서':'검 사 성 적 서'}
-async function inspRptPDF(id){
-  const hdr=rptOf(id);if(!hdr)return;
-  const rows=rptRowsOf(id);
-  const appr=await findAppr('insp',id,hdr.project_id);
-  qaPdf('QC-'+String(id).padStart(4,'0'),inspPdfTitle(hdr),qaMold(hdr.project_id),
-    (hdr.insp_date||'')+' · '+(hdr.form_title||hdr.purpose||''),
-    inspPdfBody(hdr,rows)+apprHistHtml(appr),apprSigns(appr));
+    <td class="mono">${esc(X.map(k=>r[k]).filter(Boolean).join(' / ')||r.actual||'')}</td>
+    <td class="${r.judge==='NG'?'ng':r.judge?'ok':''}">${esc(r.judge||'')}</td>
+    <td>${esc(r.worker||'')}</td></tr>`).join('')}</tbody></table>`;
 }
 function exportNcrPDF(){
   if(!NCRS.length)return toast('출력할 기록이 없습니다');
