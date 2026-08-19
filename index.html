@@ -543,6 +543,14 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .kpad .kp-sym button{padding:12px 2px;border-radius:9px;border:1px solid var(--goldbd);
   background:var(--goldbg);color:var(--gold);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
 .kpad .kp-sym button:active{background:var(--gold);color:#1b1d26}
+.kpad .kp-sym.wide button{font-size:12.5px;padding:11px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpad .kp-sym.hide{display:none}
+.kpad .kp-num{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line2)}
+.kpad .kp-num button{padding:13px 2px;border-radius:9px;border:1px solid var(--line);background:var(--card2);
+  color:var(--ink);font-size:16px;font-weight:800;cursor:pointer;font-family:inherit}
+.kpad .kp-num button.fn{background:rgba(79,140,255,.14);border-color:rgba(79,140,255,.35);color:var(--blue);font-size:13px}
+.kpad .kp-num button.ok{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold);font-size:13px}
+.kpad .kp-h span button{margin-left:5px}
 @media(max-width:520px){
   .kpad{top:60px}
   .kpad .kp-sym{grid-template-columns:repeat(4,1fr)}
@@ -907,7 +915,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 11.6</span>
+    <span class="rev">Rev 11.8</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1946,20 +1954,26 @@ header .hright{position:relative}
 <datalist id="dl-pv"></datalist>
 
 <div id="kpad" class="kpad hide">
-  <div class="kp-h"><span>규격 / 기준 입력 도우미</span><button type="button" onclick="kpClose()">✕ 닫기</button></div>
-  <div class="kp-sym">
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('ø')">ø</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('±')">±</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('°')">°</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('~')">~</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('mm')">mm</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('㎛')">㎛</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('Min.')">Min.</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('Max.')">Max.</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('R')">R</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('C')">C</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('t')">t</button>
-    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('HRC')">HRC</button>
+  <div class="kp-h"><span id="kp-title">입력 도우미</span>
+    <span><button type="button" onmousedown="event.preventDefault()" onclick="kpKeyboard()">⌨ 키보드</button>
+    <button type="button" onclick="kpClose()">✕ 닫기</button></span></div>
+  <div class="kp-sym" id="kp-body"></div>
+  <div class="kp-num" id="kp-num">
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('7')">7</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('8')">8</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('9')">9</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('.')">.</button>
+    <button type="button" class="fn" onmousedown="event.preventDefault()" onclick="kpBack()">⌫</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('4')">4</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('5')">5</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('6')">6</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('-')">-</button>
+    <button type="button" class="fn" onmousedown="event.preventDefault()" onclick="kpClear()">지움</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('1')">1</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('2')">2</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('3')">3</button>
+    <button type="button" onmousedown="event.preventDefault()" onclick="kpIns('0')">0</button>
+    <button type="button" class="fn ok" onmousedown="event.preventDefault()" onclick="kpNext()">다음 ▼</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -3900,16 +3914,16 @@ function drawFormItems(){
   const filled=FITEMS.filter(r=>r.item&&r.item.trim()).length;
   box.innerHTML=`<div class="ifm-op"><div class="ifm-oph">
       <span class="nm">검사항목 ${filled}개</span>
-      <span class="cnt">규격 칸을 누르면 입력 도우미(기호·숫자판)가 열립니다 · 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 형식 → 자동 판정</span>
+      <span class="cnt">각 칸을 누르면 상단에 입력 도우미가 열립니다 · 규격 88.14 ±0.03 / 50 +0.05/-0.02 / 10~12 형식 → 자동 판정</span>
       <div class="acts"><button type="button" onclick="addFItem(5)">+ 5줄</button><button type="button" onclick="addFItem(15)">+ 15줄</button></div>
     </div>
     <div class="ffm-head"><div>No</div><div>검사 항목</div><div>규격 / 기준</div><div>측정기 (검사방법)</div><div></div></div>
     <div class="ifm-rows">`+
     FITEMS.map((r,i)=>`<div class="ffm-row">
       <div class="idx">${i+1}</div>
-      <input value="${esc(r.item||'')}" placeholder="검사 항목" onfocus="kpClose()" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
-      <input value="${esc(r.spec||'')}" class="mono" placeholder="88.14 ±0.03" onfocus="kpOpen(this)" oninput="setFItem(${i},'spec',this.value)" onkeydown="fKey(event,${i},1)">
-      <input value="${esc(r.method||'')}" placeholder="3차원측정기 #01" onfocus="kpClose()" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
+      <input value="${esc(r.item||'')}" placeholder="검사 항목" inputmode="none" onfocus="kpOpen(this,'item')" oninput="setFItem(${i},'item',this.value)" onkeydown="fKey(event,${i},0)">
+      <input value="${esc(r.spec||'')}" class="mono" placeholder="88.14 ±0.03" inputmode="none" onfocus="kpOpen(this,'spec')" oninput="setFItem(${i},'spec',this.value)" onkeydown="fKey(event,${i},1)">
+      <input value="${esc(r.method||'')}" placeholder="3차원측정기" inputmode="none" onfocus="kpOpen(this,'gauge')" oninput="setFItem(${i},'method',this.value)" onkeydown="fKey(event,${i},2)">
       <button class="rm" title="행 삭제" onclick="rmFItem(${i})">✕</button>
     </div>`).join('')+'</div></div>';
 }
@@ -3921,14 +3935,34 @@ function fKey(e,i,col){
   setTimeout(()=>{
     const rows=document.querySelectorAll('#formitems .ffm-row');
     const nx=rows[i+1]&&rows[i+1].querySelectorAll('input')[col];
-    if(nx){nx.focus();if(col===1)kpOpen(nx);else kpClose();nx.scrollIntoView({block:'center',behavior:'smooth'})}
+    if(nx){nx.focus();kpOpen(nx,['item','spec','gauge'][col]);nx.scrollIntoView({block:'center',behavior:'smooth'})}
   },10);
 }
-/* ----- 입력 보조 키패드 ----- */
+/* ----- 입력 보조 팝업 (규격 기호 / 검사항목 / 측정기) ----- */
 let KPT=null;
-function kpOpen(el){
+const KP_SPEC=['ø','±','°','~','mm','㎛','Min.','Max.','R','C','t','HRC'];
+const KP_ITEM=['외경','내경','높이','두께','폭','길이','거리','각도',
+  '평면도','진원도','원통도','직각도','평행도','동심도','윤곽도','위치도','진직도',
+  '조도(Ra)','경도','외관'];
+const KP_GAUGE=['3차원측정기','형상측정기','진원도측정기','공구현미경','투영기','현미경','확대경',
+  '버니어캘리퍼스','마이크로미터','하이트게이지','다이얼게이지','실린더게이지',
+  '핀게이지','블록게이지','표면조도계','경도계','각도기','줄자','육안'];
+const KP_SET={
+  spec:{t:'규격 / 기준',list:KP_SPEC,mode:'ins',cols:6},
+  item:{t:'자주 쓰는 검사 항목',list:KP_ITEM,mode:'set',cols:4},
+  gauge:{t:'측정기 (검사방법)',list:KP_GAUGE,mode:'set',cols:3},
+  num:{t:'측정값 입력',list:[],mode:'ins',cols:6}
+};
+function kpOpen(el,kind){
   KPT=el;
   const kp=document.getElementById('kpad');if(!kp)return;
+  const cf=KP_SET[kind||'spec'];
+  document.getElementById('kp-title').textContent=cf.t;
+  const body=document.getElementById('kp-body');
+  body.style.gridTemplateColumns=`repeat(${cf.cols},1fr)`;
+  body.className='kp-sym'+(cf.mode==='set'?' wide':'')+(cf.list.length?'':' hide');
+  body.innerHTML=cf.list.map(v=>
+    `<button type="button" onmousedown="event.preventDefault()" onclick="${cf.mode==='ins'?'kpIns':'kpSet'}('${v.replace(/'/g,"\\'")}')">${esc(v)}</button>`).join('');
   kp.classList.remove('hide');
   document.body.classList.add('kpad-on');
 }
@@ -3947,6 +3981,13 @@ function kpIns(t){
   KPT.dispatchEvent(new Event('input',{bubbles:true}));
   KPT.focus();
 }
+function kpSet(t){
+  if(!KPT)return;
+  KPT.value=t;
+  KPT.dispatchEvent(new Event('input',{bubbles:true}));
+  try{KPT.setSelectionRange(t.length,t.length)}catch(e){}
+  KPT.focus();
+}
 function kpBack(){
   if(!KPT)return;
   const st=KPT.selectionStart==null?KPT.value.length:KPT.selectionStart;
@@ -3956,6 +3997,26 @@ function kpBack(){
   KPT.dispatchEvent(new Event('input',{bubbles:true}));KPT.focus();
 }
 function kpClear(){if(!KPT)return;KPT.value='';KPT.dispatchEvent(new Event('input',{bubbles:true}));KPT.focus()}
+/* 기본 키보드로 전환 (직접 타이핑) */
+function kpKeyboard(){
+  if(!KPT)return;
+  const el=KPT;
+  el.setAttribute('inputmode','text');
+  el.blur();setTimeout(()=>el.focus(),40);
+}
+/* 같은 칸 다음 줄로 이동 */
+function kpNext(){
+  if(!KPT)return;
+  const el=KPT, row=el.closest('.ffm-row')||el.closest('.ifm-row');
+  if(!row)return;
+  const sel=row.classList.contains('ffm-row')?'.ffm-row':'.ifm-row';
+  const list=[...document.querySelectorAll(sel)];
+  const ri=list.indexOf(row);
+  const inputs=[...row.querySelectorAll('input')];
+  const ci=inputs.indexOf(el);
+  const nx=list[ri+1]&&list[ri+1].querySelectorAll('input')[ci];
+  if(nx){nx.focus();nx.scrollIntoView({block:'center',behavior:'smooth'})}
+}
 function pickSketch(inp){
   SKFILE=inp.files[0]||null;SKDATA=null;
   const pv=document.getElementById('ih-skpv');pv.innerHTML='';
@@ -4103,7 +4164,7 @@ function wRowHtml(r,i){
     <div class="f"><label>검사방법 (측정기 No)</label><div class="ro">${esc(r.method||'-')}</div></div>
     <div class="f"><label>규격 / 기준</label><div class="ro mono">${esc(r.spec||'-')}</div></div>
     <div class="f xs"><label>측 정 결 과 X1~X5</label>
-      <div class="xw">${INSP_X.map((k,x)=>`<input value="${esc(r[k]||'')}" placeholder="X${x+1}" inputmode="decimal" oninput="setWX(${i},'${k}',this.value)">`).join('')}</div></div>
+      <div class="xw">${INSP_X.map((k,x)=>`<input value="${esc(r[k]||'')}" placeholder="X${x+1}" inputmode="none" onfocus="kpOpen(this,'num')" oninput="setWX(${i},'${k}',this.value)">`).join('')}</div></div>
     <div class="f jd"><label>판정</label><select id="ifj-${i}" onchange="setWJudge(${i},this.value)">${INSP_JUDGE.map(j=>`<option value="${j}"${r.judge===j?' selected':''}>${j||'미판정'}</option>`).join('')}</select></div>
     <div class="f memo"><label>비고</label><input value="${esc(r.memo||'')}" oninput="setWRow(${i},'memo',this.value)"></div>
   </div>`;
