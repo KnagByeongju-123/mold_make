@@ -915,7 +915,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 12.3</span>
+    <span class="rev">Rev 12.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -965,7 +965,7 @@ header .hright{position:relative}
   <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>진행현황(전체)</div>
   <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황(세부)</div>
   <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규진행등록</div>
-  <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>진행계획</div>
+  <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>진행계획관리</div>
   <div class="mg" id="mg-out" data-menu-id="grp-out">
     <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
     <div class="msub">
@@ -1535,8 +1535,8 @@ header .hright{position:relative}
     <div class="hstep">
       <div class="hn mono">06</div>
       <div class="hb">
-        <h3>진행계획 — 계획 대비 실적</h3>
-        <p>메뉴 → <b>진행계획</b>에서 공정별 계획일을 수립합니다. 금형 선택 목록과 상단 배지에 <b>[신작] / [수리]</b>가 표시되고, 해당 유형의 공정만 나타납니다.</p>
+        <h3>진행계획관리 — 계획 대비 실적</h3>
+        <p>메뉴 → <b>진행계획관리</b>에서 공정별 계획일을 수립합니다. 금형 선택 목록과 상단 배지에 <b>[신작] / [수리]</b>가 표시되고, 해당 유형의 공정만 나타납니다.</p>
         <ul>
           <li>각 공정의 <b>완료일</b> 칸을 눌러 달력에서 선택합니다. 시작일은 이전 공정 완료일로 자동 연결되고 소요일수가 계산됩니다.</li>
           <li><b>📅 계획수립</b>: 달력을 열어 날짜를 연속 클릭하면 공정 순서대로 일정이 잡힙니다. <b>이미 저장된 계획은 그대로 불러와 달력에 표시</b>되며, 미입력 공정부터 이어서 진행됩니다.</li>
@@ -2295,7 +2295,7 @@ async function api(path,opt={}){
   return r.json();
 }
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-const VIEWTITLE={dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
+const VIEWTITLE={dash:'진행현황(전체)',new:'신규진행등록',flow:'진행현황(세부)',plan:'진행계획관리',doc:'출력물 점검표',hist:'이력',board:'게시판',tryout:'T/O보고서',stock:'재고관리',insp:'검사성적',ncr:'부적합·시정조치',ecn:'설계변경 (4M)',appr:'결재함',gauge:'계측기관리',help:'사용안내',set:'설정'};
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
