@@ -520,6 +520,26 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .ifm-row .f.xs .xw{display:flex;gap:4px}
 .ifm-row .f.xs .xw input{padding:8px 3px;text-align:center;font-size:12px;min-width:0}
 tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
+/* SKETCH 번호 편집 */
+.skthumb{position:relative;display:inline-block;max-width:180px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;vertical-align:middle}
+.skthumb img{display:block;max-width:100%;height:auto}
+.skmk{position:absolute;transform:translate(-50%,-50%);border:1.5px solid #e23b3b;border-radius:50%;
+  background:#fff;color:#e23b3b;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1}
+.skmk.big{width:26px;height:26px;font-size:13px;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.skacts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}
+.sk-cnt{font-size:11px;font-weight:800;color:var(--gold)}
+.sk-none{font-size:11.5px;color:var(--gray)}
+.sk-tip{font-size:10.5px;color:var(--gray)}
+.sklegend{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.sklegend span{font-size:11px;color:var(--sub);background:var(--card2);border:1px solid var(--line2);border-radius:8px;padding:3px 8px}
+.sklegend b{color:var(--gold);font-family:'IBM Plex Mono',monospace;margin-right:4px}
+.skbox{max-width:min(960px,96vw);width:min(960px,96vw);max-height:92vh;display:flex;flex-direction:column;padding:0 14px 14px;overflow:hidden}
+.skbox .mhead{padding:13px 0;margin:0}
+.skbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 0 10px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.skbar .btn{padding:6px 11px;font-size:12px}
+.skcanvas{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:9px;flex:1;min-height:0}
+.skstage{position:relative;margin:0 auto}
+.skstage img{display:block;width:100%;height:auto}
 /* 성적서 만들기: 좌 양식 + 우 선택칩 */
 .fedit{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:start}
 .fgrid{min-width:0}
@@ -948,7 +968,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.2</span>
+    <span class="rev">v1.3</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1062,6 +1082,24 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
     <button type="button" class="fn ok" onmousedown="event.preventDefault()" onclick="kpNext()">다음 ▼</button>
   </div>
 </div>
+<div class="modal" id="skmodal" onclick="if(event.target===this)closeSkEdit()">
+  <div class="mbox skbox">
+    <div class="mhead">
+      <b>도면 번호 편집</b>
+      <span class="sk-cnt" id="skmcnt">번호 0개</span>
+      <button class="mx" onclick="closeSkEdit()">✕</button>
+    </div>
+    <div class="skbar">
+      <button class="btn" type="button" onclick="skZoom(-0.25)">➖</button>
+      <span class="mono" id="skzval">100%</span>
+      <button class="btn" type="button" onclick="skZoom(0.25)">➕</button>
+      <button class="btn" type="button" onclick="skUndo()">↩ 되돌리기</button>
+      <button class="btn" type="button" onclick="skClearMarks()">전체 삭제</button>
+      <span class="sk-tip">도면을 누르면 번호가 순서대로 찍힙니다 · 번호를 누르면 삭제</span>
+    </div>
+    <div class="skcanvas" id="skcanvas"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1100,6 +1138,12 @@ function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 function today(){return new Date().toISOString().slice(0,10)}
 function g(id){const el=document.getElementById(id);return el?el.value.trim():''}
+function viewSketch(src,marks){
+  const mk=(marks||[]).map(m=>
+    `<span style="position:absolute;left:${m.x}%;top:${m.y}%;transform:translate(-50%,-50%);width:22px;height:22px;border:2px solid #c00;border-radius:50%;background:#fff;color:#c00;font-size:12px;font-weight:800;line-height:19px;text-align:center">${m.n}</span>`).join('');
+  const w=window.open('');
+  w.document.write('<body style="margin:0;background:#111;display:flex;justify-content:center"><div style="position:relative;display:inline-block;max-width:100%"><img src="'+src+'" style="max-width:100%;height:auto;display:block">'+mk+'</div></body>');
+}
 function openBig(src){const w=window.open('');w.document.write('<body style="margin:0;background:#111;display:flex;justify-content:center"><img src="'+src+'" style="max-width:100%;height:auto"></body>')}
 
 /* ---------- 공정 마스터 ---------- */
@@ -1233,7 +1277,7 @@ document.addEventListener('click',closePCWidthPopup);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()});
 
 /* ===== 검사성적: 양식 만들기 → 작업자 작성 → 작성이력 ===== */
-let INSPTAB='make', FORMS=[], FEDIT=null, FITEMS=[], WFORM=null, WROWS=[], RPTS=[], SKFILE=null, SKDATA=null, SKURL=null;
+let INSPTAB='make', FORMS=[], FEDIT=null, FITEMS=[], WFORM=null, WROWS=[], RPTS=[], SKFILE=null, SKDATA=null, SKURL=null, MARKS=[];
 const INSP_JUDGE=['','OK','NG','조건부 OK'];
 const INSP_X=['x1','x2','x3','x4','x5','x6','x7','x8','x9','x10'];
 const FROWS_DEF=15;
@@ -1294,7 +1338,9 @@ async function renderInsp(){
 function blankFItem(){return{item:'',method:'',spec:'',memo:''}}
 function newForm(){
   FEDIT=null;FITEMS=Array.from({length:FROWS_DEF},blankFItem);
-  SKURL=null;rmSketch();
+  SKURL=null;SKFILE=null;SKDATA=null;MARKS=[];
+  const fi=document.getElementById('ih-sketch');if(fi)fi.value='';
+  drawSketch();
   const tg=document.getElementById('fedit-tag');if(tg)tg.textContent='';
   drawFormItems();renderFormList();
 }
@@ -1499,21 +1545,86 @@ function kpNext(){
   const nx=list[ri+1]&&list[ri+1].querySelectorAll('input')[ci];
   if(nx){nx.focus();nx.scrollIntoView({block:'center',behavior:'smooth'})}
 }
+function skSrc(){return SKDATA||SKURL||null}
 function pickSketch(inp){
   SKFILE=inp.files[0]||null;SKDATA=null;
-  const pv=document.getElementById('ih-skpv');pv.innerHTML='';
-  if(!SKFILE)return;
+  if(!SKFILE){drawSketch();return}
   const rd=new FileReader();
-  rd.onload=e=>{SKDATA=e.target.result;
-    pv.innerHTML=`<img src="${SKDATA}" onclick="openBig(SKDATA)" style="height:44px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;vertical-align:middle"> <button class="btn" style="padding:3px 8px;font-size:10.5px" onclick="rmSketch()">✕</button>`};
+  rd.onload=e=>{SKDATA=e.target.result;drawSketch()};
   rd.readAsDataURL(SKFILE);
 }
 function rmSketch(){
   SKFILE=null;SKDATA=null;
   const el=document.getElementById('ih-sketch');if(el)el.value='';
-  const pv=document.getElementById('ih-skpv');
-  if(pv)pv.innerHTML=SKURL?`<img src="${SKURL}" onclick="openBig('${SKURL}')" style="height:44px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;vertical-align:middle"> <span style="font-size:10.5px;color:var(--gray)">기존 도면</span>`:'';
+  drawSketch();
 }
+function clearSketchAll(){
+  if(!confirm('도면과 번호를 모두 지울까요?'))return;
+  SKFILE=null;SKDATA=null;SKURL=null;MARKS=[];
+  const el=document.getElementById('ih-sketch');if(el)el.value='';
+  drawSketch();
+}
+/* 번호 오버레이 HTML */
+function markLayer(marks,size){
+  return (marks||[]).map(m=>
+    `<span class="skmk" style="left:${m.x}%;top:${m.y}%;width:${size}px;height:${size}px;font-size:${Math.round(size*.6)}px">${m.n}</span>`).join('');
+}
+function drawSketch(){
+  const pv=document.getElementById('ih-skpv');if(!pv)return;
+  const src=skSrc();
+  if(!src){pv.innerHTML='<span class="sk-none">등록된 도면 없음</span>';return}
+  pv.innerHTML=`<div class="skthumb" onclick="openSkEdit()">
+      <img src="${src}">${markLayer(MARKS,16)}
+    </div>
+    <div class="skacts">
+      <button class="btn" type="button" onclick="openSkEdit()">🔍 번호 편집</button>
+      <button class="btn" type="button" onclick="clearSketchAll()">✕ 도면 삭제</button>
+      <span class="sk-cnt">번호 ${MARKS.length}개</span>
+    </div>
+    <div class="sklegend">${MARKS.map(m=>{
+      const it=FITEMS[m.n-1];
+      return `<span><b>${m.n}</b> ${esc(it&&it.item?it.item:'미입력')}</span>`;
+    }).join('')||'<span class="sk-none">도면을 눌러 번호를 찍으세요</span>'}</div>`;
+}
+/* 번호 편집 모달 */
+let SKZOOM=1;
+function openSkEdit(){
+  if(!skSrc())return toast('도면 이미지를 먼저 등록하세요');
+  SKZOOM=1;
+  document.getElementById('skmodal').classList.add('show');
+  drawSkEdit();
+}
+function closeSkEdit(){
+  document.getElementById('skmodal').classList.remove('show');
+  drawSketch();
+}
+function skZoom(d){
+  SKZOOM=Math.min(4,Math.max(1,Math.round((SKZOOM+d)*10)/10));
+  drawSkEdit();
+}
+function drawSkEdit(){
+  const box=document.getElementById('skcanvas');if(!box)return;
+  document.getElementById('skzval').textContent=Math.round(SKZOOM*100)+'%';
+  document.getElementById('skmcnt').textContent='번호 '+MARKS.length+'개';
+  box.innerHTML=`<div class="skstage" style="width:${SKZOOM*100}%" onclick="skClick(event,this)">
+      <img src="${skSrc()}">${MARKS.map(m=>
+        `<span class="skmk big" style="left:${m.x}%;top:${m.y}%" onclick="event.stopPropagation();skDel(${m.n})">${m.n}</span>`).join('')}
+    </div>`;
+}
+function skClick(e,stage){
+  const r=stage.getBoundingClientRect();
+  const x=((e.clientX-r.left)/r.width)*100;
+  const y=((e.clientY-r.top)/r.height)*100;
+  if(x<0||x>100||y<0||y>100)return;
+  MARKS.push({n:MARKS.length+1,x:Math.round(x*10)/10,y:Math.round(y*10)/10});
+  drawSkEdit();
+}
+function skDel(n){
+  MARKS=MARKS.filter(m=>m.n!==n).map((m,i)=>({n:i+1,x:m.x,y:m.y}));
+  drawSkEdit();
+}
+function skUndo(){ MARKS.pop(); drawSkEdit(); }
+function skClearMarks(){ if(!confirm('번호를 모두 지울까요?'))return; MARKS=[]; drawSkEdit(); }
 async function saveForm(){
   const pid=document.getElementById('inspsel').value;
   if(!pid)return toast('금형을 선택하세요');
@@ -1531,7 +1642,7 @@ async function saveForm(){
     }
   }
   const body={project_id:pid,op_code:op,title:title,
-    sketch:sketch||null,items:items,author:USER||null};
+    sketch:sketch||null,marks:MARKS,items:items,author:USER||null};
   try{
     if(FEDIT)await api(`/mm_inspect_form?id=eq.${FEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
     else await api("/mm_inspect_form",{method:"POST",body:JSON.stringify(body)});
@@ -1543,7 +1654,10 @@ async function saveForm(){
 function formOf(id){return FORMS.find(x=>String(x.id)===String(id))}
 function fillForm(f,copy){
   document.getElementById('im-op').value=f.op_code||'';
-  SKFILE=null;SKDATA=null;SKURL=f.sketch||null;rmSketch();
+  SKFILE=null;SKDATA=null;SKURL=f.sketch||null;
+  MARKS=Array.isArray(f.marks)?f.marks.map(m=>({n:m.n,x:m.x,y:m.y})):[];
+  const fi2=document.getElementById('ih-sketch');if(fi2)fi2.value='';
+  drawSketch();
   FITEMS=(f.items||[]).map(r=>({item:r.item||'',method:r.method||'',spec:r.spec||'',memo:r.memo||''}));
   for(let i=0;i<3;i++)FITEMS.push(blankFItem());
   FEDIT=copy?null:f.id;
@@ -1626,7 +1740,7 @@ function drawWrite(){
       <span class="no">${f.op_code?opN(f.op_code):''}</span><span class="nm">${esc(f.title||'')}</span>
       <span class="cnt">입력 ${done}/${WROWS.length}${ng?' · NG '+ng:''}</span>
       <div class="acts">
-        ${f.sketch?`<button type="button" onclick="openBig('${f.sketch}')">🖼 도면</button>`:''}
+        ${f.sketch?`<button type="button" onclick="viewSketch('${f.sketch}',${JSON.stringify(f.marks||[]).replace(/"/g,'&quot;')})">🖼 도면</button>`:''}
         <button type="button" onclick="wAllOk()">전체 OK</button>
         <button type="button" onclick="wClear()">초기화</button>
         <button type="button" onclick="cancelWrite()">✕ 닫기</button>
@@ -1697,7 +1811,7 @@ function writeHdr(){
   const f=WFORM||{};
   return {project_id:document.getElementById('inspsel').value,form_id:f.id||null,form_title:f.title||null,
     op_code:f.op_code||null,purpose:f.purpose||null,
-    sketch:f.sketch||null,inspector:g('iw-worker')||USER||null,insp_date:g('iw-date')||today()};
+    sketch:f.sketch||null,marks:f.marks||[],inspector:g('iw-worker')||USER||null,insp_date:g('iw-date')||today()};
 }
 async function saveWrite(){
   if(!WFORM)return;
@@ -1833,7 +1947,15 @@ function inspPdfBody(hdr,rows){
     <tr><th>금형</th><td>${esc(qaMold(hdr.project_id))}</td><th>검사일</th><td class="mono">${esc(hdr.insp_date||'')}</td></tr>
     <tr><th>공 정</th><td>${hdr.op_code?opN(hdr.op_code)+' '+esc(mName(hdr.op_code)):esc(hdr.form_title||'-')}</td><th>검 사 자</th><td>${esc(hdr.inspector||'-')}</td></tr>
     <tr><th>측정목적</th><td colspan="3">${purpose}</td></tr></table>`;
-  if(hdr.sketch)b+=`<div class="sect">SKETCH</div><div style="border:1px solid #888;padding:6px;text-align:center;background:#fff"><img src="${hdr.sketch}" style="max-width:100%;max-height:92mm"></div>`;
+  if(hdr.sketch){
+    const mk=(hdr.marks||[]).map(m=>
+      `<span style="position:absolute;left:${m.x}%;top:${m.y}%;transform:translate(-50%,-50%);width:15px;height:15px;border:1.4px solid #c00;border-radius:50%;background:#fff;color:#c00;font-size:9px;font-weight:700;line-height:13px;text-align:center">${m.n}</span>`).join('');
+    b+=`<div class="sect">SKETCH</div>
+      <div style="border:1px solid #888;padding:6px;text-align:center;background:#fff">
+        <div style="position:relative;display:inline-block;max-width:100%">
+          <img src="${hdr.sketch}" style="max-width:100%;max-height:92mm;display:block">${mk}
+        </div></div>`;
+  }
   const ng=rows.filter(r=>r.judge==='NG').length;
   b+=`<div class="sect">측 정 결 과 <span style="font-weight:400;font-size:10px">(${rows.length}항목 · NG ${ng})</span></div>
   <table class="dt"><thead><tr><th style="width:24px">No</th><th>검사항목</th><th style="width:96px">검사방법<br>(측정기No)</th><th style="width:82px">규격</th>${INSP_X.map((k,x)=>`<th style="width:26px">X${x+1}</th>`).join('')}<th style="width:40px">판정</th></tr></thead>
