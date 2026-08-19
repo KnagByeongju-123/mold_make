@@ -56,7 +56,7 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
 
 #dim{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:.3s}
 #dim.on{opacity:1;visibility:visible}
-#drawer{position:fixed;top:0;left:0;bottom:0;z-index:90;width:270px;max-width:80vw;
+#drawer{position:fixed;top:0;left:0;bottom:0;z-index:90;width:308px;max-width:88vw;
   background:#141721;border-right:1px solid var(--line);box-shadow:6px 0 24px rgba(0,0,0,.5);
   transform:translateX(-102%);transition:transform .3s cubic-bezier(.2,.8,.3,1);
   display:flex;flex-direction:column;padding:22px 14px;
@@ -66,21 +66,21 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
 #drawer .dlogo b{width:38px;height:38px;border-radius:50%;flex-shrink:0;
   background:linear-gradient(135deg,var(--gold2),var(--gold));color:#241a05;
   display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900}
-#drawer .dlogo .n{font-size:15.5px;font-weight:900}
-#drawer .dlogo .s{font-size:11px;color:var(--sub)}
-#drawer .mi{display:flex;align-items:center;gap:11px;font-size:14px;font-weight:700;color:var(--sub);
-  padding:12px 12px;border-radius:11px;cursor:pointer;transition:.15s}
-#drawer .mi .ic{font-size:16px;width:22px;text-align:center}
+#drawer .dlogo .n{font-size:18.5px;font-weight:900}
+#drawer .dlogo .s{font-size:13px;color:var(--sub)}
+#drawer .mi{display:flex;align-items:center;gap:13px;font-size:18.5px;font-weight:700;color:var(--sub);
+  padding:14px 12px;border-radius:11px;cursor:pointer;transition:.15s}
+#drawer .mi .ic{font-size:21px;width:28px;text-align:center}
 #drawer .mi.on{background:var(--goldbg);color:var(--gold)}
 #drawer .mi:not(.on):hover{background:rgba(255,255,255,.04);color:var(--ink)}
-#drawer .mgh .arw{margin-left:auto;font-size:11px;opacity:.7;transition:transform .2s}
+#drawer .mgh .arw{margin-left:auto;font-size:14px;opacity:.7;transition:transform .2s}
 #drawer .mg.open .mgh .arw{transform:rotate(180deg)}
 #drawer .mg.open .mgh{color:var(--gold)}
 #drawer .msub{display:none;margin:2px 0 4px 10px;padding-left:8px;border-left:1px dashed var(--line)}
 #drawer .mg.open .msub{display:block}
-#drawer .msub .mi{font-size:13px;padding:10px 10px}
-#drawer .msub .mi .ic{font-size:14px;width:20px}
-#drawer .foot{margin-top:auto;font-size:10.5px;color:var(--sub);opacity:.6;padding:10px 8px 4px;line-height:1.5}
+#drawer .msub .mi{font-size:17px;padding:12px 10px}
+#drawer .msub .mi .ic{font-size:19px;width:25px}
+#drawer .foot{margin-top:auto;font-size:12.5px;color:var(--sub);opacity:.6;padding:10px 8px 4px;line-height:1.5}
 
 /* PC 가독성: 일반 화면은 1020px까지만 유동 확대 */
 /* --mm-fs : 글자 크기 배율(본문/모달 확대·축소). 고정 헤더 여백은 배율로 나눠 상쇄 */
@@ -801,7 +801,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 10.5</span>
+    <span class="rev">Rev 10.7</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
