@@ -975,7 +975,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.5</span>
+    <span class="rev">v1.6</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1911,7 +1911,8 @@ async function writePDF(){
   if(!WFORM)return;
   const rows=WROWS.filter(r=>anyX(r)||r.judge);
   if(!rows.length)return toast('출력할 측정 항목이 없습니다');
-  const hdr=writeHdr();
+  if(!(WFORM&&WFORM.sketch))toast('이 양식에는 도면이 없습니다 — 양식작성에서 SKETCH를 등록하세요');
+  const hdr=fillSketch(writeHdr());
   qaPdf('QC-'+today().replace(/-/g,''),inspPdfTitle(hdr),qaMold(hdr.project_id),
     (hdr.insp_date||'')+' · '+(hdr.form_title||''),inspPdfBody(hdr,rows));
 }
@@ -2038,8 +2039,20 @@ function inspPdfBody(hdr,rows){
   return b;
 }
 function inspPdfTitle(hdr){return hdr&&hdr.kind==='출하 검사'?'출 하 검 사 성 적 서':'검 사 성 적 서'}
+function fillSketch(hdr){
+  const h=Object.assign({},hdr);
+  if((!h.sketch||!(h.marks||[]).length)&&h.form_id){
+    const f=formOf(h.form_id);
+    if(f){
+      if(!h.sketch)h.sketch=f.sketch||null;
+      if(!(h.marks||[]).length)h.marks=f.marks||[];
+    }
+  }
+  return h;
+}
 function inspRptPDF(id){
-  const hdr=rptOf(id);if(!hdr)return;
+  let hdr=rptOf(id);if(!hdr)return;
+  hdr=fillSketch(hdr);
   const rows=rptRowsOf(id);
   qaPdf('QC-'+String(id).padStart(4,'0'),inspPdfTitle(hdr),qaMold(hdr.project_id),
     (hdr.insp_date||'')+' · '+(hdr.form_title||''),inspPdfBody(hdr,rows));
