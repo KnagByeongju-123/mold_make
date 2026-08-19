@@ -946,7 +946,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 13.3</span>
+    <span class="rev">Rev 13.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -3784,10 +3784,13 @@ function exportTracePDF(){
 /* ---------- 품질관리 (SQ): 검사성적 / NCR / ECN ---------- */
 function toggleWrite(id,btn){
   const p=document.getElementById(id);
-  const open=p.classList.toggle('hide');
-  btn.classList.toggle('open',!open);
-  btn.textContent=open?'✏️ 신규 작성':'✏️ 작성 닫기';
-  if(!open)p.scrollIntoView({behavior:'smooth',block:'start'});
+  const hid=p.classList.toggle('hide');
+  btn.classList.toggle('open',!hid);
+  const cfg=id.indexOf('cfg-')===0;
+  const lbOn=btn.dataset.lbOn||(cfg?'⚙️ 설정 닫기':'✏️ 작성 닫기');
+  const lbOff=btn.dataset.lbOff||(cfg?'⚙️ 출력설정':'✏️ 신규 작성');
+  btn.textContent=hid?lbOff:lbOn;
+  if(!hid)p.scrollIntoView({behavior:'smooth',block:'start'});
 }
 let QAPJ=[],INSP=[],INSPV=[],NCRS=[],ECNS=[];
 async function loadQaProjects(){
