@@ -1076,6 +1076,11 @@ html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"
 .tscroll:hover .tcopy{display:block}
 .tcopy:hover{color:var(--gold);border-color:var(--goldbd);background:var(--goldbg)}
 table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text}
+
+/* iframe 내장 모드 */
+html.embedded header{display:none!important}
+html.embedded main{padding-top:12px!important;margin-left:0!important}
+html.embedded .sidenav,html.embedded .topnav{display:none!important}
 </style>
 </head>
 <body>
@@ -1260,6 +1265,8 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
 <div class="toast" id="toast"></div>
 
 <script>
+if(window.self!==window.top){document.documentElement.classList.add('embedded');}
+
 /* ---------- 화면 테마 (index.html과 공유) ---------- */
 (function(){
   try{
