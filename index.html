@@ -462,6 +462,30 @@ tr:last-child td{border-bottom:none}
 .dotin.cust{background:var(--cust);border-radius:50%}
 .dotin.self{background:var(--self)}
 .dotin.out{background:var(--out);border-radius:50%}
+.hflow{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 17px;margin-bottom:14px}
+.hflow>b{font-size:13.5px;color:var(--gold);display:block;margin-bottom:5px}
+.hfl-n{font-size:11.5px;color:var(--gray);line-height:1.7}
+.hfl{margin-top:12px}
+.hfc{border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:11px 13px;background:var(--card2)}
+.hfc.dept-s{border-left-color:#e2b04a}.hfc.dept-p{border-left-color:#b48be8}
+.hfc.dept-d{border-left-color:#4f8cff}.hfc.dept-b{border-left-color:#f0a04b}
+.hfc.dept-m{border-left-color:#7ee0a0}.hfc.dept-q{border-left-color:#ff7b7b}
+.hfc.dept-t{border-left-color:#57e2d5}.hfc.dept-c{border-left-color:#f6d365}
+.hfh{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;color:var(--ink)}
+.hfh i{width:22px;height:22px;border-radius:50%;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);
+  font-style:normal;font-size:11.5px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.hfw{font-size:12.5px;color:var(--sub);margin:5px 0 6px}
+.hfw b{color:var(--ink)}
+.hfc ul{margin:0;padding-left:16px}
+.hfc li{font-size:12px;color:var(--sub);line-height:1.75}
+.hfm{margin-top:7px;font-size:10.5px;font-weight:800;color:var(--gold);background:var(--goldbg);
+  border:1px solid var(--goldbd);border-radius:8px;padding:3px 8px;display:inline-block}
+.hfa{text-align:center;font-size:10.5px;color:var(--gray);padding:5px 0;font-weight:700}
+@media(min-width:1000px){
+  .hfl{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .hfa{grid-column:1 / -1;display:none}
+  .hfc{margin-bottom:10px}
+}
 .hscn{background:var(--card);border:1px solid var(--goldbd);border-radius:13px;padding:15px 17px;margin-bottom:16px}
 .hscn>b{font-size:13.5px;color:var(--gold);display:block;margin-bottom:11px}
 .hsteps{display:flex;flex-direction:column;gap:0}
@@ -1094,7 +1118,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.5</span>
+    <span class="rev">Rev 16.6</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1691,8 +1715,111 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
 
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
-    <h1 class="pt">사용안내 <em>— Rev 16.2 기준</em></h1>
+    <h1 class="pt">사용안내 <em>— Rev 16.5 기준</em></h1>
     <div class="hp">화면 이동은 <b>☰ 메뉴</b>를 사용합니다. 금형은 <b>🗜️ 신작</b>과 <b>🔧 수리</b> 두 가지 유형으로 관리되며, 각각 <b>별도의 공정 플로우</b>를 따릅니다. 공정 번호와 단계 수는 <b>설정 → 공정설계</b>에서 회사에 맞게 직접 설계합니다.</div>
+
+    <div class="hflow">
+      <b>🧭 부서별 업무 흐름 — 누가 무엇을 하나</b>
+      <div class="hfl-n">금형 1건이 들어와서 납품될 때까지, 부서가 바통을 넘기는 순서입니다.</div>
+
+      <div class="hfl">
+        <div class="hfc dept-s">
+          <div class="hfh"><i>1</i>영업</div>
+          <div class="hfw">고객 발주를 받아 <b>금형을 등록</b>합니다</div>
+          <ul>
+            <li>금형번호 · 고객사 · 제품 · 도번 · 조수 입력</li>
+            <li>수주일 · S1(1차 시타) 예정일 · 납기일 확정</li>
+            <li>견적가 · 수주가 입력 (나중에 손익 계산의 기준)</li>
+          </ul>
+          <div class="hfm">📍 신규진행등록</div>
+        </div>
+        <div class="hfa">▼ 금형번호를 넘김</div>
+
+        <div class="hfc dept-p">
+          <div class="hfh"><i>2</i>관리 · 공무</div>
+          <div class="hfw">전체 <b>일정을 짭니다</b></div>
+          <ul>
+            <li>공정별 계획완료일 자동 생성 후 조정</li>
+            <li>이후 계획 대비 실적이 자동 비교됨</li>
+          </ul>
+          <div class="hfm">📍 신규진행계획수립</div>
+        </div>
+        <div class="hfa">▼ 일정표를 공유</div>
+
+        <div class="hfc dept-d">
+          <div class="hfh"><i>3</i>설계</div>
+          <div class="hfw">도면을 그리고 <b>부품 목록을 만듭니다</b></div>
+          <ul>
+            <li>조립도 → 레이아웃 → 부품도 순서로 진행, 공정 OK 처리</li>
+            <li>부품도가 끝나면 <b>발주서(PART LIST)</b> 작성 — 원재료 · 표준품</li>
+            <li>CAD BOM은 엑셀 붙여넣기로 한 번에 입력</li>
+          </ul>
+          <div class="hfm">📍 진행현황(세부) · 발주서(PART LIST)</div>
+        </div>
+        <div class="hfa">▼ 부품 목록을 넘김</div>
+
+        <div class="hfc dept-b">
+          <div class="hfh"><i>4</i>구매 · 외주</div>
+          <div class="hfw">자재를 <b>사고 외주를 돌립니다</b></div>
+          <ul>
+            <li>발주서 PDF로 원재료 · 표준품 발주</li>
+            <li>부품마다 가공 순서 배정 (성형연삭 → 열처리 → WIRE CUT …)</li>
+            <li>업체 · 입고요구일 지정 → <b>발주</b> → 물건 오면 <b>입고</b></li>
+            <li>매입가 · 네고율 넣고 <b>입고확정</b> → 원가에 자동 반영</li>
+          </ul>
+          <div class="hfm">📍 외주가공 (라우팅 · 발주 관리 · 입고확정)</div>
+        </div>
+        <div class="hfa">▼ 가공된 부품 입고</div>
+
+        <div class="hfc dept-m">
+          <div class="hfh"><i>5</i>가공 · 조립</div>
+          <div class="hfw">부품을 다듬고 <b>금형을 조립합니다</b></div>
+          <ul>
+            <li>공정별 OK / NG 처리 (NG는 지정된 이전 공정으로 자동 복귀)</li>
+            <li>공정 카드에서 출력물 점검표 체크 · 증빙 사진 첨부</li>
+            <li>하루 작업은 업무현황에 기록</li>
+          </ul>
+          <div class="hfm">📍 진행현황(세부) · 업무현황</div>
+        </div>
+        <div class="hfa">▼ 조립 완료품 검사 의뢰</div>
+
+        <div class="hfc dept-q">
+          <div class="hfh"><i>6</i>품질</div>
+          <div class="hfw">치수를 재고 <b>합격 여부를 판정합니다</b></div>
+          <ul>
+            <li>검사성적서 양식(도면 + 풍선번호)에 측정값 입력 → 자동 OK/NG</li>
+            <li>불량은 <b>부적합(NCR)</b>, 설계·자재 변경은 <b>설계변경(4M)</b>으로 기록</li>
+            <li>계측기 교정 주기 관리, 문서는 결재함에서 전자결재</li>
+          </ul>
+          <div class="hfm">📍 검사성적서 · NCR · ECN · 계측기관리</div>
+        </div>
+        <div class="hfa">▼ 합격 후 시타(T/O)</div>
+
+        <div class="hfc dept-t">
+          <div class="hfh"><i>7</i>시험 · T/O</div>
+          <div class="hfw">프레스에 걸어 <b>시타를 진행합니다</b></div>
+          <ul>
+            <li>차수별 작업내용 · 이슈 · 다음 계획을 사진과 함께 기록</li>
+            <li>1차 시타 완료 시 수주정보의 <b>S1 완료일</b> 입력</li>
+          </ul>
+          <div class="hfm">📍 T/O보고서</div>
+        </div>
+        <div class="hfa">▼ 납품 후 정산</div>
+
+        <div class="hfc dept-c">
+          <div class="hfh"><i>8</i>경영 · 원가</div>
+          <div class="hfw">얼마 벌었는지 <b>정산합니다</b></div>
+          <ul>
+            <li>원재료비 · 사내가공비 · 설계비 · 경비 등록 (외주비는 자동 합산)</li>
+            <li><b>수주가 − 실적원가 = 손익</b> 확인</li>
+            <li>전 공정 OK → 완료보관으로 마무리 (기록은 그대로 보존)</li>
+          </ul>
+          <div class="hfm">📍 원가관리 · 진행현황(전체)</div>
+        </div>
+      </div>
+
+      <div class="hfl-n" style="margin-top:12px">※ 부서 이름은 회사마다 다를 수 있습니다. 중요한 것은 <b>순서</b>입니다 — 등록 → 일정 → 설계 → 구매/외주 → 가공/조립 → 검사 → 시타 → 정산.</div>
+    </div>
 
     <div class="hscn">
       <b>📋 실무 진행 순서 — 금형 1건이 끝날 때까지</b>
