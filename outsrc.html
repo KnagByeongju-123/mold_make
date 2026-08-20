@@ -947,6 +947,16 @@ header .hright{position:relative}
 
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
+.implist{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:5px}
+.improw{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line2);border-radius:9px;
+  background:var(--card2);cursor:pointer;font-size:12.5px}
+.improw input{width:16px;height:16px;flex-shrink:0}
+.improw b{color:var(--gold);flex:0 0 auto}
+.improw .nm{flex:1;min-width:0;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.improw .kd{font-size:10.5px;color:var(--sub);background:var(--card);border:1px solid var(--line2);border-radius:7px;padding:2px 7px;white-space:nowrap}
+.improw .fs{font-size:10.5px;font-weight:800;color:var(--blue);white-space:nowrap}
+.improw .exb{font-size:10.5px;font-weight:800;color:var(--green);white-space:nowrap}
+.improw.ex{opacity:.55}
 .oscard{background:var(--card);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;padding:11px 13px}
 .osh{display:flex;align-items:center;gap:9px;margin-bottom:9px}
 .osh b{font-size:14.5px;color:var(--gold)}
@@ -965,6 +975,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
 .stepchip.ok{border-color:rgba(126,224,160,.45);background:rgba(126,224,160,.10);color:var(--green)}
 .stepchip.ok i{background:rgba(126,224,160,.3);color:var(--green)}
 .stepchip.late{border-color:rgba(255,123,123,.55);box-shadow:0 0 0 1px rgba(255,123,123,.3)}
+.stepchip .unset{color:var(--red)}
 .stepchip.add{min-width:0;align-items:center;justify-content:center;padding:7px 12px;border-style:dashed;color:var(--gold);border-color:var(--goldbd)}
 tr.os-ok td{background:rgba(126,224,160,.05)}
 tr.os-run td{background:rgba(79,140,255,.05)}
@@ -981,7 +992,7 @@ tr.os-late td{background:rgba(255,123,123,.06)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.0</span>
+    <span class="rev">v1.1</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1016,6 +1027,10 @@ tr.os-late td{background:rgba(255,123,123,.06)}
     <!-- 탭1: 부품 라우팅 -->
     <div id="os-part">
       <div class="qfbox"><span class="qflb">➕ 부품 추가</span>
+        <div class="stkbar" style="margin-bottom:10px">
+          <button class="btn" style="padding:9px 14px;background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.4);color:var(--blue)" onclick="openImp()">📋 발주서에서 불러오기</button>
+          <span style="font-size:11px;color:var(--gray)">발주서(PART LIST)의 품목을 선택해 라우팅 부품으로 가져옵니다</span>
+        </div>
         <div class="ihdr" style="grid-template-columns:110px 1fr 90px">
           <div class="fg"><label>품 번</label><input id="np-no" class="mono" placeholder="예: B13A"></div>
           <div class="fg"><label>부품명</label><input id="np-name" placeholder="예: PUNCH, BURRING"></div>
@@ -1069,6 +1084,26 @@ tr.os-late td{background:rgba(255,123,123,.06)}
   </div>
 </div>
 
+<div class="modal" id="impmodal" onclick="if(event.target===this)closeImp()">
+  <div class="mbox" style="max-width:640px">
+    <div class="mhead"><b>📋 발주서 품목 불러오기</b>
+      <span id="imp-cnt" style="font-size:11px;font-weight:800;color:var(--gold)"></span>
+      <button class="mx" onclick="closeImp()">✕</button></div>
+    <div style="padding:12px 16px 16px">
+      <div class="stkbar" style="margin-bottom:9px">
+        <button class="btn" style="padding:7px 12px;font-size:11.5px" onclick="impAll(true)">전체 선택</button>
+        <button class="btn" style="padding:7px 12px;font-size:11.5px" onclick="impAll(false)">전체 해제</button>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);font-weight:700;margin-left:auto">
+          <input type="checkbox" id="imp-first" checked style="width:15px;height:15px"> 1차가공(A/AA) 첫 공정 자동 생성</label>
+      </div>
+      <div id="implist" class="implist"></div>
+      <div class="stkbar" style="margin-top:12px">
+        <button class="btn btn-p" style="flex:1;padding:12px" onclick="doImport()">선택 품목 가져오기</button>
+        <button class="btn" style="padding:11px 16px" onclick="closeImp()">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1303,6 +1338,69 @@ function exportOSCSV(){
     ['품번','부품명','순서','가공공정','협력업체','발주일','입고요구일','입고일','상태','비고'],
     ROWS.map(r=>[r.part_no,r.part_name||'',r.seq,r.proc,r.vendor||'',r.order_date||'',r.due_date||'',r.in_date||'',stat(r),r.memo||'']),
     '외주가공');
+}
+
+/* ---------- 발주서 불러오기 ---------- */
+let IMP=[];
+async function openImp(){
+  const pid=g('ossel');
+  if(!pid)return toast('금형을 선택하세요');
+  let pls=[];
+  try{pls=await api(`/mm_partlist?select=kind,op_code,items&project_id=eq.${pid}&order=created_at.desc`);}
+  catch(e){return toast('발주서 조회 실패 — patch_partlist.sql 실행 여부를 확인하세요')}
+  if(!pls.length)return toast('이 금형에 저장된 발주서가 없습니다');
+  const seen=new Set();IMP=[];
+  pls.forEach(pl=>{(pl.items||[]).forEach(it=>{
+    const no=(it.no||'').trim();if(!no||seen.has(no))return;
+    seen.add(no);
+    IMP.push({no:no,name:(it.name||'').trim(),kind:pl.kind,
+      first:(it.first||'').trim().toUpperCase(),vendor:(it.vendor||'').trim(),
+      exists:ROWS.some(r=>r.part_no===no)});
+  })});
+  if(!IMP.length)return toast('발주서에 품목이 없습니다');
+  renderImp();
+  document.getElementById('impmodal').classList.add('show');
+}
+function closeImp(){document.getElementById('impmodal').classList.remove('show')}
+function renderImp(){
+  const box=document.getElementById('implist');
+  box.innerHTML=IMP.map((p,i)=>`<label class="improw${p.exists?' ex':''}">
+    <input type="checkbox" data-i="${i}" ${p.exists?'':'checked'}>
+    <b class="mono">${esc(p.no)}</b>
+    <span class="nm">${esc(p.name||'-')}</span>
+    <span class="kd">${esc(p.kind||'')}</span>
+    ${p.first?`<span class="fs">1차:${esc(p.first)}</span>`:''}
+    ${p.exists?'<span class="exb">등록됨</span>':''}
+  </label>`).join('');
+  updImpCnt();
+  box.querySelectorAll('input').forEach(c=>c.addEventListener('change',updImpCnt));
+}
+function updImpCnt(){
+  const n=[...document.querySelectorAll('#implist input:checked')].length;
+  document.getElementById('imp-cnt').textContent=n+'개 선택';
+}
+function impAll(on){
+  document.querySelectorAll('#implist input').forEach(c=>c.checked=on);
+  updImpCnt();
+}
+const FIRST_PROC={'A':'평면연삭(양면)','AA':'육면가공'};
+async function doImport(){
+  const idx=[...document.querySelectorAll('#implist input:checked')].map(c=>Number(c.dataset.i));
+  if(!idx.length)return toast('가져올 품목을 선택하세요');
+  const useFirst=document.getElementById('imp-first').checked;
+  const pid=g('ossel');
+  let made=0,skip=0;
+  for(const i of idx){
+    const p=IMP[i];
+    if(ROWS.some(r=>r.part_no===p.no)){skip++;continue}
+    const proc=useFirst&&FIRST_PROC[p.first]?FIRST_PROC[p.first]:null;
+    const body={project_id:pid,part_no:p.no,part_name:p.name||null,seq:1,
+      proc:proc||'(공정 미지정)',vendor:proc&&p.vendor?p.vendor:null,author:USER||null};
+    try{await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});made++}
+    catch(e){toast('저장 실패: '+e.message);break}
+  }
+  closeImp();await loadOS();
+  toast(made+'개 부품을 가져왔습니다'+(skip?' (이미 등록 '+skip+'개 제외)':''));
 }
 
 /* ---------- 글자크기 ---------- */
