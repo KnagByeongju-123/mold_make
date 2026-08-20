@@ -177,6 +177,60 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
   padding:10px 18px;border-radius:12px;font-size:13px;font-weight:800;z-index:99;
   opacity:0;transition:all .2s;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== 화면 테마 ===== */
+html[data-theme="mono"]{
+  --bg:#ffffff; --card:#ffffff; --card2:#f2f2f2; --navy:#ffffff; --navy2:#ebebeb;
+  --drawer:#ffffff; --drawerbd:#000000;
+  --ink:#000000; --sub:#000000; --gray:#3d3d3d;
+  --gold:#000000; --gold2:#000000; --gold3:#000000;
+  --goldbg:#e6e6e6; --goldbd:#000000;
+  --yellow:#000000; --yellowbg:#e6e6e6;
+  --blue:#000000; --red:#000000; --green:#000000;
+  --cust:#000000; --self:#000000; --out:#000000;
+  --line:#000000; --line2:#8a8a8a; --line3:#000000; --line4:#000000;
+}
+html[data-theme="mono"] body{color-scheme:light;background:#fff;color:#000}
+html[data-theme="mono"] .gold-txt{-webkit-text-fill-color:initial;background:none;color:#000;animation:none}
+html[data-theme="mono"] header{background:#fff}
+html[data-theme="mono"] .toast{background:#000;color:#fff;border-color:#000}
+html[data-theme="mono"] .pcwpopup,
+html[data-theme="mono"] .pcwpopup:before{background:#fff;border-color:#000}
+html[data-theme="mono"] .modal{background:rgba(0,0,0,.45)}
+html[data-theme="mono"] .inspplan-tbl th{background:#e6e6e6;color:#000}
+html[data-theme="mono"] .st,
+html[data-theme="mono"] .badge,
+html[data-theme="mono"] .ngc,
+html[data-theme="mono"] .stat .v,
+html[data-theme="mono"] .cd{color:#000!important}
+html[data-theme="mono"] .st{background:#fff!important;border:1px solid #000!important}
+html[data-theme="mono"] .st.ok{background:#000!important;color:#fff!important}
+html[data-theme="mono"] .st.run{background:#d9d9d9!important}
+html[data-theme="mono"] .st.ng{background:#fff!important;text-decoration:underline}
+html[data-theme="mono"] .btn,
+html[data-theme="mono"] .mi,
+html[data-theme="mono"] input,
+html[data-theme="mono"] select,
+html[data-theme="mono"] textarea{color:#000!important}
+html[data-theme="mono"] .btn[style*="background"],
+html[data-theme="mono"] button[style*="background"]{background:#fff!important;border:1px solid #000!important;color:#000!important}
+html[data-theme="mono"] .btn-p,
+html[data-theme="mono"] .wrbtn.open,
+html[data-theme="mono"] .itab.on,
+html[data-theme="mono"] .mi.on,
+html[data-theme="mono"] .pfilter button.on,
+html[data-theme="mono"] .thm.on,
+html[data-theme="mono"] .pfsquick button.on{background:#000!important;color:#fff!important;border-color:#000!important}
+html[data-theme="mono"] .monbig{background:#f2f2f2!important;border-color:#000!important;box-shadow:none}
+html[data-theme="mono"] .monbig .tx,
+html[data-theme="mono"] .monbig .go,
+html[data-theme="mono"] .monbig .tx em{color:#000!important}
+html[data-theme="mono"] .wizbtn{background:#fff!important;color:#000!important;border-color:#000!important;box-shadow:none}
+
+html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"].bd-3{
+  --line:#000000; --line2:#8a8a8a; --line3:#000000; --line4:#000000}
+
+
 </style>
 </head>
 <body>
@@ -272,6 +326,18 @@ textarea:focus,.ip:focus{outline:none;border-color:var(--goldbd)}
 <div class="toast" id="toast"></div>
 
 <script>
+/* ---------- 화면 테마 (index.html과 공유) ---------- */
+(function(){
+  try{
+    var t=localStorage.getItem('mm_theme_v1')||'';if(t!=='mono')t='';
+    if(t){
+      document.documentElement.setAttribute('data-theme',t);
+      var m=document.querySelector('meta[name="theme-color"]');
+      if(m)m.setAttribute('content',(t==='mono'?'#ffffff':'#0f1117'));
+    }
+  }catch(e){}
+})();
+
 /* ================= 설정 (금형제작관리 전용) ================= */
 const BASE = "https://pllwltojbofjaftcemvn.supabase.co";
 const KEY  = "sb_publishable_9dYJzdz472b888EcqdBBaA_Ncwk0yvT";
