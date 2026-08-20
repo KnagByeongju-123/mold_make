@@ -1055,9 +1055,22 @@ html.embedded main{padding-top:12px!important;margin-left:0!important}
 html.embedded .sidenav,html.embedded .topnav{display:none!important}
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
+.costrow{display:grid;grid-template-columns:130px 140px minmax(120px,1fr) 140px 90px;gap:9px}
+.costrow .fg input,.costrow .fg select{width:100%;min-width:0}
+@media(max-width:760px){
+  .costrow{grid-template-columns:1fr 1fr}
+  .costrow .fg:nth-child(3){grid-column:1 / -1}
+  .costrow .cadd{grid-column:1 / -1}
+  .costrow .cadd label{display:none}
+}
 .cfsum{display:flex;gap:18px;flex-wrap:wrap;padding:11px 14px;
   background:var(--card);border:1px solid var(--line);font-size:12.5px;color:var(--sub);font-weight:700}
 .cfsum b{font-size:14px;color:var(--ink)}
+@media(max-width:560px){
+  .cfsum{gap:6px 14px;font-size:12px;padding:10px 12px}
+  .cfsum b{font-size:13px}
+  main{padding-left:12px;padding-right:12px}
+}
 
 </style>
 </head>
@@ -1069,7 +1082,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.0</span>
+    <span class="rev">v1.1</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1119,13 +1132,13 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
       <div class="cfsum" id="cdhead" style="margin-bottom:12px"></div>
 
       <div class="qfbox"><span class="qflb">➕ 비용 등록 (원재료비 · 사내가공비 · 설계비 · 경비 등)</span>
-        <div class="ihdr" style="grid-template-columns:130px 130px 1fr 140px 90px">
+        <div class="ihdr costrow">
           <div class="fg"><label>구분</label>
             <select id="cc-kind"><option>원재료비</option><option>구매품비</option><option>사내가공비</option><option>설계비</option><option>경비</option><option>기타</option></select></div>
           <div class="fg"><label>일자</label><input id="cc-date" type="date"></div>
           <div class="fg"><label>내용</label><input id="cc-memo" placeholder="예: SKD11 원재료 3건"></div>
           <div class="fg"><label>금액 (원)</label><input id="cc-amt" type="number" class="mono" placeholder="0"></div>
-          <div class="fg"><label>&nbsp;</label><button class="btn btn-p" style="padding:10px 4px" onclick="addCost()">추가</button></div>
+          <div class="fg cadd"><label>&nbsp;</label><button class="btn btn-p" style="padding:11px 4px" onclick="addCost()">추가</button></div>
         </div>
       </div>
 
