@@ -1033,6 +1033,21 @@ html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"
   --line:#000000; --line2:#8a8a8a; --line3:#000000; --line4:#000000}
 
 
+
+/* ===== PC(1000px+) MES 스타일: 직각 · 고딕 ===== */
+@media(min-width:1000px){
+  body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif}
+  *{border-radius:0!important}
+}
+
+/* 표 복사 버튼 (시트 복붙용) */
+.tscroll{position:relative}
+.tcopy{position:absolute;top:5px;right:5px;z-index:5;display:none;
+  padding:4px 10px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.tscroll:hover .tcopy{display:block}
+.tcopy:hover{color:var(--gold);border-color:var(--goldbd);background:var(--goldbg)}
+table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text}
 </style>
 </head>
 <body>
@@ -1672,6 +1687,41 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
   try{await loadFoot();await loadAll();}catch(e){toast('불러오기 실패: '+e.message)}
 })();
 
+
+/* ===== 표 → 엑셀 복사 (모든 .tscroll 테이블에 ⎘ 버튼 자동 부착) ===== */
+(function(){
+  function cellText(td){return td.innerText.replace(/[\t\n]+/g,' ').trim()}
+  function tsv(tb){
+    return [...tb.querySelectorAll('tr')]
+      .map(tr=>[...tr.children].map(cellText).join('\t')).join('\n');
+  }
+  function attach(){
+    document.querySelectorAll('.tscroll').forEach(w=>{
+      if(w.querySelector('.tcopy'))return;
+      const t=w.querySelector('table');if(!t)return;
+      const b=document.createElement('button');
+      b.type='button';b.className='tcopy';b.textContent='⎘ 표 복사';
+      b.onclick=e=>{
+        e.stopPropagation();
+        const txt=tsv(t);
+        const done=()=>{if(typeof toast==='function')toast('표를 복사했습니다 — 엑셀에 붙여넣기(Ctrl+V) 하세요')};
+        if(navigator.clipboard&&navigator.clipboard.writeText)
+          navigator.clipboard.writeText(txt).then(done).catch(()=>{fallback(txt);done()});
+        else{fallback(txt);done()}
+      };
+      w.appendChild(b);
+    });
+  }
+  function fallback(txt){
+    const ta=document.createElement('textarea');
+    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    ta.remove();
+  }
+  attach();
+  new MutationObserver(()=>attach()).observe(document.body,{childList:true,subtree:true});
+})();
 </script>
 </body>
 </html>

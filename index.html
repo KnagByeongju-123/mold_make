@@ -164,13 +164,9 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
   .sidenav .sitem.on{background:var(--goldbg);color:var(--gold);box-shadow:inset 3px 0 0 var(--gold);font-weight:800}
   .sidenav .sitem .ic{font-size:13px;flex-shrink:0}
   main{margin-left:198px;padding-top:calc(113px / var(--mm-fs,1))!important;max-width:1180px}
-  /* MES 느낌 — 각진 셀 */
-  .stat,.projcard,.panel,.op,.mbox,.qfbox,.moncard,.oscard,.card,
-  .tscroll,.pcwpopup,.dcell,.plnote,.hstep,.hnotebox{border-radius:3px!important}
-  .btn,.wrbtn,.itab,.pfilter button,.psel select,.fg input,.fg select,.fg textarea,
-  .dpick,.stepchip,.thm,.pfsquick button,.bulkbar input{border-radius:3px!important}
-  .ubadge,.badge,.st,.ocomp,.ngc{border-radius:3px!important}
-  table.wide th,table.wide td{border-radius:0!important}
+  /* MES 느낌 — 완전 직각 */
+  *{border-radius:0!important}
+  input[type=checkbox]{border-radius:0!important}
 }
 main{width:100%;max-width:1020px;margin:0 auto;
   zoom:var(--mm-fs,1);
@@ -1036,6 +1032,15 @@ header .hright{position:relative}
   .partsec{grid-column:1/3}
   .ptbl{font-size:11px}
 }
+
+/* 표 복사 버튼 (시트 복붙용) */
+.tscroll{position:relative}
+.tcopy{position:absolute;top:5px;right:5px;z-index:5;display:none;
+  padding:4px 10px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.tscroll:hover .tcopy{display:block}
+.tcopy:hover{color:var(--gold);border-color:var(--goldbd);background:var(--goldbg)}
+table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text}
 </style>
 </head>
 <body>
@@ -1064,7 +1069,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 15.4</span>
+    <span class="rev">Rev 15.5</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -5426,6 +5431,41 @@ async function loadHist(){
     setPCWidthView('dash');
     loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();
   }
+})();
+
+/* ===== 표 → 엑셀 복사 (모든 .tscroll 테이블에 ⎘ 버튼 자동 부착) ===== */
+(function(){
+  function cellText(td){return td.innerText.replace(/[\t\n]+/g,' ').trim()}
+  function tsv(tb){
+    return [...tb.querySelectorAll('tr')]
+      .map(tr=>[...tr.children].map(cellText).join('\t')).join('\n');
+  }
+  function attach(){
+    document.querySelectorAll('.tscroll').forEach(w=>{
+      if(w.querySelector('.tcopy'))return;
+      const t=w.querySelector('table');if(!t)return;
+      const b=document.createElement('button');
+      b.type='button';b.className='tcopy';b.textContent='⎘ 표 복사';
+      b.onclick=e=>{
+        e.stopPropagation();
+        const txt=tsv(t);
+        const done=()=>{if(typeof toast==='function')toast('표를 복사했습니다 — 엑셀에 붙여넣기(Ctrl+V) 하세요')};
+        if(navigator.clipboard&&navigator.clipboard.writeText)
+          navigator.clipboard.writeText(txt).then(done).catch(()=>{fallback(txt);done()});
+        else{fallback(txt);done()}
+      };
+      w.appendChild(b);
+    });
+  }
+  function fallback(txt){
+    const ta=document.createElement('textarea');
+    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    ta.remove();
+  }
+  attach();
+  new MutationObserver(()=>attach()).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
 </body>

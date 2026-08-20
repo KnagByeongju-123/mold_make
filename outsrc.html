@@ -947,7 +947,14 @@ header .hright{position:relative}
 
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
-.gdtbl{min-width:1080px}
+.gdtbl{min-width:1110px}
+.bulkbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:9px 11px;
+  background:var(--card);border:1px dashed var(--line);border-radius:11px}
+.bulkbar input{background:var(--card2);border:1px solid var(--line);border-radius:7px;color:var(--ink);
+  padding:7px 8px;font-size:12px;font-family:inherit}
+.bulkbar input[type=date]{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+.bulkbar .bl{font-size:11.5px;font-weight:800;color:var(--gray);white-space:nowrap;padding-right:3px}
+.bulkbar .bl.on{color:var(--gold)}
 .gdtbl td{padding:2px 3px}
 .gdtbl th{font-size:11px;white-space:nowrap}
 .gdi{width:100%;min-width:0;background:transparent;border:1px solid transparent;border-radius:6px;
@@ -1047,6 +1054,21 @@ html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"
   --line:#000000; --line2:#8a8a8a; --line3:#000000; --line4:#000000}
 
 
+
+/* ===== PC(1000px+) MES 스타일: 직각 · 고딕 ===== */
+@media(min-width:1000px){
+  body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif}
+  *{border-radius:0!important}
+}
+
+/* 표 복사 버튼 (시트 복붙용) */
+.tscroll{position:relative}
+.tcopy{position:absolute;top:5px;right:5px;z-index:5;display:none;
+  padding:4px 10px;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.tscroll:hover .tcopy{display:block}
+.tcopy:hover{color:var(--gold);border-color:var(--goldbd);background:var(--goldbg)}
+table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text}
 </style>
 </head>
 <body>
@@ -1057,7 +1079,7 @@ html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.2</span>
+    <span class="rev">v1.3</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1113,10 +1135,22 @@ html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"
         <button class="btn" style="padding:9px 13px" onclick="gridAddRow()">+ 행 추가</button>
         <button class="btn" style="padding:9px 13px" onclick="openImp()">📋 발주서 불러오기</button>
         <button class="btn hxls" style="padding:9px 13px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportOSCSV()">엑셀</button>
-        <span style="font-size:11px;color:var(--gray)">Tab·Enter 이동 · 셀 수정 후 일괄 저장 · 빈 품번 행은 무시</span>
+        <span style="font-size:11px;color:var(--gray)">Tab·Enter 이동 · Ctrl+V로 엑셀 범위 붙여넣기 · 셀 수정 후 일괄 저장</span>
+      </div>
+      <div class="bulkbar">
+        <span class="bl" id="gd-sel">선택 0행</span>
+        <input id="bk-vendor" placeholder="협력업체" style="width:120px">
+        <input id="bk-proc" list="proclist" placeholder="가공공정" style="width:130px">
+        <input type="date" id="bk-order" title="발주일">
+        <input type="date" id="bk-due" title="입고요구일">
+        <input type="date" id="bk-in" title="입고일">
+        <button class="btn" style="padding:8px 13px;background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.4);color:var(--blue)" onclick="bulkApply()">선택 행에 적용</button>
+        <button class="btn" style="padding:8px 12px" onclick="bulkToday('bk-order')">오늘 발주</button>
+        <button class="btn" style="padding:8px 12px" onclick="bulkToday('bk-in')">오늘 입고</button>
       </div>
       <div class="tscroll"><table class="wide gdtbl" id="gdtbl">
         <thead><tr>
+          <th style="width:26px"><input type="checkbox" id="gd-all" onchange="gdSelAll(this.checked)" style="width:15px;height:15px"></th>
           <th style="width:30px">#</th><th style="width:86px">품번</th><th style="width:150px">부품명</th>
           <th style="width:38px">순</th><th style="width:130px">가공공정</th><th style="width:110px">협력업체</th>
           <th style="width:118px">발주일</th><th style="width:118px">입고요구일</th><th style="width:118px">입고일</th>
@@ -1418,6 +1452,7 @@ function renderGrid(){
     const st=isNew?'신규':stat(r);
     const key=isNew?'n'+i:r.id;
     return `<tr class="${isNew?'gd-new':'os-'+stCls(st)}${!isNew&&delayed(r)?' os-late':''}" data-key="${key}">`+
+      `<td style="text-align:center"><input type="checkbox" class="gdck" onchange="gdSelCnt()" style="width:15px;height:15px"></td>`+
       `<td class="mono" style="text-align:center;color:var(--gray)">${i+1}</td>`+
       GCOLS.map(([f,cls])=>{
         const v=r[f]==null?'':r[f];
@@ -1433,9 +1468,74 @@ function renderGrid(){
   };
   tb.innerHTML=rows.map((r,i)=>line(Object.assign({},r,GDIRTY.get(r.id)||{}),i,false)).join('')
     +GNEW.map((r,i)=>line(r,rows.length+i,true)).join('')
-    ||'<tr><td colspan="12" class="empty">+ 행 추가 또는 📋 발주서 불러오기로 시작하세요</td></tr>';
-  gdMark();
+    ||'<tr><td colspan="13" class="empty">+ 행 추가 또는 📋 발주서 불러오기로 시작하세요</td></tr>';
+  gdMark();gdSelCnt();
 }
+function gdSelAll(on){
+  document.querySelectorAll('#gdbody .gdck').forEach(c=>c.checked=on);
+  gdSelCnt();
+}
+function gdSelCnt(){
+  const n=document.querySelectorAll('#gdbody .gdck:checked').length;
+  const el=document.getElementById('gd-sel');
+  if(el){el.textContent='선택 '+n+'행';el.classList.toggle('on',n>0)}
+}
+function bulkToday(id){document.getElementById(id).value=today()}
+function bulkApply(){
+  const trs=[...document.querySelectorAll('#gdbody tr')].filter(t=>{
+    const c=t.querySelector('.gdck');return c&&c.checked;
+  });
+  if(!trs.length)return toast('적용할 행을 선택하세요');
+  const map={vendor:g('bk-vendor'),proc:g('bk-proc'),order_date:g('bk-order'),due_date:g('bk-due'),in_date:g('bk-in')};
+  const fields=Object.keys(map).filter(k=>map[k]);
+  if(!fields.length)return toast('적용할 값을 입력하세요');
+  trs.forEach(tr=>{
+    const key=tr.dataset.key;
+    const inputs=tr.querySelectorAll('input.gdi');
+    fields.forEach(f=>{
+      const ci=GCOLS.findIndex(c=>c[0]===f);
+      if(ci<0||!inputs[ci])return;
+      inputs[ci].value=map[f];
+      gdEdit(key,f,map[f]);
+    });
+  });
+  gdMark();
+  toast(trs.length+'행에 적용 — 💾 일괄 저장을 눌러 확정하세요');
+}
+/* 엑셀 범위 붙여넣기 (Ctrl+V) */
+function gdPaste(e){
+  const el=e.target;
+  if(!el.classList||!el.classList.contains('gdi'))return;
+  const txt=(e.clipboardData||window.clipboardData).getData('text');
+  if(!txt)return;
+  if(txt.indexOf('\t')<0&&txt.indexOf('\n')<0)return;
+  e.preventDefault();
+  const tb=document.getElementById('gdbody');
+  const rows=[...tb.querySelectorAll('tr')];
+  const tr=el.closest('tr');
+  const ri=rows.indexOf(tr);
+  const ci=[...tr.querySelectorAll('input.gdi')].indexOf(el);
+  const lines=txt.replace(/\r/g,'').split('\n').filter(l=>l.length);
+  const need=ri+lines.length-rows.length;
+  for(let k=0;k<need;k++)GNEW.push({part_no:'',part_name:'',seq:1,proc:'',vendor:'',order_date:'',due_date:'',in_date:'',memo:''});
+  if(need>0)renderGrid();
+  const rows2=[...document.querySelectorAll('#gdbody tr')];
+  lines.forEach((ln,r)=>{
+    const tgt=rows2[ri+r];if(!tgt)return;
+    const ins=[...tgt.querySelectorAll('input.gdi')];
+    ln.split('\t').forEach((cell,c)=>{
+      const idx=ci+c;
+      if(idx>=GCOLS.length||!ins[idx])return;
+      const v=cell.trim();
+      ins[idx].value=v;
+      gdEdit(tgt.dataset.key,GCOLS[idx][0],v);
+    });
+  });
+  gdMark();
+  toast(lines.length+'행 붙여넣기 — 💾 일괄 저장을 눌러 확정하세요');
+}
+document.addEventListener('paste',gdPaste);
+
 function gdEdit(key,f,v){
   if(String(key).startsWith('n')){
     const i=Number(String(key).slice(1));
@@ -1655,6 +1755,41 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
   try{await loadAll();}catch(e){toast('불러오기 실패: '+e.message)}
 })();
 
+
+/* ===== 표 → 엑셀 복사 (모든 .tscroll 테이블에 ⎘ 버튼 자동 부착) ===== */
+(function(){
+  function cellText(td){return td.innerText.replace(/[\t\n]+/g,' ').trim()}
+  function tsv(tb){
+    return [...tb.querySelectorAll('tr')]
+      .map(tr=>[...tr.children].map(cellText).join('\t')).join('\n');
+  }
+  function attach(){
+    document.querySelectorAll('.tscroll').forEach(w=>{
+      if(w.querySelector('.tcopy'))return;
+      const t=w.querySelector('table');if(!t)return;
+      const b=document.createElement('button');
+      b.type='button';b.className='tcopy';b.textContent='⎘ 표 복사';
+      b.onclick=e=>{
+        e.stopPropagation();
+        const txt=tsv(t);
+        const done=()=>{if(typeof toast==='function')toast('표를 복사했습니다 — 엑셀에 붙여넣기(Ctrl+V) 하세요')};
+        if(navigator.clipboard&&navigator.clipboard.writeText)
+          navigator.clipboard.writeText(txt).then(done).catch(()=>{fallback(txt);done()});
+        else{fallback(txt);done()}
+      };
+      w.appendChild(b);
+    });
+  }
+  function fallback(txt){
+    const ta=document.createElement('textarea');
+    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    ta.remove();
+  }
+  attach();
+  new MutationObserver(()=>attach()).observe(document.body,{childList:true,subtree:true});
+})();
 </script>
 </body>
 </html>
