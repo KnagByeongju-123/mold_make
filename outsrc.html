@@ -947,6 +947,17 @@ header .hright{position:relative}
 
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
+.gdtbl{min-width:1080px}
+.gdtbl td{padding:2px 3px}
+.gdtbl th{font-size:11px;white-space:nowrap}
+.gdi{width:100%;min-width:0;background:transparent;border:1px solid transparent;border-radius:6px;
+  color:var(--ink);padding:7px 6px;font-size:12.5px;font-family:inherit}
+.gdi:hover{border-color:var(--line2);background:var(--card2)}
+.gdi:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.09)}
+.gdi.mono{font-family:'IBM Plex Mono',monospace}
+.gdi.num{text-align:center}
+.gdi.date{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+tr.gd-new td{background:rgba(226,176,74,.06)}
 .implist{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:5px}
 .improw{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line2);border-radius:9px;
   background:var(--card2);cursor:pointer;font-size:12.5px}
@@ -992,7 +1003,7 @@ tr.os-late td{background:rgba(255,123,123,.06)}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.1</span>
+    <span class="rev">v1.2</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1021,6 +1032,7 @@ tr.os-late td{background:rgba(255,123,123,.06)}
 
     <div class="itabs">
       <button class="itab on" id="otab-part" onclick="osTab('part')">🧩 부품 라우팅</button>
+      <button class="itab" id="otab-grid" onclick="osTab('grid')">⌨ 표 편집</button>
       <button class="itab" id="otab-order" onclick="osTab('order')">🏭 발주 관리</button>
     </div>
 
@@ -1038,6 +1050,25 @@ tr.os-late td{background:rgba(255,123,123,.06)}
         </div>
       </div>
       <div id="oslist"></div>
+    </div>
+
+    <!-- 탭: 표 편집 (PC 일괄입력) -->
+    <div id="os-grid" class="hide">
+      <div class="stkbar" style="margin-bottom:10px;flex-wrap:wrap">
+        <button class="btn btn-p" style="padding:10px 18px" onclick="gridSave()">💾 일괄 저장 <span id="gd-dirty"></span></button>
+        <button class="btn" style="padding:9px 13px" onclick="gridAddRow()">+ 행 추가</button>
+        <button class="btn" style="padding:9px 13px" onclick="openImp()">📋 발주서 불러오기</button>
+        <button class="btn hxls" style="padding:9px 13px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportOSCSV()">엑셀</button>
+        <span style="font-size:11px;color:var(--gray)">Tab·Enter 이동 · 셀 수정 후 일괄 저장 · 빈 품번 행은 무시</span>
+      </div>
+      <div class="tscroll"><table class="wide gdtbl" id="gdtbl">
+        <thead><tr>
+          <th style="width:30px">#</th><th style="width:86px">품번</th><th style="width:150px">부품명</th>
+          <th style="width:38px">순</th><th style="width:130px">가공공정</th><th style="width:110px">협력업체</th>
+          <th style="width:118px">발주일</th><th style="width:118px">입고요구일</th><th style="width:118px">입고일</th>
+          <th style="width:120px">비고</th><th style="width:58px">상태</th><th style="width:34px"></th>
+        </tr></thead>
+        <tbody id="gdbody"></tbody></table></div>
     </div>
 
     <!-- 탭2: 발주 관리 -->
@@ -1174,16 +1205,22 @@ function render(){
   document.getElementById('os-sum').innerHTML=
     `<span style="color:var(--gray)">미발주 ${c['미발주']}</span> · <span style="color:var(--blue)">발주 ${c['발주']}</span> · <span style="color:var(--green)">입고 ${c['입고']}</span>`+
     (dl?` · <span style="color:var(--red)">지연 ${dl}</span>`:'');
-  if(OSTAB==='part')renderParts(); else renderOrders();
+  if(OSTAB==='part')renderParts();
+  else if(OSTAB==='grid')renderGrid();
+  else renderOrders();
 }
 
 /* ---------- 탭 ---------- */
 function osTab(t){
+  if(OSTAB==='grid'&&t!=='grid'&&GDIRTY.size){
+    if(!confirm('저장하지 않은 변경이 있습니다. 이동할까요?'))return;
+    GDIRTY.clear();GNEW=[];
+  }
   OSTAB=t;
-  document.getElementById('otab-part').classList.toggle('on',t==='part');
-  document.getElementById('otab-order').classList.toggle('on',t==='order');
-  document.getElementById('os-part').classList.toggle('hide',t!=='part');
-  document.getElementById('os-order').classList.toggle('hide',t!=='order');
+  ['part','grid','order'].forEach(x=>{
+    document.getElementById('otab-'+x).classList.toggle('on',t===x);
+    document.getElementById('os-'+x).classList.toggle('hide',t!==x);
+  });
   render();
 }
 function setOSF(f){
@@ -1297,6 +1334,116 @@ async function delStep(){
     }
     closeStep();await loadOS();toast('삭제 완료');
   }catch(e){toast('삭제 실패: '+e.message)}
+}
+
+/* ---------- 표 편집 (일괄 입력) ---------- */
+let GDIRTY=new Map(), GNEW=[];
+const GCOLS=[['part_no','mono'],['part_name',''],['seq','mono num'],['proc','proc'],['vendor',''],
+  ['order_date','date'],['due_date','date'],['in_date','date'],['memo','']];
+function gdMark(){
+  const n=GDIRTY.size+GNEW.filter(r=>r.part_no&&r.part_no.trim()).length;
+  const el=document.getElementById('gd-dirty');
+  if(el)el.textContent=n?'('+n+')':'';
+}
+function renderGrid(){
+  const tb=document.getElementById('gdbody');if(!tb)return;
+  const rows=[...ROWS].sort((a,b)=>String(a.part_no).localeCompare(String(b.part_no))||a.seq-b.seq);
+  const line=(r,i,isNew)=>{
+    const st=isNew?'신규':stat(r);
+    const key=isNew?'n'+i:r.id;
+    return `<tr class="${isNew?'gd-new':'os-'+stCls(st)}${!isNew&&delayed(r)?' os-late':''}" data-key="${key}">`+
+      `<td class="mono" style="text-align:center;color:var(--gray)">${i+1}</td>`+
+      GCOLS.map(([f,cls])=>{
+        const v=r[f]==null?'':r[f];
+        const type=cls.includes('date')?'date':cls.includes('num')?'number':'text';
+        return `<td><input class="gdi ${cls}" type="${type}" value="${esc(v)}"
+          ${f==='proc'?'list="proclist"':''}
+          oninput="gdEdit('${key}','${f}',this.value)" onkeydown="gdKey(event,this)"></td>`;
+      }).join('')+
+      `<td style="text-align:center"><span class="st ${isNew?'wait':(st==='입고'?'ok':st==='발주'?'run':'wait')}">${st}</span></td>`+
+      `<td style="text-align:center">${isNew
+        ? `<button class="del" onclick="gdDelNew(${i})">✕</button>`
+        : `<button class="del" onclick="gdDel(${r.id})">✕</button>`}</td></tr>`;
+  };
+  tb.innerHTML=rows.map((r,i)=>line(Object.assign({},r,GDIRTY.get(r.id)||{}),i,false)).join('')
+    +GNEW.map((r,i)=>line(r,rows.length+i,true)).join('')
+    ||'<tr><td colspan="12" class="empty">+ 행 추가 또는 📋 발주서 불러오기로 시작하세요</td></tr>';
+  gdMark();
+}
+function gdEdit(key,f,v){
+  if(String(key).startsWith('n')){
+    const i=Number(String(key).slice(1));
+    if(GNEW[i])GNEW[i][f]=v;
+  }else{
+    const id=Number(key);
+    const o=GDIRTY.get(id)||{};o[f]=v;GDIRTY.set(id,o);
+  }
+  gdMark();
+}
+function gdKey(e,el){
+  const tds=[...el.closest('tr').querySelectorAll('input')];
+  const ci=tds.indexOf(el);
+  const rows=[...document.querySelectorAll('#gdbody tr')];
+  const ri=rows.indexOf(el.closest('tr'));
+  let t=null;
+  if(e.key==='Enter'||e.key==='ArrowDown'){t=rows[ri+1]}
+  else if(e.key==='ArrowUp'){t=rows[ri-1]}
+  else return;
+  e.preventDefault();
+  if(!t){ if(e.key!=='ArrowUp'){gridAddRow();setTimeout(()=>{
+      const nr=[...document.querySelectorAll('#gdbody tr')].pop();
+      if(nr)nr.querySelectorAll('input')[ci].focus();},20)} return }
+  const nx=t.querySelectorAll('input')[ci];
+  if(nx){nx.focus();if(nx.select)try{nx.select()}catch(err){}}
+}
+function gridAddRow(){
+  const last=GNEW[GNEW.length-1]||{};
+  GNEW.push({part_no:last.part_no||'',part_name:last.part_name||'',
+    seq:last.part_no?(Number(last.seq)||1)+1:1,proc:'',vendor:'',order_date:'',due_date:'',in_date:'',memo:''});
+  renderGrid();
+  setTimeout(()=>{
+    const nr=[...document.querySelectorAll('#gdbody tr')].pop();
+    if(nr){const i=last.part_no?3:0;nr.querySelectorAll('input')[i].focus()}
+  },20);
+}
+function gdDelNew(i){
+  const rows=[...ROWS];
+  GNEW.splice(i-rows.length,1);renderGrid();
+}
+async function gdDel(id){
+  if(!confirm('이 공정을 삭제할까요?'))return;
+  try{await api(`/mm_out_route?id=eq.${id}`,{method:"DELETE"});GDIRTY.delete(id);await loadOS();toast('삭제 완료')}
+  catch(e){toast('삭제 실패: '+e.message)}
+}
+async function gridSave(){
+  const pid=g('ossel');
+  if(!pid)return toast('금형을 선택하세요');
+  const news=GNEW.filter(r=>(r.part_no||'').trim()&&(r.proc||'').trim());
+  if(!GDIRTY.size&&!news.length)return toast('변경된 내용이 없습니다');
+  let ok=0,er=0;
+  for(const [id,o] of GDIRTY){
+    const body={};
+    Object.keys(o).forEach(k=>{
+      let v=o[k];
+      if(k==='seq')v=Number(v)||1;
+      else v=(v===''?null:v);
+      body[k]=v;
+    });
+    try{await api(`/mm_out_route?id=eq.${id}`,{method:"PATCH",body:JSON.stringify(body)});ok++}
+    catch(e){er++}
+  }
+  for(const r of news){
+    const body={project_id:pid,part_no:r.part_no.trim(),part_name:r.part_name||null,
+      seq:Number(r.seq)||1,proc:r.proc.trim(),vendor:r.vendor||null,
+      order_date:r.order_date||null,due_date:r.due_date||null,in_date:r.in_date||null,
+      memo:r.memo||null,author:USER||null};
+    try{await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});ok++}
+    catch(e){er++}
+  }
+  const skipped=GNEW.length-news.length;
+  GDIRTY.clear();GNEW=[];
+  await loadOS();
+  toast(ok+'건 저장'+(er?' · 실패 '+er:'')+(skipped?' · 미입력 '+skipped+'행 무시':''));
 }
 
 /* ---------- 발주 관리 ---------- */
