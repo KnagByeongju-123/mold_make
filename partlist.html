@@ -1063,7 +1063,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.5</span>
+    <span class="rev">v1.6</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1256,7 +1256,7 @@ function curOp(){return document.getElementById('plop').value}
 const COLS={
   '원재료':[['no','품번','70'],['name','부품명','1.4fr'],['material','재질','88'],['size','완성치수','1.2fr'],
     ['thick','원재료t','70'],['qty','수량','54'],['unit','단위','54'],['vendor','발주처','88'],
-    ['first','1차가공','70'],['memo','비고','1fr']],
+    ['first','1차가공(A/AA)','88'],['memo','비고','1fr']],
   '표준품':[['no','품번','70'],['name','부품명','1.4fr'],['type','TYPE','80'],['spec','규격','1.2fr'],
     ['qty','수량','54'],['unit','단위','54'],['maker','MAKER','92'],['vendor','발주처','88'],['memo','비고','1fr']]
 };
@@ -1367,9 +1367,12 @@ function drawPL(){
   const cols=COLS[PLTAB];
   const gt=cols.map(c=>c[2].endsWith('fr')?'minmax(90px,'+c[2]+')':c[2]+'px').join(' ');
   const filled=PITEMS.filter(r=>r.name&&r.name.trim()).length;
+  const hint=PLTAB==='원재료'
+    ? '치수 <b class="mono">42.0*#280*#180</b> · <b>#</b> 는 1:1(가공여유 없음) &nbsp;|&nbsp; <b>1차가공</b> — <b class="mono">A</b> 양면가공(연삭·면삭) · <b class="mono">AA</b> 육면가공 · 공란이면 절단만'
+    : '규격은 MISUMI 프레스 금형용 표준부품 기준 · <b>TYPE</b>은 제품 코드(예: <b class="mono">RK</b>)';
   box.innerHTML=`<div class="ifm-op"><div class="ifm-oph">
       <span class="nm">${PLTAB} 품목 ${filled}개</span>
-      <span class="cnt">치수는 <b class="mono">42.0*#280*#180</b> 형식 · # 는 1:1 가공여유 없음</span>
+      <span class="cnt">${hint}</span>
     </div>
     <div class="pl-wrap">
       <div class="pl-head" style="grid-template-columns:26px ${gt} 24px">
@@ -1377,7 +1380,7 @@ function drawPL(){
       <div class="ifm-rows">`+
       PITEMS.map((r,i)=>`<div class="pl-row" style="grid-template-columns:26px ${gt} 24px">
         <div class="idx">${i+1}</div>`+
-        cols.map(c=>`<input value="${esc(r[c[0]]||'')}" placeholder="${c[1]}" ${c[0]==='size'||c[0]==='spec'||c[0]==='no'?'class="mono"':''} ${c[0]==='material'?'list="matlist"':c[0]==='vendor'?'list="vendlist"':c[0]==='maker'?'list="vendlist"':''} oninput="setPL(${i},'${c[0]}',this.value)" onkeydown="plKey(event,${i},${cols.indexOf(c)})">`).join('')+
+        cols.map(c=>`<input value="${esc(r[c[0]]||'')}" placeholder="${c[0]==='first'?'A / AA':c[1]}" title="${c[0]==='first'?'A=양면가공, AA=육면가공, 공란=절단만':c[1]}" ${c[0]==='size'||c[0]==='spec'||c[0]==='no'?'class="mono"':''} ${c[0]==='material'?'list="matlist"':c[0]==='vendor'?'list="vendlist"':c[0]==='maker'?'list="vendlist"':''} oninput="setPL(${i},'${c[0]}',this.value)" onkeydown="plKey(event,${i},${cols.indexOf(c)})">`).join('')+
         `<button class="rm" onclick="rmPL(${i})">✕</button>
       </div>`).join('')+`</div></div></div>`;
   document.getElementById('pl-note').innerHTML='<b>주기</b><ul>'+NOTE[PLTAB].map(n=>`<li>${esc(n)}</li>`).join('')+'</ul>';
@@ -1486,7 +1489,7 @@ function splitCells(line){
 }
 const ALIAS={'품번':'no','부품번호':'no','부품명':'name','품명':'name','재질':'material','완성치수':'size','치수':'size',
   '원재료T':'thick','원재료t':'thick','두께':'thick','수량':'qty','단위':'unit','발주처':'vendor',
-  '1차가공':'first','비고':'memo','TYPE':'type','타입':'type','규격':'spec','MAKER':'maker','메이커':'maker'};
+  '1차가공':'first','1차가공(A/AA)':'first','소재가공':'first','비고':'memo','TYPE':'type','타입':'type','규격':'spec','MAKER':'maker','메이커':'maker'};
 function headerMap(cells){
   const m=cells.map(h=>ALIAS[h.replace(/\s/g,'').toUpperCase()]||ALIAS[h.replace(/\s/g,'')]||null);
   return m.filter(Boolean).length>=2?m:null;
@@ -1544,7 +1547,7 @@ function dlPLTemplate(){
        ['B23A','PUNCH,FORMING','STD11','120.00*56.00*88.90','','1','EA','','AA','']]
     : [['D38A','SET, POST-BUSH','RK','25*12*L8*8','2','EA','MISUMI','','']];
   const blanks=Array.from({length:8},()=>cols.map(()=>''));
-  dlCSV(PLTAB+' 발주서 템플릿',cols.map(c=>c[1]),sample.concat(blanks),'PARTLIST_'+PLTAB+'_템플릿');
+  dlCSV(PLTAB+' 발주서 템플릿'+(PLTAB==='원재료'?' — 1차가공: A=양면 · AA=육면':''),cols.map(c=>c[1]),sample.concat(blanks),'PARTLIST_'+PLTAB+'_템플릿');
   toast('템플릿을 내려받았습니다');
 }
 function plPasteFile(inp){
