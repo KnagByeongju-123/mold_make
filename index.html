@@ -1074,7 +1074,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.1</span>
+    <span class="rev">Rev 16.2</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1152,6 +1152,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="mi" data-menu-id="outsrc" onclick="openExt('outsrc','outsrc.html','외주가공 관리')"><span class="ic">🏭</span>외주가공</div>
   <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
   <div class="mi" data-menu-id="work-status" onclick="openExt('work-status','work_status.html','업무현황')"><span class="ic">🗂</span>업무현황</div>
+  <div class="mi" data-menu-id="cost" onclick="openExt('cost','cost.html','원가관리')"><span class="ic">💹</span>원가관리</div>
   <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
   <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
   <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
@@ -2861,7 +2862,7 @@ const CATS=[
   {k:'out',  n:'출력물',   ic:'🖨️', ids:['doc','partlist','tryout']},
   {k:'buy',  n:'구매·외주', ic:'🏭', ids:['outsrc','stock']},
   {k:'qa',   n:'품질관리(SQ)', ic:'🛡️', ids:['insp-file','ncr','ecn','gauge','appr']},
-  {k:'stat', n:'현황',     ic:'🗂', ids:['work-status','mon','hist','board']},
+  {k:'stat', n:'현황',     ic:'🗂', ids:['work-status','cost','mon','hist','board']},
   {k:'sys',  n:'설정',     ic:'⚙️', ids:['master','help','set','logout']}
 ];
 let CURCAT='plan';
@@ -2917,7 +2918,7 @@ function buildSidenav(){
 function markSidenav(v){
   document.querySelectorAll('#sidenav .sitem').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 }
-const EXT={'master':['master.html','기준정보 관리'],'insp-file':['insp.html','검사성적서'],'partlist':['partlist.html','발주서 (PART LIST)'],
+const EXT={'cost':['cost.html','원가관리'],'master':['master.html','기준정보 관리'],'insp-file':['insp.html','검사성적서'],'partlist':['partlist.html','발주서 (PART LIST)'],
   'outsrc':['outsrc.html','외주가공 관리'],'work-status':['work_status.html','업무현황']};
 let CUREXT='';
 function openExt(id,file,title,fromPop){
