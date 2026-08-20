@@ -822,8 +822,17 @@ tr.ipdrop td{box-shadow:inset 0 2px 0 var(--gold)}
 #v-plan th.pl-dp,#v-plan td.pl-dp{width:54px;text-align:center;padding-left:2px;padding-right:6px}
 #v-plan td:first-child{padding-right:2px}
 @media(max-width:760px){
+  /* 모바일: 공정명이 남는 폭을 차지하지 않도록 고정 레이아웃 + 폭 축소 */
+  #v-plan table.wide{table-layout:fixed;min-width:500px}
   #v-plan table.wide th{font-size:12.5px}
-  #v-plan .dpick{padding:7px 7px}
+  #v-plan table.wide td{font-size:13.5px;padding-left:5px;padding-right:5px}
+  #v-plan th.pl-op,#v-plan td.pl-op{min-width:0;width:158px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #v-plan th.pl-d,#v-plan td.pl-d{width:66px}
+  #v-plan th.pl-n,#v-plan td.pl-n{width:42px}
+  #v-plan th.pl-st,#v-plan td.pl-st{width:62px}
+  #v-plan th.pl-dp,#v-plan td.pl-dp{width:auto}
+  #v-plan .dpick{padding:7px 5px;font-size:13px}
+  #v-plan .st{font-size:12px;padding:4px 7px}
 }
 .dpick:hover{border-color:var(--gold);color:var(--gold)}
 .dpick.set{border-style:solid;border-color:rgba(79,140,255,.45);background:rgba(79,140,255,.1);color:var(--blue);font-weight:600}
@@ -1085,7 +1094,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.3</span>
+    <span class="rev">Rev 16.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
