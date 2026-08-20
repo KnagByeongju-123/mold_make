@@ -1091,7 +1091,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.4</span>
+    <span class="rev">v1.5</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1114,7 +1114,8 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
 <main>
   <section id="v-os">
     <div class="psel" style="margin-bottom:10px">
-      <select id="ossel" onchange="loadOS()"></select>
+      <select id="ossel" onchange="onOsProj()"></select>
+      <select id="osstage" onchange="render()" style="display:none;min-width:90px"></select>
       <span id="os-sum" style="font-size:12px;font-weight:800"></span>
     </div>
 
@@ -1184,7 +1185,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
         <button class="btn hxls" style="padding:9px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportOSCSV()">엑셀</button>
       </div>
       <div class="tscroll"><table class="wide" style="min-width:840px">
-        <thead><tr><th>품번</th><th>부품명</th><th>순서</th><th>가공공정</th><th>협력업체</th><th>발주일</th><th>입고요구일</th><th>입고일</th><th>상태</th><th style="width:150px"></th></tr></thead>
+        <thead><tr><th>조</th><th>품번</th><th>부품명</th><th>순서</th><th>가공공정</th><th>협력업체</th><th>발주일</th><th>입고요구일</th><th>입고일</th><th>상태</th><th style="width:150px"></th></tr></thead>
         <tbody id="osbody"></tbody></table></div>
     </div>
     <!-- 탭: 입고확정 (매입가 · 네고율 · 확정가) -->
@@ -1319,6 +1320,26 @@ function dlCSV(title,head,rows,fname){
 
 /* ---------- 데이터 ---------- */
 let PROJ=[],ROWS=[],OSTAB='part',OSF='',STEDIT=null;
+const STG_L='ABCDEFGHI';
+function stageOptions(){
+  const p=PROJ.find(x=>String(x.id)===String(g('ossel')));
+  const el=document.getElementById('osstage');
+  const n=p?(Number(p.stages)||1):1;
+  if(n<=1){el.style.display='none';el.innerHTML='';return}
+  const cur=el.value;
+  el.style.display='';
+  el.innerHTML='<option value="">전체 조</option>'+Array.from({length:n},(_,i)=>`<option value="${STG_L[i]}">${STG_L[i]}조</option>`).join('');
+  if([...el.options].some(o=>o.value===cur))el.value=cur;
+}
+function curStage(){
+  const el=document.getElementById('osstage');
+  return el.style.display==='none'?null:(el.value||null);
+}
+function vROWS(){
+  const st=curStage();
+  return st?ROWS.filter(r=>(r.stage||null)===st):ROWS;
+}
+async function onOsProj(){stageOptions();await loadOS()}
 const PROCS=['성형연삭(소형)','성형연삭(대형)','평면연삭','열처리','WIRE CUT','M/C황삭','M/C정삭','면삭밀링','선반','방전','각인','코팅','TAP','DRILLING'];
 
 function stat(r){return r.in_date?'입고':r.order_date?'발주':'미발주'}
@@ -1326,10 +1347,11 @@ function stCls(s){return s==='입고'?'ok':s==='발주'?'run':'wait'}
 function delayed(r){return !r.in_date&&r.due_date&&r.due_date<today()}
 
 async function loadAll(){
-  PROJ=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type&order=created_at.desc");
+  PROJ=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type,stages&order=created_at.desc");
   const sel=document.getElementById('ossel');
   sel.innerHTML=PROJ.map(x=>`<option value="${x.id}">${x.mold_type==='수리'?'[수리] ':'[신작] '}${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`).join('')
     ||'<option value="">등록된 금형 없음</option>';
+  stageOptions();
   await loadOS();
 }
 async function loadOS(){
@@ -1341,8 +1363,8 @@ async function loadOS(){
 }
 function render(){
   const c={'미발주':0,'발주':0,'입고':0};
-  ROWS.forEach(r=>c[stat(r)]++);
-  const dl=ROWS.filter(delayed).length;
+  vROWS().forEach(r=>c[stat(r)]++);
+  const dl=vROWS().filter(delayed).length;
   document.getElementById('os-sum').innerHTML=
     `<span style="color:var(--gray)">미발주 ${c['미발주']}</span> · <span style="color:var(--blue)">발주 ${c['발주']}</span> · <span style="color:var(--green)">입고 ${c['입고']}</span>`+
     (dl?` · <span style="color:var(--red)">지연 ${dl}</span>`:'');
@@ -1378,7 +1400,7 @@ function setOSF(f){
 /* ---------- 부품 라우팅 ---------- */
 function partsOf(){
   const m=new Map();
-  ROWS.forEach(r=>{
+  vROWS().forEach(r=>{
     const k=r.part_no+'|'+(r.part_name||'');
     if(!m.has(k))m.set(k,{no:r.part_no,name:r.part_name||'',steps:[]});
     m.get(k).steps.push(r);
@@ -1392,7 +1414,7 @@ function renderParts(){
     const done=p.steps.filter(s=>s.in_date).length;
     return `<div class="oscard">
       <div class="osh">
-        <b class="mono">${esc(p.no)}</b><span class="nm">${esc(p.name)}</span>
+        <b class="mono">${esc(p.no)}</b>${p.stage?`<span class="kd">${esc(p.stage)}조</span>`:''}<span class="nm">${esc(p.name)}</span>
         <span class="prog">${done}/${p.steps.length} 입고</span>
         <button class="del" title="부품 삭제" onclick="delPart('${esc(p.no)}')">✕</button>
       </div>
@@ -1458,7 +1480,7 @@ async function saveStep(){
     memo:g('st-memo')||null};
   try{
     if(STEDIT.new){
-      Object.assign(body,{project_id:g('ossel'),part_no:STEDIT.part_no,part_name:STEDIT.part_name||null,seq:STEDIT.seq,author:USER||null});
+      Object.assign(body,{project_id:g('ossel'),part_no:STEDIT.part_no,part_name:STEDIT.part_name||null,seq:STEDIT.seq,stage:curStage(),author:USER||null});
       await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});
       document.getElementById('np-no').value='';document.getElementById('np-name').value='';
     }else{
@@ -1646,7 +1668,7 @@ async function gridSave(){
   }
   for(const r of news){
     const body={project_id:pid,part_no:r.part_no.trim(),part_name:r.part_name||null,
-      seq:Number(r.seq)||1,proc:r.proc.trim(),vendor:r.vendor||null,
+      seq:Number(r.seq)||1,stage:curStage(),proc:r.proc.trim(),vendor:r.vendor||null,
       order_date:r.order_date||null,due_date:r.due_date||null,in_date:r.in_date||null,
       memo:r.memo||null,author:USER||null};
     try{await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});ok++}
@@ -1661,12 +1683,13 @@ async function gridSave(){
 /* ---------- 발주 관리 ---------- */
 function renderOrders(){
   const tb=document.getElementById('osbody');if(!tb)return;
-  let list=[...ROWS];
+  let list=[...vROWS()];
   if(OSF)list=list.filter(r=>stat(r)===OSF);
   list.sort((a,b)=>String(a.due_date||'9999').localeCompare(String(b.due_date||'9999')));
   tb.innerHTML=list.map(r=>{
     const st=stat(r);
     return `<tr class="os-${stCls(st)}${delayed(r)?' os-late':''}">
+      <td class="mono">${r.stage?esc(r.stage):'-'}</td>
       <td class="mono">${esc(r.part_no)}</td>
       <td>${esc(r.part_name||'-')}</td>
       <td class="mono" style="text-align:center">${r.seq}</td>
@@ -1681,7 +1704,7 @@ function renderOrders(){
         ${r.order_date&&!r.in_date?`<button class="btn" style="padding:4px 9px;font-size:10.5px;color:var(--green)" onclick="mark(${r.id},'in_date')">📥 입고</button>`:''}
         <button class="btn" style="padding:4px 9px;font-size:10.5px" onclick="openStep(${r.id})">✏️</button>
       </td></tr>`;
-  }).join('')||'<tr><td colspan="10" class="empty">해당 상태의 공정이 없습니다</td></tr>';
+  }).join('')||'<tr><td colspan="11" class="empty">해당 상태의 공정이 없습니다</td></tr>';
 }
 async function mark(id,field){
   try{
@@ -1694,8 +1717,8 @@ function exportOSCSV(){
   if(!ROWS.length)return toast('내보낼 데이터가 없습니다');
   const p=PROJ.find(x=>String(x.id)===String(g('ossel')));
   dlCSV('외주가공 발주현황 — '+(p?p.mold_no+' '+p.mold_name:''),
-    ['품번','부품명','순서','가공공정','협력업체','발주일','입고요구일','입고일','상태','매입가','네고율%','확정가','확정일','비고'],
-    ROWS.map(r=>[r.part_no,r.part_name||'',r.seq,r.proc,r.vendor||'',r.order_date||'',r.due_date||'',r.in_date||'',stat(r),r.price||'',r.nego||'',r.final_price||'',r.confirm_date||'',r.memo||'']),
+    ['조','품번','부품명','순서','가공공정','협력업체','발주일','입고요구일','입고일','상태','매입가','네고율%','확정가','확정일','비고'],
+    vROWS().map(r=>[r.stage||'',r.part_no,r.part_name||'',r.seq,r.proc,r.vendor||'',r.order_date||'',r.due_date||'',r.in_date||'',stat(r),r.price||'',r.nego||'',r.final_price||'',r.confirm_date||'',r.memo||'']),
     '외주가공');
 }
 
@@ -1705,16 +1728,18 @@ async function openImp(){
   const pid=g('ossel');
   if(!pid)return toast('금형을 선택하세요');
   let pls=[];
-  try{pls=await api(`/mm_partlist?select=kind,op_code,items&project_id=eq.${pid}&order=created_at.desc`);}
+  try{pls=await api(`/mm_partlist?select=kind,op_code,stage,items&project_id=eq.${pid}&order=created_at.desc`);}
   catch(e){return toast('발주서 조회 실패 — patch_partlist.sql 실행 여부를 확인하세요')}
   if(!pls.length)return toast('이 금형에 저장된 발주서가 없습니다');
   const seen=new Set();IMP=[];
-  pls.forEach(pl=>{(pl.items||[]).forEach(it=>{
-    const no=(it.no||'').trim();if(!no||seen.has(no))return;
-    seen.add(no);
-    IMP.push({no:no,name:(it.name||'').trim(),kind:pl.kind,
+  const st=curStage();
+  pls.filter(pl=>!st||(pl.stage||null)===st).forEach(pl=>{(pl.items||[]).forEach(it=>{
+    const key=(pl.stage||'')+'|'+(it.no||'').trim();
+    const no=(it.no||'').trim();if(!no||seen.has(key))return;
+    seen.add(key);
+    IMP.push({no:no,name:(it.name||'').trim(),kind:pl.kind,stage:pl.stage||null,
       first:(it.first||'').trim().toUpperCase(),vendor:(it.vendor||'').trim(),
-      exists:ROWS.some(r=>r.part_no===no)});
+      exists:ROWS.some(r=>r.part_no===no&&(r.stage||null)===(pl.stage||null))});
   })});
   if(!IMP.length)return toast('발주서에 품목이 없습니다');
   renderImp();
@@ -1751,9 +1776,9 @@ async function doImport(){
   let made=0,skip=0;
   for(const i of idx){
     const p=IMP[i];
-    if(ROWS.some(r=>r.part_no===p.no)){skip++;continue}
+    if(ROWS.some(r=>r.part_no===p.no&&(r.stage||null)===(p.stage||curStage()||null))){skip++;continue}
     const proc=useFirst&&FIRST_PROC[p.first]?FIRST_PROC[p.first]:null;
-    const body={project_id:pid,part_no:p.no,part_name:p.name||null,seq:1,
+    const body={project_id:pid,part_no:p.no,part_name:p.name||null,seq:1,stage:p.stage||curStage(),
       proc:proc||'(공정 미지정)',vendor:proc&&p.vendor?p.vendor:null,author:USER||null};
     try{await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});made++}
     catch(e){toast('저장 실패: '+e.message);break}
@@ -1788,7 +1813,7 @@ function cfEdit(id,f,v){
 }
 function renderConf(){
   const tb=document.getElementById('cfbody');if(!tb)return;
-  let list=ROWS.filter(r=>r.in_date);
+  let list=vROWS().filter(r=>r.in_date);
   if(CFF==='미확정')list=list.filter(r=>!cval(r,'confirm_date'));
   if(CFF==='확정')list=list.filter(r=>cval(r,'confirm_date'));
   list.sort((a,b)=>String(a.in_date).localeCompare(String(b.in_date))||String(a.part_no).localeCompare(String(b.part_no)));
@@ -1814,7 +1839,7 @@ function renderConf(){
 }
 function cfSum(){
   const el=document.getElementById('cfsum');if(!el)return;
-  let list=ROWS.filter(r=>r.in_date);
+  let list=vROWS().filter(r=>r.in_date);
   if(CFF==='미확정')list=list.filter(r=>!cval(r,'confirm_date'));
   if(CFF==='확정')list=list.filter(r=>cval(r,'confirm_date'));
   const tp=list.reduce((s,r)=>s+(Number(cval(r,'price'))||0),0);

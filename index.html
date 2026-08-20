@@ -1074,7 +1074,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 15.8</span>
+    <span class="rev">Rev 15.9</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1252,8 +1252,25 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
         <div class="fg"><label>제품명</label><input id="f-pd"></div>
       </div>
       <div class="row2">
+        <div class="fg"><label>모델명</label><input id="f-md"></div>
+        <div class="fg"><label>도번 (고객 도면번호)</label><input id="f-dwg" class="mono" placeholder="예: X23294-NI1760"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>조수 (공정 스테이지)</label>
+          <select id="f-stg"><option value="1">단일 (1조)</option><option value="2">2조 (A~B)</option><option value="3">3조 (A~C)</option><option value="4">4조 (A~D)</option><option value="5">5조 (A~E)</option><option value="6">6조 (A~F)</option><option value="7">7조</option><option value="8">8조</option><option value="9">9조</option></select></div>
         <div class="fg"><label>담당자</label><input id="f-mg"></div>
-        <div class="fg"><label>납기일</label><input id="f-due" type="date"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>수주일</label><input id="f-odt" type="date"></div>
+        <div class="fg"><label>S1 예정일 (1차 T/O)</label><input id="f-s1" type="date"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>납기예정일</label><input id="f-due" type="date"></div>
+        <div class="fg"><label>견적가 (원)</label><input id="f-est" type="number" class="mono" placeholder="0"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>수주가 (원)</label><input id="f-ord" type="number" class="mono" placeholder="0"></div>
+        <div class="fg"><label>판매가 (원)</label><input id="f-sal" type="number" class="mono" placeholder="0"></div>
       </div>
       <div class="fg"><label>비고</label><textarea id="f-nt" rows="2"></textarea></div>
       <button class="btn btn-p" onclick="createProject()">등록 (10 ~ 180 공정 자동 생성)</button>
@@ -2176,6 +2193,47 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
 <datalist id="dl-pw"></datalist>
 <datalist id="dl-pv"></datalist>
 
+<div class="modal" id="ordmodal" onclick="if(event.target===this)closeOrd()">
+  <div class="mbox" style="max-width:560px">
+    <div class="mhead"><b>수주정보</b><span class="mono" id="ord-no" style="font-size:11px;color:var(--gold)"></span>
+      <button class="mx" onclick="closeOrd()">✕</button></div>
+    <div style="padding:14px 18px 18px">
+      <div class="row2">
+        <div class="fg"><label>고객사</label><input id="o-cs"></div>
+        <div class="fg"><label>제품명</label><input id="o-pd"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>모델명</label><input id="o-md"></div>
+        <div class="fg"><label>도번</label><input id="o-dwg" class="mono"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>조수</label>
+          <select id="o-stg"><option value="1">단일 (1조)</option><option value="2">2조</option><option value="3">3조</option><option value="4">4조</option><option value="5">5조</option><option value="6">6조</option><option value="7">7조</option><option value="8">8조</option><option value="9">9조</option></select></div>
+        <div class="fg"><label>담당자</label><input id="o-mg"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>수주일</label><input id="o-odt" type="date"></div>
+        <div class="fg"><label>S1 예정일</label><input id="o-s1" type="date"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>S1 완료일</label><input id="o-s1d" type="date"></div>
+        <div class="fg"><label>납기예정일</label><input id="o-due" type="date"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>납기완료일</label><input id="o-dued" type="date"></div>
+        <div class="fg"><label>견적가</label><input id="o-est" type="number" class="mono"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>수주가</label><input id="o-ord" type="number" class="mono"></div>
+        <div class="fg"><label>판매가</label><input id="o-sal" type="number" class="mono"></div>
+      </div>
+      <div class="stkbar" style="margin-top:12px">
+        <button class="btn btn-p" style="flex:1;padding:12px" onclick="saveOrd()">💾 저장</button>
+        <button class="btn" style="padding:11px 16px" onclick="closeOrd()">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -3062,7 +3120,8 @@ function renderDash(){
         ${p.mold_type==='수리'
           ?'<span class="badge" style="background:rgba(196,157,255,.16);color:var(--cust)">🔧 수리</span>'
           :'<span class="badge" style="background:rgba(79,140,255,.16);color:var(--blue)">🗜️ 신작</span>'}
-        <span class="cs">${esc(p.customer||'')} ${p.product?'· '+esc(p.product):''}</span>
+        <span class="cs">${esc(p.customer||'')} ${p.product?'· '+esc(p.product):''}${p.stages>1?' · '+p.stages+'조':''}${p.dwg_no?' · '+esc(p.dwg_no):''}</span>
+        <button class="ubtn" style="flex-shrink:0" onclick="event.stopPropagation();openOrd('${p.id}')">✏️ 수주정보</button>
         <span class="badge ${bcls}">${p.archived?'보관':p.status}</span>
         <button class="del" onclick="event.stopPropagation();delProject('${p.id}','${esc(p.mold_no)}')">✕</button>
       </div>
@@ -3139,16 +3198,47 @@ async function createProject(){
   try{
     const [p]=await api("/mm_project",{method:"POST",body:JSON.stringify({
       mold_no:no,mold_name:nm,mold_type:mtype,customer:g('f-cs')||null,product:g('f-pd')||null,
+      model:g('f-md')||null,dwg_no:g('f-dwg')||null,stages:Number(g('f-stg'))||1,
+      order_date:g('f-odt')||null,s1_plan:g('f-s1')||null,
+      est_price:g('f-est')?Number(g('f-est')):null,order_price:g('f-ord')?Number(g('f-ord')):null,sale_price:g('f-sal')?Number(g('f-sal')):null,
       manager:g('f-mg')||null,due_date:g('f-due')||null,note:g('f-nt')||null})});
     const rows=fm.map((m,i)=>({project_id:p.id,op_code:m.op_code,status:i===0?'진행':'대기',started_at:i===0?new Date().toISOString():null}));
     await api("/mm_process",{method:"POST",body:JSON.stringify(rows)});
     await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' ['+mtype+'] 등록, '+opN(fm[0].op_code)+' '+fm[0].process_name+' 개시',worker:g('f-mg')||null})});
-    ['f-no','f-nm','f-cs','f-pd','f-mg','f-due','f-nt'].forEach(x=>document.getElementById(x).value='');
+    ['f-no','f-nm','f-cs','f-pd','f-md','f-dwg','f-mg','f-odt','f-s1','f-due','f-est','f-ord','f-sal','f-nt'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('f-stg').value='1';
     toast('등록 완료 — '+opN(fm[0].op_code)+' '+fm[0].process_name+'부터 진행합니다');
     openFlow(p.id);
   }catch(e){toast('등록 실패: '+e.message)}
 }
 function g(id){return document.getElementById(id).value.trim()}
+let ORDID=null;
+function openOrd(id){
+  const p=PROJECTS.find(x=>String(x.id)===String(id));if(!p)return;
+  ORDID=id;
+  document.getElementById('ord-no').textContent=p.mold_no+' '+p.mold_name;
+  const v=(i,val)=>{document.getElementById(i).value=val==null?'':val};
+  v('o-cs',p.customer);v('o-pd',p.product);v('o-md',p.model);v('o-dwg',p.dwg_no);
+  document.getElementById('o-stg').value=String(p.stages||1);
+  v('o-mg',p.manager);v('o-odt',p.order_date);v('o-s1',p.s1_plan);v('o-s1d',p.s1_done);
+  v('o-due',p.due_date);v('o-dued',p.due_done);
+  v('o-est',p.est_price);v('o-ord',p.order_price);v('o-sal',p.sale_price);
+  document.getElementById('ordmodal').classList.add('show');
+}
+function closeOrd(){document.getElementById('ordmodal').classList.remove('show');ORDID=null}
+async function saveOrd(){
+  if(!ORDID)return;
+  const num=i=>{const v=g(i);return v===''?null:Number(v)};
+  const body={customer:g('o-cs')||null,product:g('o-pd')||null,model:g('o-md')||null,dwg_no:g('o-dwg')||null,
+    stages:Number(g('o-stg'))||1,manager:g('o-mg')||null,
+    order_date:g('o-odt')||null,s1_plan:g('o-s1')||null,s1_done:g('o-s1d')||null,
+    due_date:g('o-due')||null,due_done:g('o-dued')||null,
+    est_price:num('o-est'),order_price:num('o-ord'),sale_price:num('o-sal')};
+  try{
+    await api("/mm_project?id=eq."+ORDID,{method:"PATCH",body:JSON.stringify(body)});
+    toast('수주정보 저장 완료');closeOrd();loadDash();
+  }catch(e){toast('저장 실패: '+e.message+' — patch_order.sql 실행 여부를 확인하세요')}
+}
 async function delProject(id,no){
   if(!confirm(no+' 금형을 삭제합니다.\n\n공정 진행 · 부품 · 출력물 · Tryout · 이력이 모두 함께 삭제되며 복구되지 않습니다.\n계속할까요?'))return;
   await api("/mm_project?id=eq."+id,{method:"DELETE"});

@@ -1063,7 +1063,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.3</span>
+    <span class="rev">v1.4</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1088,6 +1088,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
     <div class="psel" style="margin-bottom:10px">
       <select id="plsel" onchange="onPlProj()"></select>
       <select id="plop" onchange="loadPL()"></select>
+      <select id="plstage" onchange="loadPL()" style="display:none;min-width:90px"></select>
       <span id="plrate" style="font-weight:700;color:var(--blue)"></span>
     </div>
 
@@ -1147,7 +1148,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
 
     <div id="pl-log" class="hide">
       <div class="tscroll"><table class="wide">
-        <thead><tr><th>작성일</th><th>공정</th><th>구분</th><th>제품명</th><th>품목</th><th>발주처</th><th style="width:150px"></th></tr></thead>
+        <thead><tr><th>작성일</th><th>공정</th><th>조</th><th>구분</th><th>제품명</th><th>품목</th><th>발주처</th><th style="width:150px"></th></tr></thead>
         <tbody id="plbody"></tbody></table></div>
     </div>
   </section>
@@ -1231,6 +1232,20 @@ function dlCSV(title,head,rows,fname){
 
 /* ---------- 마스터 · 금형 ---------- */
 let MASTER=[],PROJ=[],PLS=[],PLTAB='원재료',PITEMS=[],PEDIT=null;
+const STG_L='ABCDEFGHI';
+function stageOptions(){
+  const p=curProj(),el=document.getElementById('plstage');
+  const n=p?(Number(p.stages)||1):1;
+  if(n<=1){el.style.display='none';el.innerHTML='';return}
+  const cur=el.value;
+  el.style.display='';
+  el.innerHTML=Array.from({length:n},(_,i)=>`<option value="${STG_L[i]}">${STG_L[i]}조</option>`).join('');
+  if([...el.options].some(o=>o.value===cur))el.value=cur;
+}
+function curStage(){
+  const el=document.getElementById('plstage');
+  return el.style.display==='none'?null:(el.value||null);
+}
 function opN(c){return (c||'').replace(/^OP|^RP/,'')}
 function FM(flow){return MASTER.filter(m=>(m.flow||'신작')===flow)}
 function pflow(p){return p&&p.mold_type==='수리'?'수리':'신작'}
@@ -1257,7 +1272,7 @@ function blankRow(){const o={};COLS[PLTAB].forEach(c=>o[c[0]]='');return o}
 /* ---------- 로드 ---------- */
 async function loadAll(){
   MASTER=await api("/mm_master?select=*&order=seq");
-  PROJ=await api("/mm_project?select=id,mold_no,mold_name,product,model,status,mold_type&order=created_at.desc");
+  PROJ=await api("/mm_project?select=id,mold_no,mold_name,product,model,status,mold_type,stages&order=created_at.desc");
   const sel=document.getElementById('plsel');
   sel.innerHTML=PROJ.map(x=>`<option value="${x.id}">${x.mold_type==='수리'?'[수리] ':'[신작] '}${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`).join('')
     ||'<option value="">등록된 금형 없음</option>';
@@ -1269,13 +1284,14 @@ function opOptions(){
     ||'<option value="">공정 없음</option>';
   if([...el.options].some(o=>o.value===cur))el.value=cur;
 }
-async function onPlProj(){opOptions();await loadPL()}
+async function onPlProj(){opOptions();stageOptions();await loadPL()}
 async function loadPL(){
   const pid=document.getElementById('plsel').value;
   if(!pid){document.getElementById('plitems').innerHTML='<div class="ifm-empty">먼저 금형을 등록하세요</div>';return}
   try{PLS=await api(`/mm_partlist?select=*&project_id=eq.${pid}&order=created_at.desc`);}
   catch(e){PLS=[];toast('patch_partlist.sql을 Supabase에서 실행하세요')}
-  const cur=PLS.find(x=>x.op_code===curOp()&&x.kind===PLTAB);
+  const st=curStage();
+  const cur=PLS.find(x=>x.op_code===curOp()&&x.kind===PLTAB&&(x.stage||null)===(st||null));
   if(cur)fillPL(cur); else newPL(true);
   renderPLLog();
 }
@@ -1391,7 +1407,7 @@ async function savePL(){
   cleanPL();
   const items=PITEMS.filter(r=>(r.name&&r.name.trim())||(r.no&&r.no.trim()));
   if(!items.length)return toast('품목을 1개 이상 입력하세요');
-  const body={project_id:pid,op_code:curOp(),kind:PLTAB,
+  const body={project_id:pid,op_code:curOp(),kind:PLTAB,stage:curStage(),
     mgmt_no:g('ph-mgmt')||null,product_name:g('ph-prod')||null,model_name:g('ph-model')||null,
     proc_name:g('ph-proc')||null,dwg_no:g('ph-dwg')||null,
     made_date:g('ph-made')||null,order_date:g('ph-order')||null,
@@ -1413,6 +1429,8 @@ async function delPL(id){
 function openPL(id){
   const r=PLS.find(x=>String(x.id)===String(id));if(!r)return;
   document.getElementById('plop').value=r.op_code;
+  stageOptions();
+  if(r.stage){const se=document.getElementById('plstage');if(se.style.display!=='none')se.value=r.stage}
   PLTAB=r.kind;
   ['mat','std','log'].forEach(x=>document.getElementById('ptab-'+x).classList.remove('on'));
   document.getElementById('ptab-'+(r.kind==='원재료'?'mat':'std')).classList.add('on');
@@ -1427,6 +1445,7 @@ function renderPLLog(){
   tb.innerHTML=PLS.map(r=>`<tr>
     <td class="mono">${esc(r.made_date||String(r.created_at).slice(0,10))}</td>
     <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
+    <td class="mono">${r.stage?esc(r.stage)+'조':'-'}</td>
     <td>${esc(r.kind||'')}</td>
     <td>${esc(r.product_name||'-')}</td>
     <td>${r.item_cnt||(r.items||[]).length}건</td>
@@ -1435,7 +1454,7 @@ function renderPLLog(){
       <button class="btn" style="padding:4px 9px;font-size:10.5px" onclick="openPL('${r.id}')">✏️ 열기</button>
       <button class="btn" style="padding:4px 9px;font-size:10.5px" onclick="pdfPL('${r.id}')">📄</button>
       <button class="del" onclick="delPL('${r.id}')">✕</button></td>
-  </tr>`).join('')||'<tr><td colspan="7" class="empty">작성된 발주서가 없습니다</td></tr>';
+  </tr>`).join('')||'<tr><td colspan="8" class="empty">작성된 발주서가 없습니다</td></tr>';
 }
 
 /* ---------- 붙여넣기 ---------- */
@@ -1542,7 +1561,7 @@ function plPasteFile(inp){
 
 /* ---------- 출력 ---------- */
 function hdrNow(){
-  return {kind:PLTAB,mgmt_no:g('ph-mgmt'),product_name:g('ph-prod'),model_name:g('ph-model'),
+  return {kind:PLTAB,stage:curStage(),mgmt_no:g('ph-mgmt'),product_name:g('ph-prod'),model_name:g('ph-model'),
     proc_name:g('ph-proc'),dwg_no:g('ph-dwg'),made_date:g('ph-made'),order_date:g('ph-order'),
     due_date:g('ph-due'),due_date2:g('ph-due2'),vendor:g('ph-vendor'),
     msheet:document.getElementById('ph-msheet').value,items:PITEMS};
@@ -1599,7 +1618,7 @@ function plPdf(h){
     <table class="meta">
       <tr><th>관리제번</th><td>${esc(h.mgmt_no||'')}</td><th>제 품 명</th><td>${esc(h.product_name||'')}</td>
           <th>작성일자</th><td class="mono">${esc(h.made_date||'')}</td><th>${esc(kind)} 납기</th><td class="mono">${esc(h.due_date||'')}</td></tr>
-      <tr><th>모 델 명</th><td>${esc(h.model_name||'')}</td><th>공 정 명</th><td>${esc(h.proc_name||'')}</td>
+      <tr><th>모 델 명</th><td>${esc(h.model_name||'')}</td><th>공 정 명</th><td>${esc(h.proc_name||'')}${h.stage?' ['+esc(h.stage)+'조]':''}</td>
           <th>제품도번</th><td class="mono">${esc(h.dwg_no||'')}</td><th>${kind==='원재료'?'1차가공 납기':'가공품 납기'}</th><td class="mono">${esc(h.due_date2||'')}</td></tr>
       <tr><th>발 주 처</th><td>${esc(h.vendor||'')}</td><th>발주일자</th><td class="mono">${esc(h.order_date||'')}</td>
           <th>M/SHEET</th><td colspan="3">${kind==='원재료'?(h.msheet==='유'?'■ 유　□ 무':h.msheet==='무'?'□ 유　■ 무':'□ 유　□ 무'):'-'}</td></tr>
