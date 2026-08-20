@@ -1074,7 +1074,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 15.9</span>
+    <span class="rev">Rev 16.1</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1155,6 +1155,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
   <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
   <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
+  <div class="mi" data-menu-id="master" onclick="openExt('master','master.html','기준정보 관리')"><span class="ic">🗃️</span>기준정보 관리</div>
   <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
   <div class="mi" data-menu-id="set" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
   <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
@@ -2081,6 +2082,8 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
       <div class="fg"><label>업무 내용 (한 줄에 하나씩)</label><textarea id="oe-tasks" rows="4" placeholder="MCT 가공(3D)&#10;평면연삭 가공"></textarea></div>
       <div class="fg"><label>출력물 (한 줄에 하나씩)</label><textarea id="oe-outs" rows="3" placeholder="작업일보&#10;금형제작 일정"></textarea></div>
       <div class="fg"><label>NG 시 되돌아갈 공정</label><select id="oe-ng"></select></div>
+      <div class="fg"><label>진척 가중치 (%) — 완료 시 반영, 비우면 균등</label>
+        <input id="oe-wt" type="number" min="0" max="100" step="1" placeholder="예: 30" class="mono"></div>
       <div class="cbtns">
         <button class="cb back" onclick="closeOpEdit()">취소</button>
         <button class="cb ok" onclick="saveOpMaster()">저장</button>
@@ -2358,6 +2361,7 @@ function renderOpList(){
         <span class="ocnt">업무 ${m.tasks.length}</span>
         <span class="ocnt clk" onclick="toggleOut('${m.op_code}')">📑 출력물 ${m.outputs.length} ${open?'▲':'▼'}</span>
         ${m.ng_return_op?`<span class="ngc">NG→${opN(m.ng_return_op)}</span>`:''}
+        ${m.wt!=null?`<span class="ocnt" style="color:var(--gold)">진척 ${m.wt}%</span>`:''}
       </div>
     </div>
     <div class="opact">
@@ -2445,6 +2449,7 @@ function editOpMaster(code){
   const acts=m?actorList(m.actor):['사내'];
   document.querySelectorAll('#oe-actor button').forEach(b=>b.classList.toggle('on',acts.includes(b.dataset.v)));
   document.getElementById('oe-tasks').value=m?m.tasks.join('\n'):'';
+  document.getElementById('oe-wt').value=(m&&m.wt!=null)?m.wt:'';
   document.getElementById('oe-outs').value=m?m.outputs.join('\n'):'';
   document.getElementById('oe-ng').innerHTML='<option value="">없음</option>'+
     FM(m?(m.flow||'신작'):SETFLOW).filter(x=>!m||x.op_code!==m.op_code).map(x=>
@@ -2468,7 +2473,8 @@ async function saveOpMaster(){
   const tasks=document.getElementById('oe-tasks').value.split('\n').map(x=>x.trim()).filter(Boolean);
   const outs=document.getElementById('oe-outs').value.split('\n').map(x=>x.trim()).filter(Boolean);
   const body={process_name:nm,dept:dp,actor:acts.join(','),tasks,outputs:outs,flow:SETFLOW,
-    ng_return_op:document.getElementById('oe-ng').value||null};
+    ng_return_op:document.getElementById('oe-ng').value||null,
+    wt:g('oe-wt')===''?null:Number(g('oe-wt'))};
   try{
     if(OEDIT){
       await api(`/mm_master?op_code=eq.${OEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
@@ -2856,7 +2862,7 @@ const CATS=[
   {k:'buy',  n:'구매·외주', ic:'🏭', ids:['outsrc','stock']},
   {k:'qa',   n:'품질관리(SQ)', ic:'🛡️', ids:['insp-file','ncr','ecn','gauge','appr']},
   {k:'stat', n:'현황',     ic:'🗂', ids:['work-status','mon','hist','board']},
-  {k:'sys',  n:'설정',     ic:'⚙️', ids:['help','set','logout']}
+  {k:'sys',  n:'설정',     ic:'⚙️', ids:['master','help','set','logout']}
 ];
 let CURCAT='plan';
 function drawerItems(){
@@ -2911,7 +2917,7 @@ function buildSidenav(){
 function markSidenav(v){
   document.querySelectorAll('#sidenav .sitem').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 }
-const EXT={'insp-file':['insp.html','검사성적서'],'partlist':['partlist.html','발주서 (PART LIST)'],
+const EXT={'master':['master.html','기준정보 관리'],'insp-file':['insp.html','검사성적서'],'partlist':['partlist.html','발주서 (PART LIST)'],
   'outsrc':['outsrc.html','외주가공 관리'],'work-status':['work_status.html','업무현황']};
 let CUREXT='';
 function openExt(id,file,title,fromPop){
@@ -3095,6 +3101,21 @@ async function loadDash(){
   document.querySelectorAll('#pfilter button')[2].textContent='📦 보관 '+arch;
   renderDash();
 }
+/* 가중 진행률: 가중치가 하나라도 있으면 가중 합산, 없으면 개수 비율 */
+function calcPct(ps){
+  if(!ps.length)return 0;
+  const wOf=pr=>{const m=MASTER.find(x=>x.op_code===pr.op_code);return m&&m.wt!=null?Number(m.wt):null};
+  const ws=ps.map(wOf);
+  if(ws.some(w=>w!=null&&w>0)){
+    const tot=ps.reduce((s,pr,i)=>s+(ws[i]||0),0);
+    if(tot>0){
+      const done=ps.reduce((s,pr,i)=>s+(pr.status==='OK'?(ws[i]||0):0),0);
+      return Math.round(done/tot*100);
+    }
+  }
+  const ok=ps.filter(x=>x.status==='OK').length;
+  return Math.round(ok/ps.length*100);
+}
 function renderDash(){
   const box=document.getElementById('projlist');
   const list=PROJECTS.filter(p=>{
@@ -3106,8 +3127,8 @@ function renderDash(){
   if(!list.length){box.innerHTML='<div class="empty">'+(PF==='arch'?'보관된 금형이 없습니다':PF==='done'?'완료된 금형이 없습니다':'해당하는 금형이 없습니다')+'</div>';return}
   box.innerHTML=list.map(p=>{
     const ps=PROCS.filter(x=>x.project_id===p.id);
-    const ok=ps.filter(x=>x.status==='OK').length, tot=ps.length||1;
-    const pct=Math.round(ok/tot*100);
+    const ok=ps.filter(x=>x.status==='OK').length;
+    const pct=calcPct(ps);
     const co=curProcObj(ps);
     const cno=co.pr?opN(co.pr.op_code):'-';
     const cnm=co.pr?nm4(co.pr.op_code):(ps.length?'전공정완료':'');
@@ -3377,7 +3398,7 @@ async function renderFlow(){
   loadSuggest();
   const pj=PROJECTS.find(x=>x.id===pid);
   const ok=ps.filter(x=>x.status==='OK').length;
-  document.getElementById('flowprog').textContent=`${pj&&pj.mold_type==='수리'?'🔧수리 · ':''}진행률 ${ok}/${ps.length} (${Math.round(ok/(ps.length||1)*100)}%)`;
+  document.getElementById('flowprog').textContent=`${pj&&pj.mold_type==='수리'?'🔧수리 · ':''}진행률 ${ok}/${ps.length} (${calcPct(ps)}%)`;
   box.innerHTML=FM(pflow(pj)).map(m=>{
     const p=ps.find(x=>x.op_code===m.op_code)||{status:'대기',ng_count:0};
     const stc=p.status==='OK'?'st-ok':p.status==='진행'?'st-r':p.status==='NG'?'st-ng':'st-w';

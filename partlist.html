@@ -1063,7 +1063,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.4</span>
+    <span class="rev">v1.5</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1109,7 +1109,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
           <div class="fg"><label>작성일자</label><input type="date" id="ph-made"></div>
           <div class="fg"><label>발주일자</label><input type="date" id="ph-order"></div>
           <div class="fg"><label id="ph-duelb">원재료 납기</label><input type="date" id="ph-due"></div>
-          <div class="fg"><label>발 주 처</label><input id="ph-vendor" placeholder="예: iptk"></div>
+          <div class="fg"><label>발 주 처</label><input id="ph-vendor" list="vendlist" placeholder="예: iptk"></div>
           <div class="fg" id="ph-2ndwrap"><label id="ph-due2lb">1차가공 납기</label><input type="date" id="ph-due2"></div>
           <div class="fg"><label>M/SHEET</label>
             <select id="ph-msheet"><option value="">해당없음</option><option>유</option><option>무</option></select></div>
@@ -1377,7 +1377,7 @@ function drawPL(){
       <div class="ifm-rows">`+
       PITEMS.map((r,i)=>`<div class="pl-row" style="grid-template-columns:26px ${gt} 24px">
         <div class="idx">${i+1}</div>`+
-        cols.map(c=>`<input value="${esc(r[c[0]]||'')}" placeholder="${c[1]}" ${c[0]==='size'||c[0]==='spec'||c[0]==='no'?'class="mono"':''} oninput="setPL(${i},'${c[0]}',this.value)" onkeydown="plKey(event,${i},${cols.indexOf(c)})">`).join('')+
+        cols.map(c=>`<input value="${esc(r[c[0]]||'')}" placeholder="${c[1]}" ${c[0]==='size'||c[0]==='spec'||c[0]==='no'?'class="mono"':''} ${c[0]==='material'?'list="matlist"':c[0]==='vendor'?'list="vendlist"':c[0]==='maker'?'list="vendlist"':''} oninput="setPL(${i},'${c[0]}',this.value)" onkeydown="plKey(event,${i},${cols.indexOf(c)})">`).join('')+
         `<button class="rm" onclick="rmPL(${i})">✕</button>
       </div>`).join('')+`</div></div></div>`;
   document.getElementById('pl-note').innerHTML='<b>주기</b><ul>'+NOTE[PLTAB].map(n=>`<li>${esc(n)}</li>`).join('')+'</ul>';
@@ -1706,10 +1706,20 @@ document.addEventListener('click',closePCWidthPopup);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()});
 
 /* ---------- 초기화 ---------- */
+async function loadMasters(){
+  const mk=(id,rows,f)=>{
+    let dl=document.getElementById(id);
+    if(!dl){dl=document.createElement('datalist');dl.id=id;document.body.appendChild(dl)}
+    dl.innerHTML=rows.map(r=>`<option value="${esc(r[f]||'')}">`).join('');
+  };
+  try{mk('vendlist',await api('/mm_vendor?select=name&order=name'),'name')}catch(e){}
+  try{mk('matlist',await api('/mm_material?select=code&order=code'),'code')}catch(e){}
+}
 (async function init(){
   if(!USER){alert('로그인이 필요합니다.');location.href='index.html';return}
   document.getElementById('ubadge').textContent='👤 '+USER;
   try{applyFontScale(localStorage.getItem(FS_KEY)||100,false)}catch(e){}
+  loadMasters();
   try{await loadFoot();await loadAll();}catch(e){toast('불러오기 실패: '+e.message)}
 })();
 

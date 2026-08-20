@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0f1117">
-<title>외주가공 관리 — 금형제작관리</title>
+<title>기준정보 관리 — 금형제작관리</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
@@ -947,65 +947,37 @@ header .hright{position:relative}
 
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
-.cfi{width:100%;min-width:0;background:var(--card2);border:1px solid var(--line2);
-  color:var(--ink);padding:7px 6px;font-size:12.5px;text-align:right;font-family:'IBM Plex Mono',monospace}
-.cfi:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.08)}
-.cfi:disabled{opacity:.55;background:transparent;border-color:transparent}
-.cfsum{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;padding:11px 14px;
-  background:var(--card);border:1px solid var(--line);font-size:12.5px;color:var(--sub);font-weight:700}
-.cfsum b{font-size:14px}
-.gdtbl{min-width:1110px}
-.bulkbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:9px 11px;
-  background:var(--card);border:1px dashed var(--line);border-radius:11px}
-.bulkbar input{background:var(--card2);border:1px solid var(--line);border-radius:7px;color:var(--ink);
-  padding:7px 8px;font-size:12px;font-family:inherit}
-.bulkbar input[type=date]{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
-.bulkbar .bl{font-size:11.5px;font-weight:800;color:var(--gray);white-space:nowrap;padding-right:3px}
-.bulkbar .bl.on{color:var(--gold)}
-.gdtbl td{padding:2px 3px}
-.gdtbl th{font-size:11px;white-space:nowrap}
-.gdi{width:100%;min-width:0;background:transparent;border:1px solid transparent;border-radius:6px;
-  color:var(--ink);padding:7px 6px;font-size:12.5px;font-family:inherit}
-.gdi:hover{border-color:var(--line2);background:var(--card2)}
-.gdi:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.09)}
-.gdi.mono{font-family:'IBM Plex Mono',monospace}
-.gdi.num{text-align:center}
-.gdi.date{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
-tr.gd-new td{background:rgba(226,176,74,.06)}
-.implist{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:5px}
-.improw{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line2);border-radius:9px;
-  background:var(--card2);cursor:pointer;font-size:12.5px}
-.improw input{width:16px;height:16px;flex-shrink:0}
-.improw b{color:var(--gold);flex:0 0 auto}
-.improw .nm{flex:1;min-width:0;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.improw .kd{font-size:10.5px;color:var(--sub);background:var(--card);border:1px solid var(--line2);border-radius:7px;padding:2px 7px;white-space:nowrap}
-.improw .fs{font-size:10.5px;font-weight:800;color:var(--blue);white-space:nowrap}
-.improw .exb{font-size:10.5px;font-weight:800;color:var(--green);white-space:nowrap}
-.improw.ex{opacity:.55}
-.oscard{background:var(--card);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;padding:11px 13px}
-.osh{display:flex;align-items:center;gap:9px;margin-bottom:9px}
-.osh b{font-size:14.5px;color:var(--gold)}
-.osh .nm{font-size:13px;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.osh .prog{font-size:11px;font-weight:800;color:var(--sub);background:var(--card2);border:1px solid var(--line2);border-radius:10px;padding:2px 9px;white-space:nowrap}
-.steps{display:flex;flex-wrap:wrap;gap:6px}
-.stepchip{display:flex;flex-direction:column;align-items:flex-start;gap:1px;position:relative;
-  min-width:108px;padding:7px 10px 7px 26px;border-radius:9px;cursor:pointer;text-align:left;
-  font-family:inherit;font-size:12px;font-weight:800;border:1px solid var(--line2);background:var(--card2);color:var(--sub)}
-.stepchip i{position:absolute;left:7px;top:7px;font-style:normal;font-size:10px;font-weight:800;width:14px;height:14px;
-  border-radius:50%;background:var(--line);color:var(--sub);display:flex;align-items:center;justify-content:center}
-.stepchip em{font-style:normal;font-size:10px;font-weight:700;opacity:.85}
-.stepchip u{text-decoration:none;font-size:10px;color:var(--gray)}
-.stepchip.run{border-color:rgba(79,140,255,.45);background:rgba(79,140,255,.10);color:var(--blue)}
-.stepchip.run i{background:rgba(79,140,255,.3);color:var(--blue)}
-.stepchip.ok{border-color:rgba(126,224,160,.45);background:rgba(126,224,160,.10);color:var(--green)}
-.stepchip.ok i{background:rgba(126,224,160,.3);color:var(--green)}
-.stepchip.late{border-color:rgba(255,123,123,.55);box-shadow:0 0 0 1px rgba(255,123,123,.3)}
-.stepchip .unset{color:var(--red)}
-.stepchip.add{min-width:0;align-items:center;justify-content:center;padding:7px 12px;border-style:dashed;color:var(--gold);border-color:var(--goldbd)}
-tr.os-ok td{background:rgba(126,224,160,.05)}
-tr.os-run td{background:rgba(79,140,255,.05)}
-tr.os-late td{background:rgba(255,123,123,.06)}
-@media(max-width:560px){.stepchip{min-width:calc(50% - 3px)}}
+.plhdr{grid-template-columns:repeat(4,1fr)}
+.pl-wrap{overflow-x:auto}
+.pl-head,.pl-row{display:grid;gap:4px;align-items:center;min-width:760px}
+.pl-head{padding:5px 6px 3px;font-size:10px;font-weight:800;color:var(--gray)}
+.pl-row{padding:3px 6px;border-bottom:1px dashed var(--line2)}
+.pl-row:last-child{border-bottom:none}
+.pl-row .idx{font-size:11px;color:var(--gray);text-align:center;font-family:'IBM Plex Mono',monospace}
+.pl-row input{width:100%;min-width:0;background:var(--card2);border:1px solid var(--line);border-radius:7px;
+  color:var(--ink);padding:8px 6px;font-size:12.5px;font-family:inherit}
+.pl-row input.mono{font-family:'IBM Plex Mono',monospace}
+.pl-row input:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.07)}
+.pl-row .rm{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer;padding:2px}
+.pl-row .rm:hover{color:var(--red)}
+.ftprev{display:flex;justify-content:space-between;gap:8px;margin:10px 0 12px;padding:9px 12px;
+  background:#fff;color:#333;border:1px solid var(--line);border-radius:8px;font-size:11.5px;font-weight:700}
+.ftprev span:nth-child(2){flex:1;text-align:center}
+.ftprev span:nth-child(3){text-align:right}
+.plnote{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 15px;font-size:11.5px;color:var(--sub);line-height:1.7}
+.plnote b{color:var(--gold)}
+.plnote ul{margin:6px 0 0;padding-left:18px}
+.pstbox{max-width:min(860px,96vw);width:min(860px,96vw);padding:0 14px 14px;max-height:92vh;overflow:auto}
+.pstbox .mhead{padding:13px 0;margin:0}
+.psthint{font-size:11.5px;color:var(--gray);margin:10px 0}
+.psthint b{color:var(--gold)}
+.psttxt{width:100%;min-height:150px;background:var(--card2);border:1px solid var(--line);border-radius:9px;
+  color:var(--ink);padding:10px;font-size:12.5px;font-family:'IBM Plex Mono',monospace;line-height:1.6;resize:vertical}
+.psttxt:focus{outline:none;border-color:var(--gold)}
+.pstprev{margin:10px 0;max-height:240px;overflow:auto}
+.pst-cnt{font-size:11.5px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.pst-empty{font-size:11.5px;color:var(--gray);padding:8px 2px}
+@media(max-width:760px){.plhdr{grid-template-columns:1fr 1fr}}
 
 
 /* ===== 화면 테마 ===== */
@@ -1081,21 +1053,28 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
 html.embedded header{display:none!important}
 html.embedded main{padding-top:12px!important;margin-left:0!important}
 html.embedded .sidenav,html.embedded .topnav{display:none!important}
+
+main{padding-top:calc(72px / var(--mm-fs,1))}
+.mi-cell{width:100%;min-width:0;background:transparent;border:1px solid transparent;
+  color:var(--ink);padding:7px 6px;font-size:12.5px;font-family:inherit}
+.mi-cell:hover{border-color:var(--line2);background:var(--card2)}
+.mi-cell:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.07)}
+
 </style>
 </head>
 <body>
 <header>
   <div class="hleft">
     <div class="hmb" onclick="location.href='index.html'" title="메인으로" style="font-size:19px;color:var(--gold);align-items:center;justify-content:center">←</div>
-    <span class="htitle gold-txt">외주가공 관리</span>
+    <span class="htitle gold-txt">기준정보 관리</span>
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.6</span>
+    <span class="rev">v1.0</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
-        <div class="pcwpophead"><b>외주가공 화면 설정</b>
+        <div class="pcwpophead"><b>기준정보 화면 설정</b>
           <button class="pcwclose" type="button" onclick="closePCWidthPopup()">×</button></div>
         <div class="pcwrow pcwfs"><span>글자 크기</span><b id="pfsValue">100%</b></div>
         <input id="pfsRange" class="pcwrange" type="range" min="80" max="150" step="5" value="100"
@@ -1112,174 +1091,44 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
 </header>
 
 <main>
-  <section id="v-os">
-    <div class="psel" style="margin-bottom:10px">
-      <select id="ossel" onchange="onOsProj()"></select>
-      <select id="osstage" onchange="render()" style="display:none;min-width:90px"></select>
-      <span id="os-sum" style="font-size:12px;font-weight:800"></span>
-    </div>
-
+  <section>
     <div class="itabs">
-      <button class="itab on" id="otab-part" onclick="osTab('part')">🧩 부품 라우팅</button>
-      <button class="itab" id="otab-grid" onclick="osTab('grid')">⌨ 표 편집</button>
-      <button class="itab" id="otab-order" onclick="osTab('order')">🏭 발주 관리</button>
-      <button class="itab" id="otab-conf" onclick="osTab('conf')">💰 입고확정</button>
+      <button class="itab on" id="mtab-vendor" onclick="mTab('vendor')">🏢 업체관리</button>
+      <button class="itab" id="mtab-material" onclick="mTab('material')">🧱 자재관리</button>
+      <button class="itab" id="mtab-moldtype" onclick="mTab('moldtype')">🗜 금형타입</button>
+      <button class="itab" id="mtab-machine" onclick="mTab('machine')">⚙️ 기계사양</button>
     </div>
 
-    <!-- 탭1: 부품 라우팅 -->
-    <div id="os-part">
-      <div class="qfbox"><span class="qflb">➕ 부품 추가</span>
-        <div class="stkbar" style="margin-bottom:10px">
-          <button class="btn" style="padding:9px 14px;background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.4);color:var(--blue)" onclick="openImp()">📋 발주서에서 불러오기</button>
-          <span style="font-size:11px;color:var(--gray)">발주서(PART LIST)의 품목을 선택해 라우팅 부품으로 가져옵니다</span>
-        </div>
-        <div class="ihdr" style="grid-template-columns:110px 1fr 90px">
-          <div class="fg"><label>품 번</label><input id="np-no" class="mono" placeholder="예: B13A"></div>
-          <div class="fg"><label>부품명</label><input id="np-name" placeholder="예: PUNCH, BURRING"></div>
-          <div class="fg"><label>&nbsp;</label><button class="btn btn-p" style="padding:10px 4px" onclick="addPart()">추가</button></div>
-        </div>
+    <div class="qfbox"><span class="qflb" id="m-addlb">➕ 신규 등록</span>
+      <div class="ihdr" id="m-addrow"></div>
+      <div class="stkbar">
+        <button class="btn btn-p" style="padding:10px 18px" onclick="mAdd()">추가</button>
+        <input id="m-q" placeholder="검색" oninput="mRender()" style="margin-left:auto;min-width:160px;background:var(--card2);border:1px solid var(--line);color:var(--ink);padding:9px 10px;font-size:12.5px;font-family:inherit">
       </div>
-      <div id="oslist"></div>
     </div>
 
-    <!-- 탭: 표 편집 (PC 일괄입력) -->
-    <div id="os-grid" class="hide">
-      <div class="stkbar" style="margin-bottom:10px;flex-wrap:wrap">
-        <button class="btn btn-p" style="padding:10px 18px" onclick="gridSave()">💾 일괄 저장 <span id="gd-dirty"></span></button>
-        <button class="btn" style="padding:9px 13px" onclick="gridAddRow()">+ 행 추가</button>
-        <button class="btn" style="padding:9px 13px" onclick="openImp()">📋 발주서 불러오기</button>
-        <button class="btn hxls" style="padding:9px 13px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportOSCSV()">엑셀</button>
-        <span style="font-size:11px;color:var(--gray)">Tab·Enter 이동 · Ctrl+V로 엑셀 범위 붙여넣기 · 셀 수정 후 일괄 저장</span>
-      </div>
-      <div class="bulkbar">
-        <span class="bl" id="gd-sel">선택 0행</span>
-        <input id="bk-vendor" list="vendlist" placeholder="협력업체" style="width:120px">
-        <input id="bk-proc" list="proclist" placeholder="가공공정" style="width:130px">
-        <input type="date" id="bk-order" title="발주일">
-        <input type="date" id="bk-due" title="입고요구일">
-        <input type="date" id="bk-in" title="입고일">
-        <button class="btn" style="padding:8px 13px;background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.4);color:var(--blue)" onclick="bulkApply()">선택 행에 적용</button>
-        <button class="btn" style="padding:8px 12px" onclick="bulkToday('bk-order')">오늘 발주</button>
-        <button class="btn" style="padding:8px 12px" onclick="bulkToday('bk-in')">오늘 입고</button>
-      </div>
-      <div class="tscroll"><table class="wide gdtbl" id="gdtbl">
-        <thead><tr>
-          <th style="width:26px"><input type="checkbox" id="gd-all" onchange="gdSelAll(this.checked)" style="width:15px;height:15px"></th>
-          <th style="width:30px">#</th><th style="width:86px">품번</th><th style="width:150px">부품명</th>
-          <th style="width:38px">순</th><th style="width:130px">가공공정</th><th style="width:110px">협력업체</th>
-          <th style="width:118px">발주일</th><th style="width:118px">입고요구일</th><th style="width:118px">입고일</th>
-          <th style="width:120px">비고</th><th style="width:58px">상태</th><th style="width:34px"></th>
-        </tr></thead>
-        <tbody id="gdbody"></tbody></table></div>
-    </div>
-
-    <!-- 탭2: 발주 관리 -->
-    <div id="os-order" class="hide">
-      <div class="pfilter" id="osfilter" style="margin-bottom:10px">
-        <button class="on" onclick="setOSF('')">전체</button>
-        <button onclick="setOSF('미발주')">미발주</button>
-        <button onclick="setOSF('발주')">발주완료</button>
-        <button onclick="setOSF('입고')">입고완료</button>
-      </div>
-      <div class="stkbar" style="margin-bottom:10px">
-        <button class="btn hxls" style="padding:9px 14px;background:rgba(126,224,160,.16);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="exportOSCSV()">엑셀</button>
-      </div>
-      <div class="tscroll"><table class="wide" style="min-width:840px">
-        <thead><tr><th>조</th><th>품번</th><th>부품명</th><th>순서</th><th>가공공정</th><th>협력업체</th><th>발주일</th><th>입고요구일</th><th>입고일</th><th>상태</th><th style="width:150px"></th></tr></thead>
-        <tbody id="osbody"></tbody></table></div>
-    </div>
-    <!-- 탭: 입고확정 (매입가 · 네고율 · 확정가) -->
-    <div id="os-conf" class="hide">
-      <div class="pfilter" id="cffilter" style="margin-bottom:10px">
-        <button class="on" onclick="setCF('')">전체</button>
-        <button onclick="setCF('미확정')">미확정</button>
-        <button onclick="setCF('확정')">확정완료</button>
-      </div>
-      <div class="bulkbar">
-        <span class="bl" id="cf-sel">선택 0행</span>
-        <input type="number" id="bk-nego" placeholder="네고율 %" style="width:88px" step="0.1">
-        <button class="btn" style="padding:8px 12px" onclick="cfNego()">네고율 적용</button>
-        <input type="date" id="bk-cdate" title="입고확정일">
-        <button class="btn" style="padding:8px 13px;background:rgba(126,224,160,.14);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="cfConfirm()">✔ 확정 처리</button>
-        <button class="btn" style="padding:8px 12px;color:var(--red)" onclick="cfCancel()">확정 취소</button>
-        <button class="btn btn-p" style="padding:8px 16px;margin-left:auto" onclick="cfSave()">💾 저장 <span id="cf-dirty"></span></button>
-      </div>
-      <div class="tscroll"><table class="wide" style="min-width:1000px">
-        <thead><tr>
-          <th style="width:26px"><input type="checkbox" onchange="cfSelAll(this.checked)" style="width:15px;height:15px"></th>
-          <th>품번</th><th>부품명</th><th>가공공정</th><th>협력업체</th><th>입고일</th>
-          <th style="width:96px">매입가</th><th style="width:72px">네고율%</th><th style="width:96px">확정가</th>
-          <th style="width:104px">확정일</th><th style="width:58px">상태</th>
-        </tr></thead>
-        <tbody id="cfbody"></tbody></table></div>
-      <div class="cfsum" id="cfsum"></div>
+    <div class="tscroll"><table class="wide" style="min-width:680px">
+      <thead id="m-head"></thead>
+      <tbody id="m-body"></tbody></table></div>
+    <div class="stkbar" style="margin-top:10px">
+      <button class="btn btn-p" style="padding:10px 18px" onclick="mSave()">💾 변경 저장 <span id="m-dirty"></span></button>
+      <span style="font-size:11px;color:var(--gray)">칸을 바로 수정하고 저장을 누르세요 · 발주서·외주가공 입력창에 자동완성으로 연동됩니다</span>
     </div>
   </section>
 </main>
 
-<!-- 스텝 편집 모달 -->
-<div class="modal" id="stmodal" onclick="if(event.target===this)closeStep()">
-  <div class="mbox">
-    <div class="mhead"><b id="st-title">공정 편집</b><button class="mx" onclick="closeStep()">✕</button></div>
-    <div style="padding:14px 18px 18px">
-      <div class="ihdr" style="grid-template-columns:1fr 1fr">
-        <div class="fg"><label>가공공정</label><input id="st-proc" placeholder="예: 성형연삭(소형)"></div>
-        <div class="fg"><label>협력업체</label><input id="st-vendor" list="vendlist" placeholder="예: 동우정밀"></div>
-        <div class="fg"><label>발주일</label><input type="date" id="st-order"></div>
-        <div class="fg"><label>입고요구일</label><input type="date" id="st-due"></div>
-        <div class="fg"><label>입고일</label><input type="date" id="st-in"></div>
-        <div class="fg"><label>비고</label><input id="st-memo"></div>
-      </div>
-      <div class="stkbar" style="margin-top:12px;flex-wrap:wrap">
-        <button class="btn" style="padding:9px 13px;background:rgba(79,140,255,.12);border-color:rgba(79,140,255,.4);color:var(--blue)" onclick="quickOrder()">📤 오늘 발주</button>
-        <button class="btn" style="padding:9px 13px;background:rgba(126,224,160,.14);border-color:rgba(126,224,160,.4);color:var(--green)" onclick="quickIn()">📥 오늘 입고</button>
-        <button class="btn" style="padding:9px 13px;color:var(--red)" onclick="delStep()">✕ 삭제</button>
-      </div>
-      <div class="stkbar" style="margin-top:12px">
-        <button class="btn btn-p" style="flex:1;padding:12px" onclick="saveStep()">💾 저장</button>
-        <button class="btn" style="padding:11px 16px" onclick="closeStep()">취소</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="impmodal" onclick="if(event.target===this)closeImp()">
-  <div class="mbox" style="max-width:640px">
-    <div class="mhead"><b>📋 발주서 품목 불러오기</b>
-      <span id="imp-cnt" style="font-size:11px;font-weight:800;color:var(--gold)"></span>
-      <button class="mx" onclick="closeImp()">✕</button></div>
-    <div style="padding:12px 16px 16px">
-      <div class="stkbar" style="margin-bottom:9px">
-        <button class="btn" style="padding:7px 12px;font-size:11.5px" onclick="impAll(true)">전체 선택</button>
-        <button class="btn" style="padding:7px 12px;font-size:11.5px" onclick="impAll(false)">전체 해제</button>
-        <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--sub);font-weight:700;margin-left:auto">
-          <input type="checkbox" id="imp-first" checked style="width:15px;height:15px"> 1차가공(A/AA) 첫 공정 자동 생성</label>
-      </div>
-      <div id="implist" class="implist"></div>
-      <div class="stkbar" style="margin-top:12px">
-        <button class="btn btn-p" style="flex:1;padding:12px" onclick="doImport()">선택 품목 가져오기</button>
-        <button class="btn" style="padding:11px 16px" onclick="closeImp()">취소</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="toast" id="toast"></div>
 
 <script>
 if(window.self!==window.top){document.documentElement.classList.add('embedded');}
-
-/* ---------- 화면 테마 (index.html과 공유) ---------- */
 (function(){
   try{
     var t=localStorage.getItem('mm_theme_v1')||'';if(t!=='mono')t='';
-    if(t){
-      document.documentElement.setAttribute('data-theme',t);
+    if(t){document.documentElement.setAttribute('data-theme',t);
       var m=document.querySelector('meta[name="theme-color"]');
-      if(m)m.setAttribute('content',(t==='mono'?'#ffffff':'#0f1117'));
-    }
+      if(m)m.setAttribute('content',(t==='mono'?'#ffffff':'#0f1117'));}
   }catch(e){}
 })();
-
 /* ================= 설정 ================= */
 const BASE="https://pllwltojbofjaftcemvn.supabase.co";
 const URL_=BASE+"/rest/v1";
@@ -1308,607 +1157,85 @@ async function api(path,opt={}){
 }
 function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-function today(){return new Date().toISOString().slice(0,10)}
 function g(id){const el=document.getElementById(id);return el?el.value.trim():''}
-function md(d){return d?String(d).slice(5,10).replace('-','/'):''}
-function dlCSV(title,head,rows,fname){
-  const csv=[[title],head,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
-  a.download=fname+'_'+today()+'.csv';a.click();URL.revokeObjectURL(a.href);
-}
 
-/* ---------- 데이터 ---------- */
-let PROJ=[],ROWS=[],OSTAB='part',OSF='',STEDIT=null;
-const STG_L='ABCDEFGHI';
-function stageOptions(){
-  const p=PROJ.find(x=>String(x.id)===String(g('ossel')));
-  const el=document.getElementById('osstage');
-  const n=p?(Number(p.stages)||1):1;
-  if(n<=1){el.style.display='none';el.innerHTML='';return}
-  const cur=el.value;
-  el.style.display='';
-  el.innerHTML='<option value="">전체 조</option>'+Array.from({length:n},(_,i)=>`<option value="${STG_L[i]}">${STG_L[i]}조</option>`).join('');
-  if([...el.options].some(o=>o.value===cur))el.value=cur;
-}
-function curStage(){
-  const el=document.getElementById('osstage');
-  return el.style.display==='none'?null:(el.value||null);
-}
-function vROWS(){
-  const st=curStage();
-  return st?ROWS.filter(r=>(r.stage||null)===st):ROWS;
-}
-async function onOsProj(){stageOptions();await loadOS()}
-const PROCS=['성형연삭(소형)','성형연삭(대형)','평면연삭','열처리','WIRE CUT','M/C황삭','M/C정삭','면삭밀링','선반','방전','각인','코팅','TAP','DRILLING'];
+/* ---------- 탭 정의 ---------- */
+const TABS={
+  vendor:{tbl:'mm_vendor',lb:'🏢 업체 등록',
+    cols:[['name','업체명*','1fr'],['procs','전문공정','1fr'],['contact','담당자','110'],['phone','연락처','130'],['memo','비고','1fr']]},
+  material:{tbl:'mm_material',lb:'🧱 자재(재질) 등록',
+    cols:[['code','재질코드*','110'],['name','재질명','1fr'],['spec','특성 · 비고','1.4fr']]},
+  moldtype:{tbl:'mm_moldtype',lb:'🗜 금형타입 등록',
+    cols:[['name','타입명*','1fr'],['memo','비고','1.6fr']]},
+  machine:{tbl:'mm_machine',lb:'⚙️ 기계 등록',
+    cols:[['name','기계명*','1fr'],['spec','사양 (톤수·스트로크 등)','1.4fr'],['memo','비고','1fr']]}
+};
+let CUR='vendor', DATA=[], DIRTY=new Map();
 
-function stat(r){return r.in_date?'입고':r.order_date?'발주':'미발주'}
-function stCls(s){return s==='입고'?'ok':s==='발주'?'run':'wait'}
-function delayed(r){return !r.in_date&&r.due_date&&r.due_date<today()}
-
-async function loadAll(){
-  PROJ=await api("/mm_project?select=id,mold_no,mold_name,status,mold_type,stages&order=created_at.desc");
-  const sel=document.getElementById('ossel');
-  sel.innerHTML=PROJ.map(x=>`<option value="${x.id}">${x.mold_type==='수리'?'[수리] ':'[신작] '}${esc(x.mold_no)} — ${esc(x.mold_name)}</option>`).join('')
-    ||'<option value="">등록된 금형 없음</option>';
-  stageOptions();
-  await loadOS();
+function mTab(t){
+  if(DIRTY.size&&!confirm('저장하지 않은 변경이 있습니다. 이동할까요?'))return;
+  DIRTY.clear();
+  CUR=t;
+  Object.keys(TABS).forEach(k=>document.getElementById('mtab-'+k).classList.toggle('on',k===t));
+  document.getElementById('m-addlb').textContent='➕ '+TABS[t].lb;
+  buildAddRow();
+  mLoad();
 }
-async function loadOS(){
-  const pid=g('ossel');
-  if(!pid){ROWS=[];render();return}
-  try{ROWS=await api(`/mm_out_route?select=*&project_id=eq.${pid}&order=part_no.asc,seq.asc`);}
-  catch(e){ROWS=[];toast('patch_outsrc.sql을 Supabase에서 실행하세요')}
-  render();
+function buildAddRow(){
+  const box=document.getElementById('m-addrow');
+  const cols=TABS[CUR].cols;
+  box.style.gridTemplateColumns=cols.map(c=>c[2].endsWith('fr')?'minmax(90px,'+c[2]+')':c[2]+'px').join(' ');
+  box.innerHTML=cols.map(c=>`<div class="fg"><label>${c[1]}</label><input id="ma-${c[0]}"></div>`).join('');
 }
-function render(){
-  const c={'미발주':0,'발주':0,'입고':0};
-  vROWS().forEach(r=>c[stat(r)]++);
-  const dl=vROWS().filter(delayed).length;
-  document.getElementById('os-sum').innerHTML=
-    `<span style="color:var(--gray)">미발주 ${c['미발주']}</span> · <span style="color:var(--blue)">발주 ${c['발주']}</span> · <span style="color:var(--green)">입고 ${c['입고']}</span>`+
-    (dl?` · <span style="color:var(--red)">지연 ${dl}</span>`:'');
-  if(OSTAB==='part')renderParts();
-  else if(OSTAB==='grid')renderGrid();
-  else if(OSTAB==='conf')renderConf();
-  else renderOrders();
+async function mLoad(){
+  try{DATA=await api('/'+TABS[CUR].tbl+'?select=*&order=id.asc');}
+  catch(e){DATA=[];toast('patch_master.sql을 Supabase에서 실행하세요')}
+  mRender();
 }
-
-/* ---------- 탭 ---------- */
-function osTab(t){
-  if(OSTAB==='grid'&&t!=='grid'&&GDIRTY.size){
-    if(!confirm('저장하지 않은 변경이 있습니다. 이동할까요?'))return;
-    GDIRTY.clear();GNEW=[];
-  }
-  if(OSTAB==='conf'&&t!=='conf'&&CDIRTY.size){
-    if(!confirm('저장하지 않은 확정 변경이 있습니다. 이동할까요?'))return;
-    CDIRTY.clear();
-  }
-  OSTAB=t;
-  ['part','grid','order','conf'].forEach(x=>{
-    document.getElementById('otab-'+x).classList.toggle('on',t===x);
-    document.getElementById('os-'+x).classList.toggle('hide',t!==x);
-  });
-  render();
+function mRender(){
+  const cols=TABS[CUR].cols;
+  const q=g('m-q').toLowerCase();
+  document.getElementById('m-head').innerHTML='<tr><th style="width:36px">No</th>'+
+    cols.map(c=>`<th>${c[1].replace('*','')}</th>`).join('')+'<th style="width:40px"></th></tr>';
+  let list=DATA;
+  if(q)list=DATA.filter(r=>cols.some(c=>String(r[c[0]]||'').toLowerCase().includes(q)));
+  document.getElementById('m-body').innerHTML=list.map((r,i)=>'<tr>'+
+    `<td class="mono" style="text-align:center;color:var(--gray)">${i+1}</td>`+
+    cols.map(c=>`<td><input class="mi-cell" value="${esc(dval(r,c[0]))}" oninput="mEdit(${r.id},'${c[0]}',this.value)"></td>`).join('')+
+    `<td style="text-align:center"><button class="del" onclick="mDel(${r.id})">✕</button></td></tr>`
+  ).join('')||`<tr><td colspan="${cols.length+2}" class="empty">등록된 항목이 없습니다</td></tr>`;
+  mMark();
 }
-function setOSF(f){
-  OSF=f;
-  document.querySelectorAll('#osfilter button').forEach((b,i)=>b.classList.toggle('on',['','미발주','발주','입고'][i]===f));
-  renderOrders();
-}
-
-/* ---------- 부품 라우팅 ---------- */
-function partsOf(){
-  const m=new Map();
-  vROWS().forEach(r=>{
-    const k=r.part_no+'|'+(r.part_name||'');
-    if(!m.has(k))m.set(k,{no:r.part_no,name:r.part_name||'',steps:[]});
-    m.get(k).steps.push(r);
-  });
-  return [...m.values()];
-}
-function renderParts(){
-  const box=document.getElementById('oslist');
-  const parts=partsOf();
-  box.innerHTML=parts.map(p=>{
-    const done=p.steps.filter(s=>s.in_date).length;
-    return `<div class="oscard">
-      <div class="osh">
-        <b class="mono">${esc(p.no)}</b>${p.stage?`<span class="kd">${esc(p.stage)}조</span>`:''}<span class="nm">${esc(p.name)}</span>
-        <span class="prog">${done}/${p.steps.length} 입고</span>
-        <button class="del" title="부품 삭제" onclick="delPart('${esc(p.no)}')">✕</button>
-      </div>
-      <div class="steps">
-        ${p.steps.map(s=>{
-          const st=stat(s);
-          return `<button class="stepchip ${stCls(st)}${delayed(s)?' late':''}" onclick="openStep(${s.id})">
-            <i>${s.seq}</i>${esc(s.proc)}
-            <em>${st==='입고'?'✓ '+md(s.in_date):st==='발주'?'📤 '+md(s.order_date)+(s.due_date?' → '+md(s.due_date):''):'미발주'}</em>
-            ${s.vendor?`<u>${esc(s.vendor)}</u>`:''}
-          </button>`;
-        }).join('')}
-        <button class="stepchip add" onclick="newStep('${esc(p.no)}','${esc(p.name).replace(/'/g,"\\'")}')">+ 공정</button>
-      </div>
-    </div>`;
-  }).join('')||'<div class="ifm-empty">부품을 추가하고 가공 공정을 순서대로 등록하세요</div>';
-}
-async function addPart(){
-  const no=g('np-no'),name=g('np-name');
-  if(!no)return toast('품번을 입력하세요');
-  if(!g('ossel'))return toast('금형을 선택하세요');
-  if(ROWS.some(r=>r.part_no===no))return toast('이미 등록된 품번입니다 — 카드에서 + 공정으로 추가하세요');
-  newStep(no,name);
-}
-async function delPart(no){
-  if(!confirm(no+' 부품의 전체 공정을 삭제할까요?'))return;
+function dval(r,f){const d=DIRTY.get(r.id);return d&&f in d?d[f]:(r[f]==null?'':r[f])}
+function mEdit(id,f,v){const o=DIRTY.get(id)||{};o[f]=v;DIRTY.set(id,o);mMark()}
+function mMark(){const el=document.getElementById('m-dirty');if(el)el.textContent=DIRTY.size?'('+DIRTY.size+')':''}
+async function mAdd(){
+  const cols=TABS[CUR].cols;
+  const body={};
+  for(const c of cols)body[c[0]]=g('ma-'+c[0])||null;
+  const req=cols.find(c=>c[1].includes('*'));
+  if(req&&!body[req[0]])return toast(req[1].replace('*','')+'을(를) 입력하세요');
   try{
-    await api(`/mm_out_route?project_id=eq.${g('ossel')}&part_no=eq.${encodeURIComponent(no)}`,{method:"DELETE"});
-    await loadOS();toast('삭제 완료');
-  }catch(e){toast('삭제 실패: '+e.message)}
+    await api('/'+TABS[CUR].tbl,{method:'POST',body:JSON.stringify(body)});
+    cols.forEach(c=>{const el=document.getElementById('ma-'+c[0]);if(el)el.value=''});
+    await mLoad();toast('추가 완료');
+  }catch(e){toast('추가 실패: '+e.message)}
 }
-
-/* ---------- 스텝 편집 ---------- */
-function openStep(id){
-  const r=ROWS.find(x=>x.id===id);if(!r)return;
-  STEDIT={id:id};
-  document.getElementById('st-title').textContent=r.part_no+' — '+r.seq+'공정';
-  document.getElementById('st-proc').value=r.proc||'';
-  document.getElementById('st-vendor').value=r.vendor||'';
-  document.getElementById('st-order').value=r.order_date||'';
-  document.getElementById('st-due').value=r.due_date||'';
-  document.getElementById('st-in').value=r.in_date||'';
-  document.getElementById('st-memo').value=r.memo||'';
-  document.getElementById('stmodal').classList.add('show');
-}
-function newStep(no,name){
-  const seq=ROWS.filter(r=>r.part_no===no).reduce((m,r)=>Math.max(m,r.seq),0)+1;
-  STEDIT={new:true,part_no:no,part_name:name,seq:seq};
-  document.getElementById('st-title').textContent=no+' — '+seq+'공정 추가';
-  ['st-proc','st-vendor','st-order','st-due','st-in','st-memo'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('stmodal').classList.add('show');
-  setTimeout(()=>document.getElementById('st-proc').focus(),80);
-}
-function closeStep(){document.getElementById('stmodal').classList.remove('show');STEDIT=null}
-function quickOrder(){document.getElementById('st-order').value=today()}
-function quickIn(){document.getElementById('st-in').value=today()}
-async function saveStep(){
-  if(!STEDIT)return;
-  const proc=g('st-proc');
-  if(!proc)return toast('가공공정을 입력하세요');
-  const body={proc:proc,vendor:g('st-vendor')||null,
-    order_date:g('st-order')||null,due_date:g('st-due')||null,in_date:g('st-in')||null,
-    memo:g('st-memo')||null};
-  try{
-    if(STEDIT.new){
-      Object.assign(body,{project_id:g('ossel'),part_no:STEDIT.part_no,part_name:STEDIT.part_name||null,seq:STEDIT.seq,stage:curStage(),author:USER||null});
-      await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});
-      document.getElementById('np-no').value='';document.getElementById('np-name').value='';
-    }else{
-      await api(`/mm_out_route?id=eq.${STEDIT.id}`,{method:"PATCH",body:JSON.stringify(body)});
-    }
-    closeStep();await loadOS();toast('저장 완료');
-  }catch(e){toast('저장 실패: '+e.message)}
-}
-async function delStep(){
-  if(!STEDIT||STEDIT.new)return closeStep();
-  if(!confirm('이 공정을 삭제할까요?'))return;
-  try{
-    const r=ROWS.find(x=>x.id===STEDIT.id);
-    await api(`/mm_out_route?id=eq.${STEDIT.id}`,{method:"DELETE"});
-    // 뒤 순번 당기기
-    if(r){
-      const after=ROWS.filter(x=>x.part_no===r.part_no&&x.seq>r.seq);
-      for(const a of after)await api(`/mm_out_route?id=eq.${a.id}`,{method:"PATCH",body:JSON.stringify({seq:a.seq-1})});
-    }
-    closeStep();await loadOS();toast('삭제 완료');
-  }catch(e){toast('삭제 실패: '+e.message)}
-}
-
-/* ---------- 표 편집 (일괄 입력) ---------- */
-let GDIRTY=new Map(), GNEW=[];
-const GCOLS=[['part_no','mono'],['part_name',''],['seq','mono num'],['proc','proc'],['vendor',''],
-  ['order_date','date'],['due_date','date'],['in_date','date'],['memo','']];
-function gdMark(){
-  const n=GDIRTY.size+GNEW.filter(r=>r.part_no&&r.part_no.trim()).length;
-  const el=document.getElementById('gd-dirty');
-  if(el)el.textContent=n?'('+n+')':'';
-}
-function renderGrid(){
-  const tb=document.getElementById('gdbody');if(!tb)return;
-  const rows=[...ROWS].sort((a,b)=>String(a.part_no).localeCompare(String(b.part_no))||a.seq-b.seq);
-  const line=(r,i,isNew)=>{
-    const st=isNew?'신규':stat(r);
-    const key=isNew?'n'+i:r.id;
-    return `<tr class="${isNew?'gd-new':'os-'+stCls(st)}${!isNew&&delayed(r)?' os-late':''}" data-key="${key}">`+
-      `<td style="text-align:center"><input type="checkbox" class="gdck" onchange="gdSelCnt()" style="width:15px;height:15px"></td>`+
-      `<td class="mono" style="text-align:center;color:var(--gray)">${i+1}</td>`+
-      GCOLS.map(([f,cls])=>{
-        const v=r[f]==null?'':r[f];
-        const type=cls.includes('date')?'date':cls.includes('num')?'number':'text';
-        return `<td><input class="gdi ${cls}" type="${type}" value="${esc(v)}"
-          ${f==='proc'?'list="proclist"':f==='vendor'?'list="vendlist"':''}
-          oninput="gdEdit('${key}','${f}',this.value)" onkeydown="gdKey(event,this)"></td>`;
-      }).join('')+
-      `<td style="text-align:center"><span class="st ${isNew?'wait':(st==='입고'?'ok':st==='발주'?'run':'wait')}">${st}</span></td>`+
-      `<td style="text-align:center">${isNew
-        ? `<button class="del" onclick="gdDelNew(${i})">✕</button>`
-        : `<button class="del" onclick="gdDel(${r.id})">✕</button>`}</td></tr>`;
-  };
-  tb.innerHTML=rows.map((r,i)=>line(Object.assign({},r,GDIRTY.get(r.id)||{}),i,false)).join('')
-    +GNEW.map((r,i)=>line(r,rows.length+i,true)).join('')
-    ||'<tr><td colspan="13" class="empty">+ 행 추가 또는 📋 발주서 불러오기로 시작하세요</td></tr>';
-  gdMark();gdSelCnt();
-}
-function gdSelAll(on){
-  document.querySelectorAll('#gdbody .gdck').forEach(c=>c.checked=on);
-  gdSelCnt();
-}
-function gdSelCnt(){
-  const n=document.querySelectorAll('#gdbody .gdck:checked').length;
-  const el=document.getElementById('gd-sel');
-  if(el){el.textContent='선택 '+n+'행';el.classList.toggle('on',n>0)}
-}
-function bulkToday(id){document.getElementById(id).value=today()}
-function bulkApply(){
-  const trs=[...document.querySelectorAll('#gdbody tr')].filter(t=>{
-    const c=t.querySelector('.gdck');return c&&c.checked;
-  });
-  if(!trs.length)return toast('적용할 행을 선택하세요');
-  const map={vendor:g('bk-vendor'),proc:g('bk-proc'),order_date:g('bk-order'),due_date:g('bk-due'),in_date:g('bk-in')};
-  const fields=Object.keys(map).filter(k=>map[k]);
-  if(!fields.length)return toast('적용할 값을 입력하세요');
-  trs.forEach(tr=>{
-    const key=tr.dataset.key;
-    const inputs=tr.querySelectorAll('input.gdi');
-    fields.forEach(f=>{
-      const ci=GCOLS.findIndex(c=>c[0]===f);
-      if(ci<0||!inputs[ci])return;
-      inputs[ci].value=map[f];
-      gdEdit(key,f,map[f]);
-    });
-  });
-  gdMark();
-  toast(trs.length+'행에 적용 — 💾 일괄 저장을 눌러 확정하세요');
-}
-/* 엑셀 범위 붙여넣기 (Ctrl+V) */
-function gdPaste(e){
-  const el=e.target;
-  if(!el.classList||!el.classList.contains('gdi'))return;
-  const txt=(e.clipboardData||window.clipboardData).getData('text');
-  if(!txt)return;
-  if(txt.indexOf('\t')<0&&txt.indexOf('\n')<0)return;
-  e.preventDefault();
-  const tb=document.getElementById('gdbody');
-  const rows=[...tb.querySelectorAll('tr')];
-  const tr=el.closest('tr');
-  const ri=rows.indexOf(tr);
-  const ci=[...tr.querySelectorAll('input.gdi')].indexOf(el);
-  const lines=txt.replace(/\r/g,'').split('\n').filter(l=>l.length);
-  const need=ri+lines.length-rows.length;
-  for(let k=0;k<need;k++)GNEW.push({part_no:'',part_name:'',seq:1,proc:'',vendor:'',order_date:'',due_date:'',in_date:'',memo:''});
-  if(need>0)renderGrid();
-  const rows2=[...document.querySelectorAll('#gdbody tr')];
-  lines.forEach((ln,r)=>{
-    const tgt=rows2[ri+r];if(!tgt)return;
-    const ins=[...tgt.querySelectorAll('input.gdi')];
-    ln.split('\t').forEach((cell,c)=>{
-      const idx=ci+c;
-      if(idx>=GCOLS.length||!ins[idx])return;
-      const v=cell.trim();
-      ins[idx].value=v;
-      gdEdit(tgt.dataset.key,GCOLS[idx][0],v);
-    });
-  });
-  gdMark();
-  toast(lines.length+'행 붙여넣기 — 💾 일괄 저장을 눌러 확정하세요');
-}
-document.addEventListener('paste',gdPaste);
-
-function gdEdit(key,f,v){
-  if(String(key).startsWith('n')){
-    const i=Number(String(key).slice(1));
-    if(GNEW[i])GNEW[i][f]=v;
-  }else{
-    const id=Number(key);
-    const o=GDIRTY.get(id)||{};o[f]=v;GDIRTY.set(id,o);
+async function mSave(){
+  if(!DIRTY.size)return toast('변경된 내용이 없습니다');
+  let ok=0,er=0;
+  for(const [id,o] of DIRTY){
+    const body={};Object.keys(o).forEach(k=>body[k]=o[k]===''?null:o[k]);
+    try{await api('/'+TABS[CUR].tbl+'?id=eq.'+id,{method:'PATCH',body:JSON.stringify(body)});ok++}
+    catch(e){er++}
   }
-  gdMark();
+  DIRTY.clear();await mLoad();
+  toast(ok+'건 저장'+(er?' · 실패 '+er:''));
 }
-function gdKey(e,el){
-  const tds=[...el.closest('tr').querySelectorAll('input')];
-  const ci=tds.indexOf(el);
-  const rows=[...document.querySelectorAll('#gdbody tr')];
-  const ri=rows.indexOf(el.closest('tr'));
-  let t=null;
-  if(e.key==='Enter'||e.key==='ArrowDown'){t=rows[ri+1]}
-  else if(e.key==='ArrowUp'){t=rows[ri-1]}
-  else return;
-  e.preventDefault();
-  if(!t){ if(e.key!=='ArrowUp'){gridAddRow();setTimeout(()=>{
-      const nr=[...document.querySelectorAll('#gdbody tr')].pop();
-      if(nr)nr.querySelectorAll('input')[ci].focus();},20)} return }
-  const nx=t.querySelectorAll('input')[ci];
-  if(nx){nx.focus();if(nx.select)try{nx.select()}catch(err){}}
-}
-function gridAddRow(){
-  const last=GNEW[GNEW.length-1]||{};
-  GNEW.push({part_no:last.part_no||'',part_name:last.part_name||'',
-    seq:last.part_no?(Number(last.seq)||1)+1:1,proc:'',vendor:'',order_date:'',due_date:'',in_date:'',memo:''});
-  renderGrid();
-  setTimeout(()=>{
-    const nr=[...document.querySelectorAll('#gdbody tr')].pop();
-    if(nr){const i=last.part_no?3:0;nr.querySelectorAll('input')[i].focus()}
-  },20);
-}
-function gdDelNew(i){
-  const rows=[...ROWS];
-  GNEW.splice(i-rows.length,1);renderGrid();
-}
-async function gdDel(id){
-  if(!confirm('이 공정을 삭제할까요?'))return;
-  try{await api(`/mm_out_route?id=eq.${id}`,{method:"DELETE"});GDIRTY.delete(id);await loadOS();toast('삭제 완료')}
+async function mDel(id){
+  if(!confirm('이 항목을 삭제할까요?'))return;
+  try{await api('/'+TABS[CUR].tbl+'?id=eq.'+id,{method:'DELETE'});DIRTY.delete(id);await mLoad();toast('삭제 완료')}
   catch(e){toast('삭제 실패: '+e.message)}
-}
-async function gridSave(){
-  const pid=g('ossel');
-  if(!pid)return toast('금형을 선택하세요');
-  const news=GNEW.filter(r=>(r.part_no||'').trim()&&(r.proc||'').trim());
-  if(!GDIRTY.size&&!news.length)return toast('변경된 내용이 없습니다');
-  let ok=0,er=0;
-  for(const [id,o] of GDIRTY){
-    const body={};
-    Object.keys(o).forEach(k=>{
-      let v=o[k];
-      if(k==='seq')v=Number(v)||1;
-      else v=(v===''?null:v);
-      body[k]=v;
-    });
-    try{await api(`/mm_out_route?id=eq.${id}`,{method:"PATCH",body:JSON.stringify(body)});ok++}
-    catch(e){er++}
-  }
-  for(const r of news){
-    const body={project_id:pid,part_no:r.part_no.trim(),part_name:r.part_name||null,
-      seq:Number(r.seq)||1,stage:curStage(),proc:r.proc.trim(),vendor:r.vendor||null,
-      order_date:r.order_date||null,due_date:r.due_date||null,in_date:r.in_date||null,
-      memo:r.memo||null,author:USER||null};
-    try{await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});ok++}
-    catch(e){er++}
-  }
-  const skipped=GNEW.length-news.length;
-  GDIRTY.clear();GNEW=[];
-  await loadOS();
-  toast(ok+'건 저장'+(er?' · 실패 '+er:'')+(skipped?' · 미입력 '+skipped+'행 무시':''));
-}
-
-/* ---------- 발주 관리 ---------- */
-function renderOrders(){
-  const tb=document.getElementById('osbody');if(!tb)return;
-  let list=[...vROWS()];
-  if(OSF)list=list.filter(r=>stat(r)===OSF);
-  list.sort((a,b)=>String(a.due_date||'9999').localeCompare(String(b.due_date||'9999')));
-  tb.innerHTML=list.map(r=>{
-    const st=stat(r);
-    return `<tr class="os-${stCls(st)}${delayed(r)?' os-late':''}">
-      <td class="mono">${r.stage?esc(r.stage):'-'}</td>
-      <td class="mono">${esc(r.part_no)}</td>
-      <td>${esc(r.part_name||'-')}</td>
-      <td class="mono" style="text-align:center">${r.seq}</td>
-      <td>${esc(r.proc)}</td>
-      <td>${esc(r.vendor||'-')}</td>
-      <td class="mono">${r.order_date||'-'}</td>
-      <td class="mono"${delayed(r)?' style="color:var(--red);font-weight:800"':''}>${r.due_date||'-'}</td>
-      <td class="mono">${r.in_date||'-'}</td>
-      <td><span class="st ${st==='입고'?'ok':st==='발주'?'run':'wait'}">${st}</span>${delayed(r)?' <span class="ngc">지연</span>':''}</td>
-      <td style="white-space:nowrap;text-align:right">
-        ${!r.order_date?`<button class="btn" style="padding:4px 9px;font-size:10.5px;color:var(--blue)" onclick="mark(${r.id},'order_date')">📤 발주</button>`:''}
-        ${r.order_date&&!r.in_date?`<button class="btn" style="padding:4px 9px;font-size:10.5px;color:var(--green)" onclick="mark(${r.id},'in_date')">📥 입고</button>`:''}
-        <button class="btn" style="padding:4px 9px;font-size:10.5px" onclick="openStep(${r.id})">✏️</button>
-      </td></tr>`;
-  }).join('')||'<tr><td colspan="11" class="empty">해당 상태의 공정이 없습니다</td></tr>';
-}
-async function mark(id,field){
-  try{
-    const body={};body[field]=today();
-    await api(`/mm_out_route?id=eq.${id}`,{method:"PATCH",body:JSON.stringify(body)});
-    await loadOS();toast(field==='order_date'?'발주 처리':'입고 처리');
-  }catch(e){toast('처리 실패: '+e.message)}
-}
-function exportOSCSV(){
-  if(!ROWS.length)return toast('내보낼 데이터가 없습니다');
-  const p=PROJ.find(x=>String(x.id)===String(g('ossel')));
-  dlCSV('외주가공 발주현황 — '+(p?p.mold_no+' '+p.mold_name:''),
-    ['조','품번','부품명','순서','가공공정','협력업체','발주일','입고요구일','입고일','상태','매입가','네고율%','확정가','확정일','비고'],
-    vROWS().map(r=>[r.stage||'',r.part_no,r.part_name||'',r.seq,r.proc,r.vendor||'',r.order_date||'',r.due_date||'',r.in_date||'',stat(r),r.price||'',r.nego||'',r.final_price||'',r.confirm_date||'',r.memo||'']),
-    '외주가공');
-}
-
-/* ---------- 발주서 불러오기 ---------- */
-let IMP=[];
-async function openImp(){
-  const pid=g('ossel');
-  if(!pid)return toast('금형을 선택하세요');
-  let pls=[];
-  try{pls=await api(`/mm_partlist?select=kind,op_code,stage,items&project_id=eq.${pid}&order=created_at.desc`);}
-  catch(e){return toast('발주서 조회 실패 — patch_partlist.sql 실행 여부를 확인하세요')}
-  if(!pls.length)return toast('이 금형에 저장된 발주서가 없습니다');
-  const seen=new Set();IMP=[];
-  const st=curStage();
-  pls.filter(pl=>!st||(pl.stage||null)===st).forEach(pl=>{(pl.items||[]).forEach(it=>{
-    const key=(pl.stage||'')+'|'+(it.no||'').trim();
-    const no=(it.no||'').trim();if(!no||seen.has(key))return;
-    seen.add(key);
-    IMP.push({no:no,name:(it.name||'').trim(),kind:pl.kind,stage:pl.stage||null,
-      first:(it.first||'').trim().toUpperCase(),vendor:(it.vendor||'').trim(),
-      exists:ROWS.some(r=>r.part_no===no&&(r.stage||null)===(pl.stage||null))});
-  })});
-  if(!IMP.length)return toast('발주서에 품목이 없습니다');
-  renderImp();
-  document.getElementById('impmodal').classList.add('show');
-}
-function closeImp(){document.getElementById('impmodal').classList.remove('show')}
-function renderImp(){
-  const box=document.getElementById('implist');
-  box.innerHTML=IMP.map((p,i)=>`<label class="improw${p.exists?' ex':''}">
-    <input type="checkbox" data-i="${i}" ${p.exists?'':'checked'}>
-    <b class="mono">${esc(p.no)}</b>
-    <span class="nm">${esc(p.name||'-')}</span>
-    <span class="kd">${esc(p.kind||'')}</span>
-    ${p.first?`<span class="fs">1차:${esc(p.first)}</span>`:''}
-    ${p.exists?'<span class="exb">등록됨</span>':''}
-  </label>`).join('');
-  updImpCnt();
-  box.querySelectorAll('input').forEach(c=>c.addEventListener('change',updImpCnt));
-}
-function updImpCnt(){
-  const n=[...document.querySelectorAll('#implist input:checked')].length;
-  document.getElementById('imp-cnt').textContent=n+'개 선택';
-}
-function impAll(on){
-  document.querySelectorAll('#implist input').forEach(c=>c.checked=on);
-  updImpCnt();
-}
-const FIRST_PROC={'A':'평면연삭(양면)','AA':'육면가공'};
-async function doImport(){
-  const idx=[...document.querySelectorAll('#implist input:checked')].map(c=>Number(c.dataset.i));
-  if(!idx.length)return toast('가져올 품목을 선택하세요');
-  const useFirst=document.getElementById('imp-first').checked;
-  const pid=g('ossel');
-  let made=0,skip=0;
-  for(const i of idx){
-    const p=IMP[i];
-    if(ROWS.some(r=>r.part_no===p.no&&(r.stage||null)===(p.stage||curStage()||null))){skip++;continue}
-    const proc=useFirst&&FIRST_PROC[p.first]?FIRST_PROC[p.first]:null;
-    const body={project_id:pid,part_no:p.no,part_name:p.name||null,seq:1,stage:p.stage||curStage(),
-      proc:proc||'(공정 미지정)',vendor:proc&&p.vendor?p.vendor:null,author:USER||null};
-    try{await api("/mm_out_route",{method:"POST",body:JSON.stringify(body)});made++}
-    catch(e){toast('저장 실패: '+e.message);break}
-  }
-  closeImp();await loadOS();
-  toast(made+'개 부품을 가져왔습니다'+(skip?' (이미 등록 '+skip+'개 제외)':''));
-}
-
-/* ---------- 입고확정 (매입가·네고율·확정가) ---------- */
-let CFF='', CDIRTY=new Map();
-const won=n=>n==null||n===''?'':Number(n).toLocaleString('ko-KR');
-function cval(r,f){const d=CDIRTY.get(r.id);return d&&f in d?d[f]:(r[f]==null?'':r[f])}
-function finalOf(r){
-  const p=Number(cval(r,'price'))||0, n=Number(cval(r,'nego'))||0;
-  return p?Math.round(p*(1-n/100)):0;
-}
-function setCF(f){
-  CFF=f;
-  document.querySelectorAll('#cffilter button').forEach((b,i)=>b.classList.toggle('on',['','미확정','확정'][i]===f));
-  renderConf();
-}
-function cfMark(){
-  const el=document.getElementById('cf-dirty');
-  if(el)el.textContent=CDIRTY.size?'('+CDIRTY.size+')':'';
-}
-function cfEdit(id,f,v){
-  const o=CDIRTY.get(id)||{};o[f]=v;CDIRTY.set(id,o);
-  const r=ROWS.find(x=>x.id===id);
-  const fp=document.getElementById('cf-fp-'+id);
-  if(fp&&r)fp.textContent=won(finalOf(r));
-  cfMark();cfSum();
-}
-function renderConf(){
-  const tb=document.getElementById('cfbody');if(!tb)return;
-  let list=vROWS().filter(r=>r.in_date);
-  if(CFF==='미확정')list=list.filter(r=>!cval(r,'confirm_date'));
-  if(CFF==='확정')list=list.filter(r=>cval(r,'confirm_date'));
-  list.sort((a,b)=>String(a.in_date).localeCompare(String(b.in_date))||String(a.part_no).localeCompare(String(b.part_no)));
-  tb.innerHTML=list.map(r=>{
-    const conf=!!cval(r,'confirm_date');
-    return `<tr class="${conf?'os-ok':''}" data-id="${r.id}">
-      <td style="text-align:center"><input type="checkbox" class="cfck" onchange="cfSelCnt()" style="width:15px;height:15px"></td>
-      <td class="mono">${esc(r.part_no)}</td>
-      <td>${esc(r.part_name||'-')}</td>
-      <td>${esc(r.proc)}</td>
-      <td>${esc(r.vendor||'-')}</td>
-      <td class="mono">${r.in_date||'-'}</td>
-      <td><input class="cfi mono" type="number" value="${cval(r,'price')}" placeholder="0"
-        oninput="cfEdit(${r.id},'price',this.value)" ${conf?'disabled':''}></td>
-      <td><input class="cfi mono" type="number" step="0.1" value="${cval(r,'nego')}" placeholder="0"
-        oninput="cfEdit(${r.id},'nego',this.value)" ${conf?'disabled':''}></td>
-      <td class="mono" style="text-align:right;font-weight:800;color:var(--gold)" id="cf-fp-${r.id}">${won(conf?cval(r,'final_price'):finalOf(r))}</td>
-      <td class="mono">${cval(r,'confirm_date')||'-'}</td>
-      <td style="text-align:center"><span class="st ${conf?'ok':'wait'}">${conf?'확정':'미확정'}</span></td>
-    </tr>`;
-  }).join('')||'<tr><td colspan="11" class="empty">입고 완료된 공정이 없습니다 — 발주 관리에서 📥 입고 처리하세요</td></tr>';
-  cfSelCnt();cfMark();cfSum();
-}
-function cfSum(){
-  const el=document.getElementById('cfsum');if(!el)return;
-  let list=vROWS().filter(r=>r.in_date);
-  if(CFF==='미확정')list=list.filter(r=>!cval(r,'confirm_date'));
-  if(CFF==='확정')list=list.filter(r=>cval(r,'confirm_date'));
-  const tp=list.reduce((s,r)=>s+(Number(cval(r,'price'))||0),0);
-  const tf=list.reduce((s,r)=>s+(cval(r,'confirm_date')?(Number(cval(r,'final_price'))||0):finalOf(r)),0);
-  el.innerHTML=`<span>매입가 합계 <b class="mono">${won(tp)}</b>원</span>
-    <span>확정가 합계 <b class="mono" style="color:var(--gold)">${won(tf)}</b>원</span>
-    <span>절감 <b class="mono" style="color:var(--green)">${won(tp-tf)}</b>원</span>`;
-}
-function cfSelAll(on){document.querySelectorAll('#cfbody .cfck').forEach(c=>c.checked=on);cfSelCnt()}
-function cfSelCnt(){
-  const n=document.querySelectorAll('#cfbody .cfck:checked').length;
-  const el=document.getElementById('cf-sel');
-  if(el){el.textContent='선택 '+n+'행';el.classList.toggle('on',n>0)}
-}
-function cfRows(){
-  return [...document.querySelectorAll('#cfbody tr')]
-    .filter(t=>t.querySelector('.cfck:checked'))
-    .map(t=>ROWS.find(r=>r.id===Number(t.dataset.id))).filter(Boolean);
-}
-function cfNego(){
-  const v=g('bk-nego');
-  if(v==='')return toast('네고율을 입력하세요');
-  const rows=cfRows();
-  if(!rows.length)return toast('적용할 행을 선택하세요');
-  rows.forEach(r=>{if(!cval(r,'confirm_date'))cfEdit(r.id,'nego',v)});
-  renderConf();
-  toast(rows.length+'행에 네고율 '+v+'% 적용 — 💾 저장으로 확정하세요');
-}
-function cfConfirm(){
-  const d=g('bk-cdate')||today();
-  const rows=cfRows().filter(r=>!cval(r,'confirm_date'));
-  if(!rows.length)return toast('확정할 미확정 행을 선택하세요');
-  const noPrice=rows.filter(r=>!(Number(cval(r,'price'))>0));
-  if(noPrice.length&&!confirm(noPrice.length+'행은 매입가가 없습니다. 확정가 0원으로 처리할까요?'))return;
-  rows.forEach(r=>{
-    const o=CDIRTY.get(r.id)||{};
-    o.confirm_date=d;o.final_price=finalOf(r);
-    CDIRTY.set(r.id,o);
-  });
-  renderConf();
-  toast(rows.length+'행 확정 처리 — 💾 저장을 눌러 반영하세요');
-}
-function cfCancel(){
-  const rows=cfRows().filter(r=>cval(r,'confirm_date'));
-  if(!rows.length)return toast('취소할 확정 행을 선택하세요');
-  if(!confirm(rows.length+'행의 확정을 취소할까요?'))return;
-  rows.forEach(r=>{
-    const o=CDIRTY.get(r.id)||{};
-    o.confirm_date='';o.final_price='';
-    CDIRTY.set(r.id,o);
-  });
-  renderConf();
-  toast(rows.length+'행 확정 취소 — 💾 저장을 눌러 반영하세요');
-}
-async function cfSave(){
-  if(!CDIRTY.size)return toast('변경된 내용이 없습니다');
-  let ok=0,er=0;
-  for(const [id,o] of CDIRTY){
-    const body={};
-    if('price'in o)body.price=o.price===''?null:Number(o.price);
-    if('nego'in o)body.nego=o.nego===''?null:Number(o.nego);
-    if('final_price'in o)body.final_price=o.final_price===''?null:Number(o.final_price);
-    if('confirm_date'in o)body.confirm_date=o.confirm_date||null;
-    try{await api(`/mm_out_route?id=eq.${id}`,{method:"PATCH",body:JSON.stringify(body)});ok++}
-    catch(e){er++}
-  }
-  CDIRTY.clear();
-  await loadOS();
-  toast(ok+'건 저장'+(er?' · 실패 '+er+' — patch_outsrc_v2.sql 실행 여부 확인':''));
 }
 
 /* ---------- 글자크기 ---------- */
@@ -1943,54 +1270,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
   if(!USER){alert('로그인이 필요합니다.');location.href='index.html';return}
   document.getElementById('ubadge').textContent='👤 '+USER;
   try{applyFontScale(localStorage.getItem(FS_KEY)||100,false)}catch(e){}
-  const dl=document.createElement('datalist');dl.id='proclist';
-  dl.innerHTML=PROCS.map(p=>`<option value="${p}">`).join('');
-  document.body.appendChild(dl);
-  document.getElementById('st-proc').setAttribute('list','proclist');
-  try{
-    const vs=await api('/mm_vendor?select=name,procs&order=name');
-    const v=document.createElement('datalist');v.id='vendlist';
-    v.innerHTML=vs.map(r=>`<option value="${esc(r.name||'')}">${esc(r.procs||'')}</option>`).join('');
-    document.body.appendChild(v);
-  }catch(e){}
-  try{await loadAll();}catch(e){toast('불러오기 실패: '+e.message)}
+  buildAddRow();
+  await mLoad();
 })();
 
-
-/* ===== 표 → 엑셀 복사 (모든 .tscroll 테이블에 ⎘ 버튼 자동 부착) ===== */
-(function(){
-  function cellText(td){return td.innerText.replace(/[\t\n]+/g,' ').trim()}
-  function tsv(tb){
-    return [...tb.querySelectorAll('tr')]
-      .map(tr=>[...tr.children].map(cellText).join('\t')).join('\n');
-  }
-  function attach(){
-    document.querySelectorAll('.tscroll').forEach(w=>{
-      if(w.querySelector('.tcopy'))return;
-      const t=w.querySelector('table');if(!t)return;
-      const b=document.createElement('button');
-      b.type='button';b.className='tcopy';b.textContent='⎘ 표 복사';
-      b.onclick=e=>{
-        e.stopPropagation();
-        const txt=tsv(t);
-        const done=()=>{if(typeof toast==='function')toast('표를 복사했습니다 — 엑셀에 붙여넣기(Ctrl+V) 하세요')};
-        if(navigator.clipboard&&navigator.clipboard.writeText)
-          navigator.clipboard.writeText(txt).then(done).catch(()=>{fallback(txt);done()});
-        else{fallback(txt);done()}
-      };
-      w.appendChild(b);
-    });
-  }
-  function fallback(txt){
-    const ta=document.createElement('textarea');
-    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta);ta.select();
-    try{document.execCommand('copy')}catch(e){}
-    ta.remove();
-  }
-  attach();
-  new MutationObserver(()=>attach()).observe(document.body,{childList:true,subtree:true});
-})();
 </script>
 </body>
 </html>
