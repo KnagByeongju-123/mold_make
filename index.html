@@ -1094,7 +1094,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.4</span>
+    <span class="rev">Rev 16.5</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1147,39 +1147,59 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
     <div><div class="n">금형제작관리</div><div class="s">Mold Making Management</div></div>
   </div>
   <div class="menueditnote" id="menuEditNote">편집 중에는 메뉴 영역을 위·아래로 밀어 스크롤하고, 오른쪽 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 화면 가장자리에서는 자동으로 스크롤됩니다. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
-  <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규진행등록</div>
-  <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>신규진행계획수립</div>
-  <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>진행현황(전체)</div>
-  <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📊</span>진행현황(세부)</div>
+  <div class="mg" id="mg-plan" data-menu-id="grp-plan">
+    <div class="mi mgh" onclick="toggleGrp('plan')"><span class="ic">📊</span>진행관리<span class="arw">▾</span></div>
+    <div class="msub">
+      <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규진행등록</div>
+      <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>신규진행계획수립</div>
+      <div class="mi on" data-menu-id="dash" data-v="dash" onclick="go('dash')"><span class="ic">🏠</span>진행현황(전체)</div>
+      <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📈</span>진행현황(세부)</div>
+    </div>
+  </div>
   <div class="mg" id="mg-out" data-menu-id="grp-out">
     <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
     <div class="msub">
-      <div class="mi" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
+      <div class="mi" data-menu-id="doc" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
       <div class="mi" data-menu-id="partlist" onclick="openExt('partlist','partlist.html','발주서 (PART LIST)')"><span class="ic">📋</span>발주서 (PART LIST)</div>
-      <div class="mi" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
+      <div class="mi" data-menu-id="tryout" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
+    </div>
+  </div>
+  <div class="mg" id="mg-buy" data-menu-id="grp-buy">
+    <div class="mi mgh" onclick="toggleGrp('buy')"><span class="ic">🏭</span>구매·외주<span class="arw">▾</span></div>
+    <div class="msub">
+      <div class="mi" data-menu-id="outsrc" onclick="openExt('outsrc','outsrc.html','외주가공 관리')"><span class="ic">🏭</span>외주가공</div>
+      <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
     </div>
   </div>
   <div class="mg" id="mg-qa" data-menu-id="grp-qa">
     <div class="mi mgh" onclick="toggleGrp('qa')"><span class="ic">🛡️</span>품질관리 (SQ)<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-menu-id="insp-file" onclick="openExt('insp-file','insp.html','검사성적서')"><span class="ic">📐</span>검사성적서</div>
-      <div class="mi" data-v="ncr" onclick="go('ncr')"><span class="ic">🚨</span>부적합·시정조치</div>
-      <div class="mi" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
-      <div class="mi" data-v="gauge" onclick="go('gauge')"><span class="ic">📏</span>계측기관리</div>
-      <div class="mi" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
+      <div class="mi" data-menu-id="ncr" data-v="ncr" onclick="go('ncr')"><span class="ic">🚨</span>부적합·시정조치</div>
+      <div class="mi" data-menu-id="ecn" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
+      <div class="mi" data-menu-id="gauge" data-v="gauge" onclick="go('gauge')"><span class="ic">📏</span>계측기관리</div>
+      <div class="mi" data-menu-id="appr" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
     </div>
   </div>
-  <div class="mi" data-menu-id="outsrc" onclick="openExt('outsrc','outsrc.html','외주가공 관리')"><span class="ic">🏭</span>외주가공</div>
-  <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
-  <div class="mi" data-menu-id="work-status" onclick="openExt('work-status','work_status.html','업무현황')"><span class="ic">🗂</span>업무현황</div>
-  <div class="mi" data-menu-id="cost" onclick="openExt('cost','cost.html','원가관리')"><span class="ic">💹</span>원가관리</div>
-  <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
-  <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
-  <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
-  <div class="mi" data-menu-id="master" onclick="openExt('master','master.html','기준정보 관리')"><span class="ic">🗃️</span>기준정보 관리</div>
-  <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
-  <div class="mi" data-menu-id="set" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
-  <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
+  <div class="mg" id="mg-stat" data-menu-id="grp-stat">
+    <div class="mi mgh" onclick="toggleGrp('stat')"><span class="ic">🗂</span>현황<span class="arw">▾</span></div>
+    <div class="msub">
+      <div class="mi" data-menu-id="work-status" onclick="openExt('work-status','work_status.html','업무현황')"><span class="ic">🗂</span>업무현황</div>
+      <div class="mi" data-menu-id="cost" onclick="openExt('cost','cost.html','원가관리')"><span class="ic">💹</span>원가관리</div>
+      <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
+      <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
+      <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
+    </div>
+  </div>
+  <div class="mg" id="mg-sys" data-menu-id="grp-sys">
+    <div class="mi mgh" onclick="toggleGrp('sys')"><span class="ic">⚙️</span>설정<span class="arw">▾</span></div>
+    <div class="msub">
+      <div class="mi" data-menu-id="master" onclick="openExt('master','master.html','기준정보 관리')"><span class="ic">🗃️</span>기준정보 관리</div>
+      <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
+      <div class="mi" data-menu-id="set" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
+      <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
+    </div>
+  </div>
   <div class="menueditbar" id="menuEditBar">
     <button class="mreset" type="button" onclick="resetMenuOrder(event)">기본 순서</button>
     <button class="mdone" type="button" onclick="completeMenuEdit(event)">완료</button>
@@ -2667,7 +2687,7 @@ const VIEWTITLE={mon:'모니터링',dash:'진행현황(전체)',new:'신규진�
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
-const MENU_ORDER_KEY='mm_menu_order_v1';
+const MENU_ORDER_KEY='mm_menu_order_v2';
 const MENU_LONGPRESS_MS=500;
 let MENU_DEFAULT_ORDER=[];
 let MENU_EDIT=false;
@@ -3008,6 +3028,9 @@ function openExt(id,file,title,fromPop){
   if(!fromPop)history.pushState({t:'ext',id:id},'');
   CUREXT=id;
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.remove('on'));
+  const gk={'insp-file':'qa','partlist':'out','outsrc':'buy','work-status':'stat','cost':'stat','master':'sys'}[id];
+  if(gk)openOnlyGrp(gk);
+  document.querySelectorAll('#drawer .mi[data-menu-id]').forEach(b=>b.classList.toggle('on',b.dataset.menuId===id));
   document.getElementById('htitle').textContent=title;
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame']
     .forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!=='frame')});
@@ -3121,7 +3144,19 @@ loadPCWidths();
 loadFontScale();
 loadBorderLv();
 initMenuOrder();
-const GRP={doc:'out',tryout:'out',insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa'};
+const GRP={new:'plan',plan:'plan',dash:'plan',flow:'plan',
+  doc:'out',tryout:'out',
+  stock:'buy',
+  insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa',
+  mon:'stat',hist:'stat',board:'stat',
+  help:'sys',set:'sys'};
+/* 현재 그룹만 펼치고 나머지는 접기 */
+function openOnlyGrp(id){
+  ['plan','out','buy','qa','stat','sys'].forEach(k=>{
+    const el=document.getElementById('mg-'+k);
+    if(el)el.classList.toggle('open',k===id);
+  });
+}
 function toggleGrp(id){document.getElementById('mg-'+id).classList.toggle('open');}
 function goNew(t){
   go('new');
@@ -3139,7 +3174,7 @@ function go(v,fromPop){
   }
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   CUREXT='';markTopnav(v);
-  if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
+  openOnlyGrp(GRP[v]||'');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame'].forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!==v)});
   setPCWidthView(v);
