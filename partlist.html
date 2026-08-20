@@ -985,7 +985,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.0</span>
+    <span class="rev">v1.1</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1207,6 +1207,20 @@ function fillPL(r){
 }
 
 /* ---------- 탭 ---------- */
+function plTabUI(t){
+  PLTAB=t;
+  ['mat','std','log'].forEach(x=>document.getElementById('ptab-'+x).classList.remove('on'));
+  document.getElementById('ptab-'+(t==='원재료'?'mat':'std')).classList.add('on');
+  document.getElementById('pl-edit').classList.remove('hide');
+  document.getElementById('pl-log').classList.add('hide');
+  document.getElementById('pl-lb').textContent=(t==='원재료'?'🧱':'⚙️')+' '+t+' 발주서 정보';
+  document.getElementById('ph-duelb').textContent=t+' 납기';
+  document.getElementById('ph-due2lb').textContent=t==='원재료'?'1차가공 납기':'가공품 납기';
+  document.getElementById('ph-msheet').parentNode.style.display=t==='원재료'?'':'none';
+  PEDIT=null;
+  document.getElementById('pl-tag').textContent='';
+  toast(t+' 발주서로 전환했습니다');
+}
 function plTab(t){
   ['mat','std','log'].forEach(x=>document.getElementById('ptab-'+x).classList.remove('on'));
   if(t==='log'){
@@ -1317,6 +1331,7 @@ function renderPLLog(){
 
 /* ---------- 붙여넣기 ---------- */
 function openPLPaste(){
+  PASTE_KIND=PLTAB;
   document.getElementById('plpaste').classList.add('show');
   document.getElementById('pst-txt').value='';
   document.getElementById('pst-prev').innerHTML='';
@@ -1324,22 +1339,61 @@ function openPLPaste(){
   document.getElementById('pst-txt').placeholder=COLS[PLTAB].map(c=>c[1]).join('\t');
 }
 function closePLPaste(){document.getElementById('plpaste').classList.remove('show')}
+/* 따옴표 안의 쉼표를 보존하는 CSV/TSV 분해 */
+function splitCells(line){
+  const out=[];let cur='',q=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(q){
+      if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++} else q=false }
+      else cur+=ch;
+    }else{
+      if(ch==='"')q=true;
+      else if(ch===','||ch==='\t'){out.push(cur.trim());cur=''}
+      else cur+=ch;
+    }
+  }
+  out.push(cur.trim());
+  return out;
+}
+const ALIAS={'품번':'no','부품번호':'no','부품명':'name','품명':'name','재질':'material','완성치수':'size','치수':'size',
+  '원재료T':'thick','원재료t':'thick','두께':'thick','수량':'qty','단위':'unit','발주처':'vendor',
+  '1차가공':'first','비고':'memo','TYPE':'type','타입':'type','규격':'spec','MAKER':'maker','메이커':'maker'};
+function headerMap(cells){
+  const m=cells.map(h=>ALIAS[h.replace(/\s/g,'').toUpperCase()]||ALIAS[h.replace(/\s/g,'')]||null);
+  return m.filter(Boolean).length>=2?m:null;
+}
+function detectKind(map){
+  if(!map)return null;
+  if(map.includes('material')||map.includes('thick')||map.includes('first'))return '원재료';
+  if(map.includes('type')||map.includes('maker')||map.includes('spec'))return '표준품';
+  return null;
+}
 function parsePL(){
-  const cols=COLS[PLTAB];
   let lines=document.getElementById('pst-txt').value.split(/\r?\n/).filter(l=>l.trim());
-  if(document.getElementById('pst-head').checked)lines=lines.slice(1);
+  if(!lines.length)return [];
+  const useHead=document.getElementById('pst-head').checked;
+  let map=useHead?headerMap(splitCells(lines[0])):null;
+  if(useHead)lines=lines.slice(1);
+  if(!map)map=COLS[PLTAB].map(c=>c[0]);      // 제목행이 없으면 현재 탭의 열 순서
+  const k=detectKind(map);
+  PASTE_KIND=k||PLTAB;
+  const valid=COLS[PASTE_KIND].map(c=>c[0]);
   return lines.map(l=>{
-    const cell=l.split(/\t|,/).map(c=>c.trim().replace(/^"(.*)"$/,'$1').replace(/""/g,'"'));
-    const o=blankRow();
-    cols.forEach((c,i)=>{if(cell[i]!==undefined)o[c[0]]=cell[i]});
+    const cell=splitCells(l);
+    const o={};valid.forEach(f=>o[f]='');
+    map.forEach((f,i)=>{if(f&&valid.includes(f)&&cell[i]!==undefined)o[f]=cell[i]});
     return o;
   }).filter(o=>(o.name&&o.name.trim())||(o.no&&o.no.trim()));
 }
+let PASTE_KIND='원재료';
 function prevPLPaste(){
   const rows=parsePL(),p=document.getElementById('pst-prev');
   if(!rows.length){p.innerHTML='<div class="pst-empty">붙여넣은 내용이 없습니다</div>';return}
-  const cols=COLS[PLTAB];
-  p.innerHTML=`<div class="pst-cnt">${rows.length}개 품목 인식</div><table class="wide"><thead><tr><th>No</th>`+
+  const cols=COLS[PASTE_KIND];
+  p.innerHTML=`<div class="pst-cnt">${rows.length}개 품목 인식`+
+    (PASTE_KIND!==PLTAB?` · <span style="color:var(--blue)">${PASTE_KIND} 양식 — 넣기 시 자동 전환</span>`:'')+
+    `</div><table class="wide"><thead><tr><th>No</th>`+
     cols.map(c=>`<th>${c[1]}</th>`).join('')+'</tr></thead><tbody>'+
     rows.slice(0,10).map((r,i)=>`<tr><td class="mono">${i+1}</td>`+cols.map(c=>`<td>${esc(r[c[0]]||'')}</td>`).join('')+'</tr>').join('')+
     (rows.length>10?`<tr><td colspan="${cols.length+1}" style="color:var(--gray)">… 외 ${rows.length-10}건</td></tr>`:'')+'</tbody></table>';
@@ -1347,6 +1401,7 @@ function prevPLPaste(){
 function applyPLPaste(){
   const rows=parsePL();
   if(!rows.length)return toast('인식된 품목이 없습니다');
+  if(PASTE_KIND!==PLTAB)plTabUI(PASTE_KIND);
   if(document.getElementById('pst-rep').checked)PITEMS=[];
   else PITEMS=PITEMS.filter(r=>r.name&&r.name.trim());
   rows.forEach(r=>PITEMS.push(r));
