@@ -947,6 +947,13 @@ header .hright{position:relative}
 
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
+.cfi{width:100%;min-width:0;background:var(--card2);border:1px solid var(--line2);
+  color:var(--ink);padding:7px 6px;font-size:12.5px;text-align:right;font-family:'IBM Plex Mono',monospace}
+.cfi:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.08)}
+.cfi:disabled{opacity:.55;background:transparent;border-color:transparent}
+.cfsum{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;padding:11px 14px;
+  background:var(--card);border:1px solid var(--line);font-size:12.5px;color:var(--sub);font-weight:700}
+.cfsum b{font-size:14px}
 .gdtbl{min-width:1110px}
 .bulkbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:9px 11px;
   background:var(--card);border:1px dashed var(--line);border-radius:11px}
@@ -1079,7 +1086,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.3</span>
+    <span class="rev">v1.4</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1110,6 +1117,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
       <button class="itab on" id="otab-part" onclick="osTab('part')">🧩 부품 라우팅</button>
       <button class="itab" id="otab-grid" onclick="osTab('grid')">⌨ 표 편집</button>
       <button class="itab" id="otab-order" onclick="osTab('order')">🏭 발주 관리</button>
+      <button class="itab" id="otab-conf" onclick="osTab('conf')">💰 입고확정</button>
     </div>
 
     <!-- 탭1: 부품 라우팅 -->
@@ -1173,6 +1181,32 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
       <div class="tscroll"><table class="wide" style="min-width:840px">
         <thead><tr><th>품번</th><th>부품명</th><th>순서</th><th>가공공정</th><th>협력업체</th><th>발주일</th><th>입고요구일</th><th>입고일</th><th>상태</th><th style="width:150px"></th></tr></thead>
         <tbody id="osbody"></tbody></table></div>
+    </div>
+    <!-- 탭: 입고확정 (매입가 · 네고율 · 확정가) -->
+    <div id="os-conf" class="hide">
+      <div class="pfilter" id="cffilter" style="margin-bottom:10px">
+        <button class="on" onclick="setCF('')">전체</button>
+        <button onclick="setCF('미확정')">미확정</button>
+        <button onclick="setCF('확정')">확정완료</button>
+      </div>
+      <div class="bulkbar">
+        <span class="bl" id="cf-sel">선택 0행</span>
+        <input type="number" id="bk-nego" placeholder="네고율 %" style="width:88px" step="0.1">
+        <button class="btn" style="padding:8px 12px" onclick="cfNego()">네고율 적용</button>
+        <input type="date" id="bk-cdate" title="입고확정일">
+        <button class="btn" style="padding:8px 13px;background:rgba(126,224,160,.14);border:1px solid rgba(126,224,160,.4);color:var(--green)" onclick="cfConfirm()">✔ 확정 처리</button>
+        <button class="btn" style="padding:8px 12px;color:var(--red)" onclick="cfCancel()">확정 취소</button>
+        <button class="btn btn-p" style="padding:8px 16px;margin-left:auto" onclick="cfSave()">💾 저장 <span id="cf-dirty"></span></button>
+      </div>
+      <div class="tscroll"><table class="wide" style="min-width:1000px">
+        <thead><tr>
+          <th style="width:26px"><input type="checkbox" onchange="cfSelAll(this.checked)" style="width:15px;height:15px"></th>
+          <th>품번</th><th>부품명</th><th>가공공정</th><th>협력업체</th><th>입고일</th>
+          <th style="width:96px">매입가</th><th style="width:72px">네고율%</th><th style="width:96px">확정가</th>
+          <th style="width:104px">확정일</th><th style="width:58px">상태</th>
+        </tr></thead>
+        <tbody id="cfbody"></tbody></table></div>
+      <div class="cfsum" id="cfsum"></div>
     </div>
   </section>
 </main>
@@ -1307,6 +1341,7 @@ function render(){
     (dl?` · <span style="color:var(--red)">지연 ${dl}</span>`:'');
   if(OSTAB==='part')renderParts();
   else if(OSTAB==='grid')renderGrid();
+  else if(OSTAB==='conf')renderConf();
   else renderOrders();
 }
 
@@ -1316,8 +1351,12 @@ function osTab(t){
     if(!confirm('저장하지 않은 변경이 있습니다. 이동할까요?'))return;
     GDIRTY.clear();GNEW=[];
   }
+  if(OSTAB==='conf'&&t!=='conf'&&CDIRTY.size){
+    if(!confirm('저장하지 않은 확정 변경이 있습니다. 이동할까요?'))return;
+    CDIRTY.clear();
+  }
   OSTAB=t;
-  ['part','grid','order'].forEach(x=>{
+  ['part','grid','order','conf'].forEach(x=>{
     document.getElementById('otab-'+x).classList.toggle('on',t===x);
     document.getElementById('os-'+x).classList.toggle('hide',t!==x);
   });
@@ -1648,8 +1687,8 @@ function exportOSCSV(){
   if(!ROWS.length)return toast('내보낼 데이터가 없습니다');
   const p=PROJ.find(x=>String(x.id)===String(g('ossel')));
   dlCSV('외주가공 발주현황 — '+(p?p.mold_no+' '+p.mold_name:''),
-    ['품번','부품명','순서','가공공정','협력업체','발주일','입고요구일','입고일','상태','비고'],
-    ROWS.map(r=>[r.part_no,r.part_name||'',r.seq,r.proc,r.vendor||'',r.order_date||'',r.due_date||'',r.in_date||'',stat(r),r.memo||'']),
+    ['품번','부품명','순서','가공공정','협력업체','발주일','입고요구일','입고일','상태','매입가','네고율%','확정가','확정일','비고'],
+    ROWS.map(r=>[r.part_no,r.part_name||'',r.seq,r.proc,r.vendor||'',r.order_date||'',r.due_date||'',r.in_date||'',stat(r),r.price||'',r.nego||'',r.final_price||'',r.confirm_date||'',r.memo||'']),
     '외주가공');
 }
 
@@ -1714,6 +1753,130 @@ async function doImport(){
   }
   closeImp();await loadOS();
   toast(made+'개 부품을 가져왔습니다'+(skip?' (이미 등록 '+skip+'개 제외)':''));
+}
+
+/* ---------- 입고확정 (매입가·네고율·확정가) ---------- */
+let CFF='', CDIRTY=new Map();
+const won=n=>n==null||n===''?'':Number(n).toLocaleString('ko-KR');
+function cval(r,f){const d=CDIRTY.get(r.id);return d&&f in d?d[f]:(r[f]==null?'':r[f])}
+function finalOf(r){
+  const p=Number(cval(r,'price'))||0, n=Number(cval(r,'nego'))||0;
+  return p?Math.round(p*(1-n/100)):0;
+}
+function setCF(f){
+  CFF=f;
+  document.querySelectorAll('#cffilter button').forEach((b,i)=>b.classList.toggle('on',['','미확정','확정'][i]===f));
+  renderConf();
+}
+function cfMark(){
+  const el=document.getElementById('cf-dirty');
+  if(el)el.textContent=CDIRTY.size?'('+CDIRTY.size+')':'';
+}
+function cfEdit(id,f,v){
+  const o=CDIRTY.get(id)||{};o[f]=v;CDIRTY.set(id,o);
+  const r=ROWS.find(x=>x.id===id);
+  const fp=document.getElementById('cf-fp-'+id);
+  if(fp&&r)fp.textContent=won(finalOf(r));
+  cfMark();cfSum();
+}
+function renderConf(){
+  const tb=document.getElementById('cfbody');if(!tb)return;
+  let list=ROWS.filter(r=>r.in_date);
+  if(CFF==='미확정')list=list.filter(r=>!cval(r,'confirm_date'));
+  if(CFF==='확정')list=list.filter(r=>cval(r,'confirm_date'));
+  list.sort((a,b)=>String(a.in_date).localeCompare(String(b.in_date))||String(a.part_no).localeCompare(String(b.part_no)));
+  tb.innerHTML=list.map(r=>{
+    const conf=!!cval(r,'confirm_date');
+    return `<tr class="${conf?'os-ok':''}" data-id="${r.id}">
+      <td style="text-align:center"><input type="checkbox" class="cfck" onchange="cfSelCnt()" style="width:15px;height:15px"></td>
+      <td class="mono">${esc(r.part_no)}</td>
+      <td>${esc(r.part_name||'-')}</td>
+      <td>${esc(r.proc)}</td>
+      <td>${esc(r.vendor||'-')}</td>
+      <td class="mono">${r.in_date||'-'}</td>
+      <td><input class="cfi mono" type="number" value="${cval(r,'price')}" placeholder="0"
+        oninput="cfEdit(${r.id},'price',this.value)" ${conf?'disabled':''}></td>
+      <td><input class="cfi mono" type="number" step="0.1" value="${cval(r,'nego')}" placeholder="0"
+        oninput="cfEdit(${r.id},'nego',this.value)" ${conf?'disabled':''}></td>
+      <td class="mono" style="text-align:right;font-weight:800;color:var(--gold)" id="cf-fp-${r.id}">${won(conf?cval(r,'final_price'):finalOf(r))}</td>
+      <td class="mono">${cval(r,'confirm_date')||'-'}</td>
+      <td style="text-align:center"><span class="st ${conf?'ok':'wait'}">${conf?'확정':'미확정'}</span></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="11" class="empty">입고 완료된 공정이 없습니다 — 발주 관리에서 📥 입고 처리하세요</td></tr>';
+  cfSelCnt();cfMark();cfSum();
+}
+function cfSum(){
+  const el=document.getElementById('cfsum');if(!el)return;
+  let list=ROWS.filter(r=>r.in_date);
+  if(CFF==='미확정')list=list.filter(r=>!cval(r,'confirm_date'));
+  if(CFF==='확정')list=list.filter(r=>cval(r,'confirm_date'));
+  const tp=list.reduce((s,r)=>s+(Number(cval(r,'price'))||0),0);
+  const tf=list.reduce((s,r)=>s+(cval(r,'confirm_date')?(Number(cval(r,'final_price'))||0):finalOf(r)),0);
+  el.innerHTML=`<span>매입가 합계 <b class="mono">${won(tp)}</b>원</span>
+    <span>확정가 합계 <b class="mono" style="color:var(--gold)">${won(tf)}</b>원</span>
+    <span>절감 <b class="mono" style="color:var(--green)">${won(tp-tf)}</b>원</span>`;
+}
+function cfSelAll(on){document.querySelectorAll('#cfbody .cfck').forEach(c=>c.checked=on);cfSelCnt()}
+function cfSelCnt(){
+  const n=document.querySelectorAll('#cfbody .cfck:checked').length;
+  const el=document.getElementById('cf-sel');
+  if(el){el.textContent='선택 '+n+'행';el.classList.toggle('on',n>0)}
+}
+function cfRows(){
+  return [...document.querySelectorAll('#cfbody tr')]
+    .filter(t=>t.querySelector('.cfck:checked'))
+    .map(t=>ROWS.find(r=>r.id===Number(t.dataset.id))).filter(Boolean);
+}
+function cfNego(){
+  const v=g('bk-nego');
+  if(v==='')return toast('네고율을 입력하세요');
+  const rows=cfRows();
+  if(!rows.length)return toast('적용할 행을 선택하세요');
+  rows.forEach(r=>{if(!cval(r,'confirm_date'))cfEdit(r.id,'nego',v)});
+  renderConf();
+  toast(rows.length+'행에 네고율 '+v+'% 적용 — 💾 저장으로 확정하세요');
+}
+function cfConfirm(){
+  const d=g('bk-cdate')||today();
+  const rows=cfRows().filter(r=>!cval(r,'confirm_date'));
+  if(!rows.length)return toast('확정할 미확정 행을 선택하세요');
+  const noPrice=rows.filter(r=>!(Number(cval(r,'price'))>0));
+  if(noPrice.length&&!confirm(noPrice.length+'행은 매입가가 없습니다. 확정가 0원으로 처리할까요?'))return;
+  rows.forEach(r=>{
+    const o=CDIRTY.get(r.id)||{};
+    o.confirm_date=d;o.final_price=finalOf(r);
+    CDIRTY.set(r.id,o);
+  });
+  renderConf();
+  toast(rows.length+'행 확정 처리 — 💾 저장을 눌러 반영하세요');
+}
+function cfCancel(){
+  const rows=cfRows().filter(r=>cval(r,'confirm_date'));
+  if(!rows.length)return toast('취소할 확정 행을 선택하세요');
+  if(!confirm(rows.length+'행의 확정을 취소할까요?'))return;
+  rows.forEach(r=>{
+    const o=CDIRTY.get(r.id)||{};
+    o.confirm_date='';o.final_price='';
+    CDIRTY.set(r.id,o);
+  });
+  renderConf();
+  toast(rows.length+'행 확정 취소 — 💾 저장을 눌러 반영하세요');
+}
+async function cfSave(){
+  if(!CDIRTY.size)return toast('변경된 내용이 없습니다');
+  let ok=0,er=0;
+  for(const [id,o] of CDIRTY){
+    const body={};
+    if('price'in o)body.price=o.price===''?null:Number(o.price);
+    if('nego'in o)body.nego=o.nego===''?null:Number(o.nego);
+    if('final_price'in o)body.final_price=o.final_price===''?null:Number(o.final_price);
+    if('confirm_date'in o)body.confirm_date=o.confirm_date||null;
+    try{await api(`/mm_out_route?id=eq.${id}`,{method:"PATCH",body:JSON.stringify(body)});ok++}
+    catch(e){er++}
+  }
+  CDIRTY.clear();
+  await loadOS();
+  toast(ok+'건 저장'+(er?' · 실패 '+er+' — patch_outsrc_v2.sql 실행 여부 확인':''));
 }
 
 /* ---------- 글자크기 ---------- */
