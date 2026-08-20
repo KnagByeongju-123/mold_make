@@ -971,7 +971,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 14.5</span>
+    <span class="rev">Rev 14.6</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1040,8 +1040,8 @@ header .hright{position:relative}
       <div class="mi" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
     </div>
   </div>
-  <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
   <div class="mi" data-menu-id="outsrc" onclick="location.href='outsrc.html'"><span class="ic">🏭</span>외주가공</div>
+  <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
   <div class="mi" data-menu-id="work-status" onclick="location.href='work_status.html'"><span class="ic">🗂</span>업무현황</div>
   <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
   <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
@@ -2394,12 +2394,16 @@ function applyMenuOrder(order){
   const d=document.getElementById('drawer'),anchor=document.getElementById('menuEditBar');
   if(!d||!anchor)return;
   const items=menuSortItems(),byId=new Map(items.map(el=>[el.dataset.menuId,el]));
-  const used=new Set();
-  (Array.isArray(order)?order:[]).forEach(id=>{
-    const el=byId.get(id);
-    if(el&&!used.has(id)){d.insertBefore(el,anchor);used.add(id)}
+  const defIds=items.map(el=>el.dataset.menuId);
+  let seq=(Array.isArray(order)?order:[]).filter(id=>byId.has(id));
+  // 저장 목록에 없는 신규 메뉴는 기본 순서의 앞 항목 뒤에 삽입
+  defIds.forEach((id,i)=>{
+    if(seq.includes(id))return;
+    let pos=0;
+    for(let j=i-1;j>=0;j--){const k=seq.indexOf(defIds[j]);if(k>=0){pos=k+1;break}}
+    seq.splice(pos,0,id);
   });
-  items.forEach(el=>{if(!used.has(el.dataset.menuId))d.insertBefore(el,anchor)});
+  seq.forEach(id=>d.insertBefore(byId.get(id),anchor));
 }
 function saveMenuOrder(){
   try{localStorage.setItem(MENU_ORDER_KEY,JSON.stringify(menuOrderNow()))}catch(e){}
