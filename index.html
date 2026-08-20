@@ -138,6 +138,40 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
 
 /* PC 가독성: 일반 화면은 1020px까지만 유동 확대 */
 /* --mm-fs : 글자 크기 배율(본문/모달 확대·축소). 고정 헤더 여백은 배율로 나눠 상쇄 */
+/* ===== PC 2단 네비게이션 (상단 대분류 + 좌측 하위) ===== */
+.sidenav{display:none}
+.topnav{display:none}
+@media(min-width:1000px){
+  body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif}
+  /* 상단 대분류 */
+  .topnav{display:flex;position:fixed;top:61px;left:0;right:0;z-index:55;
+    align-items:center;gap:0;padding:0 10px;height:38px;
+    background:var(--card2);border-bottom:1px solid var(--line);overflow-x:auto}
+  .topnav .tb{display:flex;align-items:center;gap:6px;height:38px;padding:0 16px;border:none;background:none;
+    color:var(--sub);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;
+    border-right:1px solid var(--line2)}
+  .topnav .tb:hover{color:var(--gold);background:var(--goldbg)}
+  .topnav .tb.on{color:var(--gold);background:var(--card);border-bottom:2px solid var(--gold);font-weight:800}
+  .topnav .tb .ic{font-size:14px}
+  /* 좌측 하위 메뉴 */
+  .sidenav{display:block;position:fixed;top:99px;left:0;bottom:0;width:198px;z-index:50;
+    background:var(--drawer);border-right:1px solid var(--line);overflow-y:auto;padding:0 0 20px}
+  .sidenav .shd{font-size:12px;font-weight:800;color:var(--gold);padding:9px 12px;
+    background:var(--card2);border-bottom:1px solid var(--line);position:sticky;top:0}
+  .sidenav .sitem{display:flex;align-items:center;gap:7px;padding:9px 12px 9px 18px;font-size:12.5px;font-weight:600;
+    color:var(--sub);cursor:pointer;border-bottom:1px solid var(--line2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sidenav .sitem:hover{background:var(--goldbg);color:var(--gold)}
+  .sidenav .sitem.on{background:var(--goldbg);color:var(--gold);box-shadow:inset 3px 0 0 var(--gold);font-weight:800}
+  .sidenav .sitem .ic{font-size:13px;flex-shrink:0}
+  main{margin-left:198px;padding-top:calc(113px / var(--mm-fs,1))!important;max-width:1180px}
+  /* MES 느낌 — 각진 셀 */
+  .stat,.projcard,.panel,.op,.mbox,.qfbox,.moncard,.oscard,.card,
+  .tscroll,.pcwpopup,.dcell,.plnote,.hstep,.hnotebox{border-radius:3px!important}
+  .btn,.wrbtn,.itab,.pfilter button,.psel select,.fg input,.fg select,.fg textarea,
+  .dpick,.stepchip,.thm,.pfsquick button,.bulkbar input{border-radius:3px!important}
+  .ubadge,.badge,.st,.ocomp,.ngc{border-radius:3px!important}
+  table.wide th,table.wide td{border-radius:0!important}
+}
 main{width:100%;max-width:1020px;margin:0 auto;
   zoom:var(--mm-fs,1);
   padding:calc(81px / var(--mm-fs,1)) 16px calc(60px / var(--mm-fs,1))}
@@ -1030,7 +1064,7 @@ header .hright{position:relative}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 15.0</span>
+    <span class="rev">Rev 15.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1120,6 +1154,9 @@ header .hright{position:relative}
   </div>
   <div class="foot">금형제작관리 시스템<br>HC_Smart · Smart System Division</div>
 </nav>
+
+<div id="topnav" class="topnav"></div>
+<aside id="sidenav" class="sidenav"></aside>
 
 <main>
   <!-- 대시보드 -->
@@ -1580,7 +1617,7 @@ header .hright{position:relative}
 
   <!-- 사용안내 -->
   <section id="v-help" class="hide">
-    <h1 class="pt">사용안내 <em>— Rev 14.4 기준</em></h1>
+    <h1 class="pt">사용안내 <em>— Rev 15.0 기준</em></h1>
     <div class="hp">화면 이동은 <b>☰ 메뉴</b>를 사용합니다. 금형은 <b>🗜️ 신작</b>과 <b>🔧 수리</b> 두 가지 유형으로 관리되며, 각각 <b>별도의 공정 플로우</b>를 따릅니다. 공정 번호와 단계 수는 <b>설정 → 공정설계</b>에서 회사에 맞게 직접 설계합니다.</div>
 
     <div class="hstep">
@@ -1742,12 +1779,40 @@ header .hright{position:relative}
     <div class="hstep">
       <div class="hn mono">11</div>
       <div class="hb">
+        <h3>🏭 외주가공 — 부품별 공정 라우팅 · 발주 추적</h3>
+        <p>부품마다 <b>가공 공정 순서</b>(예: 성형연삭 → 열처리 → WIRE CUT)를 걸고, 공정별 협력업체 · 발주일 · 입고요구일 · 입고일을 관리합니다. 발주 누락과 납기 지연을 막는 화면입니다.</p>
+        <ul>
+          <li><b>🧩 부품 라우팅</b>(현장·모바일): 품번 · 부품명을 등록하고 <b>+ 공정</b>으로 순서를 이어 붙입니다. 공정 칩은 <i class="cd c-w"></i>회색 미발주 · <i class="cd c-r">●</i>파랑 발주 · <i class="cd c-ok">✓</i>초록 입고로 구분되고, 입고요구일이 지나면 빨간 테두리로 <b>지연</b> 표시됩니다. 칩을 누르면 업체 · 일자 편집과 <b>📤 오늘 발주</b> / <b>📥 오늘 입고</b> 원터치 처리가 가능합니다.</li>
+          <li><b>📋 발주서에서 불러오기</b>: 저장된 <b>발주서(PART LIST)</b>의 품목을 선택해 라우팅 부품으로 가져옵니다. 이미 등록된 품번은 자동 제외되고, 원재료의 <b>1차가공(A / AA)</b> 표기가 있으면 첫 공정(평면연삭 / 육면가공)과 발주처가 자동 생성됩니다.</li>
+          <li><b>⌨ 표 편집</b>(사무실 PC): 기존 MES처럼 표에서 일괄 입력합니다. <b>Tab</b> 옆 칸, <b>Enter · ↓</b> 아래 행으로 이동하고 마지막 행에서 Enter를 누르면 행이 자동 추가됩니다. 왼쪽 체크박스로 여러 행을 선택해 <b>협력업체 · 공정 · 일자를 한 번에 적용</b>할 수 있고, 엑셀 범위를 복사해 <b>Ctrl+V</b>로 붙여넣으면 행이 자동으로 채워집니다. 수정 내용은 <b>💾 일괄 저장</b>으로 한 번에 확정합니다.</li>
+          <li><b>🏭 발주 관리</b>: 전체 / 미발주 / 발주완료 / 입고완료 필터와 입고요구일 순 정렬, 행별 <b>📤 발주</b> · <b>📥 입고</b> 처리, 엑셀 출력을 지원합니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">12</div>
+      <div class="hb">
         <h3>부품 관리 · 업무현황 · 이력 · 게시판</h3>
         <ul>
           <li><b>부품 관리</b>: 개별 상세의 공정 카드 하단 <b>「외주 부품」</b>에서 부품명 · 치수 · 가공내용 · 외주업체를 등록하고 <b>발주 → 출고 → 입고</b> 날짜를 기록합니다. 입력값은 자동완성됩니다.</li>
           <li><b>🗂 업무현황</b>: 사원별 일일 업무 현황 화면으로 이동합니다(로그인 세션 공유).</li>
           <li><b>📜 이력</b>: 등록 · 시작 · OK · NG · 부품 · 출력물 · Tryout · 계획 · 보관 기록을 기간 · 금형 · 구분으로 조회하고 엑셀 출력·행별 삭제를 지원합니다.</li>
           <li><b>📋 게시판</b>: 개선·수정 요청을 등록하고 상태 뱃지를 눌러 접수 ↔ 완료로 전환합니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hstep">
+      <div class="hn mono">13</div>
+      <div class="hb">
+        <h3>📐 화면 설정 — 글자 크기 · 색상 · 테두리</h3>
+        <p>우측 상단 <b>📐</b> 버튼에서 화면을 사용자에 맞게 조정합니다. 설정은 이 기기에 저장되어 다음 접속에도 유지되며, <b>검사성적서 · 발주서 · 외주가공 · 업무현황 · 온습도</b> 화면에도 동일하게 적용됩니다.</p>
+        <ul>
+          <li><b>글자 크기</b> 80~150% — 슬라이더 또는 <b>A− / 100% / A+</b></li>
+          <li><b>화면 색상</b> — <b>기본</b>(어두운 배경 · 금색)과 <b>모노(백색)</b>(흰 배경 · 검은 글자) 중 선택. 백색 화면이 익숙하거나 밝은 사무실에서 보기 편합니다.</li>
+          <li><b>테두리 진하기</b> 3단계 — 저해상도 모니터에서 표 경계가 흐릴 때 진하게 조정합니다.</li>
+          <li>메뉴 옆 <b>☷</b> 버튼으로 메뉴 순서를 끌어 바꿀 수 있습니다.</li>
         </ul>
       </div>
     </div>
@@ -2156,7 +2221,7 @@ function enter(name){
   document.getElementById('ubadge').textContent='👤 '+name;
   history.replaceState({t:'view',v:'dash'},'');
   setPCWidthView('dash');
-  loadDash();startApprWatch();loadFoots();loadTheme();
+  loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();
 }
 function toggleDrawer(on){
   const wasOn=document.getElementById('drawer').classList.contains('on');
@@ -2531,6 +2596,7 @@ function resetMenuOrder(e){
   if(!confirm('메뉴 순서를 기본값으로 되돌릴까요?'))return;
   try{localStorage.removeItem(MENU_ORDER_KEY)}catch(err){}
   applyMenuOrder(MENU_DEFAULT_ORDER);
+  if(typeof buildTopnav==='function'){buildTopnav();buildSidenav();}
   toast('메뉴 순서를 기본값으로 복원했습니다');
 }
 function cancelMenuPress(){
@@ -2631,7 +2697,7 @@ function finishMenuDrag(save=true){
   menuSortItems().forEach(el=>el.classList.remove('menu-drop-before'));
   MENU_DRAG=null;
   stopMenuAutoScroll();
-  if(save){saveMenuOrder();toast('메뉴 순서가 저장되었습니다')}
+  if(save){saveMenuOrder();buildTopnav();buildSidenav();toast('메뉴 순서가 저장되었습니다')}
 }
 function menuPointerUp(e){
   if(MENU_DRAG&&MENU_DRAG.pointerId===e.pointerId){
@@ -2709,6 +2775,80 @@ function setTheme(t,silent){
   if(m)m.setAttribute('content',t==='mono'?'#ffffff':'#0f1117');
   if(!silent)toast('화면 색상: '+THEME_LB[t]);
 }
+/* ---------- PC 2단 네비게이션 ---------- */
+const CATS=[
+  {k:'plan', n:'진행관리', ic:'📊', ids:['new-mold','plan','dash','flow']},
+  {k:'out',  n:'출력물',   ic:'🖨️', ids:['doc','partlist','tryout']},
+  {k:'buy',  n:'구매·외주', ic:'🏭', ids:['outsrc','stock']},
+  {k:'qa',   n:'품질관리(SQ)', ic:'🛡️', ids:['insp-file','ncr','ecn','gauge','appr']},
+  {k:'stat', n:'현황',     ic:'🗂', ids:['work-status','mon','hist','board']},
+  {k:'sys',  n:'설정',     ic:'⚙️', ids:['help','set','logout']}
+];
+let CURCAT='plan';
+function drawerItems(){
+  const d=document.getElementById('drawer');if(!d)return [];
+  return [...d.querySelectorAll('.mi')].filter(el=>!el.classList.contains('mgh'));
+}
+function itemId(el){
+  if(el.dataset.menuId)return el.dataset.menuId;
+  if(el.dataset.v)return el.dataset.v;
+  return '';
+}
+function catOf(id){
+  const c=CATS.find(c=>c.ids.includes(id));
+  return c?c.k:'stat';
+}
+function buildTopnav(){
+  const nav=document.getElementById('topnav');if(!nav)return;
+  nav.textContent='';
+  CATS.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='tb';b.dataset.cat=c.k;
+    b.innerHTML='<span class="ic">'+c.ic+'</span>'+c.n;
+    b.onclick=()=>selCat(c.k);
+    nav.appendChild(b);
+  });
+  selCat(CURCAT,true);
+}
+function selCat(k,silent){
+  CURCAT=k;
+  document.querySelectorAll('#topnav .tb').forEach(b=>b.classList.toggle('on',b.dataset.cat===k));
+  buildSidenav();
+}
+function buildSidenav(){
+  const sn=document.getElementById('sidenav');if(!sn)return;
+  const cat=CATS.find(c=>c.k===CURCAT)||CATS[0];
+  sn.textContent='';
+  const hd=document.createElement('div');hd.className='shd';hd.textContent=cat.ic+' '+cat.n;
+  sn.appendChild(hd);
+  const items=drawerItems();
+  cat.ids.forEach(id=>{
+    const el=items.find(x=>itemId(x)===id);
+    if(!el)return;
+    const it=document.createElement('div');
+    it.className='sitem';it.dataset.v=el.dataset.v||'';it.dataset.id=id;
+    it.innerHTML=el.innerHTML.replace(/<span class="arw">.*?<\/span>/,'');
+    if(el.getAttribute('onclick'))it.setAttribute('onclick',el.getAttribute('onclick'));
+    sn.appendChild(it);
+  });
+  const cur=document.querySelector('#drawer .mi.on[data-v]');
+  markSidenav(cur?cur.dataset.v:'dash');
+}
+function markSidenav(v){
+  document.querySelectorAll('#sidenav .sitem').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+}
+function markTopnav(v){
+  const items=drawerItems();
+  const el=items.find(x=>x.dataset.v===v);
+  const id=el?itemId(el):'';
+  const k=id?catOf(id):CURCAT;
+  if(k!==CURCAT){CURCAT=k;
+    document.querySelectorAll('#topnav .tb').forEach(b=>b.classList.toggle('on',b.dataset.cat===k));
+    buildSidenav();
+  }
+  markSidenav(v);
+}
+
 function loadTheme(){
   let t='';try{t=localStorage.getItem(THEME_KEY)||''}catch(e){}
   if(t!=='mono')t='';
@@ -2815,6 +2955,7 @@ function go(v,fromPop){
       history.pushState({t:'view',v},'');
   }
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  markTopnav(v);
   if(GRP[v])document.getElementById('mg-'+GRP[v]).classList.add('open');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon'].forEach(x=>document.getElementById('v-'+x).classList.toggle('hide',x!==v));
@@ -5283,7 +5424,7 @@ async function loadHist(){
     document.getElementById('ubadge').textContent='👤 '+USER;
     history.replaceState({t:'view',v:'dash'},'');
     setPCWidthView('dash');
-    loadDash();startApprWatch();loadFoots();loadTheme();
+    loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();
   }
 })();
 </script>
