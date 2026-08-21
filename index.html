@@ -1118,7 +1118,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.6</span>
+    <span class="rev">Rev 16.7</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -3392,7 +3392,7 @@ function renderDash(){
       <div class="meta">
         <span>공정 <span class="cur">${cno} ${cnm}</span>${ctag?` <span class="ngc">${ctag}</span>`:''}
           ${cpe?` · 목표 <b class="mono">${md(cpe)}</b> ${ddTag(cpe)}`:''}</span>
-        <span>${ok}/${tot} (${pct}%)${p.due_date?` · 납기 <b class="mono">${md(p.due_date)}</b> ${ddTag(p.due_date)}`:''}</span>
+        <span>${ok}/${ps.length} (${pct}%)${p.due_date?` · 납기 <b class="mono">${md(p.due_date)}</b> ${ddTag(p.due_date)}`:''}</span>
       </div>
       <div class="pcbtns" onclick="event.stopPropagation()">
         <button class="trc" onclick="openTrace('${p.id}')">📜 전체이력</button>
