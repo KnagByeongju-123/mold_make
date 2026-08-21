@@ -1186,6 +1186,45 @@ th{letter-spacing:-.3px;font-weight:700}
 .mono,input.mono,td.mono,.rev,.htitle{letter-spacing:-.1px}
 .mono,input.mono,td.mono,.rev{font-family:'Malgun Gothic','Consolas','IBM Plex Mono',monospace;letter-spacing:0}
 }
+
+/* ============================================================
+   데이터시트(엑셀/액세스) 스타일 표 — 행번호 + 셀 구분선
+   ============================================================ */
+.tscroll table th,.tscroll table td{border-right:1px solid var(--line2)}
+.tscroll table th:last-child,.tscroll table td:last-child{border-right:none}
+.tscroll table th{border-bottom:1.5px solid var(--line3);position:sticky;top:0;z-index:2}
+.tscroll table tbody tr:nth-child(even){background:rgba(255,255,255,.022)}
+.tscroll table tbody tr:hover{background:var(--goldbg)}
+.tscroll table tr:last-child td{border-bottom:1px solid var(--line2)}
+.tscroll{max-height:none}
+
+/* 행번호 거터 */
+.tscroll table th.rnum,.tscroll table td.rnum{
+  width:38px;min-width:38px;max-width:38px;
+  text-align:center;padding:9px 4px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  color:var(--gray);background:var(--navy2);
+  border-right:1.5px solid var(--line3);
+  position:sticky;left:0;z-index:1;user-select:none}
+.tscroll table th.rnum{z-index:3;color:var(--gold)}
+.tscroll table tbody tr:hover td.rnum{color:var(--ink)}
+
+html[data-theme="clean"] .tscroll table th,
+html[data-theme="clean"] .tscroll table td{border-right-color:#e8ebf0}
+html[data-theme="clean"] .tscroll table th{border-bottom-color:#d5d9e0;background:#f7f8fa}
+html[data-theme="clean"] .tscroll table tbody tr:nth-child(even){background:#fafbfc}
+html[data-theme="clean"] .tscroll table tbody tr:hover{background:#eef4ff}
+html[data-theme="clean"] .tscroll table th.rnum,
+html[data-theme="clean"] .tscroll table td.rnum{background:#f0f2f5;color:#8b9099;border-right-color:#d5d9e0}
+html[data-theme="clean"] .tscroll table th.rnum{color:#4a4f57}
+
+html[data-theme="mono"] .tscroll table th,
+html[data-theme="mono"] .tscroll table td{border-right:1px solid #000}
+html[data-theme="mono"] .tscroll table tbody tr:nth-child(even){background:#f4f4f4}
+html[data-theme="mono"] .tscroll table tbody tr:hover{background:#e4e4e4}
+html[data-theme="mono"] .tscroll table th.rnum,
+html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;color:#000!important}
+
 </style>
 </head>
 <body>
@@ -1914,5 +1953,72 @@ async function loadMasters(){
   new MutationObserver(()=>attach()).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+
+<script>
+/* ===== 데이터시트 행번호 자동 부여 (.tscroll 내 표) ===== */
+(function(){
+  var BUSY=false;
+  var SKIP=/^(no|#|순|순번|번호|seq)$/i;
+  function hasOwnNum(tb){
+    var th=tb.tHead&&tb.tHead.rows[0]&&tb.tHead.rows[0].cells[0];
+    if(!th)return false;
+    if(th.classList.contains('rnum'))return false;
+    return SKIP.test((th.textContent||'').trim());
+  }
+  function numberOne(tb){
+    if(tb.hasAttribute('data-nonum'))return;
+    if(hasOwnNum(tb)){tb.setAttribute('data-nonum','');return}
+    var head=tb.tHead&&tb.tHead.rows[0];
+    if(head&&!(head.cells[0]&&head.cells[0].classList.contains('rnum'))){
+      var th=document.createElement('th');
+      th.className='rnum';th.textContent='';
+      head.insertBefore(th,head.cells[0]||null);
+      /* thead가 2줄 이상이면 나머지 줄도 자리 확보 */
+      for(var r=1;r<tb.tHead.rows.length;r++){
+        var hr=tb.tHead.rows[r];
+        if(hr.cells[0]&&hr.cells[0].classList.contains('rnum'))continue;
+        var th2=document.createElement('th');th2.className='rnum';
+        hr.insertBefore(th2,hr.cells[0]||null);
+      }
+    }
+    var bodies=tb.tBodies,n=0;
+    for(var b=0;b<bodies.length;b++){
+      var rows=bodies[b].rows;
+      for(var i=0;i<rows.length;i++){
+        var tr=rows[i],c0=tr.cells[0];
+        if(c0&&c0.classList.contains('rnum')){
+          if(c0.getAttribute('data-empty')!=='1')c0.textContent=++n;
+          continue;
+        }
+        var only=tr.cells.length===1&&c0&&(c0.colSpan>1||c0.classList.contains('empty'));
+        var td=document.createElement('td');
+        td.className='rnum';
+        if(only){td.setAttribute('data-empty','1');td.textContent='';}
+        else td.textContent=++n;
+        tr.insertBefore(td,c0||null);
+      }
+    }
+  }
+  function run(){
+    if(BUSY)return;BUSY=true;
+    try{
+      document.querySelectorAll('.tscroll > table, .tscroll table').forEach(numberOne);
+    }catch(e){}
+    BUSY=false;
+  }
+  function watch(){
+    run();
+    var mo=new MutationObserver(function(){
+      if(BUSY)return;
+      clearTimeout(watch._t);
+      watch._t=setTimeout(run,40);
+    });
+    mo.observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);
+  else watch();
+})();
+</script>
+
 </body>
 </html>
