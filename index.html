@@ -143,7 +143,7 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
 /* PC 가독성: 일반 화면은 1020px까지만 유동 확대 */
 /* --mm-fs : 글자 크기 배율(본문/모달 확대·축소). 고정 헤더 여백은 배율로 나눠 상쇄 */
 /* ===== 외부 문서 프레임 ===== */
-.extframe{width:100%;height:calc(100vh - 132px);border:1px solid var(--line);background:#0f1117;display:block}
+.extframe{width:100%;height:calc(100vh - 132px);border:1px solid var(--line);background:var(--bg);display:block}
 @media(max-width:999px){.extframe{height:calc(100vh - 90px)}}
 /* ===== PC 2단 네비게이션 (상단 대분류 + 좌측 하위) ===== */
 .sidenav{display:none}
@@ -1098,7 +1098,6 @@ header .hright{position:relative}
 .tscroll:hover .tcopy{display:block}
 .tcopy:hover{color:var(--gold);border-color:var(--goldbd);background:var(--goldbg)}
 table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text}
-@media(min-width:1000px){
 /* ============================================================
    클린 테마 (네이버/네이트 스타일) — data-theme="clean"
    ============================================================ */
@@ -1218,6 +1217,8 @@ html[data-theme="clean"] .pcwrange{accent-color:#2f5fd0}
 html[data-theme="clean"] .toast{background:#22262e;color:#fff;border-color:#22262e}
 html[data-theme="clean"] .empty{color:#9aa0a9}
 
+
+@media(min-width:1000px){
 /* ============================================================
    PC 타이포그래피 — 네이버 계열 폰트 스택
    ============================================================ */
@@ -1258,7 +1259,7 @@ th{letter-spacing:-.3px;font-weight:700}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 17.4</span>
+    <span class="rev">Rev 17.5</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -3213,16 +3214,33 @@ function applyFontScale(v,save){
 /* ---------- 화면 테마 ---------- */
 const THEME_KEY='mm_theme_v1';
 const THEME_LB={'':'기본','clean':'클린(밝은)','mono':'모노(백색)'};
-function setTheme(t,silent){
-  t=t||'';
+let MMTHEME='';
+function applyThemeAttr(){
+  let t=MMTHEME;
+  /* 클린 테마는 PC(1000px 이상)에서만 적용 */
+  if(t==='clean'&&window.innerWidth<1000)t='';
   if(t)document.documentElement.setAttribute('data-theme',t);
   else document.documentElement.removeAttribute('data-theme');
-  try{localStorage.setItem(THEME_KEY,t)}catch(e){}
-  document.querySelectorAll('.thm').forEach(b=>b.classList.toggle('on',(b.dataset.thm||'')===t));
-  const lb=document.getElementById('thmValue');if(lb)lb.textContent=THEME_LB[t];
   const m=document.querySelector('meta[name="theme-color"]');
-  if(m)m.setAttribute('content',t==='mono'?'#ffffff':t==='clean'?'#ffffff':'#0f1117');
-  if(!silent)toast('화면 색상: '+THEME_LB[t]);
+  if(m)m.setAttribute('content',(t==='mono'||t==='clean')?'#ffffff':'#0f1117');
+}
+window.addEventListener('resize',applyThemeAttr);
+function pushThemeToFrame(){
+  const fr=document.getElementById('extframe');
+  if(!fr)return;
+  try{
+    const w=fr.contentWindow;
+    if(w&&w.__mmApplyTheme){w.__mmTheme=MMTHEME;w.__mmApplyTheme();}
+  }catch(e){}
+}
+function setTheme(t,silent){
+  MMTHEME=t||'';
+  applyThemeAttr();
+  try{localStorage.setItem(THEME_KEY,MMTHEME)}catch(e){}
+  document.querySelectorAll('.thm').forEach(b=>b.classList.toggle('on',(b.dataset.thm||'')===MMTHEME));
+  const lb=document.getElementById('thmValue');if(lb)lb.textContent=THEME_LB[MMTHEME];
+  pushThemeToFrame();
+  if(!silent)toast('화면 색상: '+THEME_LB[MMTHEME]);
 }
 /* ---------- PC 2단 네비게이션 ---------- */
 const CATS=[
@@ -3303,7 +3321,10 @@ function openExt(id,file,title,fromPop){
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame']
     .forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!=='frame')});
   const fr=document.getElementById('extframe');
-  if(fr.getAttribute('src')!==file)fr.setAttribute('src',file);
+  if(fr.getAttribute('src')!==file){
+    fr.setAttribute('src',file);
+    fr.onload=function(){pushThemeToFrame()};
+  }else pushThemeToFrame();
   const k=catOf(id);
   if(k!==CURCAT){CURCAT=k;
     document.querySelectorAll('#topnav .tb').forEach(b=>b.classList.toggle('on',b.dataset.cat===k));
@@ -3325,7 +3346,7 @@ function markTopnav(v){
 
 function loadTheme(){
   let t='';try{t=localStorage.getItem(THEME_KEY)||''}catch(e){}
-  if(t!=='mono')t='';
+  if(t!=='mono'&&t!=='clean')t='';
   setTheme(t,true);
 }
 

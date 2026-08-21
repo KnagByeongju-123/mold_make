@@ -172,7 +172,6 @@ html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"
 .tcopy:hover{color:var(--gold);border-color:var(--goldbd);background:var(--goldbg)}
 table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text}
 
-@media(min-width:1000px){
 /* ============================================================
    클린 테마 (네이버/네이트 스타일) — data-theme="clean"
    ============================================================ */
@@ -292,6 +291,8 @@ html[data-theme="clean"] .pcwrange{accent-color:#2f5fd0}
 html[data-theme="clean"] .toast{background:#22262e;color:#fff;border-color:#22262e}
 html[data-theme="clean"] .empty{color:#9aa0a9}
 
+
+@media(min-width:1000px){
 /* ============================================================
    PC 타이포그래피 — 네이버 계열 폰트 스택
    ============================================================ */
@@ -351,12 +352,24 @@ th{letter-spacing:-.3px;font-weight:700}
 /* ---------- 화면 테마 (index.html과 공유) ---------- */
 (function(){
   try{
-    var t=localStorage.getItem('mm_theme_v1')||'';if(t!=='mono'&&t!=='clean')t='';
-    if(t){
-      document.documentElement.setAttribute('data-theme',t);
+    window.__mmTheme=localStorage.getItem('mm_theme_v1')||'';
+    if(window.__mmTheme!=='mono'&&window.__mmTheme!=='clean')window.__mmTheme='';
+    window.__mmApplyTheme=function(){
+      var t=window.__mmTheme;
+      /* 클린 테마는 PC(1000px 이상)에서만 적용 */
+      if(t==='clean'&&(window.innerWidth||document.documentElement.clientWidth)<1000)t='';
+      if(t)document.documentElement.setAttribute('data-theme',t);
+      else document.documentElement.removeAttribute('data-theme');
       var m=document.querySelector('meta[name="theme-color"]');
-      if(m)m.setAttribute('content',(t==='mono'||t==='clean'?'#ffffff':'#0f1117'));
-    }
+      if(m)m.setAttribute('content',(t==='mono'||t==='clean')?'#ffffff':'#0f1117');
+    };
+    window.__mmApplyTheme();
+    window.addEventListener('resize',window.__mmApplyTheme);
+    window.addEventListener('storage',function(e){
+      if(e.key!=='mm_theme_v1')return;
+      window.__mmTheme=(e.newValue==='mono'||e.newValue==='clean')?e.newValue:'';
+      window.__mmApplyTheme();
+    });
   }catch(e){}
 })();
 
