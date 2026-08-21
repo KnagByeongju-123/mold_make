@@ -470,7 +470,10 @@ tr.insp-ng td{background:rgba(255,123,123,.07)}
 .wrbtn.open{background:var(--gold);color:#1a1d27}
 
 /* 검사성적: 탭 + 공정 기준 성적서 양식 */
-.itabs{display:flex;gap:6px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px}
+.itabs{display:flex;gap:6px;margin:0 0 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:5px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.itabs::-webkit-scrollbar{height:4px}
+.itabs::-webkit-scrollbar-thumb{background:var(--line3);border-radius:2px}
 .itab{flex:1;padding:11px 10px;border-radius:9px;border:none;background:transparent;color:var(--sub);
   font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
 .itab.on{background:var(--goldbg);color:var(--gold);box-shadow:inset 0 0 0 1px var(--goldbd)}
@@ -587,6 +590,7 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .kpad .kp-num button.ok{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold);font-size:13px}
 .kpad .kp-h span button{margin-left:5px}
 @media(max-width:520px){
+  #m-addrow{grid-template-columns:1fr!important}
   .kpad{top:60px}
   .kpad .kp-sym{grid-template-columns:repeat(4,1fr)}
   .ffm-head{grid-template-columns:26px 1.4fr 1fr 1fr 24px;font-size:9.5px}
@@ -612,6 +616,13 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .wsave{display:flex;gap:7px;flex-wrap:wrap;padding:12px;border-top:1px solid var(--line2);background:var(--card)}
 @media(max-width:960px){
   .ihdr{grid-template-columns:1fr 1fr}
+  /* 기준정보 등록폼: JS가 넣는 인라인 grid-template-columns 무력화 */
+  #m-addrow{grid-template-columns:1fr 1fr!important}
+  #m-addrow .fg{min-width:0}
+  #m-addrow input,#m-addrow select{width:100%;min-width:0}
+  .itab{flex:0 0 auto;font-size:12.5px;padding:9px 11px}
+  .stkbar{flex-wrap:wrap}
+  #m-q{min-width:0!important;flex:1 1 140px;margin-left:0!important}
   .ifm-row.v2{grid-template-columns:1fr 1fr;gap:7px 8px;padding:10px 4px}
   .ifm-row.v2 .idx{grid-column:1/3;text-align:left;padding:0 0 2px}
   .ifm-row.v2 .f.item,.ifm-row.v2 .f.xs,.ifm-row.v2 .f.memo{grid-column:1/3}
@@ -1243,7 +1254,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.2</span>
+    <span class="rev">v1.3</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1282,7 +1293,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
       </div>
     </div>
 
-    <div class="tscroll"><table class="wide" style="min-width:680px">
+    <div class="tscroll"><table class="wide" id="m-tbl" style="min-width:680px">
       <thead id="m-head"></thead>
       <tbody id="m-body"></tbody></table></div>
     <div class="stkbar" style="margin-top:10px">
@@ -1377,15 +1388,20 @@ function mTab(t){
   buildAddRow();
   mLoad();
 }
+function isNarrow(){return (window.innerWidth||document.documentElement.clientWidth)<=960}
 function buildAddRow(){
   const box=document.getElementById('m-addrow');
   const cols=TABS[CUR].cols;
-  box.style.gridTemplateColumns=cols.map(c=>c[2].endsWith('fr')?'minmax(90px,'+c[2]+')':c[2]+'px').join(' ');
+  /* 좁은 화면에서는 인라인 고정폭을 쓰지 않고 CSS(2열/1열)에 맡긴다 */
+  if(isNarrow())box.style.gridTemplateColumns='';
+  else box.style.gridTemplateColumns=cols.map(c=>c[2].endsWith('fr')?'minmax(90px,'+c[2]+')':c[2]+'px').join(' ');
   box.innerHTML=cols.map(c=>{
     const dl=DL[c[0]]?` list="${DL[c[0]]}"`:'';
     const tp=(c[0]==='price'||c[0]==='rate')?' type="number"':(c[0]==='from_date')?' type="date"':'';
     return `<div class="fg"><label>${c[1]}</label><input id="ma-${c[0]}"${dl}${tp}></div>`;
   }).join('');
+  const tb=document.getElementById('m-tbl');
+  if(tb)tb.style.minWidth=(CUR==='price'?'1060px':CUR==='labor'?'780px':'680px');
   const nt=document.getElementById('m-note');
   if(nt)nt.textContent=CUR==='price'
     ?'구분(외주/자재) + 업체 · 공정 · 품목 · 재질 · 규격 조합으로 매칭되어 외주 입고확정 매입가와 자재발주 단가에 자동 입력됩니다'
@@ -1505,6 +1521,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
   try{applyFontScale(localStorage.getItem(FS_KEY)||100,false)}catch(e){}
   await buildDL();
   buildAddRow();
+  let rz;
+  window.addEventListener('resize',function(){
+    clearTimeout(rz);rz=setTimeout(buildAddRow,150);
+  });
   await mLoad();
 })();
 
