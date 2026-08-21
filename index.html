@@ -1374,7 +1374,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="rtag" id="rolebadge" title="현재 권한"></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 18.2</span>
+    <span class="rev">Rev 18.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1477,7 +1477,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <div class="msub">
       <div class="mi" data-menu-id="master" onclick="openExt('master','master.html','기준정보 관리')"><span class="ic">🗃️</span>기준정보 관리</div>
       <div class="mi" data-menu-id="appr" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
-      <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
+      <div class="mi" data-menu-id="help" onclick="openExt('help','help.html','사용안내')"><span class="ic">❓</span>사용안내</div>
       <div class="mi" data-menu-id="set" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
       <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
     </div>
@@ -1801,8 +1801,6 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     </div>
   </section>
 
-
-
   <!-- 부적합·시정조치 -->
   <section id="v-ncr" class="hide">
     <div class="qfbox"><span class="qflb">🔍 조회 · 출력</span>
@@ -1978,380 +1976,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
   </section>
 
   <!-- 사용안내 -->
-  <section id="v-help" class="hide">
-    <h1 class="pt">사용안내 <em>— Rev 16.5 기준</em></h1>
-    <div class="hp">화면 이동은 <b>☰ 메뉴</b>를 사용합니다. 금형은 <b>🗜️ 신작</b>과 <b>🔧 수리</b> 두 가지 유형으로 관리되며, 각각 <b>별도의 공정 플로우</b>를 따릅니다. 공정 번호와 단계 수는 <b>설정 → 공정설계</b>에서 회사에 맞게 직접 설계합니다.</div>
-
-    <div class="hflow">
-      <b>🧭 부서별 업무 흐름 — 누가 무엇을 하나</b>
-      <div class="hfl-n">금형 1건이 들어와서 납품될 때까지, 부서가 바통을 넘기는 순서입니다.</div>
-
-      <div class="hfl">
-        <div class="hfc dept-s">
-          <div class="hfh"><i>1</i>영업</div>
-          <div class="hfw">고객 발주를 받아 <b>금형을 등록</b>합니다</div>
-          <ul>
-            <li>금형번호 · 고객사 · 제품 · 도번 · 조수 입력</li>
-            <li>수주일 · S1(1차 시타) 예정일 · 납기일 확정</li>
-            <li>견적가 · 수주가 입력 (나중에 손익 계산의 기준)</li>
-          </ul>
-          <div class="hfm">📍 신규진행등록</div>
-        </div>
-        <div class="hfa">▼ 금형번호를 넘김</div>
-
-        <div class="hfc dept-p">
-          <div class="hfh"><i>2</i>관리 · 공무</div>
-          <div class="hfw">전체 <b>일정을 짭니다</b></div>
-          <ul>
-            <li>공정별 계획완료일 자동 생성 후 조정</li>
-            <li>이후 계획 대비 실적이 자동 비교됨</li>
-          </ul>
-          <div class="hfm">📍 신규진행계획수립</div>
-        </div>
-        <div class="hfa">▼ 일정표를 공유</div>
-
-        <div class="hfc dept-d">
-          <div class="hfh"><i>3</i>설계</div>
-          <div class="hfw">도면을 그리고 <b>부품 목록을 만듭니다</b></div>
-          <ul>
-            <li>조립도 → 레이아웃 → 부품도 순서로 진행, 공정 OK 처리</li>
-            <li>부품도가 끝나면 <b>발주서(PART LIST)</b> 작성 — 원재료 · 표준품</li>
-            <li>CAD BOM은 엑셀 붙여넣기로 한 번에 입력</li>
-          </ul>
-          <div class="hfm">📍 진행현황(세부) · 발주서(PART LIST)</div>
-        </div>
-        <div class="hfa">▼ 부품 목록을 넘김</div>
-
-        <div class="hfc dept-b">
-          <div class="hfh"><i>4</i>구매 · 외주</div>
-          <div class="hfw">자재를 <b>사고 외주를 돌립니다</b></div>
-          <ul>
-            <li>발주서 PDF로 원재료 · 표준품 발주</li>
-            <li>부품마다 가공 순서 배정 (성형연삭 → 열처리 → WIRE CUT …)</li>
-            <li>업체 · 입고요구일 지정 → <b>발주</b> → 물건 오면 <b>입고</b></li>
-            <li>매입가 · 네고율 넣고 <b>입고확정</b> → 원가에 자동 반영</li>
-          </ul>
-          <div class="hfm">📍 외주가공 (라우팅 · 발주 관리 · 입고확정)</div>
-        </div>
-        <div class="hfa">▼ 가공된 부품 입고</div>
-
-        <div class="hfc dept-m">
-          <div class="hfh"><i>5</i>가공 · 조립</div>
-          <div class="hfw">부품을 다듬고 <b>금형을 조립합니다</b></div>
-          <ul>
-            <li>공정별 OK / NG 처리 (NG는 지정된 이전 공정으로 자동 복귀)</li>
-            <li>공정 카드에서 출력물 점검표 체크 · 증빙 사진 첨부</li>
-            <li>하루 작업은 업무현황에 기록</li>
-          </ul>
-          <div class="hfm">📍 진행현황(세부) · 업무현황</div>
-        </div>
-        <div class="hfa">▼ 조립 완료품 검사 의뢰</div>
-
-        <div class="hfc dept-q">
-          <div class="hfh"><i>6</i>품질</div>
-          <div class="hfw">치수를 재고 <b>합격 여부를 판정합니다</b></div>
-          <ul>
-            <li>검사성적서 양식(도면 + 풍선번호)에 측정값 입력 → 자동 OK/NG</li>
-            <li>불량은 <b>부적합(NCR)</b>, 설계·자재 변경은 <b>설계변경(4M)</b>으로 기록</li>
-            <li>계측기 교정 주기 관리, 문서는 결재함에서 전자결재</li>
-          </ul>
-          <div class="hfm">📍 검사성적서 · NCR · ECN · 계측기관리</div>
-        </div>
-        <div class="hfa">▼ 합격 후 시타(T/O)</div>
-
-        <div class="hfc dept-t">
-          <div class="hfh"><i>7</i>시험 · T/O</div>
-          <div class="hfw">프레스에 걸어 <b>시타를 진행합니다</b></div>
-          <ul>
-            <li>차수별 작업내용 · 이슈 · 다음 계획을 사진과 함께 기록</li>
-            <li>1차 시타 완료 시 수주정보의 <b>S1 완료일</b> 입력</li>
-          </ul>
-          <div class="hfm">📍 T/O보고서</div>
-        </div>
-        <div class="hfa">▼ 납품 후 정산</div>
-
-        <div class="hfc dept-c">
-          <div class="hfh"><i>8</i>경영 · 원가</div>
-          <div class="hfw">얼마 벌었는지 <b>정산합니다</b></div>
-          <ul>
-            <li>원재료비 · 사내가공비 · 설계비 · 경비 등록 (외주비는 자동 합산)</li>
-            <li><b>수주가 − 실적원가 = 손익</b> 확인</li>
-            <li>전 공정 OK → 완료보관으로 마무리 (기록은 그대로 보존)</li>
-          </ul>
-          <div class="hfm">📍 원가관리 · 진행현황(전체)</div>
-        </div>
-      </div>
-
-      <div class="hfl-n" style="margin-top:12px">※ 부서 이름은 회사마다 다를 수 있습니다. 중요한 것은 <b>순서</b>입니다 — 등록 → 일정 → 설계 → 구매/외주 → 가공/조립 → 검사 → 시타 → 정산.</div>
-    </div>
-
-    <div class="hscn">
-      <b>📋 실무 진행 순서 — 금형 1건이 끝날 때까지</b>
-      <div class="hsteps">
-        <div class="hs"><i>1</i><div><b>수주 확정 · 등록</b><em>신규진행등록</em>
-          고객 발주가 확정되면 금형번호 · 금형명 · 고객사 · 제품명 · 모델 · 도번 · <b>조수</b>(프로그레시브면 A~F) · 수주일 · <b>S1 예정일</b> · 납기예정일 · 견적가 · 수주가를 입력해 등록합니다. 이후 모든 작업이 이 금형에 붙습니다.</div></div>
-        <div class="hs"><i>2</i><div><b>일정 수립</b><em>신규진행계획수립</em>
-          <b>📅 계획수립</b>으로 공정별 계획완료일을 한 번에 만들고, 필요한 공정만 날짜를 조정합니다. 이후 계획 대비 실적이 자동으로 비교됩니다.</div></div>
-        <div class="hs"><i>3</i><div><b>설계 진행</b><em>진행현황(세부)</em>
-          도면 승인·설계 공정을 <b>OK</b> 처리합니다. 공정에 진척 가중치를 넣어 두면(예: 조립도30·레이아웃30·부품도40) 설계만으로 진척률이 정확히 올라갑니다.</div></div>
-        <div class="hs"><i>4</i><div><b>부품 전개 · 발주서 작성</b><em>설계관리 › 발주서(PART LIST)</em>
-          공정(조)을 고르고 <b>🧱 원재료</b> · <b>⚙️ 표준품</b> 발주서를 작성합니다. CAD BOM은 <b>📋 엑셀 붙여넣기</b>로 한 번에 넣고, PDF로 출력해 발주처에 전달합니다.</div></div>
-        <div class="hs"><i>5</i><div><b>외주 라우팅 구성</b><em>구매관리 › 외주가공</em>
-          <b>📋 발주서에서 불러오기</b>로 품목을 가져온 뒤, 부품마다 가공 순서를 붙입니다(예: 성형연삭 → 열처리 → WIRE CUT). 사무실에서는 <b>⌨ 표 편집</b>으로 여러 행을 한 번에 채우는 편이 빠릅니다.</div></div>
-        <div class="hs"><i>6</i><div><b>발주 · 입고 추적</b><em>외주가공 › 발주 관리</em>
-          업체·입고요구일을 지정하고 <b>📤 발주</b>, 물건이 오면 <b>📥 입고</b>를 누릅니다. 요구일이 지난 건은 <b>지연</b>으로 표시되니 매일 이 화면만 보면 됩니다.</div></div>
-        <div class="hs"><i>7</i><div><b>단가 확정</b><em>외주가공 › 입고확정</em>
-          입고된 건에 매입가와 네고율을 넣으면 확정가가 계산됩니다. 여러 건 선택 후 <b>✔ 확정 처리</b>하면 그대로 원가에 반영됩니다.</div></div>
-        <div class="hs"><i>8</i><div><b>가공 · 조립 진행</b><em>진행현황(세부)</em>
-          공정별로 OK / NG를 처리하고, 각 공정 카드에서 <b>출력물 점검표</b>를 체크하며 증빙 사진을 첨부합니다.</div></div>
-        <div class="hs"><i>9</i><div><b>검사 · 성적서</b><em>조립관리 › 검사성적서</em>
-          양식을 만들어 두고(도면 + 풍선번호) 측정자가 X1~X10 값만 입력하면 OK/NG가 자동 판정됩니다. 결과는 PDF로 출력해 결재·제출합니다.</div></div>
-        <div class="hs"><i>10</i><div><b>T/O · 시타</b><em>조립관리 › T/O보고서</em>
-          차수별 작업 내용 · 이슈 · 다음 계획을 사진과 함께 기록합니다. 1차 시타가 끝나면 수주정보의 <b>S1 완료일</b>을 입력합니다.</div></div>
-        <div class="hs"><i>11</i><div><b>문제 발생 시</b><em>조립관리 › 부적합 / 설계관리 › 설계변경</em>
-          불량은 <b>NCR</b>로 접수 → 원인 → 조치 → 재발방지까지, 설계·자재·공법 변경은 <b>ECN(4M)</b>으로 남깁니다. SQ 심사에서 가장 많이 보는 기록입니다.</div></div>
-        <div class="hs"><i>12</i><div><b>납품 · 원가 정산</b><em>원가관리 › 원가관리(손익)</em>
-          납기완료일을 입력하고, 원재료비 · 사내가공비 · 설계비 · 경비를 등록하면 <b>수주가 − 실적원가 = 손익</b>이 바로 나옵니다.</div></div>
-        <div class="hs"><i>13</i><div><b>완료 보관</b><em>진행현황(전체)</em>
-          전 공정 OK로 상태가 완료가 되면 <b>📦 완료보관</b>을 누릅니다. 성적서 · NCR · 발주 기록은 그대로 보존되어 언제든 조회·재출력됩니다.</div></div>
-      </div>
-      <div class="hscn-n">※ 사전에 <b>설정 → 공정설계</b>에서 회사 공정을, <b>설정 → 기준정보 관리</b>에서 협력업체 · 재질 코드를 등록해 두면 이후 입력이 훨씬 빨라집니다.</div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">01</div>
-      <div class="hb">
-        <h3>로그인 — 7일 자동 유지</h3>
-        <p>PIN 4자리로 로그인합니다. 초기 관리자 PIN은 <b>0000</b>이며, 로그인한 사람 이름이 모든 작업의 작업자로 자동 기록됩니다.</p>
-        <ul>
-          <li>한 번 로그인하면 <b>7일간 자동 로그인</b>됩니다. 접속할 때마다 기한이 다시 7일로 연장되어, 매일 사용하면 재로그인이 필요 없습니다.</li>
-          <li>상단 우측 이름 배지 또는 메뉴 → 로그아웃을 누르면 자동 로그인도 함께 해제됩니다.</li>
-          <li>사원 등록·수정은 <b>설정 → PIN 관리</b>에서 하며, 이름 · <b>부서</b> · PIN을 관리합니다. 설정 진입 시 마스터 비밀번호가 필요합니다.</li>
-          <li>마스터 비밀번호는 설정 화면에서 변경할 수 있고, DB에 저장되어 모든 기기에 적용됩니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">02</div>
-      <div class="hb">
-        <h3>설정 → 공정설계 — 신작 / 수리 플로우</h3>
-        <p>회사마다 다른 공정 구성을 직접 설계합니다. 상단 탭으로 <b>🆕 금형신작 공정</b>과 <b>🔧 금형수리 공정</b>을 나눠 관리합니다.</p>
-        <ul>
-          <li><b>＋ 공정 추가</b> · <b>▲▼ 순서 변경</b> · <b>수정</b>(공정명 · 담당(고객사/사내/외주 중복 선택) · 담당부서 · 업무내용 · 출력물 · NG 되돌림) · <b>✕ 삭제</b>를 지원합니다.</li>
-          <li>공정 카드의 <b>📑 출력물 n</b>을 누르면 패널이 펼쳐져, 출력물을 <b>추가 · 이름수정 · 순서변경 · 삭제</b>할 수 있습니다.</li>
-          <li>수리 공정이 비어 있으면 <b>「기본 수리공정 자동생성」</b> 버튼으로 7단계(수리접수/견적 → 분해·세척 → 상태진단 → 부품가공/교체 → 조립 → T/O검증 → 출하)를 한 번에 만듭니다.</li>
-          <li>변경 내용은 <b>이후 등록되는 금형</b>부터 적용됩니다. 이미 사용 중인 공정은 삭제되지 않습니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">03</div>
-      <div class="hb">
-        <h3>신규진행등록 (신작 · 수리)</h3>
-        <p>메뉴 <b>🗜️ 신규진행등록</b>에서 화면 상단 <b>구분</b> 버튼으로 <b>🆕 금형신작</b> / <b>🔧 금형수리</b>를 선택해 등록합니다.</p>
-        <ul>
-          <li>금형번호 · 금형명은 필수, 고객사 · 제품명 · 담당자 · 납기일 · 비고는 선택입니다.</li>
-          <li>등록하면 선택한 구분의 <b>공정이 자동 생성</b>되고, 첫 공정이 <span class="st st-r">진행</span>, 나머지는 <span class="st st-w">대기</span>가 됩니다.</li>
-          <li>등록 직후 해당 금형의 진행현황(세부)으로 이동합니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">04</div>
-      <div class="hb">
-        <h3>진행현황(세부) — 공정 상태 처리</h3>
-        <p>금형을 선택해 <b>공정별 세부 진행상태</b>를 처리하는 화면입니다. 여러 금형의 전체 현황은 <b>진행현황(전체)</b> 화면에서 확인합니다.</p>
-        <ul>
-          <li>상단 선택창에서 금형을 고르면 공정 카드가 순서대로 표시되고, 우측에 진행률이 나타납니다.</li>
-          <li>각 카드에서 <b>시작 / OK / NG</b> 처리와 담당 부서·업무 내용 확인이 가능합니다.</li>
-          <li>카드 하단에서 <b>출력물 점검표</b>를 관리합니다.</li>
-        </ul>
-        <table class="htbl">
-          <tr><td><button class="b-start" style="pointer-events:none">시작</button></td><td>대기 → 진행. 시작 시각과 로그인 사용자가 기록됩니다.</td></tr>
-          <tr><td><button class="b-ok" style="pointer-events:none">OK</button></td><td>공정 합격. 완료 시각 기록 + <b>다음 공정 자동 개시</b>. 전 공정 OK 시 금형이 <span class="badge b-done">완료</span>로 전환됩니다.</td></tr>
-          <tr><td><button class="b-ng2" style="pointer-events:none">NG</button></td><td>불합격. 공정설계에서 지정한 <b>이전 공정으로 자동 복귀</b>하고 NG 횟수가 누적됩니다.</td></tr>
-        </table>
-        <p class="hnote"><b>공정명</b> 또는 옆의 <i class="ico">?</i>를 누르면 업무 내용 · 결과물 · 되돌림 경로가 팝업으로 열립니다.</p>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">05</div>
-      <div class="hb">
-        <h3>홈 — 진행요약 · 완료보관 · 전체이력</h3>
-        <p>상단 통계(진행 · 완료 · NG · 전체)와 금형별 카드가 표시됩니다. 카드에는 <b>🗜️신작 / 🔧수리</b> 배지가 붙습니다.</p>
-        <ul>
-          <li>필터 탭: <b>진행중 · 완료 · 📦보관 · 전체</b>. 기본은 진행중만 표시됩니다.</li>
-          <li>요약 줄: <b>공정번호 + 공정명(4글자)</b> · <b>목표일(월/일)</b> · <b>D-day 배지</b>(D-n 파랑 / 3일 이내 주황 / 지연 시 <b style="color:var(--red)">D+n</b> 빨강)와 진행률·납기가 표시됩니다.</li>
-          <li><b>📦 완료보관</b>: 완료된 금형을 보관 처리하면 진행 목록에서 분리되어 별도 관리됩니다. 데이터는 삭제되지 않으며 <b>↩ 보관 해제</b>로 되돌릴 수 있습니다.</li>
-          <li><b>📜 전체이력</b>: 등록 · 시작 · OK · NG · 부품 · 출력물 · T/O · 보관까지 <b>모든 기록을 하나의 타임라인</b>으로 봅니다. 구분별 필터, 상단 요약(공정 진척 · NG 횟수 · 부품/출력물/T/O 건수 · 총 소요일수), <b>엑셀 / PDF</b>(결재란 포함) 출력을 지원합니다.</li>
-          <li>카드 우측 <b>✕</b>는 금형과 공정 · 부품 · 출력물 · 이력을 함께 삭제합니다. 복구되지 않습니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">06</div>
-      <div class="hb">
-        <h3>신규진행계획수립 — 계획 대비 실적</h3>
-        <p>메뉴 → <b>신규진행계획수립</b>에서 공정별 계획일을 수립합니다. 금형 선택 목록과 상단 배지에 <b>[신작] / [수리]</b>가 표시되고, 해당 유형의 공정만 나타납니다.</p>
-        <ul>
-          <li>각 공정의 <b>완료일</b> 칸을 눌러 달력에서 선택합니다. 시작일은 이전 공정 완료일로 자동 연결되고 소요일수가 계산됩니다.</li>
-          <li><b>📅 계획수립</b>: 달력을 열어 날짜를 연속 클릭하면 공정 순서대로 일정이 잡힙니다. <b>이미 저장된 계획은 그대로 불러와 달력에 표시</b>되며, 미입력 공정부터 이어서 진행됩니다.</li>
-          <li>지정된 날짜를 <b>더블클릭</b>하면 이동 대기 상태가 되고, 옮길 날짜를 클릭하면 이동합니다. <b>이후 공정도 함께 이동</b> 옵션을 켜두면 이후 공정이 같은 일수만큼 따라 이동합니다.</li>
-          <li>계획완료일이 지난 미완료 공정은 <b style="color:var(--red)">지연</b>으로 표시됩니다.</li>
-          <li><b>엑셀 출력</b>으로 계획 대비 실적표를 내려받습니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">07</div>
-      <div class="hb">
-        <h3>출력물 — 점검표 · 발주서 · T/O보고서</h3>
-        <p>메뉴의 <b>🖨️ 출력물</b> 그룹 안에 세 화면이 있습니다.</p>
-        <ul>
-          <li><b>📑 출력물 점검표</b>: 금형별 전 결과물의 작성 여부 · 작성일 · 작성자 · 증빙을 한 장으로 확인합니다. 선택 목록과 배지에 <b>[신작]/[수리]</b>가 구분 표시되며, <b>엑셀</b>과 <b>PDF</b>(결재란 포함 A4)로 출력합니다. SQ 심사 대응용입니다.</li>
-          <li>개별 상세의 공정 카드 하단 <b>「출력물 n/m 작성」</b>에서 항목 <b>체크</b> 시 작성일·작성자가 자동 기록되고, <b>첨부</b>로 증빙 사진을 등록합니다. 전 항목 작성 시 <span class="ocomp">완비</span> 표시가 붙습니다.</li>
-          <li><b>📋 발주서 (PART LIST)</b>(별도 화면): <b>금형 × 공정 × 구분</b> 단위로 발주서를 만듭니다.
-            <br>· <b>🧱 원재료 발주서</b> — 품번 · 부품명 · 재질 · 완성치수 · 원재료t · 수량 · 단위 · 발주처 · 1차가공 · 비고, M/SHEET 유·무와 <b>원재료 납기 / 1차가공 납기</b>
-            <br>· <b>⚙️ 표준품 발주서</b> — 품번 · 부품명 · TYPE · 규격 · 수량 · 단위 · MAKER · 발주처 · 비고, <b>표준품 납기 / 가공품 납기</b>
-            <br>· 관리제번 · 제품명 · 모델명 · 공정명은 선택한 금형·공정에서 <b>자동 입력</b>되고, 기본 10줄에 <b>+5줄 / +10줄</b>·Enter 연속 입력을 지원합니다.
-            <br>· <b>📋 엑셀 붙여넣기</b>: 제목행을 읽어 열을 자동 매핑하고 원재료/표준품 구분도 자동 판별합니다. <b>템플릿(CSV)</b> 다운로드와 파일 열기도 가능합니다.
-            <br>· <b>📚 발주 이력</b>에서 지난 발주서를 열어 수정·PDF 재출력·삭제하며, 출력은 <b>A4 가로</b> PART LIST 양식(메타표 + 작성·검토·승인 결재란 + 품목표 + 주기)으로 인쇄됩니다. <b>⚙️ 출력설정</b>으로 바닥글(문서번호·회사명·용지)을 지정합니다.</li>
-          <li><b>🔧 T/O보고서</b>: 작업일 · 금형 · 차수(1차/2차/3차/양산전/기타) · 상태(완료/진행중/이슈/보류)를 선택하고 작업 내용 · 이슈 · 다음 계획을 기록합니다. 사진 최대 3장(Storage 저장), 기간·금형·차수·상태 필터, <b>수정</b>, <b>엑셀</b>·<b>PDF</b> 출력과 <b>⚙️ 출력설정</b>(바닥글)을 지원합니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">08</div>
-      <div class="hb">
-        <h3>📦 재고관리 — 금형부품</h3>
-        <p>금형부품·소모품의 재고와 입출고를 관리합니다. 상단에 <b>품목 수 · 재고총액 · 재고부족 · 이달 입출고</b> 지표가 표시됩니다.</p>
-        <ul>
-          <li><b>＋ 품목 등록</b>: 품명 · 분류 · 규격 · 단위(EA·SET·KG 등 선택) · 현재고 · 안전재고 · 단가 · 위치(랙) · 거래처 · 사진.</li>
-          <li>품명·규격 입력 시 <b>Φ ° t × ± ㎜ R M</b> 심볼 버튼으로 특수문자를 커서 위치에 바로 넣습니다.</li>
-          <li><b>입고 / 출고</b> 버튼으로 수량을 처리하면 재고가 자동 갱신되고 이력이 남습니다. 현재고보다 많은 출고는 차단됩니다.</li>
-          <li>안전재고 이하 품목은 <span style="color:var(--red);font-weight:700">부족</span>으로 강조되며, <b>⚠ 부족만</b> 필터로 모아볼 수 있습니다. 검색·분류 필터, <b>엑셀</b>(재고금액·총액 포함) 출력을 지원합니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">09</div>
-      <div class="hb">
-        <h3>🛡️ 품질관리 (SQ)</h3>
-        <p>SQ 심사 대응 문서를 작성·보관하는 그룹입니다. 모든 문서는 PDF에 <b>결재란</b>이 포함되며, 각 화면의 <b>⚙️ 출력설정</b>에서 바닥글(좌: 문서번호 · 중앙: 회사명 · 우: 용지)을 지정합니다.</p>
-        <ul>
-          <li><b>📐 검사성적서</b>(별도 화면): <b>양식작성 → 치수측정 → 결과출력 → 출력설정</b> 4단계입니다.
-            <br>· <b>양식작성</b>: 금형·공정을 고르고 검사항목 / 규격 / 측정기를 등록합니다. 칸을 누르면 오른쪽 <b>선택</b> 패널에 항목·측정기 프리셋과 규격 기호·숫자·공차(±0.03 등) 칩이 나타나 키보드 없이 입력합니다. <b>📋 엑셀 붙여넣기</b>로 기존 엑셀 성적서를 그대로 옮기거나 템플릿(CSV)을 내려받아 채울 수 있습니다.
-            <br>· <b>SKETCH</b>: 도면 이미지를 등록하고 <b>🔍 번호 편집</b>에서 확대해 위치를 누르면 ①②③ 풍선번호가 찍힙니다. 검사항목 순번과 자동 대응됩니다.
-            <br>· <b>치수측정</b>: 해당 공정 작업자가 양식을 불러와 <b>X1~X10</b> 측정값만 입력합니다. 규격을 <span class="mono">88.14 ±0.03</span> · <span class="mono">50 +0.05/-0.02</span> · <span class="mono">10~12</span> 형식으로 등록해 두면 <b>OK/NG가 자동 판정</b>됩니다.
-            <br>· <b>결과출력</b>: 발행된 성적서 목록에서 상세보기 · <b>📄 PDF</b>(도면+번호 → 측정결과표) · 엑셀 · 삭제.</li>
-          <li><b>🚨 부적합·시정조치(NCR)</b>: 부적합 접수 → 원인분석 → 시정조치 → 재발방지를 단계로 기록하고 조치중/완료로 관리합니다. 기간·상태·구분 조회, 보고서 PDF·관리대장 엑셀.</li>
-          <li><b>📝 설계변경(4M)</b>: 설계/자재/공법/설비/작업자 구분으로 변경 전→후·사유·요청/승인자를 기록하고 검토중 → 승인/반려로 진행합니다.</li>
-          <li><b>📏 계측기관리</b>: 관리번호·측정범위·교정주기를 등록하면 <b>차기 교정일이 자동 계산</b>되고 임박·초과가 D-day로 표시됩니다. 교정 이력과 관리대장 PDF를 지원합니다.</li>
-          <li><b>✍️ 결재함</b>: 상신한 문서를 <b>작성 → 검토 → 확인 → 승인</b> 순으로 전자결재합니다. 서명패드로 서명하면 무결성 해시가 함께 저장되고, 서명이 삽입된 PDF가 출력됩니다. 결재 대기 건은 상단 🔔 배지로 알립니다. 결재선은 <b>설정 → 결재선</b>에서 만듭니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">10</div>
-      <div class="hb">
-        <h3>📡 모니터링 — 이상 징후 한눈에</h3>
-        <p>조치가 필요한 항목만 모아 보여주는 화면입니다. 상단에 <b>진행 금형 · 지연 공정 · 납기 임박 · 조치 필요</b> 건수가 집계되고, 아래 카드에서 상세를 확인해 <b>바로가기 ›</b>로 해당 화면으로 이동합니다.</p>
-        <ul>
-          <li>⏰ 지연 공정 · 📅 납기 임박(D-7) · 🚫 NG 발생 공정</li>
-          <li>🚨 미조치 NCR · 📝 검토중 설계변경 · 📏 계측기 교정 임박·초과(D-14)</li>
-          <li>📦 안전재고 미달 · ✍️ 내 결재 대기</li>
-        </ul>
-        <p class="hnote"><b>확장 예정</b> — 작업장 <b>온도 · 습도 · 체감온도 · 결로</b> 모니터링과 <b>ntfy 알림 발송</b>, <b>안돈(Andon) 시스템</b> 적용이 가능합니다. 센서 연동 시 임계치 초과를 실시간 감지해 담당자 휴대폰으로 즉시 알림을 보내고, 현장 표시등·대시보드로 이상 상태를 표시할 수 있습니다.</p>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">11</div>
-      <div class="hb">
-        <h3>🏭 외주가공 — 부품별 공정 라우팅 · 발주 추적</h3>
-        <p>부품마다 <b>가공 공정 순서</b>(예: 성형연삭 → 열처리 → WIRE CUT)를 걸고, 공정별 협력업체 · 발주일 · 입고요구일 · 입고일을 관리합니다. 발주 누락과 납기 지연을 막는 화면입니다.</p>
-        <ul>
-          <li><b>🧩 부품 라우팅</b>(현장·모바일): 품번 · 부품명을 등록하고 <b>+ 공정</b>으로 순서를 이어 붙입니다. 공정 칩은 <i class="cd c-w"></i>회색 미발주 · <i class="cd c-r">●</i>파랑 발주 · <i class="cd c-ok">✓</i>초록 입고로 구분되고, 입고요구일이 지나면 빨간 테두리로 <b>지연</b> 표시됩니다. 칩을 누르면 업체 · 일자 편집과 <b>📤 오늘 발주</b> / <b>📥 오늘 입고</b> 원터치 처리가 가능합니다.</li>
-          <li><b>📋 발주서에서 불러오기</b>: 저장된 <b>발주서(PART LIST)</b>의 품목을 선택해 라우팅 부품으로 가져옵니다. 이미 등록된 품번은 자동 제외되고, 원재료의 <b>1차가공(A / AA)</b> 표기가 있으면 첫 공정(평면연삭 / 육면가공)과 발주처가 자동 생성됩니다.</li>
-          <li><b>⌨ 표 편집</b>(사무실 PC): 기존 MES처럼 표에서 일괄 입력합니다. <b>Tab</b> 옆 칸, <b>Enter · ↓</b> 아래 행으로 이동하고 마지막 행에서 Enter를 누르면 행이 자동 추가됩니다. 왼쪽 체크박스로 여러 행을 선택해 <b>협력업체 · 공정 · 일자를 한 번에 적용</b>할 수 있고, 엑셀 범위를 복사해 <b>Ctrl+V</b>로 붙여넣으면 행이 자동으로 채워집니다. 수정 내용은 <b>💾 일괄 저장</b>으로 한 번에 확정합니다.</li>
-          <li><b>🏭 발주 관리</b>: 전체 / 미발주 / 발주완료 / 입고완료 필터와 입고요구일 순 정렬, 행별 <b>📤 발주</b> · <b>📥 입고</b> 처리, 엑셀 출력을 지원합니다.</li>
-          <li><b>💰 입고확정</b>: 입고 완료된 공정에 <b>매입가 · 네고율(%)</b>을 입력하면 <b>확정가</b>가 자동 계산됩니다(매입가 × (1−네고율/100)). 여러 행을 선택해 네고율 일괄 적용, <b>✔ 확정 처리</b>(확정일 기록) · 확정 취소가 가능하고, 하단에 매입가 · 확정가 · 절감액 합계가 표시되어 금형별 외주비를 집계합니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">12</div>
-      <div class="hb">
-        <h3>부품 관리 · 업무현황 · 이력 · 게시판</h3>
-        <ul>
-          <li><b>🗂 업무현황</b>: 사원별 일일 업무 현황 화면으로 이동합니다(로그인 세션 공유).</li>
-          <li><b>📜 이력</b>: 등록 · 시작 · OK · NG · 부품 · 출력물 · Tryout · 계획 · 보관 기록을 기간 · 금형 · 구분으로 조회하고 엑셀 출력·행별 삭제를 지원합니다.</li>
-          <li><b>📋 게시판</b>: 개선·수정 요청을 등록하고 상태 뱃지를 눌러 접수 ↔ 완료로 전환합니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">13</div>
-      <div class="hb">
-        <h3>📐 화면 설정 — 글자 크기 · 색상 · 테두리</h3>
-        <p>우측 상단 <b>📐</b> 버튼에서 화면을 사용자에 맞게 조정합니다. 설정은 이 기기에 저장되어 다음 접속에도 유지되며, <b>검사성적서 · 발주서 · 외주가공 · 업무현황 · 온습도</b> 화면에도 동일하게 적용됩니다.</p>
-        <ul>
-          <li><b>글자 크기</b> 80~150% — 슬라이더 또는 <b>A− / 100% / A+</b></li>
-          <li><b>화면 색상</b> — <b>기본</b>(어두운 배경 · 금색)과 <b>모노(백색)</b>(흰 배경 · 검은 글자) 중 선택. 백색 화면이 익숙하거나 밝은 사무실에서 보기 편합니다.</li>
-          <li><b>테두리 진하기</b> 3단계 — 저해상도 모니터에서 표 경계가 흐릴 때 진하게 조정합니다.</li>
-          <li>메뉴 옆 <b>☷</b> 버튼으로 메뉴 순서를 끌어 바꿀 수 있습니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">14</div>
-      <div class="hb">
-        <h3>🗃️ 기준정보 관리 — 업체 · 자재 · 금형타입 · 기계</h3>
-        <p><b>설정 → 기준정보 관리</b>에서 자주 쓰는 값을 미리 등록해 두면, 발주서와 외주가공의 입력창에 <b>자동완성</b>으로 나타나 두세 글자만 쳐도 입력이 끝납니다.</p>
-        <ul>
-          <li><b>🏢 업체관리</b>: 업체명 · <b>전문공정</b>(열처리, WIRE CUT 등) · 담당자 · 연락처 → 외주가공의 협력업체, 발주서의 발주처·MAKER에 연동</li>
-          <li><b>🧱 자재관리</b>: 재질코드(STD11, SKD11, SS400 …)와 특성 → 발주서 원재료의 재질 칸에 연동</li>
-          <li><b>🗜 금형타입</b> · <b>⚙️ 기계사양</b>: 금형 유형과 프레스 사양 목록 관리</li>
-          <li>표의 칸을 직접 고치고 <b>💾 변경 저장</b>으로 한 번에 반영합니다.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hstep">
-      <div class="hn mono">15</div>
-      <div class="hb">
-        <h3>💹 원가관리 — 견적가 대비 실적 손익</h3>
-        <p>금형 한 건의 <b>수주가와 실제 들어간 돈</b>을 비교하는 화면입니다. 외주비는 입고확정 데이터에서 <b>자동 합산</b>되므로, 나머지 비용만 등록하면 손익이 완성됩니다.</p>
-        <ul>
-          <li><b>📊 손익 요약</b>: 금형별 견적가 · 수주가 · 외주비 · 기타비용 · 실적원가 · <b>손익 · 이익률</b>을 한 줄로 봅니다. 흑자는 초록, 적자는 빨강으로 표시되고 하단에 합계가 나옵니다.</li>
-          <li><b>🧾 금형별 상세</b>: 원재료비 · 사내가공비 · 설계비 · 경비 등을 구분 · 일자 · 금액으로 등록하고, 외주가공 확정 내역(업체별 매입가 · 네고율 · 확정가)을 함께 확인합니다.</li>
-          <li>공식: <b>실적원가 = 외주 확정가 합계 + 등록한 비용 합계</b>, <b>손익 = 수주가 − 실적원가</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="hnotebox">
-      <b>참고</b>
-      <ul>
-        <li>신작 공정은 <span class="mono">OP</span>, 수리 공정은 <span class="mono">RP</span> 코드로 저장되어 서로 충돌하지 않으며, 화면에는 숫자만 표시됩니다.</li>
-        <li>공정 마스터는 mm_master 테이블(flow 컬럼으로 신작/수리 구분), 금형은 mm_project(mold_type)에 저장됩니다.</li>
-        <li>데이터는 Supabase에 저장되어 여러 PC·모바일에서 같은 현황을 공유합니다. 첨부 이미지는 Storage 버킷(mm-photos)에 보관되어 DB 용량에 영향을 주지 않습니다.</li>
-        <li>담당 주체(고객사·사내·외주)는 설정의 공정설계에서 공정별로 지정합니다. 외주 진행 부품은 09의 부품 관리에 기록하세요.</li>
-      </ul>
-    </div>
-  </section>
+  
 </main>
 
 <div class="modal" id="trace" onclick="if(event.target===this)closeTrace()">
@@ -2830,7 +2455,7 @@ function guardView(v){
     doc:'design',ecn:'design',stock:'buy',
     tryout:'asm',ncr:'asm',gauge:'asm',
     mon:'cost',hist:'cost',board:'cost',
-    appr:'base',help:'base',set:'base'};
+    appr:'base',set:'base'};
   if(v==='set'&&!perm().admin){toast('관리자만 접근할 수 있습니다');return false}
   const k=map[v];
   if(k&&!canCat(k)){toast('접근 권한이 없습니다 ('+ROLE+')');return false}
@@ -3525,7 +3150,7 @@ function markSidenav(v){
   document.querySelectorAll('#sidenav .sitem').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 }
 const EXT={'cost':['cost.html','원가관리'],'master':['master.html','기준정보 관리'],'insp-file':['insp.html','검사성적서'],'partlist':['partlist.html','발주서 (PART LIST)'],
-  'outsrc':['outsrc.html','외주가공 관리'],'mat':['mat.html','자재발주 관리'],'work-status':['work_status.html','업무현황']};
+  'outsrc':['outsrc.html','외주가공 관리'],'mat':['mat.html','자재발주 관리'],'work-status':['work_status.html','업무현황'],'help':['help.html','사용안내']};
 let CUREXT='';
 function openExt(id,file,title,fromPop){
   if(!fromPop&&!canItem(id)){toast('접근 권한이 없습니다 ('+ROLE+')');return}
@@ -3535,11 +3160,11 @@ function openExt(id,file,title,fromPop){
   if(!fromPop)history.pushState({t:'ext',id:id},'');
   CUREXT=id;
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.remove('on'));
-  const gk={'insp-file':'asm','partlist':'design','outsrc':'buy','mat':'buy','work-status':'asm','cost':'cost','master':'base'}[id];
+  const gk={'insp-file':'asm','partlist':'design','outsrc':'buy','mat':'buy','work-status':'asm','cost':'cost','master':'base','help':'base'}[id];
   if(gk)openOnlyGrp(gk);
   document.querySelectorAll('#drawer .mi[data-menu-id]').forEach(b=>b.classList.toggle('on',b.dataset.menuId===id));
   document.getElementById('htitle').textContent=title;
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame']
+  ['dash','flow','new','hist','board','tryout','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame']
     .forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!=='frame')});
   const fr=document.getElementById('extframe');
   if(fr.getAttribute('src')!==file){
@@ -3688,7 +3313,7 @@ function go(v,fromPop){
   CUREXT='';markTopnav(v);
   openOnlyGrp(GRP[v]||'');
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
-  ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame'].forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!==v)});
+  ['dash','flow','new','hist','board','tryout','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame'].forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!==v)});
   setPCWidthView(v);
   if(v==='dash')loadDash();
   if(v==='mon')loadMon();
@@ -4421,57 +4046,7 @@ function exportDocCSV(){
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
   a.download='출력물점검표_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
-function exportDocPDF(){
-  if(!DOCROWS.length)return toast('출력할 항목이 없습니다');
-  const done=DOCROWS.filter(r=>r.done).length;
-  let last='';
-  const body=DOCROWS.map(r=>{
-    const first=(last!==r.op);last=r.op;
-    return `<tr class="${r.done?'':'nd'}">
-      <td class="c">${first?opN(r.op)+' '+esc(r.pname):''}</td>
-      <td class="c">${first?r.dept:''}</td>
-      <td>${esc(r.name)}</td>
-      <td class="c">${r.done?'○':'×'}</td>
-      <td class="c">${r.date||''}</td>
-      <td class="c">${esc(r.worker)}</td>
-      <td class="c">${r.photo?`<img src="${r.photo}">`:''}</td>
-    </tr>`;}).join('');
-  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>출력물 점검표</title><style>
-    @page{size:A4;margin:13mm}
-    body{font-family:'Malgun Gothic','Noto Sans KR',sans-serif;color:#232a35;font-size:10.5px}
-    h1{font-size:19px;text-align:center;margin:0 0 4px;letter-spacing:3px}
-    .sub{text-align:center;font-size:11px;color:#666;margin-bottom:6px}
-    .sign{display:flex;justify-content:flex-end;gap:0;margin-bottom:8px}
-    .sign div{border:1px solid #999;width:70px;text-align:center;font-size:9.5px}
-    .sign div .t{background:#f2f2f2;padding:2px;border-bottom:1px solid #999}
-    .sign div .b{height:34px}
-    table{width:100%;border-collapse:collapse}
-    th{background:#16233c;color:#fff;border:1px solid #16233c;padding:5px 4px;font-size:10px}
-    td{border:1px solid #bbb;padding:4px 6px;vertical-align:middle}
-    td.c{text-align:center}
-    tr.nd td{background:#fdf2f2}
-    td img{width:44px;height:34px;object-fit:cover;border:1px solid #ccc}
-    .ft{margin-top:10px;display:flex;justify-content:space-between;font-size:10px;color:#777}
-  </style></head><body>
-  <h1>출 력 물 점 검 표</h1>
-  <div class="sub">${esc(docTitle())}</div>
-  <div class="sign">
-    <div><div class="t">작성</div><div class="b"></div></div>
-    <div><div class="t">검토</div><div class="b"></div></div>
-    <div><div class="t">승인</div><div class="b"></div></div>
-  </div>
-  <table>
-    <thead><tr><th style="width:110px">공정</th><th style="width:42px">부서</th><th>결과물</th><th style="width:34px">작성</th><th style="width:62px">작성일</th><th style="width:56px">작성자</th><th style="width:52px">증빙</th></tr></thead>
-    <tbody>${body}</tbody>
-  </table>
-  <div class="ft"><span>작성 ${done} / 전체 ${DOCROWS.length} 항목 (${Math.round(done/DOCROWS.length*100)}%)</span>
-  <span>출력: ${new Date().toLocaleString('ko-KR')} · ${USER||''}</span></div>
-  <script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script>
-  </body></html>`;
-  const w=window.open('','_blank');
-  if(!w)return toast('팝업이 차단되었습니다. 허용 후 다시 시도하세요');
-  w.document.write(html);w.document.close();
-}
+
 
 /* ---------- 모니터링 ---------- */
 function monCard(title,icon,cls,rows,link,empty){
@@ -4884,8 +4459,6 @@ function exportPlan(){
   a.download='금형진행계획_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
 
-
-
 /* ---------- 금형 전체이력 추적 ---------- */
 let TRPJ=null,TRALL=[],TRFILT='전체';
 async function openTrace(pid){
@@ -4953,31 +4526,6 @@ function exportTraceCSV(){
   a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
   a.download='금형이력_'+TRPJ.mold_no+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
-function exportTracePDF(){
-  if(!TRPJ)return;
-  const rows=trList().map(e=>`<tr><td class="mono">${fmt(e.t)}</td><td>${esc(e.k)}</td>
-    <td>${e.op?opN(e.op)+' '+esc(mName(e.op)):'-'}</td><td>${esc(e.d)}</td><td>${esc(e.w||'-')}</td></tr>`).join('');
-  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>금형 전체이력</title><style>
-  @page{size:A4;margin:14mm}
-  body{font-family:'Malgun Gothic',sans-serif;color:#111;font-size:11px}
-  h1{font-size:17px;margin:0 0 4px}.sub{color:#555;font-size:11px;margin-bottom:10px}
-  table{width:100%;border-collapse:collapse}
-  th,td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top}
-  th{background:#eee;font-size:10.5px}
-  .mono{font-family:Consolas,monospace;white-space:nowrap}
-  .sg{margin-top:14px;display:flex;gap:8px}
-  .sg div{flex:1;border:1px solid #999;height:52px;font-size:10px;padding:3px 5px}
-  </style></head><body>
-  <h1>금형 제작 전체이력 (추적성 기록)</h1>
-  <div class="sub">금형번호 ${esc(TRPJ.mold_no)} · 금형명 ${esc(TRPJ.mold_name)} ${TRPJ.customer?'· 고객사 '+esc(TRPJ.customer):''}
-   · 출력일 ${new Date().toISOString().slice(0,10)} · 총 ${trList().length}건</div>
-  <table><thead><tr><th style="width:80px">일시</th><th style="width:52px">구분</th><th style="width:90px">공정</th><th>내용</th><th style="width:60px">담당</th></tr></thead>
-  <tbody>${rows}</tbody></table>
-  <div class="sg"><div>작성</div><div>검토</div><div>승인</div></div>
-  </body></html>`;
-  const w=window.open('');w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);
-}
-
 
 /* ---------- 품질관리 (SQ): 검사성적 / NCR / ECN ---------- */
 function toggleWrite(id,btn){
@@ -5442,82 +4990,6 @@ function apprHistHtml(a){
     <td style="font-size:9px">${x.memo?esc(x.memo)+'<br>':''}${x.hash?'<span class="mono" style="color:#666">'+x.hash.slice(0,24)+'...</span>':''}</td></tr>`).join('')}</tbody></table>`;
 }
 
-/* ----- 결재 문서 PDF (서명 삽입) ----- */
-async function apprPDF(id){
-  const a=APPRS.find(x=>x.id===id);if(!a)return;
-  const signs=[];
-  // 작성 + 코스 단계 → qaPdf 결재란 (작성/검토/확인/승인 순 배치)
-  ['작성','검토','확인','승인'].forEach(role=>{
-    const st=a.steps.find(x=>x.role===role);
-    signs.push(st?{role,name:st.name,img:st.sig||null,date:st.signed_at?String(st.signed_at).slice(0,10):''}:{role,name:''});
-  });
-  let body='';
-  try{
-    if(a.doc_type==='ncr'){
-      const [r]=await api("/mm_ncr?select=*&id=eq."+a.ref_id);
-      if(r)body=ncrPdfBody(r);
-    }else if(a.doc_type==='ecn'){
-      const [r]=await api("/mm_ecn?select=*&id=eq."+a.ref_id);
-      if(r)body=ecnPdfBody(r);
-    }else if(a.doc_type==='insp'&&a.snapshot){
-      if(Array.isArray(a.snapshot)&&a.snapshot.length){
-        const rows=await api("/mm_inspect?select=*&id=in.("+a.snapshot.join(',')+")&order=created_at");
-        body=inspTableHtml(rows);
-      }else if(a.snapshot&&Array.isArray(a.snapshot.rows)){
-        body=inspTableHtml(a.snapshot.rows);
-      }
-    }else{
-      body='<div class="sect">'+esc(a.title)+'</div><div class="qbx">본 문서는 결재용 표지입니다. 상세 내역은 해당 화면의 PDF를 참조하세요.</div>';
-    }
-  }catch(e){}
-  body+=`<div class="sect">결재 이력</div>
-  <table class="dt"><thead><tr><th style="width:52px">단계</th><th style="width:70px">결재자</th><th style="width:60px">상태</th><th style="width:120px">일시</th><th>의견 / 무결성 해시</th></tr></thead>
-  <tbody>${a.steps.map(x=>`<tr><td>${esc(x.role)}</td><td>${esc(x.name)}</td>
-    <td class="${x.status==='반려'?'ng':x.status==='승인'?'ok':''}">${esc(x.status)}</td>
-    <td class="mono" style="font-size:9.5px">${x.signed_at?fmt(x.signed_at):'-'}</td>
-    <td style="font-size:9px">${x.memo?esc(x.memo)+'<br>':''}${x.hash?'<span class="mono" style="color:#666">'+x.hash.slice(0,24)+'...</span>':''}</td></tr>`).join('')}</tbody></table>`;
-  FOOTKIND=a.doc_type||'etc';
-  qaPdf(a.doc_type.toUpperCase()+'-'+String(a.ref_id||a.id).padStart(4,'0'),
-    a.status==='완료'?'전자결재 문서 (승인 완료)':'전자결재 문서 ['+a.status+']',
-    a.title,'전자결재 · SHA-256 무결성 해시 적용',body,signs);
-}
-async function exportNcrOnePDF(id){
-  const r=NCRS.find(x=>x.id===id)||(await api("/mm_ncr?select=*&id=eq."+id))[0];
-  if(!r)return;
-  const appr=await findAppr('ncr',id,null);
-  const body=ncrPdfBody(r)+apprHistHtml(appr);
-  FOOTKIND='ncr';
-  qaPdf('NCR-'+String(id).padStart(4,'0'),'부적합 · 시정조치 보고서 (NCR)',qaMold(r.project_id),
-    (r.occur_date||'')+' · '+(r.kind||''),body,apprSigns(appr));
-}
-async function exportEcnOnePDF(id){
-  const r=ECNS.find(x=>x.id===id)||(await api("/mm_ecn?select=*&id=eq."+id))[0];
-  if(!r)return;
-  const appr=await findAppr('ecn',id,null);
-  const body=ecnPdfBody(r)+apprHistHtml(appr);
-  FOOTKIND='ecn';
-  qaPdf('ECN-'+String(id).padStart(4,'0'),'설계 · 4M 변경 통지서 (ECN)',qaMold(r.project_id),
-    (r.change_date||'')+' · '+(r.kind||''),body,apprSigns(appr));
-}
-function ncrPdfBody(r){
-  return `<table class="meta">
-    <tr><th>금형</th><td>${esc(qaMold(r.project_id))}</td><th>공정</th><td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td></tr>
-    <tr><th>발생일</th><td>${r.occur_date||'-'}</td><th>구분</th><td>${esc(r.kind||'-')}</td></tr>
-    <tr><th>조치자</th><td>${esc(r.worker||'-')}</td><th>확인자</th><td>${esc(r.checker||'-')}</td></tr></table>
-  <div class="sect" style="font-size:10.5px">부적합 내용</div><div class="qbx">${esc(r.description)}</div>
-  <div class="sect" style="font-size:10.5px">원인 분석</div><div class="qbx">${esc(r.cause||'')}</div>
-  <div class="sect" style="font-size:10.5px">시정 조치</div><div class="qbx">${esc(r.action||'')}</div>
-  <div class="sect" style="font-size:10.5px">재발 방지 대책</div><div class="qbx">${esc(r.prevention||'')}</div>`;
-}
-function ecnPdfBody(r){
-  return `<table class="meta">
-    <tr><th>금형</th><td>${esc(qaMold(r.project_id))}</td><th>변경일</th><td>${r.change_date||'-'}</td></tr>
-    <tr><th>구분(4M)</th><td>${esc(r.kind||'-')}</td><th>요청/승인</th><td>${esc(r.worker||'-')} / ${esc(r.approver||'-')}</td></tr></table>
-  <div class="sect" style="font-size:10.5px">변경 전</div><div class="qbx">${esc(r.before_val||'')}</div>
-  <div class="sect" style="font-size:10.5px">변경 후</div><div class="qbx">${esc(r.after_val)}</div>
-  <div class="sect" style="font-size:10.5px">변경 사유</div><div class="qbx">${esc(r.reason||'')}</div>`;
-}
-
 /* ===== QA 공통 PDF (결재란 포함, 전자결재 서명 이미지 대응 구조) ===== */
 function qaFilterLabel(f1,f2,extra){
   const p=[];
@@ -5564,53 +5036,7 @@ async function saveFoot(k){
 }
 function resetFoot(k){FOOTS[k]=Object.assign({},FOOT_DEF);drawFoot(k)}
 
-function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
-  const sg=signs||[{role:'작성',name:USER||''},{role:'검토',name:''},{role:'확인',name:''},{role:'승인',name:''}];
-  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
-  @page{size:A4;margin:12mm}
-  body{font-family:'Malgun Gothic','맑은 고딕',sans-serif;color:#111;font-size:11px;line-height:1.5;margin:0}
-  .hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-  .hd .tt h1{font-size:19px;margin:0 0 4px;letter-spacing:2px}
-  .hd .tt .sub{font-size:10.5px;color:#555}
-  .apv{border-collapse:collapse}
-  .apv th,.apv td{border:1px solid #333;text-align:center}
-  .apv th{background:#efefef;font-size:10px;padding:3px 0;width:64px}
-  .apv td.sig{height:52px;vertical-align:middle}
-  .apv td.sig img{max-height:44px;max-width:58px}
-  .apv td.nm{font-size:9.5px;padding:2px 0;height:14px}
-  table.dt{width:100%;border-collapse:collapse;margin-top:6px}
-  .dt th,.dt td{border:1px solid #888;padding:4px 6px;text-align:left;vertical-align:top}
-  .dt th{background:#eee;font-size:10px;white-space:nowrap}
-  .mono{font-family:Consolas,monospace}
-  .ng{color:#c00;font-weight:700}.ok{color:#0a58c9;font-weight:700}
-  .sect{font-size:12px;font-weight:700;margin:12px 0 4px;border-left:4px solid #333;padding-left:6px}
-  .meta{width:100%;border-collapse:collapse;margin-top:4px}
-  .meta th,.meta td{border:1px solid #888;padding:4px 6px;font-size:10.5px}
-  .meta th{background:#eee;width:82px;white-space:nowrap}
-  .ft{margin-top:14px;font-size:9.5px;color:#444;display:flex;justify-content:space-between;border-top:1px solid #999;padding-top:4px}
-  .ft span:nth-child(2){flex:1;text-align:center}
-  .ft span:nth-child(3){text-align:right}
-  .qbx{border:1px solid #888;padding:6px 8px;min-height:34px;margin-top:2px}
-  </style></head><body>
-  <div class="hd">
-    <div class="tt">
-      <h1>${esc(title)}</h1>
-      <div class="sub">${esc(moldLabel)}<br>조회조건: ${esc(filterLabel)} · 출력일 ${today()}</div>
-    </div>
-    <table class="apv">
-      <tr>${sg.map(x=>`<th>${esc(x.role)}</th>`).join('')}</tr>
-      <tr>${sg.map(x=>`<td class="sig">${x.img?`<img src="${x.img}">`:''}</td>`).join('')}</tr>
-      <tr>${sg.map(x=>`<td class="nm">${esc(x.name||'')}${x.date?'<br>'+esc(x.date):''}</td>`).join('')}</tr>
-    </table>
-  </div>
-  ${bodyHtml}
-  <div class="ft"><span>${esc(footOf(FOOTKIND).l)}</span><span>${esc(footOf(FOOTKIND).c)}</span><span>${esc(footOf(FOOTKIND).r)}</span></div>
-  </body></html>`;
-  const w=window.open('','_blank');
-  if(!w)return toast('팝업이 차단되었습니다. 허용 후 재시도하세요');
-  w.document.write(html);w.document.close();
-  setTimeout(()=>{try{w.focus();w.print()}catch(e){}},400);
-}
+
 /* 검사성적서 결재문서(스냅샷) 표 — 검사성적서는 insp.html에서 작성 */
 function inspTableHtml(rows){
   rows=rows||[];
@@ -5626,43 +5052,6 @@ function inspTableHtml(rows){
     <td class="mono">${esc(X.map(k=>r[k]).filter(Boolean).join(' / ')||r.actual||'')}</td>
     <td class="${r.judge==='NG'?'ng':r.judge?'ok':''}">${esc(r.judge||'')}</td>
     <td>${esc(r.worker||'')}</td></tr>`).join('')}</tbody></table>`;
-}
-function exportNcrPDF(){
-  if(!NCRS.length)return toast('출력할 기록이 없습니다');
-  const pid=document.getElementById('ncrsel').value;
-  const fl=qaFilterLabel(g('nf-from'),g('nf-to'),[['상태',document.getElementById('nf-status').value],['구분',document.getElementById('nf-kind').value]]);
-  const body=NCRS.map((r,i)=>`
-    ${i>0?'<div style="page-break-before:always"></div>':''}
-    <div class="sect">NCR-${String(r.id).padStart(4,'0')} <span style="font-weight:400;color:${r.status==='완료'?'#0a7a3d':'#c00'}">[${esc(r.status)}]</span></div>
-    <table class="meta">
-      <tr><th>금형</th><td>${esc(qaMold(r.project_id))}</td><th>공정</th><td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td></tr>
-      <tr><th>발생일</th><td>${r.occur_date||'-'}</td><th>구분</th><td>${esc(r.kind||'-')}</td></tr>
-      <tr><th>조치자</th><td>${esc(r.worker||'-')}</td><th>확인자</th><td>${esc(r.checker||'-')}${r.closed_date?' · 완료 '+r.closed_date:''}</td></tr>
-    </table>
-    <div class="sect" style="font-size:10.5px">부적합 내용</div><div class="qbx">${esc(r.description)}</div>
-    <div class="sect" style="font-size:10.5px">원인 분석</div><div class="qbx">${esc(r.cause||'')}</div>
-    <div class="sect" style="font-size:10.5px">시정 조치</div><div class="qbx">${esc(r.action||'')}</div>
-    <div class="sect" style="font-size:10.5px">재발 방지 대책</div><div class="qbx">${esc(r.prevention||'')}</div>`).join('');
-  FOOTKIND='ncr';
-  qaPdf('NCR-'+today().replace(/-/g,''),'부적합 · 시정조치 보고서',pid?qaMold(pid):'전체 금형',fl,body);
-}
-function exportEcnPDF(){
-  if(!ECNS.length)return toast('출력할 기록이 없습니다');
-  const pid=document.getElementById('ecnsel').value;
-  const fl=qaFilterLabel(g('ef-from'),g('ef-to'),[['상태',document.getElementById('ef-status').value],['구분',document.getElementById('ef-kind').value]]);
-  const body=`<div class="sect">설계·4M 변경 관리대장 (${ECNS.length}건)</div>
-  <table class="dt"><thead><tr><th style="width:66px">ECN번호</th><th style="width:100px">금형</th><th style="width:66px">변경일</th><th style="width:70px">구분</th><th>변경 전 → 후 / 사유</th><th style="width:48px">요청</th><th style="width:48px">승인</th><th style="width:48px">상태</th></tr></thead>
-  <tbody>${ECNS.map(r=>`<tr>
-    <td class="mono">ECN-${String(r.id).padStart(4,'0')}</td>
-    <td>${esc(qaMold(r.project_id))}</td>
-    <td class="mono">${r.change_date||'-'}</td>
-    <td>${esc((r.kind||'').split(' ')[0])}</td>
-    <td>${r.before_val?esc(r.before_val)+' → ':''}<b>${esc(r.after_val)}</b>${r.reason?'<br><span style="font-size:9px;color:#666">사유: '+esc(r.reason)+'</span>':''}</td>
-    <td>${esc(r.worker||'-')}</td>
-    <td>${esc(r.approver||'-')}</td>
-    <td class="${r.status==='승인'?'ok':r.status==='반려'?'ng':''}">${esc(r.status)}</td></tr>`).join('')}</tbody></table>`;
-  FOOTKIND='ecn';
-  qaPdf('ECN-'+today().replace(/-/g,''),'설계 · 4M 변경 관리대장',pid?qaMold(pid):'전체 금형',fl,body);
 }
 
 /* 공통 CSV */
@@ -5821,25 +5210,7 @@ function exportGaugeCSV(){
     x.cal_cycle,x.last_cal||'',guNext(x)||'',x.agency||'',x.cert_no||'',x.location||'',x.worker||'',x.status,x.memo||'']);
   dlCSV('계측기 관리대장',head,rows,'계측기관리대장');
 }
-async function exportGaugePDF(){
-  if(!GAUGES.length)return toast('출력할 계측기가 없습니다');
-  const act=GAUGES.filter(x=>x.status!=='폐기');
-  const body=`<div class="sect">계측기 관리대장 (총 ${GAUGES.length}대 · 사용 ${GAUGES.filter(x=>x.status==='사용').length}대)</div>
-  <table class="dt"><thead><tr><th style="width:52px">관리번호</th><th>계측기명 / 모델</th><th style="width:70px">측정범위</th><th style="width:50px">정밀도</th><th style="width:36px">주기</th><th style="width:62px">최근교정</th><th style="width:62px">차기교정</th><th style="width:64px">교정기관</th><th style="width:56px">위치</th><th style="width:36px">상태</th></tr></thead>
-  <tbody>${GAUGES.map(x=>{
-    const nx=guNext(x),d=guDday(x);const late=d!==null&&d<0;
-    return `<tr><td class="mono">${esc(x.mgmt_no)}</td>
-    <td><b>${esc(x.name)}</b>${x.model?'<br><span style="font-size:9px;color:#666">'+esc(x.model)+(x.serial_no?' · SN '+esc(x.serial_no):'')+'</span>':''}</td>
-    <td class="mono">${esc(x.range_val||'-')}</td><td class="mono">${esc(x.accuracy||'-')}</td>
-    <td style="text-align:center">${x.cal_cycle||'-'}</td>
-    <td class="mono">${x.last_cal||'-'}</td>
-    <td class="mono ${late?'ng':''}">${nx||'-'}${late?' 초과':''}</td>
-    <td style="font-size:9px">${esc(x.agency||'-')}${x.cert_no?'<br>'+esc(x.cert_no):''}</td>
-    <td style="font-size:9px">${esc(x.location||'-')}</td>
-    <td class="${x.status==='폐기'?'ng':x.status==='사용'?'ok':''}" style="text-align:center">${esc(x.status)}</td></tr>`}).join('')}</tbody></table>`;
-  FOOTKIND='gauge';
-  qaPdf('MG-'+today().replace(/-/g,''),'계측기 관리대장','전체 계측기','교정주기 기준 차기 교정일 자동계산 · 출력일 '+today(),body);
-}
+
 
 /* ---------- 재고관리 (금형부품) ---------- */
 let SITEMS=[],SHIST=[],STK_LOW=false,SKEDIT=null,SKIO=null,SKIOTYPE='in';
@@ -6098,57 +5469,7 @@ function exportTryoutCSV(){
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
   a.download='Tryout일지_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href);
 }
-function exportTryoutPDF(){
-  if(!TROWS.length)return toast('출력할 일지가 없습니다');
-  const f=g('t-from'),t=g('t-to');
-  const period=(f||t)?`${f||'~'} ~ ${t||'~'}`:'전체 기간';
-  const body=TROWS.map(r=>`
-    <div class="rp">
-      <div class="rh">
-        <span class="rd">${r.log_date}</span>
-        <b>${esc(r.mm_project?r.mm_project.mold_no+' — '+r.mm_project.mold_name:'')}</b>
-        <span class="rt">${esc(r.stage)} / ${esc(r.status)}</span>
-        <span class="ra">작성자: ${esc(r.author||'')}</span>
-      </div>
-      <table>
-        <tr><th>작업 내용</th><td>${esc(r.work_done||'-').replace(/\n/g,'<br>')}</td></tr>
-        <tr><th>이슈 사항</th><td>${esc(r.issues||'-').replace(/\n/g,'<br>')}</td></tr>
-        <tr><th>다음 계획</th><td>${esc(r.next_plan||'-').replace(/\n/g,'<br>')}</td></tr>
-      </table>
-      ${(r.photos&&r.photos.length)?`<div class="rimgs">${r.photos.map(p=>`<img src="${p}">`).join('')}</div>`:''}
-    </div>`).join('');
-  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>T/O보고서</title>
-  <style>
-    @page{size:A4;margin:14mm}
-    body{font-family:'Malgun Gothic','Noto Sans KR',sans-serif;color:#232a35;font-size:11px}
-    h1{font-size:19px;text-align:center;margin:0 0 4px;letter-spacing:2px}
-    .sub{text-align:center;font-size:11px;color:#777;margin-bottom:14px;border-bottom:2px solid #16233c;padding-bottom:8px}
-    .rp{border:1px solid #ccc;border-radius:5px;padding:9px 11px;margin-bottom:9px;page-break-inside:avoid}
-    .rh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:7px;font-size:11.5px}
-    .rd{background:#fdf3cd;border:1px solid #e2cd7e;padding:1px 8px;border-radius:4px;font-weight:700}
-    .rt{background:#eef2f8;padding:1px 8px;border-radius:4px}
-    .ra{margin-left:auto;color:#777}
-    table{width:100%;border-collapse:collapse}
-    th{width:70px;background:#f4f6fa;border:1px solid #ddd;padding:4px 7px;text-align:left;font-size:10.5px;color:#555;vertical-align:top}
-    td{border:1px solid #ddd;padding:4px 8px;line-height:1.55}
-    .rimgs{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
-    .rimgs img{width:150px;height:110px;object-fit:cover;border:1px solid #ddd;border-radius:4px}
-    .ft{margin-top:14px;font-size:10px;color:#444;display:flex;justify-content:space-between;border-top:1px solid #999;padding-top:4px}
-    .ft span:nth-child(2){flex:1;text-align:center}
-    .ft span:nth-child(3){text-align:right}
-    @media print{.noprint{display:none}}
-  
-</style></head><body>
-  <h1>T/O보고서 (Tryout 작업일지)</h1>
-  <div class="sub">기간: ${period} &nbsp;|&nbsp; 총 ${TROWS.length}건 &nbsp;|&nbsp; 출력: ${new Date().toLocaleString('ko-KR')} (${USER||''})</div>
-  ${body}
-  <div class="ft"><span>${esc(footOf('tryout').l)}</span><span>${esc(footOf('tryout').c)}</span><span>${esc(footOf('tryout').r)}</span></div>
-  <script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script>
-  </body></html>`;
-  const w=window.open('','_blank');
-  if(!w)return toast('팝업이 차단되었습니다. 허용 후 다시 시도하세요');
-  w.document.write(html);w.document.close();
-}
+
 
 async function saveTryout(){
   const pid=document.getElementById('t-proj').value;
@@ -6351,5 +5672,6 @@ async function loadHist(){
 })();
 </script>
 
+<script src="pdf.js"></script>
 </body>
 </html>
