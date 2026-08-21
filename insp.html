@@ -1266,6 +1266,15 @@ html[data-theme="mono"] .tscroll table tbody tr:hover{background:#e4e4e4}
 html[data-theme="mono"] .tscroll table th.rnum,
 html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;color:#000!important}
 
+
+/* ===== PC 본문 폭 (서브페이지) =====
+   · 기본 1280px, 팝업 슬라이더로 720~1600px 조절
+   · iframe 안(embedded)에서는 부모가 준 폭을 100% 사용 */
+@media(min-width:761px){
+  main>section{width:min(var(--pc-view-width,1280px),100%)}
+}
+html.embedded main{max-width:none!important}
+html.embedded main>section{width:100%!important;max-width:none!important}
 </style>
 </head>
 <body>
@@ -1282,6 +1291,15 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
         <div class="pcwpophead"><b>검사성적서 화면 설정</b>
           <button class="pcwclose" type="button" onclick="closePCWidthPopup()">×</button></div>
+        <div class="pcwrow"><span>본문 폭</span><b id="pcwValue">1280px</b></div>
+        <input id="pcwRange" class="pcwrange" type="range" min="720" max="1600" step="20" value="1280"
+          oninput="previewPCW(this.value)" onchange="savePCW(this.value)">
+        <div class="pcwscale"><span>720px</span><span>1600px</span></div>
+        <div class="pfsquick" style="margin-bottom:10px">
+          <button type="button" onclick="savePCW(1020)">기본</button>
+          <button type="button" onclick="savePCW(1280)">넓게</button>
+          <button type="button" onclick="savePCW(1600)">최대</button>
+        </div>
         <div class="pcwrow pcwfs"><span>글자 크기</span><b id="pfsValue">100%</b></div>
         <input id="pfsRange" class="pcwrange" type="range" min="80" max="150" step="5" value="100"
           oninput="previewFontScale(this.value)" onchange="saveFontScale(this.value)">
@@ -1680,6 +1698,35 @@ function qaPdf(docNo,title,moldLabel,filterLabel,bodyHtml,signs){
   setTimeout(()=>{try{w.focus();w.print()}catch(e){}},400);
 }
 /* ---------- 글자 크기 (index.html과 동일 키) ---------- */
+
+/* ---------- PC 본문 폭 ---------- */
+const PCW_SUB_KEY='mm_pc_width_sub_v1';
+const PCW_ID='insp';
+let MM_PCW=1280;
+function pcwClampS(v){let n=Number(v)||1280;n=Math.round(n/20)*20;return Math.max(720,Math.min(1600,n))}
+function applyPCW(v,save){
+  MM_PCW=pcwClampS(v);
+  document.documentElement.style.setProperty('--pc-view-width',MM_PCW+'px');
+  document.documentElement.style.setProperty('--pc-active-width',MM_PCW+'px');
+  const rg=document.getElementById('pcwRange');if(rg)rg.value=MM_PCW;
+  const vl=document.getElementById('pcwValue');if(vl)vl.textContent=MM_PCW+'px';
+  if(save){
+    try{
+      const o=JSON.parse(localStorage.getItem(PCW_SUB_KEY)||'{}');
+      o[PCW_ID]=MM_PCW;
+      localStorage.setItem(PCW_SUB_KEY,JSON.stringify(o));
+    }catch(e){}
+  }
+}
+function previewPCW(v){applyPCW(v,false)}
+function savePCW(v){applyPCW(v,true)}
+function loadPCW(){
+  let v=1280;
+  try{const o=JSON.parse(localStorage.getItem(PCW_SUB_KEY)||'{}');if(o&&o[PCW_ID])v=o[PCW_ID]}catch(e){}
+  applyPCW(v,false);
+}
+loadPCW();
+
 const FS_KEY='mm_font_scale_v1';
 let MM_FS=100;
 function fsClamp(v){let n=Number(v)||100;n=Math.round(n/5)*5;return Math.max(80,Math.min(150,n))}

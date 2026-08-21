@@ -1038,6 +1038,7 @@ header .hright{position:relative}
     transition:padding .18s ease;
   }
   main{max-width:none}
+  main>section#v-frame{width:100%;max-width:none}
   main>section{
     width:min(var(--pc-view-width,1020px),100%);
     max-width:none;
@@ -1374,7 +1375,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="rtag" id="rolebadge" title="현재 권한"></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 18.4</span>
+    <span class="rev">Rev 18.5</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
