@@ -466,6 +466,13 @@ tr:last-child td{border-bottom:none}
 .ubtn:hover{border-color:var(--gold);color:var(--gold)}
 .ubtn.save{background:linear-gradient(160deg,var(--gold2),var(--gold));border-color:var(--gold);color:#241a05}
 .hnote{margin-top:10px;font-size:12.5px;color:var(--gray)}
+.rtag{font-size:11px;font-weight:800;padding:2px 9px;border-radius:20px;white-space:nowrap;
+  background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)}
+html[data-theme="clean"] .rtag{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="mono"] .rtag{background:#fff!important;border-color:#000!important;color:#000!important}
+body.perm-ro .btn-p,body.perm-ro .ubtn.save,body.perm-ro .del,body.perm-ro .wizbtn{
+  opacity:.4;pointer-events:none}
+body.perm-ro .perm-w{display:none!important}
 .dotin{display:inline-block;width:11px;height:11px;vertical-align:-1px;margin-right:2px}
 .dotin.cust{background:var(--cust);border-radius:50%}
 .dotin.self{background:var(--self)}
@@ -1258,8 +1265,9 @@ th{letter-spacing:-.3px;font-weight:700}
   </div>
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
+    <span class="rtag" id="rolebadge" title="현재 권한"></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 17.5</span>
+    <span class="rev">Rev 17.6</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1475,9 +1483,9 @@ th{letter-spacing:-.3px;font-weight:700}
       </div>
       <div class="row2">
         <div class="fg"><label>납기예정일</label><input id="f-due" type="date"></div>
-        <div class="fg"><label>견적가 (원)</label><input id="f-est" type="number" class="mono" placeholder="0"></div>
+        <div class="fg perm-money"><label>견적가 (원)</label><input id="f-est" type="number" class="mono" placeholder="0"></div>
       </div>
-      <div class="row2">
+      <div class="row2 perm-money">
         <div class="fg"><label>수주가 (원)</label><input id="f-ord" type="number" class="mono" placeholder="0"></div>
         <div class="fg"><label>판매가 (원)</label><input id="f-sal" type="number" class="mono" placeholder="0"></div>
       </div>
@@ -1634,13 +1642,16 @@ th{letter-spacing:-.3px;font-weight:700}
         <div class="fg"><label>이름 *</label><input id="u-nm"></div>
         <div class="fg"><label>부서</label><input id="u-dept" list="dl-dept" placeholder="예: 가공"></div>
       </div>
-      <div class="fg"><label>PIN (4자리) *</label><input id="u-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리"></div>
+      <div class="row2">
+        <div class="fg"><label>권한 *</label><select id="u-role"></select></div>
+        <div class="fg"><label>PIN (4자리) *</label><input id="u-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리"></div>
+      </div>
       <button class="btn btn-p" onclick="addUser()">사원 추가</button>
     </div>
     <div style="margin-top:14px">
       <div class="tscroll">
         <table class="wide">
-          <thead><tr><th>이름</th><th>부서</th><th>PIN</th><th>등록일</th><th style="width:110px">관리</th></tr></thead>
+          <thead><tr><th>이름</th><th>부서</th><th style="width:96px">권한</th><th>PIN</th><th>등록일</th><th style="width:110px">관리</th></tr></thead>
           <tbody id="userbody"></tbody>
         </table>
       </div>
@@ -2594,9 +2605,9 @@ th{letter-spacing:-.3px;font-weight:700}
       </div>
       <div class="row2">
         <div class="fg"><label>납기완료일</label><input id="o-dued" type="date"></div>
-        <div class="fg"><label>견적가</label><input id="o-est" type="number" class="mono"></div>
+        <div class="fg perm-money"><label>견적가</label><input id="o-est" type="number" class="mono"></div>
       </div>
-      <div class="row2">
+      <div class="row2 perm-money">
         <div class="fg"><label>수주가</label><input id="o-ord" type="number" class="mono"></div>
         <div class="fg"><label>판매가</label><input id="o-sal" type="number" class="mono"></div>
       </div>
@@ -2637,11 +2648,82 @@ function readSession(){
   return sessionStorage.getItem('mm_user')||null;
 }
 function clearSession(){
-  try{localStorage.removeItem(SESS_KEY);}catch(e){}
-  sessionStorage.removeItem('mm_user');
+  try{localStorage.removeItem(SESS_KEY);localStorage.removeItem('mm_role');}catch(e){}
+  sessionStorage.removeItem('mm_user');sessionStorage.removeItem('mm_role');
 }
 let USER=readSession();
 let PIN="";
+
+/* ================= 권한 (역할별 메뉴/금액 접근) ================= */
+const ROLES={
+  '관리자':{cats:['sales','design','buy','asm','cost','base'],money:1,admin:1},
+  '영업'  :{cats:['sales','design','asm','cost','base'],money:1},
+  '설계'  :{cats:['sales','design','asm','base'],money:0},
+  '구매'  :{cats:['sales','design','buy','base'],money:1},
+  '가공조립':{cats:['sales','design','buy','asm','base'],money:0},
+  '품질'  :{cats:['sales','asm','base'],money:0},
+  '조회'  :{cats:['sales','design','asm','base'],money:0,readonly:1}
+};
+const ROLE_LIST=Object.keys(ROLES);
+/* 역할과 무관하게 관리자 전용인 항목 */
+const ADMIN_ONLY=['set'];
+let ROLE='관리자';
+function perm(){return ROLES[ROLE]||ROLES['조회']}
+function canCat(k){return perm().cats.includes(k)}
+function canItem(id){
+  if(ADMIN_ONLY.includes(id)&&!perm().admin)return false;
+  if(id==='cost'&&!perm().money)return false;
+  const k=catOf(id);
+  return k?canCat(k):true;
+}
+function canMoney(){return !!perm().money}
+function isReadonly(){return !!perm().readonly}
+function saveRole(r){
+  ROLE=ROLES[r]?r:'조회';
+  try{localStorage.setItem('mm_role',ROLE);sessionStorage.setItem('mm_role',ROLE)}catch(e){}
+}
+function loadRole(){
+  let r='';
+  try{r=sessionStorage.getItem('mm_role')||localStorage.getItem('mm_role')||''}catch(e){}
+  ROLE=ROLES[r]?r:'관리자';
+}
+/* 화면에 권한 반영 */
+function applyPerm(){
+  /* 드로어 그룹 */
+  ['sales','design','buy','asm','cost','base'].forEach(k=>{
+    const el=document.getElementById('mg-'+k);
+    if(el)el.classList.toggle('hide',!canCat(k));
+  });
+  /* 드로어 개별 항목 */
+  document.querySelectorAll('#drawer .mi[data-menu-id]').forEach(el=>{
+    const id=el.dataset.menuId;
+    if(id==='logout')return;
+    el.classList.toggle('hide',!canItem(id));
+  });
+  /* PC 상단 대분류 */
+  document.querySelectorAll('#topnav .tb').forEach(b=>{
+    b.classList.toggle('hide',!canCat(b.dataset.cat));
+  });
+  /* 금액 필드 */
+  document.querySelectorAll('.perm-money').forEach(el=>el.classList.toggle('hide',!canMoney()));
+  /* 읽기전용 */
+  document.body.classList.toggle('perm-ro',isReadonly());
+  const rb=document.getElementById('rolebadge');
+  if(rb)rb.textContent=ROLE;
+  buildSidenav();
+}
+/* 접근 불가 화면 진입 차단 */
+function guardView(v){
+  const map={new:'sales',plan:'sales',dash:'sales',flow:'sales',
+    doc:'design',ecn:'design',stock:'buy',
+    tryout:'asm',ncr:'asm',gauge:'asm',
+    mon:'cost',hist:'cost',board:'cost',
+    appr:'base',help:'base',set:'base'};
+  if(v==='set'&&!perm().admin){toast('관리자만 접근할 수 있습니다');return false}
+  const k=map[v];
+  if(k&&!canCat(k)){toast('접근 권한이 없습니다 ('+ROLE+')');return false}
+  return true;
+}
 
 /* ---------- PIN 로그인 ---------- */
 function pinKey(n){if(PIN.length>=4)return;PIN+=n;pinDraw();if(PIN.length===4)pinSubmit();}
@@ -2652,10 +2734,14 @@ function pinDraw(){
 }
 async function pinSubmit(){
   const msg=document.getElementById('lgmsg');
-  if(PIN===MASTER_PIN){enter('관리자');return}
+  if(PIN===MASTER_PIN){saveRole('관리자');enter('관리자');return}
   try{
-    const u=await api("/mm_user?select=name&pin=eq."+PIN);
-    if(u.length){enter(u[0].name===MASTER_KEY?'관리자':u[0].name);return}
+    const u=await api("/mm_user?select=name,role&pin=eq."+PIN);
+    if(u.length){
+      const isM=u[0].name===MASTER_KEY;
+      saveRole(isM?'관리자':(u[0].role||'조회'));
+      enter(isM?'관리자':u[0].name);return;
+    }
   }catch(e){}
   msg.textContent='등록되지 않은 PIN입니다';
   msg.classList.add('err');
@@ -2668,7 +2754,7 @@ function enter(name){
   document.getElementById('ubadge').textContent='👤 '+name;
   history.replaceState({t:'view',v:'dash'},'');
   setPCWidthView('dash');
-  loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();
+  loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();applyPerm();
 }
 function toggleDrawer(on){
   const wasOn=document.getElementById('drawer').classList.contains('on');
@@ -2889,19 +2975,25 @@ let EDITU=null;
 async function loadUsers(){
   const rows=(await api("/mm_user?select=*&order=created_at")).filter(u=>u.name!==MASTER_KEY);
   document.getElementById('userbody').innerHTML=rows.map(u=>{
+    const ropt=r=>ROLE_LIST.map(x=>`<option${x===r?' selected':''}>${x}</option>`).join('');
     if(EDITU===u.id)return `<tr>
       <td><input class="uin" id="e-nm" value="${esc(u.name)}"></td>
       <td><input class="uin" id="e-dept" list="dl-dept" value="${esc(u.dept||'')}"></td>
+      <td><select class="uin" id="e-role">${ropt(u.role||'조회')}</select></td>
       <td><input class="uin mono" id="e-pin" maxlength="4" inputmode="numeric" value="${esc(u.pin)}"></td>
       <td>${fmt(u.created_at)}</td>
       <td><button class="ubtn save" onclick="saveUser(${u.id})">저장</button>
           <button class="ubtn" onclick="EDITU=null;loadUsers()">취소</button></td></tr>`;
     return `<tr>
-      <td>${esc(u.name)}</td><td>${u.dept?esc(u.dept):'<span class="oempty" style="padding:0">-</span>'}</td><td class="mono">${esc(u.pin)}</td>
+      <td>${esc(u.name)}</td><td>${u.dept?esc(u.dept):'<span class="oempty" style="padding:0">-</span>'}</td>
+      <td><span class="rtag">${esc(u.role||'조회')}</span></td>
+      <td class="mono">${esc(u.pin)}</td>
       <td>${fmt(u.created_at)}</td>
       <td><button class="ubtn" onclick="EDITU=${u.id};loadUsers()">수정</button>
           <button class="del" onclick="delUser(${u.id},'${esc(u.name)}')">✕</button></td></tr>`;
-  }).join('')||'<tr><td colspan="5" class="empty">등록된 사원이 없습니다</td></tr>';
+  }).join('')||'<tr><td colspan="6" class="empty">등록된 사원이 없습니다</td></tr>';
+  const rs=document.getElementById('u-role');
+  if(rs&&!rs.options.length)rs.innerHTML=ROLE_LIST.map(x=>`<option${x==='가공조립'?' selected':''}>${x}</option>`).join('');
 }
 async function saveUser(id){
   const nm=document.getElementById('e-nm').value.trim();
@@ -2912,7 +3004,8 @@ async function saveUser(id){
   if(pin===MASTER_PIN)return toast('마스터 PIN과 동일한 번호는 사용할 수 없습니다');
   const dup=await api("/mm_user?select=id&pin=eq."+pin);
   if(dup.length&&dup[0].id!==id)return toast('이미 사용중인 PIN입니다');
-  await api(`/mm_user?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({name:nm,dept:dept||null,pin})});
+  const role=(document.getElementById('e-role')||{}).value||'조회';
+  await api(`/mm_user?id=eq.${id}`,{method:"PATCH",body:JSON.stringify({name:nm,dept:dept||null,pin,role})});
   EDITU=null;toast('사원 정보 수정 완료');loadUsers();
 }
 async function changeMaster(){
@@ -2936,7 +3029,8 @@ async function addUser(){
   if(pin===MASTER_PIN)return toast('마스터 PIN과 동일한 번호는 사용할 수 없습니다');
   const dup=await api("/mm_user?select=id&pin=eq."+pin);
   if(dup.length)return toast('이미 사용중인 PIN입니다');
-  await api("/mm_user",{method:"POST",body:JSON.stringify({name:nm,dept:dept||null,pin})});
+  const role=g('u-role')||'조회';
+  await api("/mm_user",{method:"POST",body:JSON.stringify({name:nm,dept:dept||null,pin,role})});
   ['u-nm','u-dept','u-pin'].forEach(x=>document.getElementById(x).value='');
   toast('사원 등록 완료');loadUsers();
 }
@@ -3243,6 +3337,7 @@ function setTheme(t,silent){
   if(!silent)toast('화면 색상: '+THEME_LB[MMTHEME]);
 }
 /* ---------- PC 2단 네비게이션 ---------- */
+function catAllowed(k){return typeof canCat==='function'?canCat(k):true}
 const CATS=[
   {k:'sales', n:'영업관리', ic:'💼', ids:['new-mold','plan','dash','flow']},
   {k:'design',n:'설계관리', ic:'📐', ids:['doc','partlist','ecn']},
@@ -3269,12 +3364,14 @@ function buildTopnav(){
   const nav=document.getElementById('topnav');if(!nav)return;
   nav.textContent='';
   CATS.forEach(c=>{
+    if(!catAllowed(c.k))return;
     const b=document.createElement('button');
     b.className='tb';b.dataset.cat=c.k;
     b.innerHTML='<span class="ic">'+c.ic+'</span>'+c.n;
     b.onclick=()=>selCat(c.k);
     nav.appendChild(b);
   });
+  if(!catAllowed(CURCAT)){const f=CATS.find(c=>catAllowed(c.k));CURCAT=f?f.k:'sales'}
   selCat(CURCAT,true);
 }
 function selCat(k,silent){
@@ -3290,6 +3387,7 @@ function buildSidenav(){
   sn.appendChild(hd);
   const items=drawerItems();
   cat.ids.forEach(id=>{
+    if(typeof canItem==='function'&&!canItem(id))return;
     const el=items.find(x=>itemId(x)===id);
     if(!el)return;
     const it=document.createElement('div');
@@ -3308,6 +3406,7 @@ const EXT={'cost':['cost.html','원가관리'],'master':['master.html','기준�
   'outsrc':['outsrc.html','외주가공 관리'],'mat':['mat.html','자재발주 관리'],'work-status':['work_status.html','업무현황']};
 let CUREXT='';
 function openExt(id,file,title,fromPop){
+  if(!fromPop&&!canItem(id)){toast('접근 권한이 없습니다 ('+ROLE+')');return}
   if(window.innerWidth<1000){location.href=file;return}
   document.getElementById('drawer').classList.remove('on');
   document.getElementById('dim').classList.remove('on');
@@ -3455,6 +3554,8 @@ function goNew(t){
   document.getElementById('htitle').textContent='신규진행등록';
 }
 function go(v,fromPop){
+  if(!fromPop&&!guardView(v)){document.getElementById('drawer').classList.remove('on');
+    document.getElementById('dim').classList.remove('on');return}
   document.getElementById('drawer').classList.remove('on');
   document.getElementById('dim').classList.remove('on');
   if(!fromPop){
@@ -5972,6 +6073,7 @@ async function loadHist(){
 }
 
 (async()=>{
+  loadRole();
   await loadMaster();
   await loadMasterPin();
   if(USER){
@@ -5979,7 +6081,7 @@ async function loadHist(){
     document.getElementById('ubadge').textContent='👤 '+USER;
     history.replaceState({t:'view',v:'dash'},'');
     setPCWidthView('dash');
-    loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();
+    loadDash();startApprWatch();loadFoots();loadTheme();buildTopnav();buildSidenav();applyPerm();
   }
 })();
 

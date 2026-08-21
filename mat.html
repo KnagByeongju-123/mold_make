@@ -1239,7 +1239,7 @@ th{letter-spacing:-.3px;font-weight:700}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.1</span>
+    <span class="rev">v1.2</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1310,8 +1310,8 @@ th{letter-spacing:-.3px;font-weight:700}
           <th style="width:110px">재질</th>
           <th style="width:78px">수량</th>
           <th style="width:70px">단위</th>
-          <th style="width:110px">단가</th>
-          <th style="width:110px">금액</th>
+          <th style="width:110px" class="perm-money">단가</th>
+          <th style="width:110px" class="perm-money">금액</th>
           <th style="width:140px">구매처</th>
           <th style="width:118px">발주일</th>
           <th style="width:118px">입고요구일</th>
@@ -1335,7 +1335,7 @@ th{letter-spacing:-.3px;font-weight:700}
           <th style="width:30px">#</th><th>품목명</th><th>규격</th><th style="width:90px">재질</th>
           <th style="width:60px">수량</th><th style="width:110px">구매처</th>
           <th style="width:100px">발주일</th><th style="width:100px">요구일</th><th style="width:100px">입고일</th>
-          <th style="width:70px">지연</th><th style="width:110px">금액</th><th style="width:62px">상태</th>
+          <th style="width:70px">지연</th><th style="width:110px" class="perm-money">금액</th><th style="width:62px">상태</th>
         </tr></thead>
         <tbody id="ibody"></tbody>
       </table></div>
@@ -1425,6 +1425,22 @@ function num(v){const n=Number(String(v??'').replace(/[^\d.\-]/g,''));return isF
 function won(n){return (Math.round(num(n))).toLocaleString('ko-KR')}
 function dayDiff(a,b){if(!a||!b)return null;return Math.round((new Date(b)-new Date(a))/864e5)}
 
+
+/* ================= 권한 확인 ================= */
+const ROLES={'관리자':{money:1,admin:1},'영업':{money:1},'설계':{money:0},
+  '구매':{money:1},'가공조립':{money:0},'품질':{money:0},'조회':{money:0,readonly:1}};
+let ROLE='관리자';
+try{ROLE=sessionStorage.getItem('mm_role')||localStorage.getItem('mm_role')||'관리자'}catch(e){}
+if(!ROLES[ROLE])ROLE='조회';
+function canMoney(){return !!(ROLES[ROLE]||{}).money}
+function isReadonly(){return !!(ROLES[ROLE]||{}).readonly}
+function permDeny(msg){
+  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;'+
+    'height:100vh;flex-direction:column;gap:12px;font-family:inherit;color:#8b9099">'+
+    '<div style="font-size:40px">🔒</div><div style="font-size:15px;font-weight:800">'+msg+'</div>'+
+    '<div style="font-size:12.5px">현재 권한: '+ROLE+'</div></div>';
+}
+
 /* ================= 상태 ================= */
 let PROJ=[], CURP=null, ROWS=[], VEND=[], MATS=[], PRICE=[];
 let DIRTY=new Map(), NEWR=[], TAB='po';
@@ -1513,7 +1529,7 @@ function renderSum(){
   const amt=all.reduce((s,r)=>s+num(r.qty)*num(r.price),0);
   document.getElementById('m-sum').innerHTML=
     `미발주 <b>${no}</b> <span class="sp">·</span> 발주 <b>${od}</b> <span class="sp">·</span> 입고 <b>${ind}</b>`+
-    ` <span class="sp">·</span> 금액 <b class="mono">${won(amt)}</b>원`;
+    (canMoney()?` <span class="sp">·</span> 금액 <b class="mono">${won(amt)}</b>원`:'');
   const late=all.filter(r=>lateDays(r)).length;
   const isum=document.getElementById('i-sum');
   if(isum)isum.innerHTML=`입고 <b>${ind}</b>/${all.length} <span class="sp">·</span> 지연 <b style="color:var(--red)">${late}</b>건`
@@ -1541,9 +1557,10 @@ function renderPO(){
         const type=cls==='date'?'date':cls==='num'?'number':'text';
         const dl=f==='vendor'?'vendlist':f==='material'?'matlist':f==='item_name'?'itemlist':f==='unit'?'unitlist':f==='kind'?'kindlist':'';
         const ph=PH[f]||'';
-        return `<td><input class="mti ${cls}" type="${type}" value="${esc(v)}"${dl?` list="${dl}"`:''}${ph?` placeholder="${ph}"`:''}
+        const pm=(f==='price')?' class="perm-money"':'';
+        return `<td${pm}><input class="mti ${cls}" type="${type}" value="${esc(v)}"${dl?` list="${dl}"`:''}${ph?` placeholder="${ph}"`:''}
           oninput="pEdit('${key}','${f}',this.value)" onchange="pChg('${key}','${f}')" onkeydown="pKey(event,this)"></td>`
-          +(f==='price'?`<td class="amt" data-amt="${key}">${amt?won(amt):''}</td>`:'');
+          +(f==='price'?`<td class="amt perm-money" data-amt="${key}">${amt?won(amt):''}</td>`:'');
       }).join('')+
       `<td style="text-align:center"><span class="st ${isNew?'st-w':stCls(st)}">${st}</span></td>`+
       `<td style="text-align:center">${isNew
@@ -1570,7 +1587,7 @@ function renderIN(){
       <td class="mono">${esc(r.due_date||'')}</td>
       <td class="mono">${esc(r.in_date||'')}</td>
       <td class="mono" style="text-align:center;color:${ld?'var(--red)':'var(--gray)'}">${ld?'+'+ld+'일':'-'}</td>
-      <td class="amt">${won(num(r.qty)*num(r.price))}</td>
+      <td class="amt perm-money">${won(num(r.qty)*num(r.price))}</td>
       <td style="text-align:center"><span class="st ${stCls(st)}">${st}</span></td>
     </tr>`;
   }).join('')||'<tr><td colspan="12" class="empty">발주된 자재가 없습니다</td></tr>';
@@ -1844,6 +1861,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePCWidthPopup()
   kl.innerHTML='<option value="자재"><option value="표준품"><option value="부자재"><option value="소모품">';
   document.body.appendChild(kl);
   const bo=document.getElementById('bk-order');if(bo&&!bo.value)bo.value=today();
+  document.body.classList.toggle('perm-ro',isReadonly());
+  if(!canMoney()){
+    const st=document.createElement('style');
+    st.textContent='.perm-money{display:none!important}';
+    document.head.appendChild(st);
+  }
   await loadBase();
   await loadProj();
   await loadRows();

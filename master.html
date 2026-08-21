@@ -1204,7 +1204,7 @@ th{letter-spacing:-.3px;font-weight:700}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.1</span>
+    <span class="rev">v1.2</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1232,6 +1232,7 @@ th{letter-spacing:-.3px;font-weight:700}
       <button class="itab" id="mtab-moldtype" onclick="mTab('moldtype')">🗜 금형타입</button>
       <button class="itab" id="mtab-machine" onclick="mTab('machine')">⚙️ 기계사양</button>
       <button class="itab" id="mtab-price" onclick="mTab('price')">💲 단가표</button>
+      <button class="itab" id="mtab-labor" onclick="mTab('labor')">👷 노무단가</button>
     </div>
 
     <div class="qfbox"><span class="qflb" id="m-addlb">➕ 신규 등록</span>
@@ -1321,7 +1322,10 @@ const TABS={
   price:{tbl:'mm_price',lb:'💲 표준단가 등록',
     cols:[['kind','구분* (외주/자재)','100'],['vendor','업체','120'],['proc','가공공정','130'],
           ['item_name','품목명','130'],['material','재질','90'],['spec','규격','120'],
-          ['unit','단위','60'],['price','단가*','100'],['from_date','적용일','120'],['memo','비고','1fr']]}
+          ['unit','단위','60'],['price','단가*','100'],['from_date','적용일','120'],['memo','비고','1fr']]},
+  labor:{tbl:'mm_labor_rate',lb:'👷 노무단가(시간당) 등록',
+    cols:[['worker','작업자*','120'],['dept','부서','110'],['grade','등급','90'],
+          ['rate','시간당단가*','110'],['from_date','적용일','120'],['memo','비고','1fr']]}
 };
 let CUR='vendor', DATA=[], DIRTY=new Map();
 
@@ -1340,15 +1344,18 @@ function buildAddRow(){
   box.style.gridTemplateColumns=cols.map(c=>c[2].endsWith('fr')?'minmax(90px,'+c[2]+')':c[2]+'px').join(' ');
   box.innerHTML=cols.map(c=>{
     const dl=DL[c[0]]?` list="${DL[c[0]]}"`:'';
-    const tp=(c[0]==='price')?' type="number"':(c[0]==='from_date')?' type="date"':'';
+    const tp=(c[0]==='price'||c[0]==='rate')?' type="number"':(c[0]==='from_date')?' type="date"':'';
     return `<div class="fg"><label>${c[1]}</label><input id="ma-${c[0]}"${dl}${tp}></div>`;
   }).join('');
   const nt=document.getElementById('m-note');
   if(nt)nt.textContent=CUR==='price'
     ?'구분(외주/자재) + 업체 · 공정 · 품목 · 재질 · 규격 조합으로 매칭되어 외주 입고확정 매입가와 자재발주 단가에 자동 입력됩니다'
+    :CUR==='labor'
+    ?'작업자별 시간당 단가입니다 · 원가관리 › 실적공수에서 시간 입력 시 사내가공비가 자동 계산됩니다'
     :'칸을 바로 수정하고 저장을 누르세요 · 발주서·외주가공 입력창에 자동완성으로 연동됩니다';
 }
-const DL={vendor:'dl-vendor',proc:'dl-proc',material:'dl-mat',kind:'dl-kind',unit:'dl-unit'};
+const DL={vendor:'dl-vendor',proc:'dl-proc',material:'dl-mat',kind:'dl-kind',unit:'dl-unit',
+  worker:'dl-worker',dept:'dl-dept',grade:'dl-grade'};
 async function buildDL(){
   const mk=(id,arr)=>{
     let d=document.getElementById(id);
@@ -1363,6 +1370,11 @@ async function buildDL(){
     mk('dl-proc',[...ps]);
   }catch(e){}
   try{const m=await api('/mm_material?select=code&order=code');mk('dl-mat',m.map(x=>x.code))}catch(e){}
+  mk('dl-grade',['특급','고급','중급','초급']);
+  try{const u=await api('/mm_user?select=name,dept&order=name');
+    mk('dl-worker',u.filter(x=>x.name!=='__MASTER__').map(x=>x.name));
+    mk('dl-dept',[...new Set(u.map(x=>x.dept).filter(Boolean))]);
+  }catch(e){}
 }
 async function mLoad(){
   try{DATA=await api('/'+TABS[CUR].tbl+'?select=*&order=id.asc');}
@@ -1380,8 +1392,8 @@ function mRender(){
     `<td class="mono" style="text-align:center;color:var(--gray)">${i+1}</td>`+
     cols.map(c=>{
       const dl=DL[c[0]]?` list="${DL[c[0]]}"`:'';
-      const tp=(c[0]==='price')?' type="number"':(c[0]==='from_date')?' type="date"':'';
-      const st=(c[0]==='price')?' style="text-align:right;font-family:\'IBM Plex Mono\',monospace"':'';
+      const tp=(c[0]==='price'||c[0]==='rate')?' type="number"':(c[0]==='from_date')?' type="date"':'';
+      const st=(c[0]==='price'||c[0]==='rate')?' style="text-align:right;font-family:\'IBM Plex Mono\',monospace"':'';
       return `<td><input class="mi-cell"${tp}${dl}${st} value="${esc(dval(r,c[0]))}" oninput="mEdit(${r.id},'${c[0]}',this.value)"></td>`;
     }).join('')+
     `<td style="text-align:center"><button class="del" onclick="mDel(${r.id})">✕</button></td></tr>`

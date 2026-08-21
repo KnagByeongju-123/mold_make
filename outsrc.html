@@ -1232,7 +1232,7 @@ th{letter-spacing:-.3px;font-weight:700}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.9</span>
+    <span class="rev">v2.0</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1563,6 +1563,7 @@ function render(){
 
 /* ---------- 탭 ---------- */
 function osTab(t){
+  if(t==='conf'&&!canMoney()){toast('입고확정(금액) 권한이 없습니다 — '+ROLE);return}
   if(OSTAB==='grid'&&t!=='grid'&&GDIRTY.size){
     if(!confirm('저장하지 않은 변경이 있습니다. 이동할까요?'))return;
     GDIRTY.clear();GNEW=[];
@@ -1985,6 +1986,22 @@ async function doImport(){
   toast(made+'개 부품을 가져왔습니다'+(skip?' (이미 등록 '+skip+'개 제외)':''));
 }
 
+
+/* ================= 권한 확인 ================= */
+const ROLES={'관리자':{money:1,admin:1},'영업':{money:1},'설계':{money:0},
+  '구매':{money:1},'가공조립':{money:0},'품질':{money:0},'조회':{money:0,readonly:1}};
+let ROLE='관리자';
+try{ROLE=sessionStorage.getItem('mm_role')||localStorage.getItem('mm_role')||'관리자'}catch(e){}
+if(!ROLES[ROLE])ROLE='조회';
+function canMoney(){return !!(ROLES[ROLE]||{}).money}
+function isReadonly(){return !!(ROLES[ROLE]||{}).readonly}
+function permDeny(msg){
+  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;'+
+    'height:100vh;flex-direction:column;gap:12px;font-family:inherit;color:#8b9099">'+
+    '<div style="font-size:40px">🔒</div><div style="font-size:15px;font-weight:800">'+msg+'</div>'+
+    '<div style="font-size:12.5px">현재 권한: '+ROLE+'</div></div>';
+}
+
 /* ---------- 표준단가 (기준정보 > 단가표) ---------- */
 let PRICE=[];
 async function loadPrice(){
@@ -2175,6 +2192,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
 
 /* ---------- 초기화 ---------- */
 (async function init(){
+  document.body.classList.toggle('perm-ro',isReadonly());
+  if(!canMoney()){const b=document.getElementById('otab-conf');if(b)b.classList.add('hide')}
   if(!USER){alert('로그인이 필요합니다.');location.href='index.html';return}
   document.getElementById('ubadge').textContent='👤 '+USER;
   try{applyFontScale(localStorage.getItem(FS_KEY)||100,false)}catch(e){}

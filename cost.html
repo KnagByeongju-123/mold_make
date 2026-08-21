@@ -1216,7 +1216,7 @@ th{letter-spacing:-.3px;font-weight:700}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.1</span>
+    <span class="rev">v1.3</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1241,6 +1241,7 @@ th{letter-spacing:-.3px;font-weight:700}
     <div class="itabs">
       <button class="itab on" id="ctab-sum" onclick="cTab('sum')">📊 손익 요약</button>
       <button class="itab" id="ctab-det" onclick="cTab('det')">🧾 금형별 상세</button>
+      <button class="itab" id="ctab-lab" onclick="cTab('lab')">👷 실적공수</button>
     </div>
 
     <!-- 요약 -->
@@ -1252,7 +1253,7 @@ th{letter-spacing:-.3px;font-weight:700}
       </div>
       <div class="tscroll"><table class="wide" style="min-width:980px">
         <thead><tr><th>금형</th><th>고객사</th><th style="text-align:right">견적가</th><th style="text-align:right">수주가</th>
-          <th style="text-align:right">자재비(입고)</th><th style="text-align:right">외주비(확정)</th><th style="text-align:right">기타비용</th><th style="text-align:right">실적원가</th>
+          <th style="text-align:right">자재비(입고)</th><th style="text-align:right">외주비(확정)</th><th style="text-align:right">사내공수</th><th style="text-align:right">기타비용</th><th style="text-align:right">실적원가</th>
           <th style="text-align:right">손익</th><th style="width:64px;text-align:right">이익률</th><th style="width:70px"></th></tr></thead>
         <tbody id="csbody"></tbody></table></div>
       <div class="cfsum" id="cstotal"></div>
@@ -1287,8 +1288,43 @@ th{letter-spacing:-.3px;font-weight:700}
           <th style="text-align:right">매입가</th><th style="text-align:right">네고%</th><th style="text-align:right">확정가</th></tr></thead>
         <tbody id="cobody"></tbody></table></div>
     </div>
+
+    <!-- 실적공수 -->
+    <div id="c-lab" class="hide">
+      <div class="psel" style="margin-bottom:10px">
+        <select id="clsel" onchange="renderLab()"></select>
+        <span class="cfsum" id="clhead" style="margin:0"></span>
+      </div>
+
+      <div class="qfbox"><span class="qflb">➕ 실적공수 등록 (사내가공 · 설계 · 조립)</span>
+        <div class="ihdr costrow">
+          <div class="fg"><label>일자</label><input id="cl-date" type="date"></div>
+          <div class="fg"><label>작업자</label><input id="cl-worker" list="dl-worker" placeholder="예: 김대리" onchange="autoRate()"></div>
+          <div class="fg"><label>공정</label><input id="cl-proc" list="dl-lproc" placeholder="예: MCT 가공"></div>
+          <div class="fg"><label>작업내용</label><input id="cl-memo" placeholder="예: 상형 코어 황삭"></div>
+          <div class="fg"><label>시간 (h)</label><input id="cl-hours" type="number" step="0.5" class="mono" placeholder="0"></div>
+          <div class="fg"><label>시간당단가</label><input id="cl-rate" type="number" class="mono" placeholder="0"></div>
+          <div class="fg cadd"><label>&nbsp;</label><button class="btn btn-p" style="padding:11px 4px" onclick="addLab()">추가</button></div>
+        </div>
+        <div style="font-size:11px;color:var(--gray);padding:0 2px 8px">작업자를 입력하면 기준정보 › 노무단가에서 시간당단가가 자동 입력됩니다</div>
+      </div>
+
+      <div class="tscroll"><table class="wide" style="min-width:900px">
+        <thead><tr><th style="width:100px">일자</th><th style="width:100px">작업자</th><th style="width:130px">공정</th>
+          <th>작업내용</th><th style="width:70px;text-align:right">시간</th>
+          <th style="width:100px;text-align:right">단가</th><th style="width:110px;text-align:right">금액</th>
+          <th style="width:40px"></th></tr></thead>
+        <tbody id="clbody"></tbody></table></div>
+      <div class="cfsum" id="cltotal" style="margin-top:10px"></div>
+    </div>
   </section>
 </main>
+
+<datalist id="dl-worker"></datalist>
+<datalist id="dl-lproc">
+  <option value="MCT 가공"><option value="와이어"><option value="방전"><option value="연삭">
+  <option value="선반"><option value="밀링"><option value="조립"><option value="사상"><option value="설계"><option value="시타">
+</datalist>
 
 <div class="toast" id="toast"></div>
 
@@ -1348,8 +1384,24 @@ function today(){return new Date().toISOString().slice(0,10)}
 function g(id){const el=document.getElementById(id);return el?el.value.trim():''}
 const won=n=>n==null||n===''||isNaN(n)?'-':Number(n).toLocaleString('ko-KR');
 
+
+/* ================= 권한 확인 ================= */
+const ROLES={'관리자':{money:1,admin:1},'영업':{money:1},'설계':{money:0},
+  '구매':{money:1},'가공조립':{money:0},'품질':{money:0},'조회':{money:0,readonly:1}};
+let ROLE='관리자';
+try{ROLE=sessionStorage.getItem('mm_role')||localStorage.getItem('mm_role')||'관리자'}catch(e){}
+if(!ROLES[ROLE])ROLE='조회';
+function canMoney(){return !!(ROLES[ROLE]||{}).money}
+function isReadonly(){return !!(ROLES[ROLE]||{}).readonly}
+function permDeny(msg){
+  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;'+
+    'height:100vh;flex-direction:column;gap:12px;font-family:inherit;color:#8b9099">'+
+    '<div style="font-size:40px">🔒</div><div style="font-size:15px;font-weight:800">'+msg+'</div>'+
+    '<div style="font-size:12.5px">현재 권한: '+ROLE+'</div></div>';
+}
+
 /* ---------- 데이터 ---------- */
-let PROJ=[],OUTS=[],COSTS=[],MATS=[],CSF='run';
+let PROJ=[],OUTS=[],COSTS=[],MATS=[],LABS=[],LRATE=[],CSF='run';
 
 async function loadAll(){
   PROJ=await api("/mm_project?select=id,mold_no,mold_name,customer,status,archived,mold_type,est_price,order_price,sale_price&order=created_at.desc");
@@ -1359,6 +1411,14 @@ async function loadAll(){
   catch(e){COSTS=[];toast('patch_cost.sql을 Supabase에서 실행하세요')}
   try{MATS=await api("/mm_material_po?select=project_id,item_name,spec,material,qty,unit,price,vendor,order_date,in_date&in_date=not.is.null");}
   catch(e){MATS=[]}
+  try{LABS=await api("/mm_labor?select=*&order=work_date.desc,id.desc");}
+  catch(e){LABS=[]}
+  try{LRATE=await api("/mm_labor_rate?select=*");}catch(e){LRATE=[]}
+  try{
+    const u=await api("/mm_user?select=name&order=name");
+    const dl=document.getElementById('dl-worker');
+    if(dl)dl.innerHTML=u.filter(x=>x.name!=='__MASTER__').map(x=>`<option value="${esc(x.name)}">`).join('');
+  }catch(e){}
   const sel=document.getElementById('cdsel');
   sel.innerHTML=PROJ.map(p=>`<option value="${p.id}">${p.mold_type==='수리'?'[수리] ':'[신작] '}${esc(p.mold_no)} — ${esc(p.mold_name)}</option>`).join('')
     ||'<option value="">등록된 금형 없음</option>';
@@ -1367,13 +1427,21 @@ async function loadAll(){
 function outSum(pid){return OUTS.filter(o=>String(o.project_id)===String(pid)).reduce((s,o)=>s+(Number(o.final_price)||0),0)}
 function costSum(pid){return COSTS.filter(c=>String(c.project_id)===String(pid)).reduce((s,c)=>s+(Number(c.amount)||0),0)}
 function matSum(pid){return MATS.filter(m=>String(m.project_id)===String(pid)).reduce((s,m)=>s+(Number(m.qty)||0)*(Number(m.price)||0),0)}
+function labSum(pid){return LABS.filter(l=>String(l.project_id)===String(pid)).reduce((s,l)=>s+(Number(l.hours)||0)*(Number(l.rate)||0),0)}
+function labHours(pid){return LABS.filter(l=>String(l.project_id)===String(pid)).reduce((s,l)=>s+(Number(l.hours)||0),0)}
+function rateOf(worker){
+  const w=String(worker||'').trim().toLowerCase();
+  const hit=LRATE.filter(r=>String(r.worker||'').trim().toLowerCase()===w)
+    .sort((a,b)=>String(b.from_date||'').localeCompare(String(a.from_date||'')));
+  return hit.length?Number(hit[0].rate)||0:0;
+}
 
 /* ---------- 탭 ---------- */
 function cTab(t){
-  document.getElementById('ctab-sum').classList.toggle('on',t==='sum');
-  document.getElementById('ctab-det').classList.toggle('on',t==='det');
-  document.getElementById('c-sum').classList.toggle('hide',t!=='sum');
-  document.getElementById('c-det').classList.toggle('hide',t!=='det');
+  ['sum','det','lab'].forEach(x=>{
+    const b=document.getElementById('ctab-'+x);if(b)b.classList.toggle('on',x===t);
+    const p=document.getElementById('c-'+x);if(p)p.classList.toggle('hide',x!==t);
+  });
   render();
 }
 function setCS(f){
@@ -1381,7 +1449,71 @@ function setCS(f){
   document.querySelectorAll('#csfilter button').forEach((b,i)=>b.classList.toggle('on',['run','done','all'][i]===f));
   renderSum();
 }
-function render(){renderSum();renderDet()}
+function render(){renderSum();renderDet();renderLab()}
+
+/* ---------- 실적공수 ---------- */
+function renderLab(){
+  const sel=document.getElementById('clsel');if(!sel)return;
+  if(!sel.options.length){
+    sel.innerHTML=PROJ.map(p=>`<option value="${p.id}">${p.mold_type==='수리'?'[수리] ':'[신작] '}${esc(p.mold_no)} — ${esc(p.mold_name)}</option>`).join('')
+      ||'<option value="">등록된 금형 없음</option>';
+  }
+  const pid=sel.value;if(!pid)return;
+  const tb=document.getElementById('clbody');if(!tb)return;
+  const list=LABS.filter(l=>String(l.project_id)===String(pid));
+  tb.innerHTML=list.map(l=>`<tr>
+    <td class="mono">${l.work_date||'-'}</td>
+    <td>${esc(l.worker||'-')}</td>
+    <td>${esc(l.proc||'-')}</td>
+    <td>${esc(l.memo||'-')}</td>
+    <td class="mono" style="text-align:right">${l.hours||0}</td>
+    <td class="mono" style="text-align:right">${won(l.rate)}</td>
+    <td class="mono" style="text-align:right;font-weight:800;color:var(--gold)">${won((Number(l.hours)||0)*(Number(l.rate)||0))}</td>
+    <td style="text-align:center"><button class="del" onclick="delLab(${l.id})">✕</button></td>
+  </tr>`).join('')||'<tr><td colspan="8" class="empty">등록된 실적공수가 없습니다</td></tr>';
+
+  const h=list.reduce((s2,l)=>s2+(Number(l.hours)||0),0);
+  const amt=list.reduce((s2,l)=>s2+(Number(l.hours)||0)*(Number(l.rate)||0),0);
+  const byW={};list.forEach(l=>{const k=l.worker||'-';byW[k]=(byW[k]||0)+(Number(l.hours)||0)});
+  const top=Object.entries(byW).sort((a,b)=>b[1]-a[1]).slice(0,4)
+    .map(([k,v])=>`${esc(k)} <b class="mono">${v}h</b>`).join(' · ');
+  document.getElementById('cltotal').innerHTML=
+    `<span>총 공수 <b class="mono">${h}</b>h</span>
+     <span>사내가공비 <b class="mono" style="color:var(--gold)">${won(amt)}</b>원</span>
+     ${top?`<span style="font-weight:400;color:var(--gray)">${top}</span>`:''}`;
+  const p=PROJ.find(x=>String(x.id)===String(pid));
+  document.getElementById('clhead').innerHTML=p
+    ?`<span>${esc(p.mold_no)} <b>${esc(p.mold_name)}</b></span><span>등록 <b>${list.length}</b>건</span>`:'';
+}
+function autoRate(){
+  const w=g('cl-worker');if(!w)return;
+  const el=document.getElementById('cl-rate');
+  if(el&&!Number(el.value)){
+    const r=rateOf(w);
+    if(r){el.value=r;toast('노무단가 자동입력: '+won(r)+'원/h')}
+  }
+}
+async function addLab(){
+  const pid=g('clsel');
+  if(!pid)return toast('금형을 선택하세요');
+  const wk=g('cl-worker');if(!wk)return toast('작업자를 입력하세요');
+  const hr=Number(g('cl-hours'));if(!hr||hr<=0)return toast('시간을 입력하세요');
+  let rate=Number(g('cl-rate'))||rateOf(wk);
+  if(!rate&&!confirm('노무단가가 없습니다. 단가 0원으로 등록할까요?'))return;
+  try{
+    await api('/mm_labor',{method:'POST',body:JSON.stringify({
+      project_id:pid,work_date:g('cl-date')||new Date().toISOString().slice(0,10),
+      worker:wk,proc:g('cl-proc')||null,memo:g('cl-memo')||null,
+      hours:hr,rate:rate||0,author:USER||null})});
+    ['cl-memo','cl-hours'].forEach(x=>{const el=document.getElementById(x);if(el)el.value=''});
+    await loadAll();cTab('lab');toast('실적공수 등록 완료');
+  }catch(e){toast('등록 실패 — patch_labor.sql 실행 여부를 확인하세요')}
+}
+async function delLab(id){
+  if(!confirm('이 실적공수를 삭제할까요?'))return;
+  try{await api('/mm_labor?id=eq.'+id,{method:'DELETE'});await loadAll();cTab('lab');toast('삭제 완료')}
+  catch(e){toast('삭제 실패: '+e.message)}
+}
 
 /* ---------- 손익 요약 ---------- */
 function renderSum(){
@@ -1391,14 +1523,14 @@ function renderSum(){
     if(CSF==='done')return p.status==='완료'||p.archived;
     return p.status!=='완료'&&!p.archived;
   });
-  let T={est:0,ord:0,mat:0,out:0,etc:0,cost:0,pf:0};
+  let T={est:0,ord:0,mat:0,out:0,lab:0,etc:0,cost:0,pf:0};
   tb.innerHTML=list.map(p=>{
-    const out=outSum(p.id),etc=costSum(p.id),mat=matSum(p.id);
-    const cost=out+etc+mat;
+    const out=outSum(p.id),etc=costSum(p.id),mat=matSum(p.id),lab=labSum(p.id);
+    const cost=out+etc+mat+lab;
     const ord=Number(p.order_price)||0;
     const pf=ord?ord-cost:null;
     const rate=ord?Math.round((ord-cost)/ord*1000)/10:null;
-    T.est+=Number(p.est_price)||0;T.ord+=ord;T.mat+=mat;T.out+=out;T.etc+=etc;T.cost+=cost;T.pf+=(pf||0);
+    T.est+=Number(p.est_price)||0;T.ord+=ord;T.mat+=mat;T.out+=out;T.lab+=lab;T.etc+=etc;T.cost+=cost;T.pf+=(pf||0);
     return `<tr>
       <td><b class="mono" style="color:var(--gold)">${esc(p.mold_no)}</b> ${esc(p.mold_name)}</td>
       <td>${esc(p.customer||'-')}</td>
@@ -1406,13 +1538,14 @@ function renderSum(){
       <td class="mono" style="text-align:right">${won(p.order_price)}</td>
       <td class="mono" style="text-align:right">${won(mat||null)}</td>
       <td class="mono" style="text-align:right">${won(out||null)}</td>
+      <td class="mono" style="text-align:right">${won(lab||null)}</td>
       <td class="mono" style="text-align:right">${won(etc||null)}</td>
       <td class="mono" style="text-align:right;font-weight:800">${won(cost||null)}</td>
       <td class="mono" style="text-align:right;font-weight:800;color:${pf==null?'var(--gray)':pf>=0?'var(--green)':'var(--red)'}">${pf==null?'-':won(pf)}</td>
       <td class="mono" style="text-align:right;color:${rate==null?'var(--gray)':rate>=0?'var(--green)':'var(--red)'}">${rate==null?'-':rate+'%'}</td>
       <td style="text-align:right"><button class="btn" style="padding:4px 9px;font-size:10.5px" onclick="goDet('${p.id}')">상세 ›</button></td>
     </tr>`;
-  }).join('')||'<tr><td colspan="11" class="empty">해당하는 금형이 없습니다</td></tr>';
+  }).join('')||'<tr><td colspan="12" class="empty">해당하는 금형이 없습니다</td></tr>';
   document.getElementById('cstotal').innerHTML=
     `<span>수주가 합계 <b class="mono">${won(T.ord)}</b>원</span>
      <span>실적원가 합계 <b class="mono">${won(T.cost)}</b>원</span>
@@ -1427,7 +1560,7 @@ function goDet(id){
 function renderDet(){
   const pid=g('cdsel');if(!pid)return;
   const p=PROJ.find(x=>String(x.id)===String(pid));if(!p)return;
-  const out=outSum(pid),etc=costSum(pid),mat=matSum(pid),cost=out+etc+mat;
+  const out=outSum(pid),etc=costSum(pid),mat=matSum(pid),lab=labSum(pid),cost=out+etc+mat+lab;
   const ord=Number(p.order_price)||0;
   const pf=ord?ord-cost:null;
   document.getElementById('cdhead').innerHTML=
@@ -1435,6 +1568,7 @@ function renderDet(){
      <span>수주가 <b class="mono">${won(p.order_price)}</b></span>
      <span>자재비 <b class="mono">${won(mat||null)}</b></span>
      <span>외주비 <b class="mono">${won(out||null)}</b></span>
+     <span>사내공수 <b class="mono">${won(lab||null)}</b> <span style="font-weight:400;color:var(--gray)">(${labHours(pid)}h)</span></span>
      <span>기타비용 <b class="mono">${won(etc||null)}</b></span>
      <span>실적원가 <b class="mono" style="color:var(--gold)">${won(cost||null)}</b></span>
      <span>손익 <b class="mono" style="color:${pf==null?'var(--gray)':pf>=0?'var(--green)':'var(--red)'}">${pf==null?'-':won(pf)}</b></span>`;
@@ -1508,10 +1642,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
 
 /* ---------- 초기화 ---------- */
 (async function init(){
+  if(!canMoney()){permDeny('원가관리 열람 권한이 없습니다');return}
   if(!USER){alert('로그인이 필요합니다.');location.href='index.html';return}
   document.getElementById('ubadge').textContent='👤 '+USER;
   try{applyFontScale(localStorage.getItem(FS_KEY)||100,false)}catch(e){}
   document.getElementById('cc-date').value=today();
+  const cl=document.getElementById('cl-date');if(cl)cl.value=today();
+  document.body.classList.toggle('perm-ro',isReadonly());
   try{await loadAll();}catch(e){toast('불러오기 실패: '+e.message)}
 })();
 
