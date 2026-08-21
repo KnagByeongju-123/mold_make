@@ -28,7 +28,7 @@ html.bd-2{--line:#4d5872; --line2:#3a4152; --line3:#5c6884; --line4:#6d7a99}
 html.bd-3{--line:#6a7794; --line2:#4d5872; --line3:#7b89a8; --line4:#8d9bba}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
 .mono{font-family:'IBM Plex Mono',monospace}
 
 .gold-txt{background:linear-gradient(120deg,var(--gold2),var(--gold),var(--gold3),var(--gold2));
@@ -1094,6 +1094,7 @@ html[data-theme="mono"] .amt{color:#000!important}
 html[data-theme="mono"] .mtbl tr.mt-new{background:#f2f2f2!important}
 html[data-theme="mono"] .mtbl tr.mt-ok{background:#e8e8e8!important}
 
+@media(min-width:1000px){
 /* ============================================================
    클린 테마 (네이버/네이트 스타일) — data-theme="clean"
    ============================================================ */
@@ -1187,13 +1188,17 @@ html[data-theme="clean"] .toast{background:#22262e;color:#fff;border-color:#2226
 html[data-theme="clean"] .empty{color:#9aa0a9}
 
 /* ============================================================
-   타이포그래피 정리 — 전 테마 공통 (네이버/네이트 톤)
+   PC 타이포그래피 — 네이버 계열 폰트 스택
    ============================================================ */
-body{letter-spacing:-.3px}
+body{
+  font-family:'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕','나눔고딕','NanumGothic',Dotum,'돋움',sans-serif;
+  letter-spacing:-.3px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+button,input,select,textarea,table,th,td{font-family:inherit}
 h1,h2,h3,h4,b,strong{letter-spacing:-.4px}
-table th{letter-spacing:-.3px}
-.mono,input.mono,td.mono,.rev{letter-spacing:0}
-
+th{letter-spacing:-.3px;font-weight:700}
+.mono,input.mono,td.mono,.rev,.htitle{letter-spacing:-.1px}
+.mono,input.mono,td.mono,.rev{font-family:'Malgun Gothic','Consolas','IBM Plex Mono',monospace;letter-spacing:0}
+}
 </style>
 </head>
 <body>
