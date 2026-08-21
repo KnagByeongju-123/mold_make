@@ -1069,6 +1069,9 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
 .mi-cell{width:100%;min-width:0;background:transparent;border:1px solid transparent;
   color:var(--ink);padding:7px 6px;font-size:12.5px;font-family:inherit}
 .mi-cell:hover{border-color:var(--line2);background:var(--card2)}
+.cmhint{font-size:10.5px;color:var(--gray);padding:1px 7px 0;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.cmhint.warn{color:var(--red)}
 .mi-cell:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.07)}
 
 
@@ -1295,7 +1298,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.3</span>
+    <span class="rev">v1.4</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1324,6 +1327,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
       <button class="itab" id="mtab-machine" onclick="mTab('machine')">⚙️ 기계사양</button>
       <button class="itab" id="mtab-price" onclick="mTab('price')">💲 단가표</button>
       <button class="itab" id="mtab-labor" onclick="mTab('labor')">👷 노무단가</button>
+      <button class="itab" id="mtab-codemap" onclick="mTab('codemap')">🔗 금형코드매칭</button>
     </div>
 
     <div class="qfbox"><span class="qflb" id="m-addlb">➕ 신규 등록</span>
@@ -1416,9 +1420,12 @@ const TABS={
           ['unit','단위','60'],['price','단가*','100'],['from_date','적용일','120'],['memo','비고','1fr']]},
   labor:{tbl:'mm_labor_rate',lb:'👷 노무단가(시간당) 등록',
     cols:[['worker','작업자*','120'],['dept','부서','110'],['grade','등급','90'],
-          ['rate','시간당단가*','110'],['from_date','적용일','120'],['memo','비고','1fr']]}
+          ['rate','시간당단가*','110'],['from_date','적용일','120'],['memo','비고','1fr']]},
+  codemap:{tbl:'mm_code_map',lb:'🔗 금형코드매칭 등록 (고객코드 ↔ 사내제번)',
+    cols:[['customer','고객사*','120'],['cust_code','고객 도번/품번*','160'],['cust_name','고객 품명','140'],
+          ['mold_no','사내 제번*','110'],['stage','조','50'],['part_no','사내 품번','110'],['memo','비고','1fr']]}
 };
-let CUR='vendor', DATA=[], DIRTY=new Map();
+let CUR='vendor', DATA=[], DIRTY=new Map(), PJ_MAP={};
 
 function mTab(t){
   if(DIRTY.size&&!confirm('저장하지 않은 변경이 있습니다. 이동할까요?'))return;
@@ -1442,16 +1449,19 @@ function buildAddRow(){
     return `<div class="fg"><label>${c[1]}</label><input id="ma-${c[0]}"${dl}${tp}></div>`;
   }).join('');
   const tb=document.getElementById('m-tbl');
-  if(tb)tb.style.minWidth=(CUR==='price'?'1060px':CUR==='labor'?'780px':'680px');
+  if(tb)tb.style.minWidth=(CUR==='price'?'1060px':CUR==='labor'?'780px':CUR==='codemap'?'900px':'680px');
   const nt=document.getElementById('m-note');
   if(nt)nt.textContent=CUR==='price'
     ?'구분(외주/자재) + 업체 · 공정 · 품목 · 재질 · 규격 조합으로 매칭되어 외주 입고확정 매입가와 자재발주 단가에 자동 입력됩니다'
     :CUR==='labor'
     ?'작업자별 시간당 단가입니다 · 원가관리 › 실적공수에서 시간 입력 시 사내가공비가 자동 계산됩니다'
+    :CUR==='codemap'
+    ?'고객사가 부르는 도번·품번과 사내 제번을 연결합니다 · 검색창에 어느 쪽 코드를 넣어도 반대쪽을 찾을 수 있습니다'
     :'칸을 바로 수정하고 저장을 누르세요 · 발주서·외주가공 입력창에 자동완성으로 연동됩니다';
 }
 const DL={vendor:'dl-vendor',proc:'dl-proc',material:'dl-mat',kind:'dl-kind',unit:'dl-unit',
-  worker:'dl-worker',dept:'dl-dept',grade:'dl-grade'};
+  worker:'dl-worker',dept:'dl-dept',grade:'dl-grade',
+  customer:'dl-cust',mold_no:'dl-moldno',stage:'dl-stage'};
 async function buildDL(){
   const mk=(id,arr)=>{
     let d=document.getElementById(id);
@@ -1467,6 +1477,13 @@ async function buildDL(){
   }catch(e){}
   try{const m=await api('/mm_material?select=code&order=code');mk('dl-mat',m.map(x=>x.code))}catch(e){}
   mk('dl-grade',['특급','고급','중급','초급']);
+  mk('dl-stage',['A','B','C','D','E','F']);
+  try{
+    const pj=await api('/mm_project?select=mold_no,mold_name,customer&order=created_at.desc');
+    mk('dl-moldno',pj.map(x=>x.mold_no));
+    mk('dl-cust',[...new Set(pj.map(x=>x.customer).filter(Boolean))]);
+    PJ_MAP={};pj.forEach(x=>{PJ_MAP[x.mold_no]={name:x.mold_name,cust:x.customer}});
+  }catch(e){}
   try{const u=await api('/mm_user?select=name,dept&order=name');
     mk('dl-worker',u.filter(x=>x.name!=='__MASTER__').map(x=>x.name));
     mk('dl-dept',[...new Set(u.map(x=>x.dept).filter(Boolean))]);

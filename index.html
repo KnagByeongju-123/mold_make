@@ -466,6 +466,16 @@ tr:last-child td{border-bottom:none}
 .ubtn:hover{border-color:var(--gold);color:var(--gold)}
 .ubtn.save{background:linear-gradient(160deg,var(--gold2),var(--gold));border-color:var(--gold);color:#241a05}
 .hnote{margin-top:10px;font-size:12.5px;color:var(--gray)}
+.dsrch{flex:1 1 220px;min-width:180px;padding:8px 12px;border-radius:9px;
+  border:1px solid var(--line3);background:var(--card2);color:var(--ink);
+  font-size:12.5px;font-family:inherit}
+.dsrch:focus{border-color:var(--gold);outline:none}
+html[data-theme="clean"] .dsrch:focus{border-color:#2f5fd0;box-shadow:0 0 0 2px rgba(47,95,208,.12)}
+.cmhit{margin:0 0 10px;padding:9px 12px;border-radius:9px;font-size:12px;
+  background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);line-height:1.6}
+.cmhit b{font-family:'IBM Plex Mono',monospace}
+html[data-theme="clean"] .cmhit{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="mono"] .cmhit{background:#f0f0f0!important;border-color:#000!important;color:#000!important}
 .pcode{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;
   padding:1px 7px;border-radius:5px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);
   margin:0 3px;letter-spacing:.3px}
@@ -1352,7 +1362,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="rtag" id="rolebadge" title="현재 권한"></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 18.0</span>
+    <span class="rev">Rev 18.1</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1485,7 +1495,10 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
       <button onclick="setPF('done')">완료</button>
       <button onclick="setPF('arch')">📦 보관</button>
       <button onclick="setPF('all')">전체</button>
+      <input id="dsearch" class="dsrch" placeholder="🔍 제번 · 금형명 · 고객 도번으로 찾기"
+        oninput="renderDash()" autocomplete="off">
     </div>
+    <div id="cmhit" class="cmhit hide"></div>
     <div id="projlist"></div>
   </section>
 
@@ -3692,8 +3705,10 @@ let PF='run';
 function setPF(v){PF=v;
   document.querySelectorAll('#pfilter button').forEach((b,k)=>b.classList.toggle('on',['run','done','arch','all'][k]===v));
   renderDash();}
+let CODEMAP=[];
 async function loadDash(){
   PROJECTS=await api("/mm_project?select=*&order=created_at.desc");
+  try{CODEMAP=await api("/mm_code_map?select=customer,cust_code,cust_name,mold_no,stage")}catch(e){CODEMAP=[]}
   PROCS=await api("/mm_process?select=project_id,op_code,status,ng_count,plan_end");
   const live=PROJECTS.filter(p=>!p.archived);
   const run=live.filter(p=>p.status==='진행').length;
@@ -3721,13 +3736,36 @@ function calcPct(ps){
 }
 function renderDash(){
   const box=document.getElementById('projlist');
-  const list=PROJECTS.filter(p=>{
+  let list=PROJECTS.filter(p=>{
     if(PF==='arch')return p.archived;
     if(PF==='all')return true;
     if(p.archived)return false;
     return PF==='done'?p.status==='완료':p.status!=='완료';
   });
-  if(!list.length){box.innerHTML='<div class="empty">'+(PF==='arch'?'보관된 금형이 없습니다':PF==='done'?'완료된 금형이 없습니다':'해당하는 금형이 없습니다')+'</div>';return}
+  /* 검색: 제번 · 금형명 · 제품 · 고객사 · 도번 + 금형코드매칭 */
+  const q=(document.getElementById('dsearch')||{}).value||'';
+  const hit=document.getElementById('cmhit');
+  const qq=q.trim().toLowerCase();
+  if(qq){
+    const maps=CODEMAP.filter(m=>
+      String(m.cust_code||'').toLowerCase().includes(qq)||
+      String(m.cust_name||'').toLowerCase().includes(qq));
+    const mapNos=maps.map(m=>String(m.mold_no||'').toLowerCase());
+    list=list.filter(p=>[p.mold_no,p.mold_name,p.product,p.customer,p.dwg_no,p.model]
+        .some(v=>String(v||'').toLowerCase().includes(qq))
+      ||mapNos.includes(String(p.mold_no||'').toLowerCase()));
+    if(hit){
+      if(maps.length){
+        hit.classList.remove('hide');
+        hit.innerHTML='🔗 금형코드매칭 '+maps.length+'건 — '+
+          maps.slice(0,4).map(m=>`${esc(m.customer||'')} <b>${esc(m.cust_code||'')}</b>`+
+            `${m.cust_name?' ('+esc(m.cust_name)+')':''} → 사내 <b>${esc(m.mold_no||'')}</b>`+
+            `${m.stage?' '+esc(m.stage)+'조':''}`).join('<br>')+
+          (maps.length>4?'<br>…':'');
+      }else hit.classList.add('hide');
+    }
+  }else if(hit)hit.classList.add('hide');
+  if(!list.length){box.innerHTML='<div class="empty">'+(qq?'검색 결과가 없습니다':PF==='arch'?'보관된 금형이 없습니다':PF==='done'?'완료된 금형이 없습니다':'해당하는 금형이 없습니다')+'</div>';return}
   box.innerHTML=list.map(p=>{
     const ps=PROCS.filter(x=>x.project_id===p.id);
     const ok=ps.filter(x=>x.status==='OK').length;
@@ -3829,6 +3867,7 @@ async function createProject(){
     const rows=fm.map((m,i)=>({project_id:p.id,op_code:m.op_code,status:i===0?'진행':'대기',started_at:i===0?new Date().toISOString():null}));
     await api("/mm_process",{method:"POST",body:JSON.stringify(rows)});
     await api("/mm_history",{method:"POST",body:JSON.stringify({project_id:p.id,action:'등록',detail:no+' '+nm+' ['+mtype+'] 등록, '+opN(fm[0].op_code)+' '+fm[0].process_name+' 개시',worker:g('f-mg')||null})});
+    await syncCodeMap(no,g('f-cs'),g('f-dwg'),g('f-pd')||nm);
     ['f-no','f-nm','f-cs','f-pd','f-md','f-dwg','f-mg','f-odt','f-s1','f-due','f-est','f-ord','f-sal','f-nt'].forEach(x=>document.getElementById(x).value='');
     document.getElementById('f-stg').value='1';
     toast('등록 완료 — '+opN(fm[0].op_code)+' '+fm[0].process_name+'부터 진행합니다');
@@ -3860,8 +3899,23 @@ async function saveOrd(){
     est_price:num('o-est'),order_price:num('o-ord'),sale_price:num('o-sal')};
   try{
     await api("/mm_project?id=eq."+ORDID,{method:"PATCH",body:JSON.stringify(body)});
+    const pj=PROJECTS.find(x=>x.id===ORDID);
+    if(pj)await syncCodeMap(pj.mold_no,body.customer,body.dwg_no,body.product||pj.mold_name);
     toast('수주정보 저장 완료');closeOrd();loadDash();
   }catch(e){toast('저장 실패: '+e.message+' — patch_order.sql 실행 여부를 확인하세요')}
+}
+/* ---------- 금형코드매칭 자동 등록 ---------- */
+async function syncCodeMap(mold_no,customer,dwg_no,cust_name){
+  if(!mold_no||!customer||!dwg_no)return;
+  try{
+    const ex=await api('/mm_code_map?select=id&mold_no=eq.'+encodeURIComponent(mold_no)
+      +'&customer=eq.'+encodeURIComponent(customer)
+      +'&cust_code=eq.'+encodeURIComponent(dwg_no));
+    if(ex.length)return;
+    await api('/mm_code_map',{method:'POST',body:JSON.stringify({
+      customer:customer,cust_code:dwg_no,cust_name:cust_name||null,
+      mold_no:mold_no,memo:'수주등록 자동생성'})});
+  }catch(e){}
 }
 async function delProject(id,no){
   if(!confirm(no+' 금형을 삭제합니다.\n\n공정 진행 · 부품 · 출력물 · Tryout · 이력이 모두 함께 삭제되며 복구되지 않습니다.\n계속할까요?'))return;
