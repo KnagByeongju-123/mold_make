@@ -655,6 +655,34 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .monbig .tx em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--gold);opacity:.8;margin-top:2px}
 .monbig .go{font-size:12.5px;font-weight:800;color:var(--gold);white-space:nowrap;flex-shrink:0}
 @media(max-width:520px){.monbig{padding:13px 14px;gap:10px}.monbig .tx{font-size:15.5px}.monbig .go{font-size:11.5px}}
+.vwsw{display:flex;align-items:center;gap:6px;margin:10px 0 8px;flex-wrap:wrap}
+.vwsw button{padding:7px 14px;border:1px solid var(--line);background:var(--card2);color:var(--sub);
+  border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.vwsw button.on{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold)}
+.gleg{margin-left:auto;font-size:10.5px;color:var(--gray);display:flex;gap:9px;flex-wrap:wrap}
+.gleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;vertical-align:-1px}
+.gwrap{border:1px solid var(--line);border-radius:11px;overflow:auto;background:var(--card)}
+.gtab{min-width:720px}
+.grow{display:flex;border-bottom:1px solid var(--line2)}
+.grow:last-child{border-bottom:none}
+.grow.ghead{position:sticky;top:0;z-index:2;background:var(--card2)}
+.gname{flex:0 0 170px;padding:8px 10px;border-right:1px solid var(--line);font-size:12px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gname b{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:12px;margin-right:5px}
+.gname .sub{display:block;font-size:10.5px;color:var(--gray);margin-top:1px}
+.gbar{position:relative;flex:1;min-width:520px;height:38px}
+.ghead .gbar{height:26px}
+.gtick{position:absolute;top:0;bottom:0;border-left:1px dashed var(--line2)}
+.gtick span{position:absolute;top:5px;left:4px;font-size:9.5px;color:var(--gray);white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+.gseg{position:absolute;top:9px;height:20px;border-radius:3px;font-size:9.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;color:#10131a;cursor:default}
+.gseg.ok{background:#7ee0a0}
+.gseg.run{background:var(--gold)}
+.gseg.wait{background:#4a5268;color:var(--sub)}
+.gseg.late{background:#ff7b7b}
+.gtoday{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.85;z-index:1}
+.gtoday span{position:absolute;top:-1px;left:3px;font-size:9px;color:var(--red);font-weight:800}
+.gdue{position:absolute;top:4px;bottom:4px;width:2px;background:var(--blue);z-index:1}
 .moncard{background:var(--card);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;overflow:hidden}
 .moncard .mch{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--line2)}
 .moncard .mch .ic{font-size:15px}
@@ -1118,7 +1146,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.6</span>
+    <span class="rev">Rev 16.7</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1250,7 +1278,13 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
       <button onclick="setPF('arch')">📦 보관</button>
       <button onclick="setPF('all')">전체</button>
     </div>
+    <div class="vwsw">
+      <button class="on" id="vw-card" onclick="setDashView('card')">🗂 카드</button>
+      <button id="vw-gantt" onclick="setDashView('gantt')">📅 일정표</button>
+      <span class="gleg" id="gleg"></span>
+    </div>
     <div id="projlist"></div>
+    <div id="ganttbox" class="hide"></div>
   </section>
 
   <!-- 진행현황 -->
@@ -3359,14 +3393,92 @@ function calcPct(ps){
   const ok=ps.filter(x=>x.status==='OK').length;
   return Math.round(ok/ps.length*100);
 }
-function renderDash(){
-  const box=document.getElementById('projlist');
-  const list=PROJECTS.filter(p=>{
+let DASHVIEW='card';
+function setDashView(v){
+  DASHVIEW=v;
+  document.getElementById('vw-card').classList.toggle('on',v==='card');
+  document.getElementById('vw-gantt').classList.toggle('on',v==='gantt');
+  document.getElementById('projlist').classList.toggle('hide',v!=='card');
+  document.getElementById('ganttbox').classList.toggle('hide',v!=='gantt');
+  document.getElementById('gleg').innerHTML = v==='gantt'
+    ? '<span><i style="background:#7ee0a0"></i>완료</span><span><i style="background:#e2b04a"></i>진행</span>'+
+      '<span><i style="background:#4a5268"></i>대기</span><span><i style="background:#ff7b7b"></i>지연</span>'+
+      '<span><i style="background:#4f8cff"></i>납기</span>' : '';
+  if(v==='gantt')renderGantt();
+}
+const DAY=864e5;
+const dnum=d=>d?Math.floor(new Date(d+'T00:00:00').getTime()/DAY):null;
+function renderGantt(){
+  const box=document.getElementById('ganttbox');
+  const list=filteredProjects();
+  if(!list.length){box.innerHTML='<div class="empty">표시할 금형이 없습니다</div>';return}
+  // 각 금형의 공정을 순서대로 구간화
+  const rows=list.map(p=>{
+    const ps=PROCS.filter(x=>String(x.project_id)===String(p.id))
+      .slice().sort((a,b)=>opN(a.op_code).localeCompare(opN(b.op_code),undefined,{numeric:true}));
+    let prev=dnum(p.order_date)||null;
+    const segs=[];
+    ps.forEach(pr=>{
+      const e=dnum(pr.plan_end);
+      if(e==null)return;
+      const s=(prev!=null&&prev<e)?prev:e-1;
+      segs.push({s:s,e:e,st:pr.status,op:pr.op_code,nm:mName(pr.op_code),pe:pr.plan_end});
+      prev=e;
+    });
+    return {p:p,segs:segs,due:dnum(p.due_date)};
+  }).filter(r=>r.segs.length||r.due!=null);
+  if(!rows.length){box.innerHTML='<div class="empty">계획 일자가 없습니다 — 신규진행계획수립에서 📅 계획수립을 먼저 진행하세요</div>';return}
+  const today=dnum(new Date().toISOString().slice(0,10));
+  let min=Math.min(...rows.flatMap(r=>r.segs.map(s=>s.s)).concat([today]));
+  let max=Math.max(...rows.flatMap(r=>r.segs.map(s=>s.e)).concat(rows.map(r=>r.due).filter(x=>x!=null)).concat([today]));
+  if(max<=min)max=min+7;
+  const span=max-min;
+  const pos=d=>((d-min)/span*100);
+  // 눈금 (주 단위)
+  const ticks=[];
+  const step=span>120?28:span>60?14:7;
+  for(let d=min;d<=max;d+=step){
+    const dt=new Date(d*DAY);
+    ticks.push({left:pos(d),lb:(dt.getMonth()+1)+'/'+dt.getDate()});
+  }
+  const tickHtml=ticks.map(t=>`<div class="gtick" style="left:${t.left}%"><span>${t.lb}</span></div>`).join('');
+  box.innerHTML=`<div class="gwrap"><div class="gtab">
+    <div class="grow ghead">
+      <div class="gname" style="font-weight:800;color:var(--sub)">금형 · 진행률</div>
+      <div class="gbar">${tickHtml}</div>
+    </div>
+    ${rows.map(r=>{
+      const ps=PROCS.filter(x=>String(x.project_id)===String(r.p.id));
+      const pct=calcPct(ps);
+      return `<div class="grow">
+        <div class="gname"><b>${esc(r.p.mold_no)}</b>${esc(r.p.mold_name)}
+          <span class="sub">${pct}% · ${esc(r.p.customer||'-')}</span></div>
+        <div class="gbar">${tickHtml}
+          ${r.segs.map(sg=>{
+            const late=sg.st!=='OK'&&dnum(sg.pe)<today;
+            const cls=sg.st==='OK'?'ok':late?'late':sg.st==='진행'?'run':'wait';
+            const l=pos(sg.s),w=Math.max(1.2,pos(sg.e)-pos(sg.s));
+            return `<div class="gseg ${cls}" style="left:${l}%;width:${w}%" title="${opN(sg.op)} ${esc(sg.nm)} · 계획 ${sg.pe} · ${sg.st}">${w>7?opN(sg.op):''}</div>`;
+          }).join('')}
+          ${r.due!=null?`<div class="gdue" style="left:${pos(r.due)}%" title="납기 ${r.p.due_date}"></div>`:''}
+          <div class="gtoday" style="left:${pos(today)}%"><span>오늘</span></div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div></div>`;
+}
+function filteredProjects(){
+  return PROJECTS.filter(p=>{
     if(PF==='arch')return p.archived;
     if(PF==='all')return true;
     if(p.archived)return false;
     return PF==='done'?p.status==='완료':p.status!=='완료';
   });
+}
+function renderDash(){
+  if(DASHVIEW==='gantt')renderGantt();
+  const box=document.getElementById('projlist');
+  const list=filteredProjects();
   if(!list.length){box.innerHTML='<div class="empty">'+(PF==='arch'?'보관된 금형이 없습니다':PF==='done'?'완료된 금형이 없습니다':'해당하는 금형이 없습니다')+'</div>';return}
   box.innerHTML=list.map(p=>{
     const ps=PROCS.filter(x=>x.project_id===p.id);
