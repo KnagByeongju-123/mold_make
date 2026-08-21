@@ -1251,6 +1251,8 @@ th{letter-spacing:-.3px;font-weight:700}
           <button class="btn" style="padding:8px 12px" onclick="addPLRow(10)">+ 10줄</button>
           <button class="btn" style="padding:8px 12px" onclick="openPLPaste()">📋 엑셀 붙여넣기</button>
           <button class="btn" style="padding:8px 12px" onclick="newPL()">새 발주서</button>
+          <button class="btn" style="padding:8px 12px" onclick="autoFillPL()">↩ 금형정보 불러오기</button>
+          <button class="btn" style="padding:8px 12px" onclick="plTab('log')">📚 발주 이력에서 불러오기</button>
           <span id="pl-tag" style="font-size:11.5px;font-weight:800;color:var(--gold)"></span>
         </div>
       </div>
@@ -1422,29 +1424,29 @@ async function loadPL(){
   if(!pid){document.getElementById('plitems').innerHTML='<div class="ifm-empty">먼저 금형을 등록하세요</div>';return}
   try{PLS=await api(`/mm_partlist?select=*&project_id=eq.${pid}&order=created_at.desc`);}
   catch(e){PLS=[];toast('patch_partlist.sql을 Supabase에서 실행하세요')}
-  const st=curStage();
-  const cur=PLS.find(x=>x.op_code===curOp()&&x.kind===PLTAB&&(x.stage||null)===(st||null));
-  if(cur)fillPL(cur); else newPL(true);
+  newPL();
   renderPLLog();
 }
-function newPL(keepHdr){
+function newPL(){
   PEDIT=null;PITEMS=Array.from({length:10},blankRow);
-  const p=curProj(),m=MASTER.find(x=>x.op_code===curOp());
-  if(!keepHdr||!g('ph-mgmt')){
-    document.getElementById('ph-mgmt').value=p?p.mold_no:'';
-    document.getElementById('ph-prod').value=p?(p.product||p.mold_name):'';
-    document.getElementById('ph-model').value=p?(p.model||''):'';
-    document.getElementById('ph-dwg').value='';
-    document.getElementById('ph-vendor').value='';
-    document.getElementById('ph-order').value='';
-    document.getElementById('ph-due').value='';
-    document.getElementById('ph-due2').value='';
-    document.getElementById('ph-msheet').value='';
-  }
-  document.getElementById('ph-proc').value=m?(opN(m.op_code)+' '+m.process_name):'';
-  document.getElementById('ph-made').value=today();
+  ['ph-mgmt','ph-prod','ph-model','ph-proc','ph-dwg','ph-vendor',
+   'ph-order','ph-due','ph-due2','ph-msheet'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  const md=document.getElementById('ph-made');if(md)md.value=today();
   document.getElementById('pl-tag').textContent='';
   drawPL();
+}
+/* 현재 선택된 금형·공정 정보로 헤더 자동 채우기 (버튼) */
+function autoFillPL(){
+  const p=curProj(),m=MASTER.find(x=>x.op_code===curOp());
+  const v=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||''};
+  v('ph-mgmt',p?p.mold_no:'');
+  v('ph-prod',p?(p.product||p.mold_name):'');
+  v('ph-model',p?(p.model||''):'');
+  v('ph-proc',m?(opN(m.op_code)+' '+m.process_name):'');
+  v('ph-made',today());
+  toast('금형 정보를 불러왔습니다');
 }
 function fillPL(r){
   PEDIT=r.id;
@@ -1490,7 +1492,7 @@ function plTab(t){
   document.getElementById('ph-duelb').textContent=t+' 납기';
   document.getElementById('ph-due2lb').textContent=t==='원재료'?'1차가공 납기':'가공품 납기';
   document.getElementById('ph-msheet').parentNode.style.display=t==='원재료'?'':'none';
-  loadPL();
+  newPL();renderPLLog();
 }
 
 /* ---------- 항목표 ---------- */
@@ -1553,7 +1555,11 @@ async function savePL(){
     if(PEDIT)await api(`/mm_partlist?id=eq.${PEDIT}`,{method:"PATCH",body:JSON.stringify(body)});
     else await api("/mm_partlist",{method:"POST",body:JSON.stringify(body)});
     toast('발주서를 저장했습니다');
-    await loadPL();
+    const pid2=document.getElementById('plsel').value;
+    try{PLS=await api(`/mm_partlist?select=*&project_id=eq.${pid2}&order=created_at.desc`)}catch(e){}
+    const keep=PEDIT?PLS.find(x=>String(x.id)===String(PEDIT)):PLS[0];
+    if(keep)fillPL(keep); else newPL();
+    renderPLLog();
   }catch(e){toast('저장 실패: '+e.message)}
 }
 async function delPL(id){
