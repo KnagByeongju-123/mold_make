@@ -1075,11 +1075,13 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
 .bulkbar .bf{display:flex;flex-direction:column;gap:3px}
 .bulkbar .bf > label{font-size:10.5px;font-weight:700;color:var(--gray);letter-spacing:.2px;padding-left:2px}
 .bulkbar .bf.dt > label{color:var(--blue)}
-.mtbl{min-width:1240px}
+.mtbl{min-width:1560px}
 .mtbl td{padding:2px 3px}
 .mtbl th{font-size:11px;white-space:nowrap}
 .mi-cell,.mti{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;
-  color:var(--ink);padding:6px 6px;font-size:12.5px;font-family:inherit}
+  color:var(--ink);padding:7px 8px;font-size:13px;font-family:inherit;min-width:0}
+.mtbl td{padding:3px 4px}
+.mti::placeholder{color:var(--gray);opacity:.7}
 .mti:focus{border-color:var(--goldbd);background:var(--card2);outline:none}
 .mti.num{text-align:right;font-family:'IBM Plex Mono',monospace}
 .mti.date{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
@@ -1188,6 +1190,29 @@ html[data-theme="clean"] .pbar{background:#eef0f4;border-color:var(--line);
   background-image:repeating-linear-gradient(135deg,#e4e7ec 0 6px,#f4f5f7 6px 12px)}
 html[data-theme="clean"] .pbar i{background:linear-gradient(90deg,#4c7ce8,#2f5fd0);box-shadow:1px 0 0 rgba(0,0,0,.12)}
 
+/* 화면설정 팝업 */
+html[data-theme="clean"] .pcwbtn{background:#fff;border-color:var(--line3);color:#4a4f57}
+html[data-theme="clean"] .pcwbtn:hover,html[data-theme="clean"] .pcwbtn.on{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="clean"] .pcwpopup{background:#fff;border-color:var(--line3);color:#1a1c20;
+  box-shadow:0 12px 32px rgba(16,24,40,.16)}
+html[data-theme="clean"] .pcwpopup:before{background:#fff;border-color:var(--line3)}
+html[data-theme="clean"] .pcwpophead{border-bottom-color:var(--line)}
+html[data-theme="clean"] .pcwpophead b{color:#1a1c20}
+html[data-theme="clean"] .pcwclose,html[data-theme="clean"] .mx{color:#8b9099}
+html[data-theme="clean"] .pcwclose:hover,html[data-theme="clean"] .mx:hover{color:#1a1c20}
+html[data-theme="clean"] .pcwrow{color:#4a4f57;font-weight:600}
+html[data-theme="clean"] .pcwrow b{color:#2f5fd0}
+html[data-theme="clean"] .pcwscale{color:#9aa0a9}
+html[data-theme="clean"] .pcwsaved{color:#0a9c5c}
+html[data-theme="clean"] .pcwreset{background:#fff;border-color:var(--line3);color:#4a4f57}
+html[data-theme="clean"] .pcwreset:hover{background:#f6f7f9;border-color:#2f5fd0;color:#2f5fd0}
+html[data-theme="clean"] .pfsquick button,html[data-theme="clean"] .thm,html[data-theme="clean"] .bdb{
+  background:#fff;border-color:var(--line3);color:#3c4149}
+html[data-theme="clean"] .pfsquick button:hover,html[data-theme="clean"] .thm:hover,html[data-theme="clean"] .bdb:hover{
+  background:#f6f7f9;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="clean"] .pfsquick button.on,html[data-theme="clean"] .thm.on,html[data-theme="clean"] .bdb.on{
+  background:#eaf1ff;border-color:#2f5fd0;color:#2f5fd0}
+html[data-theme="clean"] .pcwrange{accent-color:#2f5fd0}
 html[data-theme="clean"] .toast{background:#22262e;color:#fff;border-color:#22262e}
 html[data-theme="clean"] .empty{color:#9aa0a9}
 
@@ -1213,7 +1238,7 @@ th{letter-spacing:-.3px;font-weight:700}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.0</span>
+    <span class="rev">v1.1</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1278,19 +1303,19 @@ th{letter-spacing:-.3px;font-weight:700}
         <thead><tr>
           <th style="width:26px"><input type="checkbox" id="p-all" onchange="poSelAll(this.checked)" style="width:15px;height:15px"></th>
           <th style="width:30px">#</th>
-          <th style="width:60px">구분</th>
-          <th style="width:150px">품목명</th>
-          <th style="width:130px">규격</th>
-          <th style="width:90px">재질</th>
-          <th style="width:60px">수량</th>
-          <th style="width:52px">단위</th>
-          <th style="width:96px">단가</th>
-          <th style="width:100px">금액</th>
-          <th style="width:110px">구매처</th>
+          <th style="width:88px">구분</th>
+          <th style="width:210px">품목명</th>
+          <th style="width:170px">규격</th>
+          <th style="width:110px">재질</th>
+          <th style="width:78px">수량</th>
+          <th style="width:70px">단위</th>
+          <th style="width:110px">단가</th>
+          <th style="width:110px">금액</th>
+          <th style="width:140px">구매처</th>
           <th style="width:118px">발주일</th>
           <th style="width:118px">입고요구일</th>
           <th style="width:118px">입고일</th>
-          <th style="width:110px">비고</th>
+          <th style="width:150px">비고</th>
           <th style="width:62px">상태</th>
           <th style="width:36px"></th>
         </tr></thead>
@@ -1389,6 +1414,8 @@ function dayDiff(a,b){if(!a||!b)return null;return Math.round((new Date(b)-new D
 let PROJ=[], CURP=null, ROWS=[], VEND=[], MATS=[], PRICE=[];
 let DIRTY=new Map(), NEWR=[], TAB='po';
 
+const PH={kind:'자재',item_name:'예: 상형 홀더',spec:'예: 300x200x50',material:'예: SKD11',
+  qty:'1',unit:'EA',price:'0',vendor:'구매처',memo:'비고'};
 const PCOLS=[['kind',''],['item_name',''],['spec',''],['material',''],
   ['qty','num'],['unit',''],['price','num'],
   ['vendor',''],['order_date','date'],['due_date','date'],['in_date','date'],['memo','']];
@@ -1498,7 +1525,8 @@ function renderPO(){
         const v=r[f]==null?'':r[f];
         const type=cls==='date'?'date':cls==='num'?'number':'text';
         const dl=f==='vendor'?'vendlist':f==='material'?'matlist':f==='item_name'?'itemlist':f==='unit'?'unitlist':f==='kind'?'kindlist':'';
-        return `<td><input class="mti ${cls}" type="${type}" value="${esc(v)}"${dl?` list="${dl}"`:''}
+        const ph=PH[f]||'';
+        return `<td><input class="mti ${cls}" type="${type}" value="${esc(v)}"${dl?` list="${dl}"`:''}${ph?` placeholder="${ph}"`:''}
           oninput="pEdit('${key}','${f}',this.value)" onchange="pChg('${key}','${f}')" onkeydown="pKey(event,this)"></td>`
           +(f==='price'?`<td class="amt" data-amt="${key}">${amt?won(amt):''}</td>`:'');
       }).join('')+
