@@ -124,9 +124,10 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
   display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900}
 #drawer .dlogo .n{font-size:18.5px;font-weight:900}
 #drawer .dlogo .s{font-size:13px;color:var(--sub)}
-#drawer .mi{display:flex;align-items:center;gap:13px;font-size:18.5px;font-weight:700;color:var(--sub);
+#drawer .mi{display:flex;align-items:center;gap:13px;font-size:20px;font-weight:450;color:var(--sub);
   padding:14px 12px;border-radius:11px;cursor:pointer;transition:.15s}
-#drawer .mi .ic{font-size:21px;width:28px;text-align:center}
+#drawer .mi .ic{font-size:22px;width:28px;text-align:center}
+#drawer .mgh{font-weight:800}
 #drawer .mi.on{background:var(--goldbg);color:var(--gold)}
 #drawer .mi:not(.on):hover{background:rgba(255,255,255,.04);color:var(--ink)}
 #drawer .mgh .arw{margin-left:auto;font-size:14px;opacity:.7;transition:transform .2s}
@@ -134,8 +135,9 @@ header .rev{font-size:10px;color:var(--sub);border:1px solid var(--line);padding
 #drawer .mg.open .mgh{color:var(--gold)}
 #drawer .msub{display:none;margin:2px 0 4px 10px;padding-left:8px;border-left:1px dashed var(--line)}
 #drawer .mg.open .msub{display:block}
-#drawer .msub .mi{font-size:17px;padding:12px 10px}
-#drawer .msub .mi .ic{font-size:19px;width:25px}
+#drawer .msub .mi{font-size:18.5px;font-weight:450;padding:12px 10px}
+#drawer .msub .mi .ic{font-size:20px;width:25px}
+#drawer .mi.on{font-weight:600}
 #drawer .foot{margin-top:auto;font-size:12.5px;color:var(--sub);opacity:.6;padding:10px 8px 4px;line-height:1.5}
 
 /* PC 가독성: 일반 화면은 1020px까지만 유동 확대 */
@@ -1118,7 +1120,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.7</span>
+    <span class="rev">Rev 16.8</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
