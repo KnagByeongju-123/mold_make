@@ -1258,7 +1258,7 @@ th{letter-spacing:-.3px;font-weight:700}
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 17.3</span>
+    <span class="rev">Rev 17.4</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1312,8 +1312,8 @@ th{letter-spacing:-.3px;font-weight:700}
     <div><div class="n">금형제작관리</div><div class="s">Mold Making Management</div></div>
   </div>
   <div class="menueditnote" id="menuEditNote">편집 중에는 메뉴 영역을 위·아래로 밀어 스크롤하고, 오른쪽 ☰ 핸들을 잡아 원하는 위치로 이동하세요. 화면 가장자리에서는 자동으로 스크롤됩니다. 변경 순서는 이 브라우저에 자동 저장됩니다.</div>
-  <div class="mg" id="mg-plan" data-menu-id="grp-plan">
-    <div class="mi mgh" onclick="toggleGrp('plan')"><span class="ic">📊</span>진행관리<span class="arw">▾</span></div>
+  <div class="mg" id="mg-sales" data-menu-id="grp-sales">
+    <div class="mi mgh" onclick="toggleGrp('sales')"><span class="ic">💼</span>영업관리<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-menu-id="new-mold" data-v="new" onclick="goNew('신작')"><span class="ic">🗜️</span>신규진행등록</div>
       <div class="mi" data-menu-id="plan" data-v="plan" onclick="go('plan')"><span class="ic">📅</span>신규진행계획수립</div>
@@ -1321,46 +1321,46 @@ th{letter-spacing:-.3px;font-weight:700}
       <div class="mi" data-menu-id="flow" data-v="flow" onclick="go('flow')"><span class="ic">📈</span>진행현황(세부)</div>
     </div>
   </div>
-  <div class="mg" id="mg-out" data-menu-id="grp-out">
-    <div class="mi mgh" onclick="toggleGrp('out')"><span class="ic">🖨️</span>출력물<span class="arw">▾</span></div>
+  <div class="mg" id="mg-design" data-menu-id="grp-design">
+    <div class="mi mgh" onclick="toggleGrp('design')"><span class="ic">📐</span>설계관리<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-menu-id="doc" data-v="doc" onclick="go('doc')"><span class="ic">📑</span>출력물 점검표</div>
       <div class="mi" data-menu-id="partlist" onclick="openExt('partlist','partlist.html','발주서 (PART LIST)')"><span class="ic">📋</span>발주서 (PART LIST)</div>
-      <div class="mi" data-menu-id="tryout" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
+      <div class="mi" data-menu-id="ecn" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
     </div>
   </div>
   <div class="mg" id="mg-buy" data-menu-id="grp-buy">
-    <div class="mi mgh" onclick="toggleGrp('buy')"><span class="ic">🏭</span>구매·외주<span class="arw">▾</span></div>
+    <div class="mi mgh" onclick="toggleGrp('buy')"><span class="ic">🏭</span>구매관리<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-menu-id="mat" onclick="openExt('mat','mat.html','자재발주 관리')"><span class="ic">🧱</span>자재발주</div>
       <div class="mi" data-menu-id="outsrc" onclick="openExt('outsrc','outsrc.html','외주가공 관리')"><span class="ic">🏭</span>외주가공</div>
       <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
     </div>
   </div>
-  <div class="mg" id="mg-qa" data-menu-id="grp-qa">
-    <div class="mi mgh" onclick="toggleGrp('qa')"><span class="ic">🛡️</span>품질관리 (SQ)<span class="arw">▾</span></div>
+  <div class="mg" id="mg-asm" data-menu-id="grp-asm">
+    <div class="mi mgh" onclick="toggleGrp('asm')"><span class="ic">🔧</span>조립관리<span class="arw">▾</span></div>
     <div class="msub">
+      <div class="mi" data-menu-id="tryout" data-v="tryout" onclick="go('tryout')"><span class="ic">🔧</span>T/O보고서</div>
       <div class="mi" data-menu-id="insp-file" onclick="openExt('insp-file','insp.html','검사성적서')"><span class="ic">📐</span>검사성적서</div>
       <div class="mi" data-menu-id="ncr" data-v="ncr" onclick="go('ncr')"><span class="ic">🚨</span>부적합·시정조치</div>
-      <div class="mi" data-menu-id="ecn" data-v="ecn" onclick="go('ecn')"><span class="ic">📝</span>설계변경 (4M)</div>
       <div class="mi" data-menu-id="gauge" data-v="gauge" onclick="go('gauge')"><span class="ic">📏</span>계측기관리</div>
-      <div class="mi" data-menu-id="appr" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
+      <div class="mi" data-menu-id="work-status" onclick="openExt('work-status','work_status.html','업무현황')"><span class="ic">🗂</span>업무현황</div>
     </div>
   </div>
-  <div class="mg" id="mg-stat" data-menu-id="grp-stat">
-    <div class="mi mgh" onclick="toggleGrp('stat')"><span class="ic">🗂</span>현황<span class="arw">▾</span></div>
+  <div class="mg" id="mg-cost" data-menu-id="grp-cost">
+    <div class="mi mgh" onclick="toggleGrp('cost')"><span class="ic">💹</span>원가관리<span class="arw">▾</span></div>
     <div class="msub">
-      <div class="mi" data-menu-id="work-status" onclick="openExt('work-status','work_status.html','업무현황')"><span class="ic">🗂</span>업무현황</div>
-      <div class="mi" data-menu-id="cost" onclick="openExt('cost','cost.html','원가관리')"><span class="ic">💹</span>원가관리</div>
+      <div class="mi" data-menu-id="cost" onclick="openExt('cost','cost.html','원가관리')"><span class="ic">💹</span>원가관리 (손익)</div>
       <div class="mi" data-menu-id="mon" data-v="mon" onclick="go('mon')"><span class="ic">📡</span>모니터링</div>
       <div class="mi" data-menu-id="hist" data-v="hist" onclick="go('hist')"><span class="ic">📜</span>이력</div>
       <div class="mi" data-menu-id="board" data-v="board" onclick="go('board')"><span class="ic">📋</span>게시판</div>
     </div>
   </div>
-  <div class="mg" id="mg-sys" data-menu-id="grp-sys">
-    <div class="mi mgh" onclick="toggleGrp('sys')"><span class="ic">⚙️</span>설정<span class="arw">▾</span></div>
+  <div class="mg" id="mg-base" data-menu-id="grp-base">
+    <div class="mi mgh" onclick="toggleGrp('base')"><span class="ic">🗃️</span>기준정보<span class="arw">▾</span></div>
     <div class="msub">
       <div class="mi" data-menu-id="master" onclick="openExt('master','master.html','기준정보 관리')"><span class="ic">🗃️</span>기준정보 관리</div>
+      <div class="mi" data-menu-id="appr" data-v="appr" onclick="go('appr')"><span class="ic">✍️</span>결재함</div>
       <div class="mi" data-menu-id="help" data-v="help" onclick="go('help')"><span class="ic">❓</span>사용안내</div>
       <div class="mi" data-menu-id="set" data-v="set" onclick="goSet()"><span class="ic">🔒</span>설정</div>
       <div class="mi" data-menu-id="logout" onclick="logout()"><span class="ic">🚪</span>로그아웃</div>
@@ -1972,9 +1972,9 @@ th{letter-spacing:-.3px;font-weight:700}
           <b>📅 계획수립</b>으로 공정별 계획완료일을 한 번에 만들고, 필요한 공정만 날짜를 조정합니다. 이후 계획 대비 실적이 자동으로 비교됩니다.</div></div>
         <div class="hs"><i>3</i><div><b>설계 진행</b><em>진행현황(세부)</em>
           도면 승인·설계 공정을 <b>OK</b> 처리합니다. 공정에 진척 가중치를 넣어 두면(예: 조립도30·레이아웃30·부품도40) 설계만으로 진척률이 정확히 올라갑니다.</div></div>
-        <div class="hs"><i>4</i><div><b>부품 전개 · 발주서 작성</b><em>출력물 › 발주서(PART LIST)</em>
+        <div class="hs"><i>4</i><div><b>부품 전개 · 발주서 작성</b><em>설계관리 › 발주서(PART LIST)</em>
           공정(조)을 고르고 <b>🧱 원재료</b> · <b>⚙️ 표준품</b> 발주서를 작성합니다. CAD BOM은 <b>📋 엑셀 붙여넣기</b>로 한 번에 넣고, PDF로 출력해 발주처에 전달합니다.</div></div>
-        <div class="hs"><i>5</i><div><b>외주 라우팅 구성</b><em>구매·외주 › 외주가공</em>
+        <div class="hs"><i>5</i><div><b>외주 라우팅 구성</b><em>구매관리 › 외주가공</em>
           <b>📋 발주서에서 불러오기</b>로 품목을 가져온 뒤, 부품마다 가공 순서를 붙입니다(예: 성형연삭 → 열처리 → WIRE CUT). 사무실에서는 <b>⌨ 표 편집</b>으로 여러 행을 한 번에 채우는 편이 빠릅니다.</div></div>
         <div class="hs"><i>6</i><div><b>발주 · 입고 추적</b><em>외주가공 › 발주 관리</em>
           업체·입고요구일을 지정하고 <b>📤 발주</b>, 물건이 오면 <b>📥 입고</b>를 누릅니다. 요구일이 지난 건은 <b>지연</b>으로 표시되니 매일 이 화면만 보면 됩니다.</div></div>
@@ -1982,13 +1982,13 @@ th{letter-spacing:-.3px;font-weight:700}
           입고된 건에 매입가와 네고율을 넣으면 확정가가 계산됩니다. 여러 건 선택 후 <b>✔ 확정 처리</b>하면 그대로 원가에 반영됩니다.</div></div>
         <div class="hs"><i>8</i><div><b>가공 · 조립 진행</b><em>진행현황(세부)</em>
           공정별로 OK / NG를 처리하고, 각 공정 카드에서 <b>출력물 점검표</b>를 체크하며 증빙 사진을 첨부합니다.</div></div>
-        <div class="hs"><i>9</i><div><b>검사 · 성적서</b><em>품질관리 › 검사성적서</em>
+        <div class="hs"><i>9</i><div><b>검사 · 성적서</b><em>조립관리 › 검사성적서</em>
           양식을 만들어 두고(도면 + 풍선번호) 측정자가 X1~X10 값만 입력하면 OK/NG가 자동 판정됩니다. 결과는 PDF로 출력해 결재·제출합니다.</div></div>
-        <div class="hs"><i>10</i><div><b>T/O · 시타</b><em>출력물 › T/O보고서</em>
+        <div class="hs"><i>10</i><div><b>T/O · 시타</b><em>조립관리 › T/O보고서</em>
           차수별 작업 내용 · 이슈 · 다음 계획을 사진과 함께 기록합니다. 1차 시타가 끝나면 수주정보의 <b>S1 완료일</b>을 입력합니다.</div></div>
-        <div class="hs"><i>11</i><div><b>문제 발생 시</b><em>품질관리 › 부적합 / 설계변경</em>
+        <div class="hs"><i>11</i><div><b>문제 발생 시</b><em>조립관리 › 부적합 / 설계관리 › 설계변경</em>
           불량은 <b>NCR</b>로 접수 → 원인 → 조치 → 재발방지까지, 설계·자재·공법 변경은 <b>ECN(4M)</b>으로 남깁니다. SQ 심사에서 가장 많이 보는 기록입니다.</div></div>
-        <div class="hs"><i>12</i><div><b>납품 · 원가 정산</b><em>현황 › 원가관리</em>
+        <div class="hs"><i>12</i><div><b>납품 · 원가 정산</b><em>원가관리 › 원가관리(손익)</em>
           납기완료일을 입력하고, 원재료비 · 사내가공비 · 설계비 · 경비를 등록하면 <b>수주가 − 실적원가 = 손익</b>이 바로 나옵니다.</div></div>
         <div class="hs"><i>13</i><div><b>완료 보관</b><em>진행현황(전체)</em>
           전 공정 OK로 상태가 완료가 되면 <b>📦 완료보관</b>을 누릅니다. 성적서 · NCR · 발주 기록은 그대로 보존되어 언제든 조회·재출력됩니다.</div></div>
@@ -2955,7 +2955,7 @@ const VIEWTITLE={mon:'모니터링',dash:'진행현황(전체)',new:'신규진�
 
 
 /* ---------- 햄버거 메뉴 순서 편집 ---------- */
-const MENU_ORDER_KEY='mm_menu_order_v2';
+const MENU_ORDER_KEY='mm_menu_order_v3';
 const MENU_LONGPRESS_MS=500;
 let MENU_DEFAULT_ORDER=[];
 let MENU_EDIT=false;
@@ -3226,14 +3226,14 @@ function setTheme(t,silent){
 }
 /* ---------- PC 2단 네비게이션 ---------- */
 const CATS=[
-  {k:'plan', n:'진행관리', ic:'📊', ids:['new-mold','plan','dash','flow']},
-  {k:'out',  n:'출력물',   ic:'🖨️', ids:['doc','partlist','tryout']},
-  {k:'buy',  n:'구매·외주', ic:'🏭', ids:['mat','outsrc','stock']},
-  {k:'qa',   n:'품질관리(SQ)', ic:'🛡️', ids:['insp-file','ncr','ecn','gauge','appr']},
-  {k:'stat', n:'현황',     ic:'🗂', ids:['work-status','cost','mon','hist','board']},
-  {k:'sys',  n:'설정',     ic:'⚙️', ids:['master','help','set','logout']}
+  {k:'sales', n:'영업관리', ic:'💼', ids:['new-mold','plan','dash','flow']},
+  {k:'design',n:'설계관리', ic:'📐', ids:['doc','partlist','ecn']},
+  {k:'buy',   n:'구매관리', ic:'🏭', ids:['mat','outsrc','stock']},
+  {k:'asm',   n:'조립관리', ic:'🔧', ids:['tryout','insp-file','ncr','gauge','work-status']},
+  {k:'cost',  n:'원가관리', ic:'💹', ids:['cost','mon','hist','board']},
+  {k:'base',  n:'기준정보', ic:'🗃️', ids:['master','appr','help','set','logout']}
 ];
-let CURCAT='plan';
+let CURCAT='sales';
 function drawerItems(){
   const d=document.getElementById('drawer');if(!d)return [];
   return [...d.querySelectorAll('.mi')].filter(el=>!el.classList.contains('mgh'));
@@ -3296,7 +3296,7 @@ function openExt(id,file,title,fromPop){
   if(!fromPop)history.pushState({t:'ext',id:id},'');
   CUREXT=id;
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.remove('on'));
-  const gk={'insp-file':'qa','partlist':'out','outsrc':'buy','mat':'buy','work-status':'stat','cost':'stat','master':'sys'}[id];
+  const gk={'insp-file':'asm','partlist':'design','outsrc':'buy','mat':'buy','work-status':'asm','cost':'cost','master':'base'}[id];
   if(gk)openOnlyGrp(gk);
   document.querySelectorAll('#drawer .mi[data-menu-id]').forEach(b=>b.classList.toggle('on',b.dataset.menuId===id));
   document.getElementById('htitle').textContent=title;
@@ -3412,15 +3412,15 @@ loadPCWidths();
 loadFontScale();
 loadBorderLv();
 initMenuOrder();
-const GRP={new:'plan',plan:'plan',dash:'plan',flow:'plan',
-  doc:'out',tryout:'out',
+const GRP={new:'sales',plan:'sales',dash:'sales',flow:'sales',
+  doc:'design',ecn:'design',
   stock:'buy',
-  insp:'qa',ncr:'qa',ecn:'qa',appr:'qa',gauge:'qa',
-  mon:'stat',hist:'stat',board:'stat',
-  help:'sys',set:'sys'};
+  tryout:'asm',insp:'asm',ncr:'asm',gauge:'asm',
+  mon:'cost',hist:'cost',board:'cost',
+  appr:'base',help:'base',set:'base'};
 /* 현재 그룹만 펼치고 나머지는 접기 */
 function openOnlyGrp(id){
-  ['plan','out','buy','qa','stat','sys'].forEach(k=>{
+  ['sales','design','buy','asm','cost','base'].forEach(k=>{
     const el=document.getElementById('mg-'+k);
     if(el)el.classList.toggle('open',k===id);
   });
