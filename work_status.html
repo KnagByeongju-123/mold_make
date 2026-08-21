@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="#ffffff">
 <title>업무현황 v1.0 · 금형제작관리</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -466,6 +466,232 @@ html[data-theme="mono"] .tscroll table th.rnum,
 html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;color:#000!important}
 
 </style>
+
+<style id="erp-grid-override">
+
+/* ============================================================
+   ERP DATA GRID UI OVERRIDE
+   - 04_erp_data_grid template visual system
+   - existing application logic / IDs / events are preserved
+   ============================================================ */
+:root{
+  --bg:#e9edf2!important;--card:#ffffff!important;--card2:#f3f5f8!important;
+  --navy:#ffffff!important;--navy2:#f3f5f8!important;--drawer:#ffffff!important;
+  --ink:#18202b!important;--sub:#5b6675!important;--gray:#7b8491!important;
+  --gold:#0f6b5c!important;--gold2:#0f6b5c!important;--gold3:#258b79!important;
+  --goldbg:#e5f4f0!important;--goldbd:#92c9bd!important;
+  --yellow:#9a6700!important;--yellowbg:#fff7df!important;
+  --blue:#2563eb!important;--red:#c83a3a!important;--green:#0a8f5b!important;
+  --cust:#6d4bc3!important;--self:#2563eb!important;--out:#b65f18!important;
+  --line:#cfd6df!important;--line2:#e2e7ed!important;--line3:#b8c2ce!important;--line4:#9ea9b7!important;
+  --drawerbd:#9ea9b7!important;
+}
+html[data-theme="clean"]{
+  --bg:#f5f7fb!important;--card:#fff!important;--card2:#f8fafc!important;
+  --navy:#fff!important;--navy2:#f8fafc!important;--drawer:#fff!important;
+  --ink:#172033!important;--sub:#64748b!important;--gray:#8792a2!important;
+  --gold:#2563eb!important;--gold2:#2563eb!important;--gold3:#477deb!important;
+  --goldbg:#eff6ff!important;--goldbd:#bfdbfe!important;
+  --blue:#2563eb!important;--red:#dc2626!important;--green:#059669!important;
+  --line:#e5e7eb!important;--line2:#eef1f5!important;--line3:#cbd5e1!important;--line4:#94a3b8!important;
+  --drawerbd:#cbd5e1!important;
+}
+html[data-theme="mono"]{
+  --bg:#fff!important;--card:#fff!important;--card2:#f2f2f2!important;
+  --navy:#fff!important;--navy2:#f2f2f2!important;--drawer:#fff!important;
+  --ink:#000!important;--sub:#333!important;--gray:#555!important;
+  --gold:#000!important;--gold2:#000!important;--gold3:#000!important;
+  --goldbg:#ececec!important;--goldbd:#000!important;
+  --blue:#000!important;--red:#000!important;--green:#000!important;
+  --cust:#000!important;--self:#000!important;--out:#000!important;
+  --line:#999!important;--line2:#d8d8d8!important;--line3:#666!important;--line4:#000!important;
+  --drawerbd:#000!important;
+}
+html.bd-1{--line:#dde2e8!important;--line2:#eef1f4!important;--line3:#cbd3dc!important;--line4:#b8c1cc!important}
+html.bd-2{--line:#cfd6df!important;--line2:#e2e7ed!important;--line3:#b8c2ce!important;--line4:#9ea9b7!important}
+html.bd-3{--line:#aeb8c4!important;--line2:#cfd6df!important;--line3:#8f9aa8!important;--line4:#667383!important}
+html[data-theme="clean"].bd-1{--line:#edf0f4!important;--line2:#f4f6f8!important;--line3:#dce2e9!important;--line4:#cbd5e1!important}
+html[data-theme="clean"].bd-2{--line:#e5e7eb!important;--line2:#eef1f5!important;--line3:#cbd5e1!important;--line4:#94a3b8!important}
+html[data-theme="clean"].bd-3{--line:#cbd5e1!important;--line2:#dde3ea!important;--line3:#94a3b8!important;--line4:#64748b!important}
+html[data-theme="mono"].bd-1,html[data-theme="mono"].bd-2,html[data-theme="mono"].bd-3{--line:#999!important;--line2:#d8d8d8!important;--line3:#666!important;--line4:#000!important}
+
+*{border-radius:0!important}
+body{background:var(--bg)!important;color:var(--ink)!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Pretendard","Malgun Gothic",Arial,sans-serif!important;line-height:1.5!important}
+.gold-txt{-webkit-text-fill-color:initial!important;background:none!important;color:var(--gold)!important;animation:none!important}
+
+header{background:var(--card)!important;border-bottom:1px solid var(--line4)!important;box-shadow:none!important;backdrop-filter:none!important}
+.hmb,.back,.pcwbtn,.menuordbtn{background:var(--card2)!important;border:1px solid var(--line3)!important;color:var(--ink)!important;box-shadow:none!important}
+.hmb i{background:var(--gold)!important}
+.htitle,h1{letter-spacing:-.2px!important}.htitle{color:var(--ink)!important;font-weight:800!important}
+.rev,.ubadge,.rtag{background:var(--card2)!important;border-color:var(--line)!important;color:var(--sub)!important}
+.ubadge{font-weight:700!important}.rtag{color:var(--gold)!important;border-color:var(--goldbd)!important;background:var(--goldbg)!important}
+
+.pcwpopup{background:var(--card)!important;border:1px solid var(--line4)!important;box-shadow:0 16px 40px rgba(31,41,55,.16)!important;color:var(--ink)!important}
+.pcwpopup:before{background:var(--card)!important;border-color:var(--line4)!important}
+.pcwpophead{border-color:var(--line)!important}.pcwpophead b,.pcwrow b{color:var(--gold)!important}
+.pcwrange{accent-color:var(--gold)!important}
+.pfsquick button,.thm,.pcwreset{background:var(--card2)!important;border:1px solid var(--line)!important;color:var(--sub)!important;font-weight:800!important}
+.pfsquick button.on,.thm.on{background:var(--goldbg)!important;border-color:var(--gold)!important;color:var(--gold)!important}
+
+button,.btn,.ubtn,.dbtn,.sw,.chip,.itab,.pfilter button,.paddtoggle,.dstamp,.wizbtn{box-shadow:none!important;transition:background .12s,border-color .12s,color .12s!important}
+.btn,.ubtn,.dbtn,.sw,.chip,.itab,.pfilter button,.paddtoggle,.dstamp{background:var(--card2)!important;border:1px solid var(--line3)!important;color:var(--sub)!important;font-weight:700!important}
+.btn-p,.ubtn.save,.btn.primary,.wizbtn{background:var(--gold)!important;border-color:var(--gold)!important;color:#fff!important;background-image:none!important}
+.btn:hover,.ubtn:hover,.dbtn:hover,.sw:hover,.chip:hover,.itab:hover,.pfilter button:hover{border-color:var(--gold)!important;color:var(--gold)!important;background:var(--goldbg)!important}
+.itab.on,.pfilter button.on,.chip.on{background:var(--gold)!important;border-color:var(--gold)!important;color:#fff!important}
+
+input,select,textarea,.uin,.pdate{background:var(--card)!important;color:var(--ink)!important;border:1px solid var(--line3)!important;box-shadow:none!important;outline:none!important}
+input:focus,select:focus,textarea:focus,.uin:focus,.pdate:focus{border-color:var(--gold)!important;box-shadow:0 0 0 1px var(--gold)!important}
+input::placeholder,textarea::placeholder{color:#8b95a3!important}
+
+/* dense ERP panels */
+.panel,.projcard,.op,.opcard,.bcard,.tcard,.hstep,.hflow,.hscn,.hnotebox,.qfbox,.cfsum,.monbig,.stat,.card,.box,.section,.secbox,.summary-card{
+  background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:none!important;
+}
+.projcard:hover,.opcard:hover,.bcard:hover,.tcard:hover{border-color:var(--line4)!important}
+.stats{gap:5px!important;margin-bottom:7px!important}.stat{padding:8px 10px!important;text-align:left!important}.stat .k{font-size:10px!important;color:var(--sub)!important}.stat .v{font-size:20px!important;color:var(--gold)!important}
+
+.tscroll,.table-wrap{border:1px solid var(--line4)!important;background:var(--card)!important;overflow:auto!important;box-shadow:none!important}
+table{border-collapse:collapse!important;background:var(--card)!important;border-color:var(--line)!important}
+th,td{border-color:var(--line)!important;padding:6px 8px!important;font-size:11px!important}
+th{background:var(--card2)!important;color:var(--gold)!important;font-weight:900!important}
+thead th{position:sticky;top:0;z-index:2}
+tbody tr:hover td{background:color-mix(in srgb,var(--goldbg) 55%,var(--card))!important}
+.tag,.badge,.st,.dd,.dept,.atag,.rtag{border:1px solid var(--line3)!important;background:var(--card2)!important}
+
+/* section headers / filters */
+h1.pt{font-size:15px!important;margin-bottom:8px!important;padding:7px 9px!important;background:var(--card)!important;border:1px solid var(--line4)!important;color:var(--ink)!important}
+.psel,.pfilter,.hfilter,.stkbar,.datebar,.livebar,.ordbar{background:var(--card)!important;border:1px solid var(--line)!important;padding:6px!important;margin-bottom:7px!important}
+.itabs{gap:0!important;border-bottom:1px solid var(--line4)!important;margin-bottom:7px!important}.itab{border-color:var(--line)!important;margin-right:-1px!important;padding:7px 10px!important;font-size:11px!important}
+.qfbox{padding:8px!important;margin-bottom:7px!important}.qflb{font-size:11px!important;color:var(--gold)!important;font-weight:900!important}
+.fg label,.pf label{font-size:10px!important;color:var(--sub)!important;font-weight:800!important}
+.fg input,.fg select,.fg textarea,.pf input{padding:6px 7px!important;font-size:11.5px!important}
+
+.toast{background:#27303a!important;color:#fff!important;border-color:#27303a!important;box-shadow:0 8px 24px rgba(0,0,0,.18)!important}
+.modal,.mask{background:rgba(15,23,42,.45)!important}.mbox,.sheet{background:var(--card)!important;border-color:var(--line4)!important;box-shadow:0 18px 50px rgba(0,0,0,.22)!important}
+
+@media(max-width:999px){
+  body{font-size:13px!important}
+  header{box-shadow:none!important}
+  .pcwpopup{width:min(300px,calc(100vw - 18px))!important}
+  main,.container{padding-left:7px!important;padding-right:7px!important}
+  .tscroll,.table-wrap{margin-left:0!important;margin-right:0!important}
+  th,td{padding:6px 7px!important;font-size:10.8px!important}
+  .stats{grid-template-columns:repeat(2,1fr)!important}
+  .panel,.qfbox,.projcard,.op,.opcard,.bcard,.tcard{margin-bottom:7px!important}
+}
+
+/* Standalone/iframe sub-screen shell */
+header{min-height:54px!important;padding:8px 12px!important}
+header .hleft,header .hrow{gap:8px!important}
+header .hleft:before,header .hrow:before{content:'ERP';display:inline-flex;align-items:center;height:30px;padding:0 8px;background:var(--gold);color:#fff;font-size:10px;font-weight:900;letter-spacing:.6px;flex-shrink:0}
+header .htitle,header h1{font-size:14px!important;color:var(--ink)!important;font-weight:800!important}
+header .hmb,header .back{width:32px!important;height:32px!important;font-size:16px!important;color:var(--gold)!important}
+main{padding-top:70px!important;max-width:var(--pc-view-width,1280px)!important}
+@media(min-width:1000px){main{padding-left:10px!important;padding-right:10px!important}.container{max-width:var(--pc-view-width,1280px)!important;margin-left:auto!important;margin-right:auto!important}}
+@media(max-width:999px){header .hleft:before,header .hrow:before{display:none!important}main{padding-top:66px!important}.container{padding-top:7px!important}}
+
+/* work_status has a multi-row sticky header */
+header{position:sticky!important;min-height:auto!important;padding:8px 10px!important}.container{padding-top:8px!important}.datebar,.livebar{margin:6px 0 0!important}.sheet{border-left:1px solid var(--line4)!important}
+
+</style>
+
+<style id="erp-pc-fit-readable-v2">
+/* ============================================================
+   PC FIT + READABILITY v2
+   - 화면 확대(zoom) 대신 글자/컨트롤만 확대
+   - 본문/iframe은 항상 현재 viewport 안에서 제한
+   - 우측 상단 UI 설정(--mm-fs)은 유지
+   ============================================================ */
+:root{
+  --erp-body-fs:14.5px;
+  --erp-table-fs:13px;
+  --erp-control-fs:13px;
+  --erp-small-fs:12px;
+  --erp-menu-fs:13px;
+  --erp-title-fs:16px;
+}
+html,body{max-width:100%!important;overflow-x:hidden!important}
+body{font-size:var(--erp-body-fs)!important;line-height:1.58!important;-webkit-text-size-adjust:100%}
+/* 기존 zoom 확대는 가로 넘침 원인이므로 해제. UI 설정은 아래 font 변수로 반영 */
+main,.container,.sheet,.modal{zoom:1!important}
+
+/* 공통 가독성 */
+header .htitle,header h1{font-size:var(--erp-title-fs)!important;line-height:1.25!important}
+header .rev,.ubadge,.rtag{font-size:var(--erp-small-fs)!important}
+button,.btn,.ubtn,.dbtn,.sw,.chip,.itab,.pfilter button,.paddtoggle,.dstamp,.wizbtn,
+input,select,textarea,.uin,.pdate{font-size:var(--erp-control-fs)!important}
+button,.btn,.ubtn,.dbtn,.sw,.chip,.itab,.pfilter button,.paddtoggle,.dstamp,.wizbtn{min-height:34px!important}
+input:not([type="checkbox"]):not([type="radio"]),select,textarea,.uin,.pdate{min-height:34px!important;padding:7px 9px!important}
+textarea{min-height:72px!important}
+main>*{max-width:100%!important;box-sizing:border-box!important}
+input,select,textarea,button{max-width:100%}
+.fg label,.pf label,.qflb,.pcwrow,.pcwsaved,.pcwscale{font-size:var(--erp-small-fs)!important}
+
+/* 표: 글자는 키우되 표 자체가 화면을 밀어내지 않게 래퍼에서 스크롤 */
+.tscroll,.table-wrap{width:100%!important;max-width:100%!important;overflow:auto!important;overscroll-behavior-x:contain}
+table{max-width:100%;}
+th,td{font-size:var(--erp-table-fs)!important;padding:8px 9px!important;line-height:1.35!important}
+th{font-weight:800!important}
+.tscroll input,.tscroll select,.table-wrap input,.table-wrap select,td input,td select{font-size:var(--erp-table-fs)!important;min-height:32px!important;padding:5px 7px!important}
+
+/* 제목/탭/상태 */
+h1.pt{font-size:calc(var(--erp-title-fs) + 1px)!important;padding:9px 10px!important;margin-bottom:9px!important}
+.itab{font-size:var(--erp-menu-fs)!important;padding:8px 11px!important}
+.tag,.badge,.st,.dd,.dept,.atag,.rtag{font-size:var(--erp-small-fs)!important}
+.stat .k{font-size:var(--erp-small-fs)!important}.stat .v{font-size:23px!important}
+
+/* UI 설정 팝업 자체도 읽기 쉽게 */
+.pcwpopup{font-size:var(--erp-control-fs)!important;max-width:calc(100vw - 20px)!important}
+.pcwpophead b,.pcwrow b{font-size:var(--erp-control-fs)!important}
+.pfsquick button,.thm,.pcwreset{font-size:var(--erp-small-fs)!important;min-height:32px!important}
+
+@media(max-width:999px){
+  body{font-size:var(--erp-body-fs)!important}
+  th,td{font-size:var(--erp-table-fs)!important;padding:7px 8px!important}
+  button,.btn,.ubtn,.dbtn,input,select,textarea{font-size:var(--erp-control-fs)!important}
+  main,.container{max-width:100%!important;width:100%!important;box-sizing:border-box!important}
+}
+</style>
+
+<style id="erp-subpage-pc-fit-v2">
+@media(min-width:1000px){
+  header{min-height:58px!important;padding:9px 12px!important;max-width:100vw!important;box-sizing:border-box!important}
+  main{
+    width:100%!important;
+    max-width:min(var(--pc-view-width,1280px),100%)!important;
+    margin-left:auto!important;margin-right:auto!important;
+    padding:74px 12px 18px!important;box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  main>section,.container{width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+  html.embedded,html.embedded body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+  html.embedded main{width:100%!important;max-width:100%!important;margin:0!important;padding:10px!important;box-sizing:border-box!important}
+  html.embedded main>section,html.embedded .container{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important}
+  html.embedded .tscroll,html.embedded .table-wrap{max-width:100%!important;width:100%!important;overflow:auto!important}
+}
+</style>
+
+<style id="erp-ui-popup-visibility-fix-v3">
+/* UI 설정 팝업이 PC 헤더 overflow에 잘리는 현상 수정 */
+header, header .hright, .pcwmenu{overflow:visible!important}
+.pcwmenu{position:relative!important;z-index:10020!important}
+.pcwpopup{
+  position:fixed!important;
+  top:66px!important;
+  right:10px!important;
+  left:auto!important;
+  width:min(320px,calc(100vw - 20px))!important;
+  max-width:calc(100vw - 20px)!important;
+  max-height:calc(100vh - 78px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  z-index:10050!important;
+}
+.pcwpopup:before{right:14px!important}
+@media(max-width:999px){
+  .pcwpopup{top:62px!important;right:8px!important;width:min(310px,calc(100vw - 16px))!important;max-width:calc(100vw - 16px)!important;max-height:calc(100vh - 72px)!important}
+}
+</style>
 </head>
 <body>
 
@@ -574,7 +800,7 @@ if(window.self!==window.top){document.documentElement.classList.add('embedded');
       if(t)document.documentElement.setAttribute('data-theme',t);
       else document.documentElement.removeAttribute('data-theme');
       var m=document.querySelector('meta[name="theme-color"]');
-      if(m)m.setAttribute('content',(t==='mono'||t==='clean')?'#ffffff':'#0f1117');
+      if(m)m.setAttribute('content','#ffffff');
     };
     window.__mmApplyTheme();
     window.addEventListener('resize',window.__mmApplyTheme);
@@ -1309,5 +1535,34 @@ init();
 })();
 </script>
 
+
+<script id="erp-readable-scale-v2">
+(function(){
+  var lastScale=null;
+  function applyReadableScale(force){
+    var root=document.documentElement;
+    var raw=parseFloat(getComputedStyle(root).getPropertyValue('--mm-fs'))||1;
+    raw=Math.max(.8,Math.min(1.5,raw));
+    if(!force && lastScale===raw)return;
+    lastScale=raw;
+    function px(v){return (Math.round(v*raw*10)/10)+'px'}
+    root.style.setProperty('--erp-body-fs',px(14.5));
+    root.style.setProperty('--erp-table-fs',px(13));
+    root.style.setProperty('--erp-control-fs',px(13));
+    root.style.setProperty('--erp-small-fs',px(12));
+    root.style.setProperty('--erp-menu-fs',px(13));
+    root.style.setProperty('--erp-title-fs',px(16));
+  }
+  applyReadableScale(true);
+  var mo=new MutationObserver(function(muts){
+    for(var i=0;i<muts.length;i++){
+      if(muts[i].attributeName==='style'){applyReadableScale(false);break;}
+    }
+  });
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['style']});
+  window.addEventListener('load',function(){applyReadableScale(true)});
+  window.addEventListener('resize',function(){applyReadableScale(false)});
+})();
+</script>
 </body>
 </html>
