@@ -952,18 +952,52 @@ header .hright{position:relative}
 
 main{padding-top:calc(72px / var(--mm-fs,1))}
 .plhdr{grid-template-columns:repeat(4,1fr)}
-.pl-wrap{overflow-x:auto}
-.pl-head,.pl-row{display:grid;gap:4px;align-items:center;min-width:760px}
-.pl-head{padding:5px 6px 3px;font-size:10px;font-weight:800;color:var(--gray)}
-.pl-row{padding:3px 6px;border-bottom:1px dashed var(--line2)}
+.pl-wrap{overflow-x:auto;margin:0 10px 12px;border:1px solid var(--line3);border-radius:9px}
+.pl-wrap .ifm-rows{padding:0}
+/* ===== 데이터시트형 품목표 ===== */
+.pl-head,.pl-row{display:grid;gap:0;align-items:stretch;min-width:760px}
+.pl-head{font-size:10.5px;font-weight:800;color:var(--sub);
+  background:var(--navy2);border-bottom:1.5px solid var(--line3);
+  position:sticky;top:0;z-index:2}
+.pl-head > div{padding:7px 6px;text-align:center;
+  border-right:1px solid var(--line2);white-space:nowrap;
+  display:flex;align-items:center;justify-content:center}
+.pl-head > div:last-child{border-right:none}
+.pl-row{border-bottom:1px solid var(--line2)}
 .pl-row:last-child{border-bottom:none}
-.pl-row .idx{font-size:11px;color:var(--gray);text-align:center;font-family:'IBM Plex Mono',monospace}
-.pl-row input{width:100%;min-width:0;background:var(--card2);border:1px solid var(--line);border-radius:7px;
-  color:var(--ink);padding:8px 6px;font-size:12.5px;font-family:inherit}
+.pl-row:nth-child(even){background:rgba(255,255,255,.02)}
+.pl-row:hover{background:var(--goldbg)}
+.pl-row .idx{font-size:11px;color:var(--gray);text-align:center;
+  font-family:'IBM Plex Mono',monospace;background:var(--navy2);
+  border-right:1px solid var(--line3);
+  display:flex;align-items:center;justify-content:center;user-select:none}
+.pl-row input{width:100%;min-width:0;height:100%;background:transparent;
+  border:none;border-right:1px solid var(--line2);border-radius:0;
+  color:var(--ink);padding:8px 7px;font-size:12.5px;font-family:inherit}
 .pl-row input.mono{font-family:'IBM Plex Mono',monospace}
-.pl-row input:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.07)}
+.pl-row input::placeholder{color:var(--gray);opacity:.45}
+.pl-row input:focus{outline:none;background:var(--card2);
+  box-shadow:inset 0 0 0 2px var(--goldbd);position:relative;z-index:1}
 .pl-row .rm{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer;padding:2px}
 .pl-row .rm:hover{color:var(--red)}
+
+html[data-theme="clean"] .pl-wrap{border-color:#d5d9e0}
+html[data-theme="clean"] .pl-head{background:#f7f8fa;border-bottom-color:#d5d9e0;color:#4a4f57}
+html[data-theme="clean"] .pl-head > div{border-right-color:#e8ebf0}
+html[data-theme="clean"] .pl-row{border-bottom-color:#eef0f4}
+html[data-theme="clean"] .pl-row:nth-child(even){background:#fafbfc}
+html[data-theme="clean"] .pl-row:hover{background:#eef4ff}
+html[data-theme="clean"] .pl-row .idx{background:#f0f2f5;color:#8b9099;border-right-color:#d5d9e0}
+html[data-theme="clean"] .pl-row input{border-right-color:#e8ebf0}
+html[data-theme="clean"] .pl-row input:focus{background:#f7faff;box-shadow:inset 0 0 0 2px #2f5fd0}
+
+html[data-theme="mono"] .pl-wrap{border-color:#000}
+html[data-theme="mono"] .pl-head{background:#e6e6e6!important;border-bottom-color:#000}
+html[data-theme="mono"] .pl-head > div,
+html[data-theme="mono"] .pl-row input{border-right-color:#000}
+html[data-theme="mono"] .pl-row{border-bottom-color:#000}
+html[data-theme="mono"] .pl-row:nth-child(even){background:#f4f4f4}
+html[data-theme="mono"] .pl-row .idx{background:#e6e6e6!important;color:#000!important;border-right-color:#000}
 .ftprev{display:flex;justify-content:space-between;gap:8px;margin:10px 0 12px;padding:9px 12px;
   background:#fff;color:#333;border:1px solid var(--line);border-radius:8px;font-size:11.5px;font-weight:700}
 .ftprev span:nth-child(2){flex:1;text-align:center}
@@ -1608,13 +1642,13 @@ function drawPL(){
       <span class="cnt">${hint}</span>
     </div>
     <div class="pl-wrap">
-      <div class="pl-head" style="grid-template-columns:26px ${gt} 24px">
+      <div class="pl-head" style="grid-template-columns:34px ${gt} 30px">
         <div>No</div>${cols.map(c=>`<div>${c[1]}</div>`).join('')}<div></div></div>
       <div class="ifm-rows">`+
-      PITEMS.map((r,i)=>`<div class="pl-row" style="grid-template-columns:26px ${gt} 24px">
+      PITEMS.map((r,i)=>`<div class="pl-row" style="grid-template-columns:34px ${gt} 30px">
         <div class="idx">${i+1}</div>`+
         cols.map(c=>`<input value="${esc(r[c[0]]||'')}" placeholder="${c[0]==='first'?'A / AA':c[1]}" title="${c[0]==='first'?'A=양면가공, AA=육면가공, 공란=절단만':c[1]}" ${c[0]==='size'||c[0]==='spec'||c[0]==='no'?'class="mono"':''} ${c[0]==='material'?'list="matlist"':c[0]==='vendor'?'list="vendlist"':c[0]==='maker'?'list="vendlist"':''} oninput="setPL(${i},'${c[0]}',this.value)" onkeydown="plKey(event,${i},${cols.indexOf(c)})">`).join('')+
-        `<button class="rm" onclick="rmPL(${i})">✕</button>
+        `<button class="rm" onclick="rmPL(${i})" title="행 삭제">✕</button>
       </div>`).join('')+`</div></div></div>`;
   document.getElementById('pl-note').innerHTML='<b>주기</b><ul>'+NOTE[PLTAB].map(n=>`<li>${esc(n)}</li>`).join('')+'</ul>';
 }
