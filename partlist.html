@@ -1173,6 +1173,37 @@ html[data-theme="clean"] .pfsquick button:hover,html[data-theme="clean"] .thm:ho
 html[data-theme="clean"] .pfsquick button.on,html[data-theme="clean"] .thm.on,html[data-theme="clean"] .bdb.on{
   background:#eaf1ff;border-color:#2f5fd0;color:#2f5fd0}
 html[data-theme="clean"] .pcwrange{accent-color:#2f5fd0}
+/* ===== 금색 배경 버튼 일괄 보정 =====
+   기본 테마는 금색 배경 + 진갈색 글자(#241a05)지만,
+   클린/모노에서는 배경이 파랑/검정으로 바뀌므로 글자를 흰색으로 반전 */
+html[data-theme="clean"] .btn-p,
+html[data-theme="clean"] .psave,
+html[data-theme="clean"] .ubtn.save,
+html[data-theme="clean"] .wizbtn,
+html[data-theme="clean"] .modetab button.on,
+html[data-theme="clean"] .menueditbar .mdone,
+html[data-theme="clean"] .lglogo,
+html[data-theme="clean"] .dlogo b{
+  background:#2f5fd0!important;border-color:#2f5fd0!important;color:#fff!important}
+html[data-theme="clean"] .btn-p:hover,
+html[data-theme="clean"] .psave:hover,
+html[data-theme="clean"] .ubtn.save:hover,
+html[data-theme="clean"] .menueditbar .mdone:hover{background:#2750b4!important}
+html[data-theme="clean"] .menueditbar button{background:#fff;border-color:var(--line3);color:#4a4f57}
+html[data-theme="clean"] .menueditbar .mreset{color:#e4443c;border-color:#f5c2bf;background:#fff}
+html[data-theme="clean"] .menueditnote{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="clean"] .mordhandle{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="clean"] .c-r{background:#fff4e5;border-color:#f0c48a;color:#c26a00}
+html[data-theme="clean"] .tp button{background:#e4443c;color:#fff}
+html[data-theme="clean"] .nm.click:hover .ico{background:#2f5fd0;color:#fff}
+html[data-theme="clean"] .pinpad button:active{background:#2f5fd0;border-color:#2f5fd0;color:#fff}
+
+html[data-theme="mono"] .menueditbar .mdone{background:#000!important;border-color:#000!important;color:#fff!important}
+html[data-theme="mono"] .menueditbar .mreset{background:#fff!important;color:#000!important;border-color:#000!important}
+html[data-theme="mono"] .menueditnote{background:#f0f0f0!important;border-color:#000!important;color:#000!important}
+html[data-theme="mono"] .mordhandle{background:#fff!important;border-color:#000!important;color:#000!important}
+html[data-theme="mono"] .psave{background:#000!important;color:#fff!important;border-color:#000!important}
+
 /* 모드 탭(설정 등) */
 html[data-theme="clean"] .modetab button{background:#fff;border-color:var(--line3);color:#3c4149}
 html[data-theme="clean"] .modetab button:hover{background:#f6f7f9;border-color:#c3d6fb;color:#2f5fd0}
