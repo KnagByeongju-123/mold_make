@@ -656,32 +656,32 @@ tr.irpt-sub>td{background:rgba(226,176,74,.035);padding:6px 8px}
 .monbig .go{font-size:12.5px;font-weight:800;color:var(--gold);white-space:nowrap;flex-shrink:0}
 @media(max-width:520px){.monbig{padding:13px 14px;gap:10px}.monbig .tx{font-size:15.5px}.monbig .go{font-size:11.5px}}
 .vwsw{display:flex;align-items:center;gap:6px;margin:10px 0 8px;flex-wrap:wrap}
-.vwsw button{padding:7px 14px;border:1px solid var(--line);background:var(--card2);color:var(--sub);
-  border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.vwsw button{padding:9px 18px;border:1px solid var(--line);background:var(--card2);color:var(--sub);
+  border-radius:9px;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit}
 .vwsw button.on{background:var(--goldbg);border-color:var(--goldbd);color:var(--gold)}
-.gleg{margin-left:auto;font-size:10.5px;color:var(--gray);display:flex;gap:9px;flex-wrap:wrap}
-.gleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px;vertical-align:-1px}
+.gleg{margin-left:auto;font-size:12px;font-weight:700;color:var(--sub);display:flex;gap:11px;flex-wrap:wrap}
+.gleg i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .gwrap{border:1px solid var(--line);border-radius:11px;overflow:auto;background:var(--card)}
 .gtab{min-width:720px}
 .grow{display:flex;border-bottom:1px solid var(--line2)}
 .grow:last-child{border-bottom:none}
 .grow.ghead{position:sticky;top:0;z-index:2;background:var(--card2)}
-.gname{flex:0 0 170px;padding:8px 10px;border-right:1px solid var(--line);font-size:12px;
+.gname{flex:0 0 200px;padding:10px 12px;border-right:1px solid var(--line);font-size:14px;font-weight:700;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gname b{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:12px;margin-right:5px}
-.gname .sub{display:block;font-size:10.5px;color:var(--gray);margin-top:1px}
-.gbar{position:relative;flex:1;min-width:520px;height:38px}
-.ghead .gbar{height:26px}
+.gname b{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:800;margin-right:6px}
+.gname .sub{display:block;font-size:12px;color:var(--gray);margin-top:2px;font-weight:600}
+.gbar{position:relative;flex:1;min-width:560px;height:48px}
+.ghead .gbar{height:32px}
 .gtick{position:absolute;top:0;bottom:0;border-left:1px dashed var(--line2)}
-.gtick span{position:absolute;top:5px;left:4px;font-size:9.5px;color:var(--gray);white-space:nowrap;font-family:'IBM Plex Mono',monospace}
-.gseg{position:absolute;top:9px;height:20px;border-radius:3px;font-size:9.5px;font-weight:800;
+.gtick span{position:absolute;top:8px;left:5px;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+.gseg{position:absolute;top:11px;height:26px;border-radius:3px;font-size:12px;font-weight:800;
   display:flex;align-items:center;justify-content:center;overflow:hidden;color:#10131a;cursor:default}
 .gseg.ok{background:#7ee0a0}
 .gseg.run{background:var(--gold)}
 .gseg.wait{background:#4a5268;color:var(--sub)}
 .gseg.late{background:#ff7b7b}
 .gtoday{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.85;z-index:1}
-.gtoday span{position:absolute;top:-1px;left:3px;font-size:9px;color:var(--red);font-weight:800}
+.gtoday span{position:absolute;top:0;left:4px;font-size:11px;color:var(--red);font-weight:900;white-space:nowrap}
 .gdue{position:absolute;top:4px;bottom:4px;width:2px;background:var(--blue);z-index:1}
 .moncard{background:var(--card);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;overflow:hidden}
 .moncard .mch{display:flex;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid var(--line2)}
@@ -1146,7 +1146,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.7</span>
+    <span class="rev">Rev 16.9</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1279,12 +1279,12 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
       <button onclick="setPF('all')">전체</button>
     </div>
     <div class="vwsw">
-      <button class="on" id="vw-card" onclick="setDashView('card')">🗂 카드</button>
-      <button id="vw-gantt" onclick="setDashView('gantt')">📅 일정표</button>
+      <button class="on" id="vw-gantt" onclick="setDashView('gantt')">📅 일정표</button>
+      <button id="vw-card" onclick="setDashView('card')">🗂 카드</button>
       <span class="gleg" id="gleg"></span>
     </div>
-    <div id="projlist"></div>
-    <div id="ganttbox" class="hide"></div>
+    <div id="projlist" class="hide"></div>
+    <div id="ganttbox"></div>
   </section>
 
   <!-- 진행현황 -->
@@ -3339,7 +3339,7 @@ function go(v,fromPop){
   document.getElementById('htitle').textContent=VIEWTITLE[v]||'';
   ['dash','flow','new','hist','board','tryout','help','set','plan','doc','stock','ncr','ecn','appr','gauge','mon','frame'].forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.classList.toggle('hide',x!==v)});
   setPCWidthView(v);
-  if(v==='dash')loadDash();
+  if(v==='dash'){loadDash();setDashView(DASHVIEW);}
   if(v==='mon')loadMon();
   if(v==='flow')loadFlowSel();
   if(v==='plan')loadPlanSel();
@@ -3393,7 +3393,7 @@ function calcPct(ps){
   const ok=ps.filter(x=>x.status==='OK').length;
   return Math.round(ok/ps.length*100);
 }
-let DASHVIEW='card';
+let DASHVIEW='gantt';
 function setDashView(v){
   DASHVIEW=v;
   document.getElementById('vw-card').classList.toggle('on',v==='card');
@@ -3444,7 +3444,7 @@ function renderGantt(){
   const tickHtml=ticks.map(t=>`<div class="gtick" style="left:${t.left}%"><span>${t.lb}</span></div>`).join('');
   box.innerHTML=`<div class="gwrap"><div class="gtab">
     <div class="grow ghead">
-      <div class="gname" style="font-weight:800;color:var(--sub)">금형 · 진행률</div>
+      <div class="gname" style="font-weight:800;color:var(--sub);font-size:13px">금형 · 진행률</div>
       <div class="gbar">${tickHtml}</div>
     </div>
     ${rows.map(r=>{
@@ -3458,7 +3458,7 @@ function renderGantt(){
             const late=sg.st!=='OK'&&dnum(sg.pe)<today;
             const cls=sg.st==='OK'?'ok':late?'late':sg.st==='진행'?'run':'wait';
             const l=pos(sg.s),w=Math.max(1.2,pos(sg.e)-pos(sg.s));
-            return `<div class="gseg ${cls}" style="left:${l}%;width:${w}%" title="${opN(sg.op)} ${esc(sg.nm)} · 계획 ${sg.pe} · ${sg.st}">${w>7?opN(sg.op):''}</div>`;
+            return `<div class="gseg ${cls}" style="left:${l}%;width:${w}%" title="${opN(sg.op)} ${esc(sg.nm)} · 계획 ${sg.pe} · ${sg.st}">${w>5?opN(sg.op):''}</div>`;
           }).join('')}
           ${r.due!=null?`<div class="gdue" style="left:${pos(r.due)}%" title="납기 ${r.p.due_date}"></div>`:''}
           <div class="gtoday" style="left:${pos(today)}%"><span>오늘</span></div>
