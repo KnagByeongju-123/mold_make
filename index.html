@@ -1333,6 +1333,18 @@ html[data-theme="mono"] .tscroll table tbody tr:hover{background:#e4e4e4}
 html[data-theme="mono"] .tscroll table th.rnum,
 html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;color:#000!important}
 
+/* ===== 진행현황(세부) 공정 카드 — PC 여백 축소 ===== */
+@media(min-width:1000px){
+  #v-flow .opwrap,#v-flow .op{max-width:1080px}
+  #v-flow .opbody{padding:9px 12px;gap:10px;align-items:center}
+  #v-flow .opinfo{flex:0 1 auto;margin-right:auto}
+  #v-flow .opinfo .t{gap:7px}
+  #v-flow .opmeta{margin-top:3px}
+  #v-flow .opacts{min-width:68px;gap:4px}
+  #v-flow .opacts button{padding:5px 10px}
+  #v-flow .otitle{padding:5px 12px}
+  #v-flow .opwrap{margin-bottom:6px}
+}
 </style>
 </head>
 <body>
@@ -1362,7 +1374,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="rtag" id="rolebadge" title="현재 권한"></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 18.1</span>
+    <span class="rev">Rev 18.2</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
