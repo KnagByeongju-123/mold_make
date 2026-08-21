@@ -955,13 +955,16 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   background:var(--card);border:1px solid var(--line);font-size:12.5px;color:var(--sub);font-weight:700}
 .cfsum b{font-size:14px}
 .gdtbl{min-width:1110px}
-.bulkbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:9px 11px;
+.bulkbar{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:10px;padding:9px 11px;
   background:var(--card);border:1px dashed var(--line);border-radius:11px}
 .bulkbar input{background:var(--card2);border:1px solid var(--line);border-radius:7px;color:var(--ink);
   padding:7px 8px;font-size:12px;font-family:inherit}
 .bulkbar input[type=date]{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
 .bulkbar .bl{font-size:11.5px;font-weight:800;color:var(--gray);white-space:nowrap;padding-right:3px}
 .bulkbar .bl.on{color:var(--gold)}
+.bulkbar .bf{display:flex;flex-direction:column;gap:3px}
+.bulkbar .bf > label{font-size:10.5px;font-weight:700;color:var(--gray);letter-spacing:.2px;padding-left:2px}
+.bulkbar .bf.dt > label{color:var(--blue)}
 .gdtbl td{padding:2px 3px}
 .gdtbl th{font-size:11px;white-space:nowrap}
 .gdi{width:100%;min-width:0;background:transparent;border:1px solid transparent;border-radius:6px;
@@ -1091,7 +1094,7 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.6</span>
+    <span class="rev">v1.8</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1152,12 +1155,17 @@ html.embedded .sidenav,html.embedded .topnav{display:none!important}
         <span style="font-size:11px;color:var(--gray)">Tab·Enter 이동 · Ctrl+V로 엑셀 범위 붙여넣기 · 셀 수정 후 일괄 저장</span>
       </div>
       <div class="bulkbar">
-        <span class="bl" id="gd-sel">선택 0행</span>
-        <input id="bk-vendor" list="vendlist" placeholder="협력업체" style="width:120px">
-        <input id="bk-proc" list="proclist" placeholder="가공공정" style="width:130px">
-        <input type="date" id="bk-order" title="발주일">
-        <input type="date" id="bk-due" title="입고요구일">
-        <input type="date" id="bk-in" title="입고일">
+        <span class="bl" id="gd-sel" style="padding-bottom:8px">선택 0행</span>
+        <div class="bf"><label for="bk-vendor">협력업체</label>
+          <input id="bk-vendor" list="vendlist" placeholder="협력업체" style="width:120px"></div>
+        <div class="bf"><label for="bk-proc">가공공정</label>
+          <input id="bk-proc" list="proclist" placeholder="가공공정" style="width:130px"></div>
+        <div class="bf dt"><label for="bk-order">발주일</label>
+          <input type="date" id="bk-order" title="발주일"></div>
+        <div class="bf dt"><label for="bk-due">입고요구일</label>
+          <input type="date" id="bk-due" title="입고요구일"></div>
+        <div class="bf dt"><label for="bk-in">입고일</label>
+          <input type="date" id="bk-in" title="입고일"></div>
         <button class="btn" style="padding:8px 13px;background:rgba(79,140,255,.12);border:1px solid rgba(79,140,255,.4);color:var(--blue)" onclick="bulkApply()">선택 행에 적용</button>
         <button class="btn" style="padding:8px 12px" onclick="bulkToday('bk-order')">오늘 발주</button>
         <button class="btn" style="padding:8px 12px" onclick="bulkToday('bk-in')">오늘 입고</button>
@@ -1308,7 +1316,8 @@ async function api(path,opt={}){
 }
 function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-function today(){return new Date().toISOString().slice(0,10)}
+function today(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+document.addEventListener('DOMContentLoaded',function(){const bo=document.getElementById('bk-order');if(bo&&!bo.value)bo.value=today();});
 function g(id){const el=document.getElementById(id);return el?el.value.trim():''}
 function md(d){return d?String(d).slice(5,10).replace('-','/'):''}
 function dlCSV(title,head,rows,fname){
@@ -1385,6 +1394,7 @@ function osTab(t){
     CDIRTY.clear();
   }
   OSTAB=t;
+  if(t==='grid'){const bo=document.getElementById('bk-order');if(bo&&!bo.value)bo.value=today();}
   ['part','grid','order','conf'].forEach(x=>{
     document.getElementById('otab-'+x).classList.toggle('on',t===x);
     document.getElementById('os-'+x).classList.toggle('hide',t!==x);
