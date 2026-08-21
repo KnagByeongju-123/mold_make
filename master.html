@@ -28,7 +28,7 @@ html.bd-2{--line:#4d5872; --line2:#3a4152; --line3:#5c6884; --line4:#6d7a99}
 html.bd-3{--line:#6a7794; --line2:#4d5872; --line3:#7b89a8; --line4:#8d9bba}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
+body{font-family:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
 .mono{font-family:'IBM Plex Mono',monospace}
 
 .gold-txt{background:linear-gradient(120deg,var(--gold2),var(--gold),var(--gold3),var(--gold2));
@@ -1060,6 +1060,107 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
 .mi-cell:hover{border-color:var(--line2);background:var(--card2)}
 .mi-cell:focus{outline:none;border-color:var(--gold);background:rgba(226,176,74,.07)}
 
+
+/* ============================================================
+   클린 테마 (네이버/네이트 스타일) — data-theme="clean"
+   ============================================================ */
+html[data-theme="clean"]{
+  --bg:#f4f5f7; --card:#ffffff; --card2:#fafbfc;
+  --navy:#ffffff; --navy2:#f0f2f5;
+  --drawer:#ffffff; --drawerbd:#e3e6ec;
+  --ink:#1a1c20; --sub:#4a4f57; --gray:#8b9099;
+  --gold:#2f5fd0; --gold2:#4c7ce8; --gold3:#2f5fd0;
+  --goldbg:#eaf1ff; --goldbd:#c3d6fb;
+  --yellow:#c98a00; --yellowbg:#fff6e0;
+  --blue:#2f5fd0; --red:#e4443c; --green:#0a9c5c;
+  --cust:#7b52d3; --self:#2f5fd0; --out:#e08300;
+  --line:#e3e6ec; --line2:#eef0f4; --line3:#d5d9e0; --line4:#c3c8d1;
+}
+html[data-theme="clean"].bd-1{--line:#eceff3; --line2:#f3f5f8; --line3:#e0e4ea; --line4:#d2d7de}
+html[data-theme="clean"].bd-2{--line:#e3e6ec; --line2:#eef0f4; --line3:#d5d9e0; --line4:#c3c8d1}
+html[data-theme="clean"].bd-3{--line:#d2d7df; --line2:#e3e6ec; --line3:#bcc3cd; --line4:#a8b0bc}
+
+html[data-theme="clean"] body{color-scheme:light;background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+html[data-theme="clean"] .gold-txt{-webkit-text-fill-color:initial;background:none;color:#1a1c20;animation:none}
+
+/* 헤더 */
+html[data-theme="clean"] header{background:#fff;border-bottom:1px solid var(--line);box-shadow:none;backdrop-filter:none}
+html[data-theme="clean"] header .htitle{color:#1a1c20;font-weight:700}
+html[data-theme="clean"] .hmb{border-color:var(--line3);background:#fff}
+html[data-theme="clean"] .rev,html[data-theme="clean"] .ubadge{background:#f4f5f7;border-color:var(--line);color:#6b7280}
+
+/* 드로어 / 사이드 */
+html[data-theme="clean"] #drawer{background:#fff;border-right:1px solid var(--line);box-shadow:none}
+html[data-theme="clean"] #drawer .mi{color:#3c4149}
+html[data-theme="clean"] #drawer .mi.on{background:#eaf1ff;color:#2f5fd0}
+html[data-theme="clean"] #drawer .mi:not(.on):hover{background:#f4f5f7;color:#1a1c20}
+html[data-theme="clean"] #drawer .mgh{color:#1a1c20}
+html[data-theme="clean"] #drawer .mg.open .mgh{color:#2f5fd0}
+html[data-theme="clean"] #sidenav{background:#fff;border-right:1px solid var(--line)}
+html[data-theme="clean"] #sidenav .sitem.on{background:#eaf1ff;color:#2f5fd0;font-weight:700}
+html[data-theme="clean"] #topnav{background:#fff;border-bottom:1px solid var(--line)}
+html[data-theme="clean"] #topnav .tnav.on{background:#fff;color:#2f5fd0;border-bottom:2px solid #2f5fd0}
+
+/* 카드 / 패널 */
+html[data-theme="clean"] .card,html[data-theme="clean"] .projcard,html[data-theme="clean"] section > .box,
+html[data-theme="clean"] .qfbox,html[data-theme="clean"] .mbox{background:#fff;border-color:var(--line);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+html[data-theme="clean"] .modal{background:rgba(20,24,32,.42)}
+
+/* 표 — 네이버 메일 스타일 */
+html[data-theme="clean"] table{background:#fff}
+html[data-theme="clean"] th{background:#f7f8fa;color:#4a4f57;font-weight:700;
+  border-bottom:1px solid var(--line3);letter-spacing:-.2px}
+html[data-theme="clean"] td{border-bottom:1px solid var(--line2);color:#2b2f36}
+html[data-theme="clean"] tbody tr:hover{background:#fafbfd}
+html[data-theme="clean"] .tscroll{border-color:var(--line);border-radius:10px}
+
+/* 입력 */
+html[data-theme="clean"] input,html[data-theme="clean"] select,html[data-theme="clean"] textarea{
+  background:#fff;border:1px solid var(--line3);color:#1a1c20;border-radius:6px}
+html[data-theme="clean"] input:focus,html[data-theme="clean"] select:focus,html[data-theme="clean"] textarea:focus{
+  border-color:#2f5fd0;outline:none;box-shadow:0 0 0 2px rgba(47,95,208,.12)}
+html[data-theme="clean"] input::placeholder,html[data-theme="clean"] textarea::placeholder{color:#a8adb6}
+
+/* 버튼 */
+html[data-theme="clean"] .btn{background:#fff;border:1px solid var(--line3);color:#3c4149;box-shadow:none;font-weight:600}
+html[data-theme="clean"] .btn:hover{background:#f6f7f9;border-color:var(--line4)}
+html[data-theme="clean"] .btn-p,html[data-theme="clean"] .wizbtn{
+  background:#2f5fd0!important;color:#fff!important;border-color:#2f5fd0!important;box-shadow:none}
+html[data-theme="clean"] .btn-p:hover{background:#2750b4!important}
+html[data-theme="clean"] .itab.on,html[data-theme="clean"] .pfilter button.on,
+html[data-theme="clean"] .pfsquick button.on,html[data-theme="clean"] .thm.on{
+  background:#eaf1ff;color:#2f5fd0;border-color:#c3d6fb;box-shadow:inset 0 0 0 1px #c3d6fb}
+html[data-theme="clean"] .mi-cell:focus,html[data-theme="clean"] .gdi:focus,html[data-theme="clean"] .mti:focus{
+  border-color:#2f5fd0;background:#f7faff}
+
+/* 상태 뱃지 */
+html[data-theme="clean"] .st,html[data-theme="clean"] .badge{font-weight:700;letter-spacing:-.2px}
+html[data-theme="clean"] .st-w,html[data-theme="clean"] .st.wait{background:#fff4e5;color:#c26a00}
+html[data-theme="clean"] .st-r,html[data-theme="clean"] .st.run{background:#fff4e5;color:#c26a00}
+html[data-theme="clean"] .st-ok,html[data-theme="clean"] .st.ok{background:#e7f5ee;color:#0a8f54}
+html[data-theme="clean"] .st-ng,html[data-theme="clean"] .st.ng{background:#fdeceb;color:#d8342c}
+html[data-theme="clean"] .b-run{background:#fff4e5;color:#c26a00}
+html[data-theme="clean"] .b-done{background:#e7f5ee;color:#0a8f54}
+html[data-theme="clean"] .b-arch{background:#f0f2f5;color:#6b7280}
+html[data-theme="clean"] .b-hold{background:#f3eefd;color:#6b3fc4}
+
+/* 진행바 */
+html[data-theme="clean"] .pbar{background:#eef0f4;border-color:var(--line);
+  background-image:repeating-linear-gradient(135deg,#e4e7ec 0 6px,#f4f5f7 6px 12px)}
+html[data-theme="clean"] .pbar i{background:linear-gradient(90deg,#4c7ce8,#2f5fd0);box-shadow:1px 0 0 rgba(0,0,0,.12)}
+
+html[data-theme="clean"] .toast{background:#22262e;color:#fff;border-color:#22262e}
+html[data-theme="clean"] .empty{color:#9aa0a9}
+
+/* ============================================================
+   타이포그래피 정리 — 전 테마 공통 (네이버/네이트 톤)
+   ============================================================ */
+body{letter-spacing:-.3px}
+h1,h2,h3,h4,b,strong{letter-spacing:-.4px}
+table th{letter-spacing:-.3px}
+.mono,input.mono,td.mono,.rev{letter-spacing:0}
+
 </style>
 </head>
 <body>
@@ -1070,7 +1171,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
   </div>
   <div class="hright">
     <span class="ubadge" id="ubadge"></span>
-    <span class="rev">v1.0</span>
+    <span class="rev">v1.1</span>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="글자 크기 설정" onclick="togglePCWidthPopup(event)">📐</button>
       <div id="pcWidthPopup" class="pcwpopup" role="dialog" onclick="event.stopPropagation()">
@@ -1097,6 +1198,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
       <button class="itab" id="mtab-material" onclick="mTab('material')">🧱 자재관리</button>
       <button class="itab" id="mtab-moldtype" onclick="mTab('moldtype')">🗜 금형타입</button>
       <button class="itab" id="mtab-machine" onclick="mTab('machine')">⚙️ 기계사양</button>
+      <button class="itab" id="mtab-price" onclick="mTab('price')">💲 단가표</button>
     </div>
 
     <div class="qfbox"><span class="qflb" id="m-addlb">➕ 신규 등록</span>
@@ -1112,7 +1214,7 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
       <tbody id="m-body"></tbody></table></div>
     <div class="stkbar" style="margin-top:10px">
       <button class="btn btn-p" style="padding:10px 18px" onclick="mSave()">💾 변경 저장 <span id="m-dirty"></span></button>
-      <span style="font-size:11px;color:var(--gray)">칸을 바로 수정하고 저장을 누르세요 · 발주서·외주가공 입력창에 자동완성으로 연동됩니다</span>
+      <span style="font-size:11px;color:var(--gray)" id="m-note">칸을 바로 수정하고 저장을 누르세요 · 발주서·외주가공 입력창에 자동완성으로 연동됩니다</span>
     </div>
   </section>
 </main>
@@ -1123,10 +1225,10 @@ main{padding-top:calc(72px / var(--mm-fs,1))}
 if(window.self!==window.top){document.documentElement.classList.add('embedded');}
 (function(){
   try{
-    var t=localStorage.getItem('mm_theme_v1')||'';if(t!=='mono')t='';
+    var t=localStorage.getItem('mm_theme_v1')||'';if(t!=='mono'&&t!=='clean')t='';
     if(t){document.documentElement.setAttribute('data-theme',t);
       var m=document.querySelector('meta[name="theme-color"]');
-      if(m)m.setAttribute('content',(t==='mono'?'#ffffff':'#0f1117'));}
+      if(m)m.setAttribute('content',(t==='mono'||t==='clean'?'#ffffff':'#0f1117'));}
   }catch(e){}
 })();
 /* ================= 설정 ================= */
@@ -1168,7 +1270,11 @@ const TABS={
   moldtype:{tbl:'mm_moldtype',lb:'🗜 금형타입 등록',
     cols:[['name','타입명*','1fr'],['memo','비고','1.6fr']]},
   machine:{tbl:'mm_machine',lb:'⚙️ 기계 등록',
-    cols:[['name','기계명*','1fr'],['spec','사양 (톤수·스트로크 등)','1.4fr'],['memo','비고','1fr']]}
+    cols:[['name','기계명*','1fr'],['spec','사양 (톤수·스트로크 등)','1.4fr'],['memo','비고','1fr']]},
+  price:{tbl:'mm_price',lb:'💲 표준단가 등록',
+    cols:[['kind','구분* (외주/자재)','100'],['vendor','업체','120'],['proc','가공공정','130'],
+          ['item_name','품목명','130'],['material','재질','90'],['spec','규격','120'],
+          ['unit','단위','60'],['price','단가*','100'],['from_date','적용일','120'],['memo','비고','1fr']]}
 };
 let CUR='vendor', DATA=[], DIRTY=new Map();
 
@@ -1185,7 +1291,31 @@ function buildAddRow(){
   const box=document.getElementById('m-addrow');
   const cols=TABS[CUR].cols;
   box.style.gridTemplateColumns=cols.map(c=>c[2].endsWith('fr')?'minmax(90px,'+c[2]+')':c[2]+'px').join(' ');
-  box.innerHTML=cols.map(c=>`<div class="fg"><label>${c[1]}</label><input id="ma-${c[0]}"></div>`).join('');
+  box.innerHTML=cols.map(c=>{
+    const dl=DL[c[0]]?` list="${DL[c[0]]}"`:'';
+    const tp=(c[0]==='price')?' type="number"':(c[0]==='from_date')?' type="date"':'';
+    return `<div class="fg"><label>${c[1]}</label><input id="ma-${c[0]}"${dl}${tp}></div>`;
+  }).join('');
+  const nt=document.getElementById('m-note');
+  if(nt)nt.textContent=CUR==='price'
+    ?'구분(외주/자재) + 업체 · 공정 · 품목 · 재질 · 규격 조합으로 매칭되어 외주 입고확정 매입가와 자재발주 단가에 자동 입력됩니다'
+    :'칸을 바로 수정하고 저장을 누르세요 · 발주서·외주가공 입력창에 자동완성으로 연동됩니다';
+}
+const DL={vendor:'dl-vendor',proc:'dl-proc',material:'dl-mat',kind:'dl-kind',unit:'dl-unit'};
+async function buildDL(){
+  const mk=(id,arr)=>{
+    let d=document.getElementById(id);
+    if(!d){d=document.createElement('datalist');d.id=id;document.body.appendChild(d)}
+    d.innerHTML=arr.filter(Boolean).map(v=>`<option value="${esc(v)}">`).join('');
+  };
+  mk('dl-kind',['외주','자재','표준품','부자재']);
+  mk('dl-unit',['EA','SET','kg','장','개','m','식']);
+  try{const v=await api('/mm_vendor?select=name,procs&order=name');
+    mk('dl-vendor',v.map(x=>x.name));
+    const ps=new Set();v.forEach(x=>String(x.procs||'').split(/[,·\/]/).forEach(t=>{t=t.trim();if(t)ps.add(t)}));
+    mk('dl-proc',[...ps]);
+  }catch(e){}
+  try{const m=await api('/mm_material?select=code&order=code');mk('dl-mat',m.map(x=>x.code))}catch(e){}
 }
 async function mLoad(){
   try{DATA=await api('/'+TABS[CUR].tbl+'?select=*&order=id.asc');}
@@ -1201,7 +1331,12 @@ function mRender(){
   if(q)list=DATA.filter(r=>cols.some(c=>String(r[c[0]]||'').toLowerCase().includes(q)));
   document.getElementById('m-body').innerHTML=list.map((r,i)=>'<tr>'+
     `<td class="mono" style="text-align:center;color:var(--gray)">${i+1}</td>`+
-    cols.map(c=>`<td><input class="mi-cell" value="${esc(dval(r,c[0]))}" oninput="mEdit(${r.id},'${c[0]}',this.value)"></td>`).join('')+
+    cols.map(c=>{
+      const dl=DL[c[0]]?` list="${DL[c[0]]}"`:'';
+      const tp=(c[0]==='price')?' type="number"':(c[0]==='from_date')?' type="date"':'';
+      const st=(c[0]==='price')?' style="text-align:right;font-family:\'IBM Plex Mono\',monospace"':'';
+      return `<td><input class="mi-cell"${tp}${dl}${st} value="${esc(dval(r,c[0]))}" oninput="mEdit(${r.id},'${c[0]}',this.value)"></td>`;
+    }).join('')+
     `<td style="text-align:center"><button class="del" onclick="mDel(${r.id})">✕</button></td></tr>`
   ).join('')||`<tr><td colspan="${cols.length+2}" class="empty">등록된 항목이 없습니다</td></tr>`;
   mMark();
@@ -1270,6 +1405,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePCWidthPopup()}
   if(!USER){alert('로그인이 필요합니다.');location.href='index.html';return}
   document.getElementById('ubadge').textContent='👤 '+USER;
   try{applyFontScale(localStorage.getItem(FS_KEY)||100,false)}catch(e){}
+  await buildDL();
   buildAddRow();
   await mLoad();
 })();

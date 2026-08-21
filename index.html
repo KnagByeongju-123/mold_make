@@ -83,7 +83,7 @@ html.bd-2{--line:#4d5872; --line2:#3a4152; --line3:#5c6884; --line4:#6d7a99}
 html.bd-3{--line:#6a7794; --line2:#4d5872; --line3:#7b89a8; --line4:#8d9bba}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
+body{font-family:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
 .mono{font-family:'IBM Plex Mono',monospace}
 
 .gold-txt{background:linear-gradient(120deg,var(--gold2),var(--gold),var(--gold3),var(--gold2));
@@ -1127,7 +1127,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.9</span>
+    <span class="rev">Rev 17.1</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -1154,6 +1154,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
         <div class="pcwrow pcwfs"><span>화면 색상</span><b id="thmValue">기본</b></div>
         <div class="thmgrid">
           <button type="button" class="thm" data-thm="" onclick="setTheme('')"><i style="background:#e2b04a"></i>기본</button>
+          <button type="button" class="thm" data-thm="clean" onclick="setTheme('clean')"><i style="background:#2f5fd0"></i>클린(밝은)</button>
           <button type="button" class="thm" data-thm="mono" onclick="setTheme('mono')"><i style="background:#fff;border:1px solid #999"></i>모노(백색)</button>
         </div>
 
@@ -1200,6 +1201,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="mg" id="mg-buy" data-menu-id="grp-buy">
     <div class="mi mgh" onclick="toggleGrp('buy')"><span class="ic">🏭</span>구매·외주<span class="arw">▾</span></div>
     <div class="msub">
+      <div class="mi" data-menu-id="mat" onclick="openExt('mat','mat.html','자재발주 관리')"><span class="ic">🧱</span>자재발주</div>
       <div class="mi" data-menu-id="outsrc" onclick="openExt('outsrc','outsrc.html','외주가공 관리')"><span class="ic">🏭</span>외주가공</div>
       <div class="mi" data-menu-id="stock" data-v="stock" onclick="go('stock')"><span class="ic">📦</span>재고관리</div>
     </div>
@@ -3079,7 +3081,7 @@ function applyFontScale(v,save){
 }
 /* ---------- 화면 테마 ---------- */
 const THEME_KEY='mm_theme_v1';
-const THEME_LB={'':'기본','mono':'모노(백색)'};
+const THEME_LB={'':'기본','clean':'클린(밝은)','mono':'모노(백색)'};
 function setTheme(t,silent){
   t=t||'';
   if(t)document.documentElement.setAttribute('data-theme',t);
@@ -3088,14 +3090,14 @@ function setTheme(t,silent){
   document.querySelectorAll('.thm').forEach(b=>b.classList.toggle('on',(b.dataset.thm||'')===t));
   const lb=document.getElementById('thmValue');if(lb)lb.textContent=THEME_LB[t];
   const m=document.querySelector('meta[name="theme-color"]');
-  if(m)m.setAttribute('content',t==='mono'?'#ffffff':'#0f1117');
+  if(m)m.setAttribute('content',t==='mono'?'#ffffff':t==='clean'?'#ffffff':'#0f1117');
   if(!silent)toast('화면 색상: '+THEME_LB[t]);
 }
 /* ---------- PC 2단 네비게이션 ---------- */
 const CATS=[
   {k:'plan', n:'진행관리', ic:'📊', ids:['new-mold','plan','dash','flow']},
   {k:'out',  n:'출력물',   ic:'🖨️', ids:['doc','partlist','tryout']},
-  {k:'buy',  n:'구매·외주', ic:'🏭', ids:['outsrc','stock']},
+  {k:'buy',  n:'구매·외주', ic:'🏭', ids:['mat','outsrc','stock']},
   {k:'qa',   n:'품질관리(SQ)', ic:'🛡️', ids:['insp-file','ncr','ecn','gauge','appr']},
   {k:'stat', n:'현황',     ic:'🗂', ids:['work-status','cost','mon','hist','board']},
   {k:'sys',  n:'설정',     ic:'⚙️', ids:['master','help','set','logout']}
@@ -3154,7 +3156,7 @@ function markSidenav(v){
   document.querySelectorAll('#sidenav .sitem').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 }
 const EXT={'cost':['cost.html','원가관리'],'master':['master.html','기준정보 관리'],'insp-file':['insp.html','검사성적서'],'partlist':['partlist.html','발주서 (PART LIST)'],
-  'outsrc':['outsrc.html','외주가공 관리'],'work-status':['work_status.html','업무현황']};
+  'outsrc':['outsrc.html','외주가공 관리'],'mat':['mat.html','자재발주 관리'],'work-status':['work_status.html','업무현황']};
 let CUREXT='';
 function openExt(id,file,title,fromPop){
   if(window.innerWidth<1000){location.href=file;return}
@@ -3163,7 +3165,7 @@ function openExt(id,file,title,fromPop){
   if(!fromPop)history.pushState({t:'ext',id:id},'');
   CUREXT=id;
   document.querySelectorAll('#drawer .mi[data-v]').forEach(b=>b.classList.remove('on'));
-  const gk={'insp-file':'qa','partlist':'out','outsrc':'buy','work-status':'stat','cost':'stat','master':'sys'}[id];
+  const gk={'insp-file':'qa','partlist':'out','outsrc':'buy','mat':'buy','work-status':'stat','cost':'stat','master':'sys'}[id];
   if(gk)openOnlyGrp(gk);
   document.querySelectorAll('#drawer .mi[data-menu-id]').forEach(b=>b.classList.toggle('on',b.dataset.menuId===id));
   document.getElementById('htitle').textContent=title;
@@ -5718,7 +5720,108 @@ function exportTryoutPDF(){
     .ft span:nth-child(2){flex:1;text-align:center}
     .ft span:nth-child(3){text-align:right}
     @media print{.noprint{display:none}}
-  </style></head><body>
+  
+/* ============================================================
+   클린 테마 (네이버/네이트 스타일) — data-theme="clean"
+   ============================================================ */
+html[data-theme="clean"]{
+  --bg:#f4f5f7; --card:#ffffff; --card2:#fafbfc;
+  --navy:#ffffff; --navy2:#f0f2f5;
+  --drawer:#ffffff; --drawerbd:#e3e6ec;
+  --ink:#1a1c20; --sub:#4a4f57; --gray:#8b9099;
+  --gold:#2f5fd0; --gold2:#4c7ce8; --gold3:#2f5fd0;
+  --goldbg:#eaf1ff; --goldbd:#c3d6fb;
+  --yellow:#c98a00; --yellowbg:#fff6e0;
+  --blue:#2f5fd0; --red:#e4443c; --green:#0a9c5c;
+  --cust:#7b52d3; --self:#2f5fd0; --out:#e08300;
+  --line:#e3e6ec; --line2:#eef0f4; --line3:#d5d9e0; --line4:#c3c8d1;
+}
+html[data-theme="clean"].bd-1{--line:#eceff3; --line2:#f3f5f8; --line3:#e0e4ea; --line4:#d2d7de}
+html[data-theme="clean"].bd-2{--line:#e3e6ec; --line2:#eef0f4; --line3:#d5d9e0; --line4:#c3c8d1}
+html[data-theme="clean"].bd-3{--line:#d2d7df; --line2:#e3e6ec; --line3:#bcc3cd; --line4:#a8b0bc}
+
+html[data-theme="clean"] body{color-scheme:light;background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+html[data-theme="clean"] .gold-txt{-webkit-text-fill-color:initial;background:none;color:#1a1c20;animation:none}
+
+/* 헤더 */
+html[data-theme="clean"] header{background:#fff;border-bottom:1px solid var(--line);box-shadow:none;backdrop-filter:none}
+html[data-theme="clean"] header .htitle{color:#1a1c20;font-weight:700}
+html[data-theme="clean"] .hmb{border-color:var(--line3);background:#fff}
+html[data-theme="clean"] .rev,html[data-theme="clean"] .ubadge{background:#f4f5f7;border-color:var(--line);color:#6b7280}
+
+/* 드로어 / 사이드 */
+html[data-theme="clean"] #drawer{background:#fff;border-right:1px solid var(--line);box-shadow:none}
+html[data-theme="clean"] #drawer .mi{color:#3c4149}
+html[data-theme="clean"] #drawer .mi.on{background:#eaf1ff;color:#2f5fd0}
+html[data-theme="clean"] #drawer .mi:not(.on):hover{background:#f4f5f7;color:#1a1c20}
+html[data-theme="clean"] #drawer .mgh{color:#1a1c20}
+html[data-theme="clean"] #drawer .mg.open .mgh{color:#2f5fd0}
+html[data-theme="clean"] #sidenav{background:#fff;border-right:1px solid var(--line)}
+html[data-theme="clean"] #sidenav .sitem.on{background:#eaf1ff;color:#2f5fd0;font-weight:700}
+html[data-theme="clean"] #topnav{background:#fff;border-bottom:1px solid var(--line)}
+html[data-theme="clean"] #topnav .tnav.on{background:#fff;color:#2f5fd0;border-bottom:2px solid #2f5fd0}
+
+/* 카드 / 패널 */
+html[data-theme="clean"] .card,html[data-theme="clean"] .projcard,html[data-theme="clean"] section > .box,
+html[data-theme="clean"] .qfbox,html[data-theme="clean"] .mbox{background:#fff;border-color:var(--line);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+html[data-theme="clean"] .modal{background:rgba(20,24,32,.42)}
+
+/* 표 — 네이버 메일 스타일 */
+html[data-theme="clean"] table{background:#fff}
+html[data-theme="clean"] th{background:#f7f8fa;color:#4a4f57;font-weight:700;
+  border-bottom:1px solid var(--line3);letter-spacing:-.2px}
+html[data-theme="clean"] td{border-bottom:1px solid var(--line2);color:#2b2f36}
+html[data-theme="clean"] tbody tr:hover{background:#fafbfd}
+html[data-theme="clean"] .tscroll{border-color:var(--line);border-radius:10px}
+
+/* 입력 */
+html[data-theme="clean"] input,html[data-theme="clean"] select,html[data-theme="clean"] textarea{
+  background:#fff;border:1px solid var(--line3);color:#1a1c20;border-radius:6px}
+html[data-theme="clean"] input:focus,html[data-theme="clean"] select:focus,html[data-theme="clean"] textarea:focus{
+  border-color:#2f5fd0;outline:none;box-shadow:0 0 0 2px rgba(47,95,208,.12)}
+html[data-theme="clean"] input::placeholder,html[data-theme="clean"] textarea::placeholder{color:#a8adb6}
+
+/* 버튼 */
+html[data-theme="clean"] .btn{background:#fff;border:1px solid var(--line3);color:#3c4149;box-shadow:none;font-weight:600}
+html[data-theme="clean"] .btn:hover{background:#f6f7f9;border-color:var(--line4)}
+html[data-theme="clean"] .btn-p,html[data-theme="clean"] .wizbtn{
+  background:#2f5fd0!important;color:#fff!important;border-color:#2f5fd0!important;box-shadow:none}
+html[data-theme="clean"] .btn-p:hover{background:#2750b4!important}
+html[data-theme="clean"] .itab.on,html[data-theme="clean"] .pfilter button.on,
+html[data-theme="clean"] .pfsquick button.on,html[data-theme="clean"] .thm.on{
+  background:#eaf1ff;color:#2f5fd0;border-color:#c3d6fb;box-shadow:inset 0 0 0 1px #c3d6fb}
+html[data-theme="clean"] .mi-cell:focus,html[data-theme="clean"] .gdi:focus,html[data-theme="clean"] .mti:focus{
+  border-color:#2f5fd0;background:#f7faff}
+
+/* 상태 뱃지 */
+html[data-theme="clean"] .st,html[data-theme="clean"] .badge{font-weight:700;letter-spacing:-.2px}
+html[data-theme="clean"] .st-w,html[data-theme="clean"] .st.wait{background:#fff4e5;color:#c26a00}
+html[data-theme="clean"] .st-r,html[data-theme="clean"] .st.run{background:#fff4e5;color:#c26a00}
+html[data-theme="clean"] .st-ok,html[data-theme="clean"] .st.ok{background:#e7f5ee;color:#0a8f54}
+html[data-theme="clean"] .st-ng,html[data-theme="clean"] .st.ng{background:#fdeceb;color:#d8342c}
+html[data-theme="clean"] .b-run{background:#fff4e5;color:#c26a00}
+html[data-theme="clean"] .b-done{background:#e7f5ee;color:#0a8f54}
+html[data-theme="clean"] .b-arch{background:#f0f2f5;color:#6b7280}
+html[data-theme="clean"] .b-hold{background:#f3eefd;color:#6b3fc4}
+
+/* 진행바 */
+html[data-theme="clean"] .pbar{background:#eef0f4;border-color:var(--line);
+  background-image:repeating-linear-gradient(135deg,#e4e7ec 0 6px,#f4f5f7 6px 12px)}
+html[data-theme="clean"] .pbar i{background:linear-gradient(90deg,#4c7ce8,#2f5fd0);box-shadow:1px 0 0 rgba(0,0,0,.12)}
+
+html[data-theme="clean"] .toast{background:#22262e;color:#fff;border-color:#22262e}
+html[data-theme="clean"] .empty{color:#9aa0a9}
+
+/* ============================================================
+   타이포그래피 정리 — 전 테마 공통 (네이버/네이트 톤)
+   ============================================================ */
+body{letter-spacing:-.3px}
+h1,h2,h3,h4,b,strong{letter-spacing:-.4px}
+table th{letter-spacing:-.3px}
+.mono,input.mono,td.mono,.rev{letter-spacing:0}
+
+</style></head><body>
   <h1>T/O보고서 (Tryout 작업일지)</h1>
   <div class="sub">기간: ${period} &nbsp;|&nbsp; 총 ${TROWS.length}건 &nbsp;|&nbsp; 출력: ${new Date().toLocaleString('ko-KR')} (${USER||''})</div>
   ${body}
