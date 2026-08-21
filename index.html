@@ -224,8 +224,15 @@ main{width:100%;max-width:1020px;margin:0 auto;
 .tld{font-size:13px;margin-top:3px;line-height:1.5}
 .tlsum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .tlsum span{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--card2);border:1px solid var(--line);color:var(--sub)}
-.pbar{height:8px;background:var(--line2);border-radius:5px;margin-top:12px;overflow:hidden}
-.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:5px}
+.pbar{height:13px;border-radius:7px;margin-top:12px;overflow:hidden;position:relative;
+  border:1px solid var(--line3);
+  background:repeating-linear-gradient(135deg,var(--line2) 0 6px,transparent 6px 12px),var(--card2)}
+.pbar i{display:block;height:100%;border-radius:6px 0 0 6px;
+  background:linear-gradient(90deg,var(--gold2),var(--gold));
+  box-shadow:2px 0 0 rgba(0,0,0,.35);position:relative;z-index:1}
+.pbar i[style*="width:100%"]{border-radius:6px}
+html[data-theme="mono"] .pbar{background:repeating-linear-gradient(135deg,#c9c9c9 0 5px,#fff 5px 10px)!important;border-color:#000!important}
+html[data-theme="mono"] .pbar i{background:#000!important;box-shadow:none}
 .projcard .meta{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;color:var(--sub)}
 .projcard .meta{flex-wrap:wrap;gap:6px}
 .dd{font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:5px;font-family:'IBM Plex Mono',monospace}
@@ -1120,7 +1127,7 @@ table.wide,table.wide th,table.wide td{user-select:text;-webkit-user-select:text
   <div class="hright">
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 16.8</span>
+    <span class="rev">Rev 16.9</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
