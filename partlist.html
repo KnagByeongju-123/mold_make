@@ -1481,6 +1481,8 @@ function opN(c){return (c||'').replace(/^OP|^RP/,'')}
 function FM(flow){return MASTER.filter(m=>(m.flow||'신작')===flow)}
 function pflow(p){return p&&p.mold_type==='수리'?'수리':'신작'}
 function mName(c){const m=MASTER.find(x=>x.op_code===c);return m?m.process_name:''}
+function pCode(c){const m=MASTER.find(x=>x.op_code===c);return m&&m.proc_code?m.proc_code:''}
+function opLabel(c){const pc=pCode(c);return opN(c)+(pc?' ['+pc+']':'')+' '+mName(c)}
 function curProj(){return PROJ.find(x=>String(x.id)===String(document.getElementById('plsel').value))}
 function curOp(){return document.getElementById('plop').value}
 
@@ -1511,7 +1513,7 @@ async function loadAll(){
 }
 function opOptions(){
   const el=document.getElementById('plop');const cur=el.value;
-  el.innerHTML=FM(pflow(curProj())).map(m=>`<option value="${m.op_code}">${opN(m.op_code)} ${esc(m.process_name)}</option>`).join('')
+  el.innerHTML=FM(pflow(curProj())).map(m=>`<option value="${m.op_code}">${opN(m.op_code)}${m.proc_code?' ['+esc(m.proc_code)+']':''} ${esc(m.process_name)}</option>`).join('')
     ||'<option value="">공정 없음</option>';
   if([...el.options].some(o=>o.value===cur))el.value=cur;
 }
@@ -1541,7 +1543,7 @@ function autoFillPL(){
   v('ph-mgmt',p?p.mold_no:'');
   v('ph-prod',p?(p.product||p.mold_name):'');
   v('ph-model',p?(p.model||''):'');
-  v('ph-proc',m?(opN(m.op_code)+' '+m.process_name):'');
+  v('ph-proc',m?opLabel(m.op_code):'');
   v('ph-made',today());
   toast('금형 정보를 불러왔습니다');
 }
@@ -1682,7 +1684,7 @@ function renderPLLog(){
   const tb=document.getElementById('plbody');if(!tb)return;
   tb.innerHTML=PLS.map(r=>`<tr>
     <td class="mono">${esc(r.made_date||String(r.created_at).slice(0,10))}</td>
-    <td>${r.op_code?opN(r.op_code)+' '+esc(mName(r.op_code)):'-'}</td>
+    <td>${r.op_code?esc(opLabel(r.op_code)):'-'}</td>
     <td class="mono">${r.stage?esc(r.stage)+'조':'-'}</td>
     <td>${esc(r.kind||'')}</td>
     <td>${esc(r.product_name||'-')}</td>

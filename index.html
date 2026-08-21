@@ -466,6 +466,11 @@ tr:last-child td{border-bottom:none}
 .ubtn:hover{border-color:var(--gold);color:var(--gold)}
 .ubtn.save{background:linear-gradient(160deg,var(--gold2),var(--gold));border-color:var(--gold);color:#241a05}
 .hnote{margin-top:10px;font-size:12.5px;color:var(--gray)}
+.pcode{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;
+  padding:1px 7px;border-radius:5px;background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold);
+  margin:0 3px;letter-spacing:.3px}
+html[data-theme="clean"] .pcode{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
+html[data-theme="mono"] .pcode{background:#fff!important;border-color:#000!important;color:#000!important}
 .rtag{font-size:11px;font-weight:800;padding:2px 9px;border-radius:20px;white-space:nowrap;
   background:var(--goldbg);border:1px solid var(--goldbd);color:var(--gold)}
 html[data-theme="clean"] .rtag{background:#eaf1ff;border-color:#c3d6fb;color:#2f5fd0}
@@ -1347,7 +1352,7 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <span class="abell hide" id="abell" onclick="go('appr');setApprTab('todo')" title="내 결재 대기">✍️<i id="abellcnt">0</i></span>
     <span class="rtag" id="rolebadge" title="현재 권한"></span>
     <span class="ubadge" id="ubadge" onclick="logout()" title="클릭 시 로그아웃"></span>
-    <span class="rev">Rev 17.9</span>
+    <span class="rev">Rev 18.0</span>
     <button id="menuOrderBtn" class="menuordbtn" type="button" title="햄버거 메뉴 순서 편집" aria-label="햄버거 메뉴 순서 편집" aria-pressed="false" onclick="toggleMenuEdit(event)">☷</button>
     <div class="pcwmenu" id="pcWidthMenu">
       <button id="pcWidthBtn" class="pcwbtn" type="button" title="화면 폭 · 글자 크기 설정" aria-label="화면 폭 · 글자 크기 설정" aria-expanded="false" onclick="togglePCWidthPopup(event)">📐</button>
@@ -2529,8 +2534,10 @@ html[data-theme="mono"] .tscroll table td.rnum{background:#e6e6e6!important;colo
     <div class="mbody">
       <div class="row2">
         <div class="fg"><label>공정번호 *</label><input id="oe-code" inputmode="numeric" placeholder="예: 45"></div>
-        <div class="fg"><label>담당부서 *</label><input id="oe-dept" list="dl-dept" placeholder="예: 가공"></div>
+        <div class="fg"><label>공정코드</label><input id="oe-pcode" class="mono" maxlength="8"
+          placeholder="예: MP, WS1" style="text-transform:uppercase"></div>
       </div>
+      <div class="fg"><label>담당부서 *</label><input id="oe-dept" list="dl-dept" placeholder="예: 가공"></div>
       <datalist id="dl-dept"><option value="영업"><option value="설계"><option value="구매"><option value="가공"><option value="조립"><option value="품질"></datalist>
       <div class="fg"><label>공정명 *</label><input id="oe-name" placeholder="예: 방전 가공"></div>
       <div class="fg"><label>담당 (중복 선택 가능)</label>
@@ -2890,7 +2897,9 @@ function renderOpList(){
       <button ${i===L.length-1?'disabled':''} onclick="moveOp(${i},1)">▼</button>
     </div>
     <div class="opinf">
-      <div class="opt"><b class="mono">${opN(m.op_code)}</b> ${esc(m.process_name)}</div>
+      <div class="opt"><b class="mono">${opN(m.op_code)}</b>
+        ${m.proc_code?`<span class="pcode">${esc(m.proc_code)}</span>`:''}
+        ${esc(m.process_name)}</div>
       <div class="opsub">
         <span class="dept">${esc(m.dept)}</span>
         ${actorList(m.actor).map(a=>`<span class="atag a-${a==='고객사'?'c':a==='사내'?'s':'o'}">${a}</span>`).join('')}
@@ -2981,6 +2990,7 @@ function editOpMaster(code){
   document.getElementById('oe-code').value=m?opN(m.op_code):'';
   document.getElementById('oe-code').disabled=!!m;
   document.getElementById('oe-name').value=m?m.process_name:'';
+  document.getElementById('oe-pcode').value=(m&&m.proc_code)?m.proc_code:'';
   document.getElementById('oe-dept').value=m?m.dept:'';
   const acts=m?actorList(m.actor):['사내'];
   document.querySelectorAll('#oe-actor button').forEach(b=>b.classList.toggle('on',acts.includes(b.dataset.v)));
@@ -3004,11 +3014,18 @@ async function saveOpMaster(){
   if(!dp)return toast('담당부서를 입력하세요');
   const acts=[...document.querySelectorAll('#oe-actor button.on')].map(b=>b.dataset.v);
   if(!acts.length)return toast('담당을 하나 이상 선택하세요');
+  const pcode=(g('oe-pcode')||'').toUpperCase();
+  if(pcode&&!/^[A-Z0-9]{1,8}$/.test(pcode))return toast('공정코드는 영문·숫자 8자 이내입니다');
+  if(pcode){
+    const dup=MASTER.find(x=>(x.proc_code||'').toUpperCase()===pcode&&x.op_code!==OEDIT);
+    if(dup)return toast('이미 사용중인 공정코드입니다 ('+opN(dup.op_code)+' '+dup.process_name+')');
+  }
   const pref=SETFLOW==='수리'?'RP':'OP';
   const code=pref+num;
   const tasks=document.getElementById('oe-tasks').value.split('\n').map(x=>x.trim()).filter(Boolean);
   const outs=document.getElementById('oe-outs').value.split('\n').map(x=>x.trim()).filter(Boolean);
   const body={process_name:nm,dept:dp,actor:acts.join(','),tasks,outputs:outs,flow:SETFLOW,
+    proc_code:pcode||null,
     ng_return_op:document.getElementById('oe-ng').value||null,
     wt:g('oe-wt')===''?null:Number(g('oe-wt'))};
   try{
@@ -4002,6 +4019,7 @@ async function renderFlow(){
         <div class="opinfo">
           <div class="t">
             <span class="nm click" onclick="openOp('${m.op_code}')">${esc(m.process_name)} <i class="ico">?</i></span>
+            ${m.proc_code?`<span class="pcode">${esc(m.proc_code)}</span>`:''}
             <span class="dept">${m.dept}</span>
             <span class="st ${stc}">${p.status}</span>
             ${p.ng_count?`<span class="ngc">NG ${p.ng_count}회</span>`:''}
@@ -4788,9 +4806,9 @@ function exportPlan(){
   if(!PLANROWS.length)return toast('출력할 계획이 없습니다');
   const sel=document.getElementById('plansel');
   const title=sel.options[sel.selectedIndex].text;
-  const head=['공정번호','공정명','부서','계획시작','계획완료','소요일수','실적시작','실적완료','상태','지연여부'];
+  const head=['공정번호','공정코드','공정명','부서','계획시작','계획완료','소요일수','실적시작','실적완료','상태','지연여부'];
   const rows=PLANROWS.map(({m,pr,delayed,start,days})=>[
-    opN(m.op_code),m.process_name,m.dept,
+    opN(m.op_code),m.proc_code||'',m.process_name,m.dept,
     start||'',pr.plan_end||'',days!==''?days:'',
     pr.started_at?pr.started_at.slice(0,10):'',pr.finished_at?pr.finished_at.slice(0,10):'',
     pr.status,delayed?'지연':'']);
